@@ -124,7 +124,9 @@ documented: {}",
                 }
                 eprintln!("");
                 for got in &tracker.other_outputs {
-                    let Some(info) = &got.info else { continue; };
+                    let Some(info) = &got.info else {
+                        continue;
+                    };
                     info.eprintln(format!("[{}]", got.context_desc));
                 }
                 eprintln!("========================================");
