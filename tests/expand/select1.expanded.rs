@@ -28,9 +28,9 @@ impl ::core::fmt::Debug for Both {
             f,
             "Both",
             "a",
-            &&self.a,
+            &self.a,
             "b",
-            &&self.b,
+            &self.b,
             "c",
             &&self.c,
         )

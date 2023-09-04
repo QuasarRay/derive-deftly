@@ -58,11 +58,6 @@ fn main() {
     let mut hasher = std::collections::hash_map::DefaultHasher::new();
     v.hash(&mut hasher);
     {
-        ::std::io::_print(
-            ::core::fmt::Arguments::new_v1(
-                &["", "\n"],
-                &[::core::fmt::ArgumentV1::new_lower_hex(&hasher.finish())],
-            ),
-        );
+        ::std::io::_print(format_args!("{0:x}\n", hasher.finish()));
     };
 }

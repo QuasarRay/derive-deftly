@@ -35,7 +35,7 @@ impl ::core::fmt::Debug for ChannelsParamsUpdates {
             f,
             "ChannelsParamsUpdates",
             "padding_enable",
-            &&self.padding_enable,
+            &self.padding_enable,
             "padding_parameters",
             &&self.padding_parameters,
         )
@@ -99,28 +99,13 @@ type K = Wombat;
 fn main() {
     let _: K = ChannelsParams::default();
     {
-        ::std::io::_print(
-            ::core::fmt::Arguments::new_v1(
-                &["field name ", "\n"],
-                &[::core::fmt::ArgumentV1::new_debug(&"padding_enable")],
-            ),
-        );
+        ::std::io::_print(format_args!("field name {0:?}\n", "padding_enable"));
     };
     {
-        ::std::io::_print(
-            ::core::fmt::Arguments::new_v1(
-                &["field name ", "\n"],
-                &[::core::fmt::ArgumentV1::new_debug(&"padding_parameters")],
-            ),
-        );
+        ::std::io::_print(format_args!("field name {0:?}\n", "padding_parameters"));
     };
     let u = ChannelsParamsUpdates::default();
     {
-        ::std::io::_print(
-            ::core::fmt::Arguments::new_v1(
-                &["updates = ", "\n"],
-                &[::core::fmt::ArgumentV1::new_debug(&&u)],
-            ),
-        );
+        ::std::io::_print(format_args!("updates = {0:?}\n", & u));
     };
 }
