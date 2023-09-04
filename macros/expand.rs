@@ -819,7 +819,27 @@ where
         ),
     )?;
 
-    let thing: T = s.parse()?;
+    let t: TokenStream = s.parse().map_err(|e| {
+        // Empirically, parsing a LitStr in actual proc macro context, with
+        // proc_macro2, into tokens, can generate a lexical error with a
+        // "fallback" Span.  Then, attempting to render the results,
+        // including the eventual compiler_error! invocation, back to
+        // a compiler proc_ma cor::TokenStream can panic with
+        // "compiler/fallback mismatch".
+        //
+        // https://github.com/dtolnay/syn/issues/1504
+        //
+        // Attempt to detect this situation.
+        match (|| {
+            let _: String = (&e).into_iter().next()?.span().source_text()?;
+            Some(())
+        })() {
+            Some(()) => e,
+            None => lit.span().error(e.to_string()),
+        }
+    })?;
+
+    let thing: T = syn::parse2(t)?;
     Ok(thing)
 }
 
