@@ -17,6 +17,11 @@ and, especially, testing them can be complex.
       * [Expansion keywords with content or arguments](#expansion-keywords-with-content-or-arguments)
       * [Adding a keyword that can appear in `${paste }` and/or `${CASE }`](#adding-a-keyword-that-can-appear-in-paste--andor-case-)
       * [Adding a boolean keyword](#adding-a-boolean-keyword)
+   * [Updating the pinned Nightly Rust (used in tests and CI)](#updating-the-pinned-nightly-rust-used-in-tests-and-ci)
+      * [Updating the nightly version number](#updating-the-nightly-version-number)
+      * [Updating the pinned docker image](#updating-the-pinned-docker-image)
+      * [Updating the cargo-expand version](#updating-the-cargo-expand-version)
+      * [Preparing and merging the changes](#preparing-and-merging-the-changes)
 
 ## Required reading
 
