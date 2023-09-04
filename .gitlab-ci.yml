@@ -11,7 +11,7 @@ default:
     # See tests/stderr.rs
     - export STDERRTEST_CARGO_OPTIONS=--locked
 
-image: "rust:latest"
+image: "rust:bookworm"
 
 # Running tests without --workspace is useful because that way cargo
 # won't add features to our dependencies that we didn't actually enable
