@@ -17,6 +17,11 @@ and, especially, testing them can be complex.
       * [Expansion keywords with content or arguments](#expansion-keywords-with-content-or-arguments)
       * [Adding a keyword that can appear in `${paste }` and/or `${CASE }`](#adding-a-keyword-that-can-appear-in-paste--andor-case-)
       * [Adding a boolean keyword](#adding-a-boolean-keyword)
+   * [Updating the pinned Nightly Rust (used in tests and CI)](#updating-the-pinned-nightly-rust-used-in-tests-and-ci)
+      * [Updating the nightly version number](#updating-the-nightly-version-number)
+      * [Updating the pinned docker image](#updating-the-pinned-docker-image)
+      * [Updating the cargo-expand version](#updating-the-cargo-expand-version)
+      * [Preparing and merging the changes](#preparing-and-merging-the-changes)
 
 ## Required reading
 
@@ -190,3 +195,69 @@ such as `append_identfrag` or `append_idpath`.
 
 This is fairly straightforward.
 Use `is_enum` (say) as an example.
+
+## Updating the pinned Nightly Rust (used in tests and CI)
+
+The docker image and the nightly version number `+nightly-YYYY-MM-DD`
+must be kept in sync.  `cargo expand` will probably need updating too.
+
+Use this to select a corresponding Nightly Rust and container image:
+<br>
+<https://www.chiark.greenend.org.uk/~ian/docker-tags-history/README.txt>
+
+Pick a date just before upstream Rust made a release, since that way
+we'll maybe have a less-buggy nightly.  Note the date `YYYY-MM-DD` and
+use the `jq` rune in that `README.txt` to get the sha256 image digest.
+
+(The Docker official way seems to be to visit
+  <https://hub.docker.com/r/rustlang/rust/tags>
+and look for the `nightly-bookworm` tag, or whatever.
+However, as far as I can tell historical information is not available,
+even though the images *are* retained!)
+
+### Updating the nightly version number
+
+Install the most recent nightly: `rustup toolchain add nightly-YYYY-MM-DD`
+
+Then run:
+```text
+TRYBUILD=overwrite MACROTEST=overwrite STDERRTEST=overwrite \
+cargo +nightly-YYYY-MM-DD test --workspace --all-features
+```
+
+**Inspect the output carefully** before committing.
+Use `git-grep` on the old nightly date string and fix all the instances.
+
+### Updating the pinned docker image
+
+### Updating the cargo-expand version
+
+Quite likely, you'll need to update cargo-expand too, since it may not
+build with the new nightly.
+
+Find the most recent version on `crates.io`,
+and `cargo install --version 1.0.NN cargp-expand`
+
+Run the overwriting test rune, above.
+**Inspect the output carefully** before committing.
+Edit `.gitlab-ci.yml` with search-and-replace to fix all the occurrences.
+
+### Preparing and merging the changes
+
+ 1. Make an MR of any preparatory fixes you found you needed to make.
+    Such changes ought to work with all compiler versions, and should be
+    made into an MR of their own.
+
+ 2. When that has merged, make an MR containing *one commit*:
+
+      - gitlab image update
+      - `cargo expand` update
+      - consequential changes to expected test outputs
+      - `Cargo.lock` update (minimal-versions ought not to change here)
+
+    This has to be its own MR because it changes, along the way,
+    things that the `every-commit` test assumes don't change.
+    Splitting it into multiple MRs arranges to refresh those assumptions.
+    <p></p>
+
+ 3. Finally, make an MR for any changes you wish to make to this doc.
