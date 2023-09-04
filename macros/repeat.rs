@@ -68,7 +68,7 @@ impl<O: SubstParseContext> SubstIf<O> {
             // We don't analyse the consequents.  We would have to scan
             // them all unconditionally, which is rather strange.  It might
             // even cause trouble: the template author might have used
-            // conditions (including for example `is_enum` to try select an
+            // conditions (including for example `is_enum` to try to select an
             // expansion appropriate for the context.
             //
             // It seems less confusing to avoid this, and require the
