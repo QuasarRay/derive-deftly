@@ -1,5 +1,3 @@
-# Template originally came from:
-# https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Rust.gitlab-ci.yml
 
 stages:
   - test
@@ -13,8 +11,6 @@ default:
     # See tests/stderr.rs
     - export STDERRTEST_CARGO_OPTIONS=--locked
 
-# Official language image. Look for the different tagged releases at:
-# https://hub.docker.com/r/library/rust/tags/
 image: "rust:latest"
 
 # Running tests without --workspace is useful because that way cargo
