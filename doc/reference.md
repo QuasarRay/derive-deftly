@@ -707,6 +707,52 @@ Iff necessary, the result will be a raw identifier.
  * `${paste x_ $fname}` for tuple: `x_0`
  * `${paste $fname _x}` for tuple: error, ``constructed identifier "0_x" is invalid``
 
+<div id="x:concat">
+
+### `${concat ...}` - literal concatenation (**beta**)
+
+</div>
+
+Concatenates the content and expands to a string literal.
+Only certain contents are allowed:
+
+ * Strings literals (`"..."`):
+   the contents of the string is used.
+
+ * Expansions that expand to identifiers:
+   the text of the identifier is used.
+   For raw identifiers, only the identifier name is used.
+
+ * Expansions that expand to types:
+   the type's source code text is used (as if with `stringify!`).
+   The precise representation is neither defined nor stable!
+   The expansion can be used in documentation or messages
+   but should not reinterpreted as Rust code,
+   nor compared for equality.
+
+ * Expansions that expand to literal strings:
+   `${Xmeta as str}`.
+
+So, supported expansions are
+those allowed in [`${paste ...}`](#x:paste),
+and `${concat }` itself.
+
+(`${concat }` does the jobs of `std::concat!` and `std::stringify!`
+but can be used in more places and is more convenient.
+
+This feature is available only in [**beta**].
+
+#### XXXX Examples (forthcoming)
+
+ * `${concat "first" "second"}`: `"firstsecond"`
+ * `${concat $tname "Suffix"}`: `"TupleSuffix"`
+ * `${concat $ttype "Suffix"}`: `"Tuple::<'a, 'l, T, C>Suffix"`
+ * `${concat $<$ttype Suffix>}`: `"TupleSuffix::<'a, 'l, T, C>"`
+ * `${concat "Prefix" $ftype}`: `"Prefix<T as TryInto<u8>>::Error"`
+ * `${concat $<Prefix $ftype>}`: `"<T as TryInto<u8>>::PrefixError"`
+ * `${concat ${snake_case $vname}}`: `"named_variant"`
+ * `${concat $<r#raw_ident>}`: `"raw_ident"`
+
 ### `${CASE_CHANGE ...}` -- case changing
 
 Expands the content, and changes its case
@@ -1001,6 +1047,10 @@ and expand it later when they are.)
 `${NAME}` may only be used
 inside pasting and case changing
 if `BODY` was precisely an invocation of `${paste }` or `$<...>`.
+
+`${NAME}` may only be used
+inside `${concat ...}`
+if `BODY` was precisely an invocation of `${concat }`, `${paste }` or `$<...>`.
 
 You can define an expansion and a condition with the same name;
 they won't interfere.

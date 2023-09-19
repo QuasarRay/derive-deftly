@@ -2,97 +2,58 @@
 
 # Future template features
 
-## Stringification
+## Stringification enhancements
 
-See
-[#64](https://gitlab.torproject.org/Diziet/rust-derive-deftly/-/issues/64).
+### `${stringify ...}` - re-stringification
 
-This is a new expansion context, admitting:
+**Draft docs**
 
- * Literal strings (including raw strings, but not byte strings)
- * Expansions (inner template code must also be valid in string context)
- * Doubled dollars `$$`
+Usually, use `${concat ..}`.
 
-Not permitted are other kinds of non-expansion tokens,
-including non-string literals, punctuation, or identifiers.
+`${stringify }` expands the content,
+displays it (converting Rust tokens to their string representations)
+and expands to a single string literal whose value is that content.
 
-Expansions that are valid in token context are all allowed.
-Leaf expansions expand to their string representation
-(`TokenStream as Display`).
-Expansions that yield types
-are stringified *as types* (which has an impact on spacing).
+String literals in the input,
+including the expansions of `${concat }` and `${Xmeta as str}`
+are *re-quoted*,
+not simply concatenated with
+the string representation of non-string tokens,
+resulting in double-quoting.
 
-The precise formatting of the output is not to be relied on.
+The precise representation is neither defined nor stable!
+The expansion can be used in documentation or messages
+but should not reinterpreted as Rust code,
+nor compared for equality.
 
-### Keyword `${string ...}`
+**Add to list of things allowed in `${concat ..}`**
 
-Body is a template valid in string context.
+ * `${stringify }` expansions:
+   The value of the `${stringify }` string literal is used.
+ 
+#### Examples
 
-When expanded in token context, expands to a string literal,
-whose value is all the content strings, concatenated.
-
-Within `${string ...}`,
-literal strings and
-the results of inner `${string }` expansions (and `$"..."` templates)
-are not re-quoted.
-
-### Case conversion 
-
-Case conversion is allowed inside stringification;
-the contents must be a valid stringification content.
-Case conversion is then applied to the stringified text.
-So inside `${stringify }`,
-case changing doesn't force pasting context.
-
-Identifier pasing `${paste }` and `$< ... >` is also allowed,
-and expands to the string representation of the type.
-
-### Interaction with `$define`
-
-User-defined expansions whose body is precisely `${string }` or `$"..."`
-are not requoted in string context.
-For other user defined expansions, the content is evaluated as tokens,
-and that token stream is converted to a string
-(requoting any string literals it may contain).
-
-This is in semantics similar to `${paste }`,
-and ensures that
-any particular template text is statically
-either string context, or not.
-
-Examples:
-
-```rust,ignore
-${define A { ${string "a"} }}   $A
-${define B { ${string "b"} }}   ${string $B}
-${define C {          "c"  }}   ${string $C}
-```
-
-Expands to:
-
-```rust,ignore
-"a"
-"b"
-r#""c""#
-```
+ * `${stringify $fvis}`: `"pub(crate)"`
+ * `${concat $%{stringify $fvis}}`: `"pub(crate)"`
+ * `${stringify "requoted"}`: `"\"requoted\""`
+ * `${stringify ${concat $fvis}}`: `"\"pub(crate)\""`
 
 ### String templating `$"..."`
 
 This is a convenient syntax for specifying a string template.
+It is equivalent to a use of `${concat }`.
+(Counts for `${define }` too.)
+
 The leading `$` is followed by a (possbily raw) string literal.
 
 The string literal contents is lexed as follows:
 
  * Literal text
- * Expansions in the form `$keyword` (or user-defined `$NAME`).
+ * Expansions in the forms
+   `$keyword`, `${keyword ...}`, `$<...>`,
+   but `"`, `'` and ``\`` are completely forbidden within the `...`.
+   If you need this, use a `${define ...}`.
  * Doubled dollars `$$`
- * Possibly, at some point `${keyword ARGS...}` but with limitations.
-    Possible limitation producing an initial level of support is:
-     * the characters `"'` cannot appear in the `ARGS...`
- * Possibly, at some point `$< ... >` with the same limitation.
-
-This template is equivalent to a `${string ...}`
-containing the same elements.
 
 Possibly in the future we might support
 `${"template with $1 positional arguments" $< blarky $fname >}`
