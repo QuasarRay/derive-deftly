@@ -43,6 +43,20 @@
 //! *Check that the actual output is as desired!*
 //! This is easily done with `git diff` before committing.
 //!
+//! ### Slight discrepancies in output, due to reformatting unfaithfulness
+//!
+//! The outputs in `tests/expand/` come from `cargo expand`,
+//! which reformats them for legibility.
+//! This reformatting is not always 100% faithful.
+//! For example, it can insert or remove `::` tokens.
+//!
+//! The output from `dbg_all_keywords` is completely faithful.
+//! This appears in `tests/stderr/recent.real-stderr`, for example.
+//!
+//! See
+//! [#13](https://gitlab.torproject.org/Diziet/rust-derive-adhoc/-/issues/13)
+//! for some more discussion.
+//!
 //! ## Classes of test in the derive-adhoc workspace
 //!
 //! Testing proc macros is not entirely straightforward,
