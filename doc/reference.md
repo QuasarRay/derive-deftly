@@ -496,7 +496,7 @@ which must refer to a path (perhaps with generics).
 Then the pasting will be applied to the final path element identifier,
 and the path prefix and generics reproduced unaltered.
 
-#### Example
+#### Examples
 
  * `$<Zingy $ftype Builder>` for `TupleVariant`:
     `std::iter::ZingyOnceBuilder::<T>`
