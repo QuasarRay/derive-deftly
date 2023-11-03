@@ -174,7 +174,7 @@ impl SubstMetaPath {
 
     pub fn search<'a, A, F, E>(&self, pmetas: A, f: &mut F) -> Result<(), E>
     where
-        F: FnMut(MetaNode<'a>) -> Result<(), E>,
+        F: FnMut(FoundMetaNode<'a>) -> Result<(), E>,
         A: IntoIterator<Item = &'a PreprocessedMeta>,
     {
         for pmeta in pmetas {
@@ -189,7 +189,7 @@ impl SubstMetaPath {
         f: &mut F,
     ) -> Result<(), E>
     where
-        F: FnMut(MetaNode<'a>) -> Result<(), E>,
+        F: FnMut(FoundMetaNode<'a>) -> Result<(), E>,
     {
         #![allow(non_camel_case_types)]
         use syn::Meta as sM;
@@ -200,9 +200,9 @@ impl SubstMetaPath {
 
         let vspan = pmeta.span();
         match (&self.deeper, pmeta) {
-            (None, sM::Path(_)) => f(MN::Unit(vspan))?,
-            (None, sM::List(_)) => f(MN::Deeper(vspan))?,
-            (None, sM::NameValue(nv)) => f(MN::Lit(&nv.lit))?,
+            (None, sM::Path(_)) => f(FMN::Unit(vspan))?,
+            (None, sM::List(_)) => f(FMN::Deeper(vspan))?,
+            (None, sM::NameValue(nv)) => f(FMN::Lit(&nv.lit))?,
             (Some(_), sM::NameValue(_)) => {}
             (Some(_), sM::Path(_)) => {} // self is deeper than pmeta
             (Some(d), sM::List(l)) => {

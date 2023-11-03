@@ -21,7 +21,7 @@ pub struct DeriveAdhocExpandInput {
 }
 
 /// Node in tree structure found in driver `#[adhoc(some(thing))]`
-pub enum MetaNode<'l> {
+pub enum FoundMetaNode<'l> {
     Unit(Span),
     Deeper(Span),
     Lit(&'l syn::Lit),
@@ -36,7 +36,7 @@ pub enum Fname<'r> {
     Index(syn::Index),
 }
 
-pub use MetaNode as MN;
+pub use FoundMetaNode as FMN;
 
 impl Parse for DeriveAdhocExpandInput {
     fn parse(input: ParseStream) -> syn::Result<Self> {
@@ -756,7 +756,7 @@ where
         let mut found = None;
         let error_loc = || [(self.span(), "expansion"), ctx.error_loc()];
 
-        self.path.search(pmetas, &mut |av: MetaNode| {
+        self.path.search(pmetas, &mut |av: FoundMetaNode| {
             if found.is_some() {
                 return Err(error_loc().error(
  "tried to expand just attribute value, but it was specified multiple times"
@@ -843,17 +843,17 @@ where
     Ok(thing)
 }
 
-impl Spanned for MetaNode<'_> {
+impl Spanned for FoundMetaNode<'_> {
     fn span(&self) -> Span {
         match self {
-            MN::Unit(span) => *span,
-            MN::Deeper(span) => *span,
-            MN::Lit(lit) => lit.span(),
+            FMN::Unit(span) => *span,
+            FMN::Deeper(span) => *span,
+            FMN::Lit(lit) => lit.span(),
         }
     }
 }
 
-impl<'l> MetaNode<'l> {
+impl<'l> FoundMetaNode<'l> {
     fn expand<O>(
         &self,
         tspan: Span,
@@ -866,13 +866,13 @@ impl<'l> MetaNode<'l> {
         let spans = |vspan| metavalue_spans(tspan, vspan);
 
         let lit = match self {
-            MN::Unit(vspan) => return Err(spans(*vspan).error(
+            FMN::Unit(vspan) => return Err(spans(*vspan).error(
  "tried to expand attribute which is just a unit, not a literal"
             )),
-            MN::Deeper(vspan) => return Err(spans(*vspan).error(
+            FMN::Deeper(vspan) => return Err(spans(*vspan).error(
  "tried to expand attribute which is nested list, not a value",
             )),
-            MN::Lit(lit) => lit,
+            FMN::Lit(lit) => lit,
         };
 
         use SubstMetaAs as SMA;
