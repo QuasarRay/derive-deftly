@@ -4,6 +4,9 @@
 -- macros driven by Rust data structures -
 by writing templates in a fairly straightforward template language.
 
+This is the friendly introduction.
+Of course there is a [reference manual](reference) too.
+
 <!--##toc##-->
    * [Getting started with `derive_adhoc`.](#getting-started-with-derive_adhoc)
       * [Exporting templates](#exporting-templates)
