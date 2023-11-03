@@ -7,7 +7,7 @@ and, especially, testing them can be complex.
    * [Required reading](#required-reading)
    * [Generated and auto-updated files in the git tree](#generated-and-auto-updated-files-in-the-git-tree)
       * [`tests/pub-export/bizarre-facade/*` etc., updated by `maint/update-bizarre`](#testspub-exportbizarre-facade-etc-updated-by-maintupdate-bizarre)
-      * [`Cargo.lock`, updated by `nailing-cargo update`.](#cargolockexample-updated-by-nailing-cargo-update)
+      * [`Cargo.lock`, updated by `nailing-cargo update`.](#cargolock-updated-by-nailing-cargo-update)
       * [`Cargo.lock.minimal`, updated by `update-minimal-versions`.](#cargolockminimal-updated-by-update-minimal-versions)
       * [Tables of contents in various `*.md`, updated by `maint/update-tocs`.](#tables-of-contents-in-various-md-updated-by-maintupdate-tocs)
    * [Testing - see `tests/tests.rs`](#testing---see-teststestsrs)
