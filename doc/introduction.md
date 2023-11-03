@@ -1142,10 +1142,8 @@ For example:
    to make user-defined reuseable template keywords,
    to save repetition in templates.
 
-Some of these can be seen in action in test cases in
-[our source repo](https://gitlab.torproject.org/Diziet/rust-derive-adhoc/-/tree/main/tests/expand)
-
-Full details are in the [reference].
+Full details are in the [reference],
+which also has a brief example demonstrating each construct.
 
 <!--
 
