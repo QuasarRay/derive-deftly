@@ -180,7 +180,6 @@ to your fullest advantage.
 If you're the kind of person who wants to skip
 straight to the reference manual,
 you can find it [over here][reference].
-(It's still pretty terse, but we're working on that.)
 
 ## A brief tutorial: How to write your own Clone
 
