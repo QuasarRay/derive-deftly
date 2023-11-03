@@ -201,11 +201,13 @@ Use `is_enum` (say) as an example.
 The docker image and the nightly version number `+nightly-YYYY-MM-DD`
 must be kept in sync.  `cargo expand` will probably need updating too.
 
+### Choosing which Nightly Rust version to update to
+
 Use this to select a corresponding Nightly Rust and container image:
 <br>
 <https://www.chiark.greenend.org.uk/~ian/docker-tags-history/README.txt>
 
-Pick a date just before upstream Rust made a release, since that way
+Pick a date just before upstream Rust branched for a release, since that way
 we'll maybe have a less-buggy nightly.  Note the date `YYYY-MM-DD` and
 use the `jq` rune in that `README.txt` to get the sha256 image digest.
 
@@ -217,7 +219,7 @@ even though the images *are* retained!)
 
 ### Updating the nightly version number
 
-Install the most recent nightly: `rustup toolchain add nightly-YYYY-MM-DD`
+Install the chosen nightly: `rustup toolchain add nightly-YYYY-MM-DD`
 
 Then run:
 ```text
