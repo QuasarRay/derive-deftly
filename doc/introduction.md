@@ -1153,8 +1153,6 @@ which also has a brief example demonstrating each construct.
 >
 >   (When to use `${for}`?)
 >
-> ## What else am I missing?
->
 > ## Links
 >
 >  - Link to more worked and commented examples.
