@@ -20,6 +20,7 @@ Of course there is a [reference manual](reference) too.
       * [Transforming names and strings](#transforming-names-and-strings)
    * [Another example: Defining a constructor function.](#another-example-defining-a-constructor-function)
       * [Marking a template's limitations](#marking-a-templates-limitations)
+      * [Debugging templates](#debugging-templates)
       * [Working with visibility](#working-with-visibility)
       * [Using attributes to make a template take arguments](#using-attributes-to-make-a-template-take-arguments)
       * [Getting started with conditionals](#getting-started-with-conditionals)
