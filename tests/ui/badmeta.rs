@@ -3,6 +3,7 @@ use derive_adhoc::{derive_adhoc, Adhoc};
 #[derive(Adhoc)]
 #[adhoc(wrong = "{")]
 #[adhoc(dot = ".")]
+#[adhoc(barelit("42"))]
 struct DataType {}
 
 derive_adhoc! {
@@ -20,6 +21,8 @@ derive_adhoc! {
     DataType:
 
     struct ${paste Bad ${tmeta(dot) as str}};
+
+    struct ${paste Bad ${tmeta(barelit) as str}};
 }
 
 fn main() {}

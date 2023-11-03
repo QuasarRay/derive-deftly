@@ -21,7 +21,7 @@ pub struct DeriveAdhocExpandInput {
 }
 
 /// Node in tree structure found in driver `#[adhoc(some(thing))]`
-pub enum MetaNode<'l> {
+pub enum FoundMetaNode<'l> {
     Unit(Span),
     Deeper(Span),
     Lit(&'l syn::Lit),
@@ -36,7 +36,7 @@ pub enum Fname<'r> {
     Index(syn::Index),
 }
 
-pub use MetaNode as MN;
+pub use FoundMetaNode as FMN;
 
 impl Parse for DeriveAdhocExpandInput {
     fn parse(input: ParseStream) -> syn::Result<Self> {
@@ -756,7 +756,7 @@ where
         let mut found = None;
         let error_loc = || [(self.span(), "expansion"), ctx.error_loc()];
 
-        self.path.search(pmetas, &mut |av: MetaNode| {
+        self.path.search(pmetas, &mut |av: FoundMetaNode| {
             if found.is_some() {
                 return Err(error_loc().error(
  "tried to expand just attribute value, but it was specified multiple times"
@@ -843,17 +843,65 @@ where
     Ok(thing)
 }
 
-impl Spanned for MetaNode<'_> {
+impl SubstMetaPath {
+    pub fn search<'a, A, F, E>(&self, pmetas: A, f: &mut F) -> Result<(), E>
+    where
+        F: FnMut(FoundMetaNode<'a>) -> Result<(), E>,
+        A: IntoIterator<Item = &'a PreprocessedMeta>,
+    {
+        for pmeta in pmetas {
+            self.search_1(pmeta, &mut *f)?;
+        }
+        Ok(())
+    }
+
+    fn search_1<'a, E, F>(
+        &self,
+        pmeta: &'a PreprocessedMeta,
+        f: &mut F,
+    ) -> Result<(), E>
+    where
+        F: FnMut(FoundMetaNode<'a>) -> Result<(), E>,
+    {
+        #![allow(non_camel_case_types)]
+        use syn::Meta as sM;
+
+        if pmeta.path() != &self.path {
+            return Ok(());
+        }
+
+        let vspan = pmeta.span();
+        match (&self.deeper, pmeta) {
+            (None, sM::Path(_)) => f(FMN::Unit(vspan))?,
+            (None, sM::List(_)) => f(FMN::Deeper(vspan))?,
+            (None, sM::NameValue(nv)) => f(FMN::Lit(&nv.lit))?,
+            (Some(_), sM::NameValue(_)) => {}
+            (Some(_), sM::Path(_)) => {} // self is deeper than pmeta
+            (Some(d), sM::List(l)) => {
+                for nm in &l.nested {
+                    let m = match nm {
+                        syn::NestedMeta::Meta(m) => m,
+                        syn::NestedMeta::Lit(_) => continue,
+                    };
+                    d.search_1(m, &mut *f)?;
+                }
+            }
+        }
+        Ok(())
+    }
+}
+
+impl Spanned for FoundMetaNode<'_> {
     fn span(&self) -> Span {
         match self {
-            MN::Unit(span) => *span,
-            MN::Deeper(span) => *span,
-            MN::Lit(lit) => lit.span(),
+            FMN::Unit(span) => *span,
+            FMN::Deeper(span) => *span,
+            FMN::Lit(lit) => lit.span(),
         }
     }
 }
 
-impl<'l> MetaNode<'l> {
+impl<'l> FoundMetaNode<'l> {
     fn expand<O>(
         &self,
         tspan: Span,
@@ -866,13 +914,13 @@ impl<'l> MetaNode<'l> {
         let spans = |vspan| metavalue_spans(tspan, vspan);
 
         let lit = match self {
-            MN::Unit(vspan) => return Err(spans(*vspan).error(
+            FMN::Unit(vspan) => return Err(spans(*vspan).error(
  "tried to expand attribute which is just a unit, not a literal"
             )),
-            MN::Deeper(vspan) => return Err(spans(*vspan).error(
+            FMN::Deeper(vspan) => return Err(spans(*vspan).error(
  "tried to expand attribute which is nested list, not a value",
             )),
-            MN::Lit(lit) => lit,
+            FMN::Lit(lit) => lit,
         };
 
         use SubstMetaAs as SMA;

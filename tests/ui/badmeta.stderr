@@ -4,11 +4,11 @@ error: this file contains an unclosed delimiter
 3  |   #[derive(Adhoc)]
    |            ^^^^^ unclosed delimiter
 ...
-8  | / derive_adhoc! {
-9  | |     DataType:
-10 | |
-11 | |     const K: () = ${tmeta(wrong)}
-12 | | }
+9  | / derive_adhoc! {
+10 | |     DataType:
+11 | |
+12 | |     const K: () = ${tmeta(wrong)}
+13 | | }
    | |_- in this macro invocation
    |
    = note: this error originates in the macro `::derive_adhoc::derive_adhoc_expand` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
@@ -19,19 +19,19 @@ error: lex error
 4  |   #[adhoc(wrong = "{")]
    |                   ^^^
 ...
-8  | / derive_adhoc! {
-9  | |     DataType:
-10 | |
-11 | |     const K: () = ${tmeta(wrong)}
-12 | | }
+9  | / derive_adhoc! {
+10 | |     DataType:
+11 | |
+12 | |     const K: () = ${tmeta(wrong)}
+13 | | }
    | |_- in this macro invocation
    |
    = note: this error originates in the macro `derive_adhoc_driver_DataType` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: constructed identifier "Bad." is invalid
-  --> ui/badmeta.rs:22:14
+  --> ui/badmeta.rs:23:14
    |
-22 |     struct ${paste Bad ${tmeta(dot) as str}};
+23 |     struct ${paste Bad ${tmeta(dot) as str}};
    |              ^^^^^
 
 error: probably-invalid input to identifier pasting
@@ -40,11 +40,36 @@ error: probably-invalid input to identifier pasting
 5  |   #[adhoc(dot = ".")]
    |                 ^^^
 ...
-19 | / derive_adhoc! {
-20 | |     DataType:
-21 | |
-22 | |     struct ${paste Bad ${tmeta(dot) as str}};
-23 | | }
+20 | / derive_adhoc! {
+21 | |     DataType:
+22 | |
+23 | |     struct ${paste Bad ${tmeta(dot) as str}};
+24 | |
+25 | |     struct ${paste Bad ${tmeta(barelit) as str}};
+26 | | }
    | |_- in this macro invocation
    |
    = note: this error originates in the macro `derive_adhoc_driver_DataType` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: tried to expand attribute which is nested list, not a value (attribute value)
+  --> ui/badmeta.rs:6:9
+   |
+6  |   #[adhoc(barelit("42"))]
+   |           ^^^^^^^^
+...
+20 | / derive_adhoc! {
+21 | |     DataType:
+22 | |
+23 | |     struct ${paste Bad ${tmeta(dot) as str}};
+24 | |
+25 | |     struct ${paste Bad ${tmeta(barelit) as str}};
+26 | | }
+   | |_- in this macro invocation
+   |
+   = note: this error originates in the macro `derive_adhoc_driver_DataType` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: tried to expand attribute which is nested list, not a value (template)
+  --> ui/badmeta.rs:25:32
+   |
+25 |     struct ${paste Bad ${tmeta(barelit) as str}};
+   |                                ^^^^^^^
