@@ -106,7 +106,7 @@ every-commit:
   image: rustlang/rust@sha256:ee4511e23bbd1d06ed24bed884e9df6ac4dc858d2e188b49c199bf56a7ece3f3
   script:
     - ./maint/via-cargo-install-in-ci cargo-expand --locked --version=1.0.67 --features=prettyplease
-    - maint/for-every-commit sh -ec 'cargo test --locked --workspace --verbose --all-features -- --skip directly::check_examples'
+    - maint/for-every-commit cargo test --locked --workspace --verbose --all-features -- --skip directly::check_examples
   cache:
     when: 'always'
     paths:
