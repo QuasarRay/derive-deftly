@@ -940,6 +940,54 @@ we'll get a more useful error:
 error: template defined for struct, but applied to enum
 ```
 
+### Debugging templates
+
+When writing complex templates,
+it can sometimes be hard to figure out compiler errors.
+derive-adhoc has some features which can help:
+
+#### Syntax checking the expansion
+
+You can tell derive-adhoc what your macro is supposed to produce:
+
+```
+# use derive_adhoc::{Adhoc, define_derive_adhoc};
+define_derive_adhoc! {
+   Constructor for struct, expect items =
+
+   impl<$tgens> $ttype where $twheres {
+      // ...
+   }
+}
+# #[derive(Adhoc)]
+# #[derive_adhoc(Constructor)]
+# struct Test;
+```
+
+If the expansion fails to syntax check,
+you'll get not only an error pointing at
+the part of the template or structure which seems wrong,
+but also error messages pointing into a *copy of the actual expansion*.
+Hopefully you'll be able to see what's wrong, there.
+
+If your macro is supposed to expand to an expression,
+you can write `expect expr` instead of `expect items`.
+
+Alternatively,
+you can request this syntax check when you invoke the macro:
+
+```
+# use derive_adhoc::{Adhoc, define_derive_adhoc};
+# define_derive_adhoc! { Constructor = }
+#[derive(Adhoc)]
+#[derive_adhoc(Constructor[expect items])]
+struct MyStruct { /* ... */ }
+```
+
+#### Showing a copy of the expansion
+
+
+
 ### Working with visibility
 
 Our `Constructor` template above doesn't really make sense
