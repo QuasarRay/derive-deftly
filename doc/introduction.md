@@ -1156,8 +1156,6 @@ which also has a brief example demonstrating each construct.
 > ## Links
 >
 >  - Link to more worked and commented examples.
->    - Try to clone some proc-macros that we use a lot, and see
->      if we can.
 >  - Link to each reference section.
 
 -->
