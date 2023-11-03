@@ -657,7 +657,7 @@ Now let's see how it works when we try to handle generics again.
 (It's surprisingly straightforward!)
 
 ```
-# use derive_adhoc::define_derive_adhoc;
+# use derive_adhoc::{Adhoc, define_derive_adhoc};
 define_derive_adhoc! {
     MyClone =
 
@@ -678,6 +678,11 @@ define_derive_adhoc! {
         }
     }
 }
+# #[derive(Adhoc)]
+# #[derive_adhoc(MyClone)]
+# enum TestCase<A> {
+#     Variant(A),
+# }
 ```
 
 
