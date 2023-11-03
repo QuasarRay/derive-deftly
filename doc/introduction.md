@@ -75,6 +75,11 @@ pub struct MyStruct;
 MyStruct::print_name();
 ```
 
+_Reference manual:
+[`define_derive_adhoc!`](crate::define_derive_adhoc),
+[`$ttype`](crate::doc_reference#ftype-vtype-ttype-tdeftype--types),
+[`#[derive(Adhoc)]`](crate::Adhoc)._
+
 ### Exporting templates
 
 But now suppose that you want to expose your template,
