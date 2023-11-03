@@ -21,6 +21,8 @@ derive_adhoc! {
     DataType:
 
     struct ${paste Bad ${tmeta(dot) as str}};
+
+    struct ${paste Bad ${tmeta(barelit) as str}};
 }
 
 fn main() {}
