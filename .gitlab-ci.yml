@@ -19,19 +19,16 @@ image: "rust:bookworm"
 cargo-check-deps:
   stage: test
   script:
-    - mv Cargo.lock.example Cargo.lock
     - cargo check --locked --verbose --all-features
 
 cargo-check:
   stage: test
   script:
-    - mv Cargo.lock.example Cargo.lock
     - cargo check --locked --workspace --verbose --all-features
 
 cargo-check-minfeatures:
   stage: test
   script:
-    - mv Cargo.lock.example Cargo.lock
     - cargo check --locked --verbose --no-default-features --features=minimal-1
 
 cargo-fmt:
@@ -83,7 +80,6 @@ cargo-test:
   image: rustlang/rust@sha256:ee4511e23bbd1d06ed24bed884e9df6ac4dc858d2e188b49c199bf56a7ece3f3
   script:
     - ./maint/via-cargo-install-in-ci cargo-expand --locked --version=1.0.67 --features=prettyplease
-    - mv Cargo.lock.example Cargo.lock
     - cargo test --locked --workspace --verbose --all-features -- --skip directly::check_examples
   cache:
     when: 'always'
@@ -98,7 +94,6 @@ check-doc-examples:
   image: rustlang/rust@sha256:ee4511e23bbd1d06ed24bed884e9df6ac4dc858d2e188b49c199bf56a7ece3f3
   allow_failure: true
   script:
-    - mv Cargo.lock.example Cargo.lock
     - cargo test --locked -p derive-adhoc-tests --verbose --all-features -- --nocapture directly::check_examples
 
 # Test every commit
@@ -111,7 +106,7 @@ every-commit:
   image: rustlang/rust@sha256:ee4511e23bbd1d06ed24bed884e9df6ac4dc858d2e188b49c199bf56a7ece3f3
   script:
     - ./maint/via-cargo-install-in-ci cargo-expand --locked --version=1.0.67 --features=prettyplease
-    - maint/for-every-commit sh -ec 'cp Cargo.lock.example Cargo.lock && cargo test --locked --workspace --verbose --all-features -- --skip directly::check_examples'
+    - maint/for-every-commit sh -ec 'cargo test --locked --workspace --verbose --all-features -- --skip directly::check_examples'
   cache:
     when: 'always'
     paths:
@@ -121,7 +116,6 @@ cargo-test-minfeatures:
   stage: comprehensive
   image: rustlang/rust@sha256:ee4511e23bbd1d06ed24bed884e9df6ac4dc858d2e188b49c199bf56a7ece3f3
   script:
-    - mv Cargo.lock.example Cargo.lock
     - cargo test --locked  -p derive-adhoc-tests --no-default-features --features=derive-adhoc-tests/recent -- --skip directly::check_examples
 
 # Test on Stable Rust
@@ -133,20 +127,17 @@ cargo-test-minfeatures:
 stable:
   stage: comprehensive
   script:
-    - mv Cargo.lock.example Cargo.lock
     - cargo test --locked --workspace --verbose --features=derive-adhoc-tests/recent,derive-adhoc-tests/full
 
 stable-minfeatures:
   stage: comprehensive
   script:
-    - mv Cargo.lock.example Cargo.lock
     - cargo test --locked  -p derive-adhoc-tests --no-default-features --features=derive-adhoc-tests/recent
 
 # Check that the docs build
 cargo-doc:
   stage: comprehensive
   script:
-    - mv Cargo.lock.example Cargo.lock
     - cargo doc --locked --workspace --verbose --features=full
 
 # Check that the complete docs build without any warnings
@@ -156,7 +147,6 @@ cargo-doc-all:
   script:
     - apt-get update
     - apt-get -y install jq
-    - mv Cargo.lock.example Cargo.lock
     - cargo doc --locked --workspace --verbose --features=full --document-private-items --message-format=json >rustdoc.json
     - jq --raw-output '. | select(.message.level) | .message.rendered' <rustdoc.json |tee rustdoc.errors
     - test ! -s rustdoc.errors
@@ -168,7 +158,6 @@ check-doc-links:
   script:
     - apt-get update
     - apt-get -y install linklint
-    - mv Cargo.lock.example Cargo.lock
     - maint/check-doc-links
 
 # Test our MSRV and Cargo.toml minimal versions

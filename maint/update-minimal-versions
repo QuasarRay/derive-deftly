@@ -13,11 +13,11 @@ set -euo pipefail
 
 trap '
 	rc=$?
-	mv Cargo.lock.example.aside Cargo.lock.example
+	mv Cargo.lock.aside Cargo.lock
 	exit $rc
 ' 0
 
-mv Cargo.lock.example Cargo.lock.example.aside # for nailing-cargo
+mv Cargo.lock Cargo.lock.aside # for nailing-cargo
 cp Cargo.lock.minimal Cargo.lock
 
 ${CARGO-cargo} +nightly update -Z minimal-versions "$@"
