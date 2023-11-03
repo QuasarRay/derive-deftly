@@ -302,7 +302,8 @@ field, and expand `$fname`
 to the name of a different field each time.
 
 (Again, more advanced repetition is possible;
-there's more to come.)
+there's
+[more to come](#a-further-note-on-reptition).)
 
 
 > ### On naming
@@ -680,17 +681,36 @@ define_derive_adhoc! {
 }
 # #[derive(Adhoc)]
 # #[derive_adhoc(MyClone)]
-# enum TestCase<A> {
-#     Variant(A),
-# }
+# enum TestCase<A> { Variant(A) }
 ```
 
+##### A further note on reptition
 
 Note that when we define our additional `where` clauses,
 we don't have to specify separate of repetition
 for variants and fields:
 if we just have `$ftype` in a top-level repetition,
 `derive_adhoc` will iterate over all fields in all variants.
+
+Sometimes, if you do something subtle,
+derive-adhoc may not be able to figure
+out what you're trying to repeat over.
+You can use `${for ...}` to specifiy explicitly:
+so, above, instead, we could have written
+```
+# use derive_adhoc::{Adhoc, derive_adhoc};
+# #[derive(Adhoc)]
+# enum TestCase<A> { Variant(A) }
+# derive_adhoc! { TestCase:
+#     fn testcase<$tgens>() where
+${for fields { $ftype: Clone, }}
+#     {}
+# }
+```
+
+You can also use `${for ...}` rather than `$(...)`
+in cases where you feel
+it makes your macro code clearer.
 
 ## Some more advanced topics
 
@@ -1154,10 +1174,6 @@ which also has a brief example demonstrating each construct.
 
  TODO:
 
-> ## Explicit repetition
->
->   (When to use `${for}`?)
->
 > ## Links
 >
 >  - Link to more worked and commented examples.
