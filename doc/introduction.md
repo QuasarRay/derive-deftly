@@ -984,9 +984,33 @@ you can request this syntax check when you invoke the macro:
 struct MyStruct { /* ... */ }
 ```
 
-#### Showing a copy of the expansion
+#### Seeing a copy of the expansion
 
+Sometimes, the expansion syntax checks,
+but is wrong in some other way.
 
+You can ask derive-adhoc to simply print a copy of the expansion.
+
+```
+# use derive_adhoc::{Adhoc, define_derive_adhoc};
+# define_derive_adhoc! { Constructor = }
+#[derive(Adhoc)]
+#[derive_adhoc(Constructor[dbg])]
+struct MyStruct { /* ... */ }
+```
+
+You'll see the compiler print something like this:
+
+```ignore
+---------- derive-adhoc expansion of Constructor for MyStruct (start) ----------
+impl<> MyStruct where {
+    pub fn new(...) { ... }
+}
+---------- derive-adhoc expansion of Constructor for MyStruct (end) ----------
+```
+
+Like the `dbg!` macro, you don't want to
+leave this in your production code.
 
 ### Working with visibility
 
