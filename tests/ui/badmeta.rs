@@ -25,6 +25,8 @@ derive_adhoc! {
     DataType:
 
     struct ${paste Bad ${tmeta(dot) as str}};
+    //
+    //
 
     struct ${paste Bad ${tmeta(barelit) as str}};
 
@@ -32,6 +34,22 @@ derive_adhoc! {
 
     struct ${paste Bad ${tmeta(several) as str}};
     struct ${paste Bad ${tmeta(several_inner(several)) as str}};
+}
+
+// Something somewhere deduplicates errors, so if we want to see them
+// all we need to re-invoke derive-adhoc:
+derive_adhoc! {
+    DataType:
+
+    //
+    //
+}
+
+derive_adhoc! {
+    DataType:
+
+    //
+    //
 }
 
 #[derive(Adhoc)]

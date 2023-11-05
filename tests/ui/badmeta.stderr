@@ -45,8 +45,8 @@ error: probably-invalid input to identifier pasting
 26 | |
 27 | |     struct ${paste Bad ${tmeta(dot) as str}};
 ...  |
-34 | |     struct ${paste Bad ${tmeta(several_inner(several)) as str}};
-35 | | }
+36 | |     struct ${paste Bad ${tmeta(several_inner(several)) as str}};
+37 | | }
    | |_- in this macro invocation
    |
    = note: this error originates in the macro `derive_adhoc_driver_DataType` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
@@ -62,16 +62,16 @@ error: tried to expand attribute which is nested list, not a value (attribute va
 26 | |
 27 | |     struct ${paste Bad ${tmeta(dot) as str}};
 ...  |
-34 | |     struct ${paste Bad ${tmeta(several_inner(several)) as str}};
-35 | | }
+36 | |     struct ${paste Bad ${tmeta(several_inner(several)) as str}};
+37 | | }
    | |_- in this macro invocation
    |
    = note: this error originates in the macro `derive_adhoc_driver_DataType` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: tried to expand attribute which is nested list, not a value (template)
-  --> ui/badmeta.rs:29:32
+  --> ui/badmeta.rs:31:32
    |
-29 |     struct ${paste Bad ${tmeta(barelit) as str}};
+31 |     struct ${paste Bad ${tmeta(barelit) as str}};
    |                                ^^^^^^^
 
 error: tried to expand attribute which is nested list, not a value (attribute value)
@@ -85,22 +85,22 @@ error: tried to expand attribute which is nested list, not a value (attribute va
 26 | |
 27 | |     struct ${paste Bad ${tmeta(dot) as str}};
 ...  |
-34 | |     struct ${paste Bad ${tmeta(several_inner(several)) as str}};
-35 | | }
+36 | |     struct ${paste Bad ${tmeta(several_inner(several)) as str}};
+37 | | }
    | |_- in this macro invocation
    |
    = note: this error originates in the macro `derive_adhoc_driver_DataType` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: tried to expand attribute which is nested list, not a value (template)
-  --> ui/badmeta.rs:31:32
+  --> ui/badmeta.rs:33:32
    |
-31 |     struct ${paste Bad ${tmeta(multi) as str}};
+33 |     struct ${paste Bad ${tmeta(multi) as str}};
    |                                ^^^^^
 
 error: tried to expand just attribute value, but it was specified multiple times (expansion)
-  --> ui/badmeta.rs:33:32
+  --> ui/badmeta.rs:35:32
    |
-33 |     struct ${paste Bad ${tmeta(several) as str}};
+35 |     struct ${paste Bad ${tmeta(several) as str}};
    |                                ^^^^^^^
 
 error: tried to expand just attribute value, but it was specified multiple times (in this data structure)
@@ -120,36 +120,36 @@ error: tried to expand just attribute value, but it was specified multiple times
 26 | |
 27 | |     struct ${paste Bad ${tmeta(dot) as str}};
 ...  |
-34 | |     struct ${paste Bad ${tmeta(several_inner(several)) as str}};
-35 | | }
+36 | |     struct ${paste Bad ${tmeta(several_inner(several)) as str}};
+37 | | }
    | |_- in this macro invocation
    |
    = note: this error originates in the macro `derive_adhoc_driver_DataType` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: tried to expand just attribute value, but it was specified multiple times (expansion)
-  --> ui/badmeta.rs:34:32
+  --> ui/badmeta.rs:36:32
    |
-34 |     struct ${paste Bad ${tmeta(several_inner(several)) as str}};
+36 |     struct ${paste Bad ${tmeta(several_inner(several)) as str}};
    |                                ^^^^^^^^^^^^^
 
 error: expected path
-  --> ui/badmeta.rs:38:9
+  --> ui/badmeta.rs:56:9
    |
-38 | #[adhoc("forbidden")]
+56 | #[adhoc("forbidden")]
    |         ^^^^^^^^^^^
-39 | struct TopLevelMetaLitForbidden;
-40 | derive_adhoc! { TopLevelMetaLitForbidden: }
+57 | struct TopLevelMetaLitForbidden;
+58 | derive_adhoc! { TopLevelMetaLitForbidden: }
    | ------------------------------------------- in this macro invocation
    |
    = note: this error originates in the macro `derive_adhoc_driver_TopLevelMetaLitForbidden` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: expected literal
-  --> ui/badmeta.rs:43:17
+  --> ui/badmeta.rs:61:17
    |
-43 | #[adhoc(value = wrong)]
+61 | #[adhoc(value = wrong)]
    |                 ^^^^^
-44 | struct MetaValueMustBeLit;
-45 | derive_adhoc! { MetaValueMustBeLit: }
+62 | struct MetaValueMustBeLit;
+63 | derive_adhoc! { MetaValueMustBeLit: }
    | ------------------------------------- in this macro invocation
    |
    = note: this error originates in the macro `derive_adhoc_driver_MetaValueMustBeLit` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
