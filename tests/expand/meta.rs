@@ -26,7 +26,7 @@ derive_adhoc! {
     // we can pick out "suffix" too
     fn $<just_suffix_ ${fmeta(multi(suffix))}>() {}
 
-    // TODO: there is no way to get access to the "42",
+    // TODO: there is no way to get access to the multi("42"),
     // it probably ought to be rejected.
   )
 }
