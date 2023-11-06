@@ -34,7 +34,8 @@ specifying _templates_ that you can use to derive new features for your
 structs and enums
 and then _applying_ those templates to your types.
 
-To define a template, you use `define_derive_adhoc!`, as in
+To define a template, you use
+[`define_derive_adhoc!`](crate::define_derive_adhoc), as in
 
 ```
 use derive_adhoc::define_derive_adhoc;
@@ -50,14 +51,18 @@ define_derive_adhoc! {
 }
 ```
 
-This is a very simple template: it uses a single expansion: `$ttype`.
+This is a very simple template: it uses a single expansion:
+[`$ttype`](crate::doc_reference#ftype-vtype-ttype-tdeftype--types).
 (We'll get into more expansions, and more useful examples, later on.
 For now, all you need to know
 is that `$ttype` expands to the type
 on which you're applying your template.)
 
 
-Later on, you can apply `NamePrinter` to your own type, as in:
+Later on, you can apply `NamePrinter` to your own type,
+with
+[`#[derive(Adhoc)]`](crate::Adhoc),
+as in:
 
 ```
 # use derive_adhoc::define_derive_adhoc;
