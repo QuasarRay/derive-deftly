@@ -4,6 +4,9 @@
 -- macros driven by Rust data structures -
 by writing templates in a fairly straightforward template language.
 
+This is the friendly introduction.
+Of course there is a [reference manual](reference) too.
+
 <!--##toc##-->
    * [Getting started with `derive_adhoc`.](#getting-started-with-derive_adhoc)
       * [Exporting templates](#exporting-templates)
@@ -17,6 +20,7 @@ by writing templates in a fairly straightforward template language.
       * [Transforming names and strings](#transforming-names-and-strings)
    * [Another example: Defining a constructor function.](#another-example-defining-a-constructor-function)
       * [Marking a template's limitations](#marking-a-templates-limitations)
+      * [Debugging templates](#debugging-templates)
       * [Working with visibility](#working-with-visibility)
       * [Using attributes to make a template take arguments](#using-attributes-to-make-a-template-take-arguments)
       * [Getting started with conditionals](#getting-started-with-conditionals)
@@ -180,7 +184,6 @@ to your fullest advantage.
 If you're the kind of person who wants to skip
 straight to the reference manual,
 you can find it [over here][reference].
-(It's still pretty terse, but we're working on that.)
 
 ## A brief tutorial: How to write your own Clone
 
@@ -300,7 +303,8 @@ field, and expand `$fname`
 to the name of a different field each time.
 
 (Again, more advanced repetition is possible;
-there's more to come.)
+there's
+[more to come](#a-further-note-on-reptition).)
 
 
 > ### On naming
@@ -655,7 +659,7 @@ Now let's see how it works when we try to handle generics again.
 (It's surprisingly straightforward!)
 
 ```
-# use derive_adhoc::define_derive_adhoc;
+# use derive_adhoc::{Adhoc, define_derive_adhoc};
 define_derive_adhoc! {
     MyClone =
 
@@ -676,14 +680,38 @@ define_derive_adhoc! {
         }
     }
 }
+# #[derive(Adhoc)]
+# #[derive_adhoc(MyClone)]
+# enum TestCase<A> { Variant(A) }
 ```
 
+##### A further note on reptition
 
 Note that when we define our additional `where` clauses,
 we don't have to specify separate of repetition
 for variants and fields:
 if we just have `$ftype` in a top-level repetition,
 `derive_adhoc` will iterate over all fields in all variants.
+
+Sometimes, if you do something subtle,
+derive-adhoc may not be able to figure
+out what you're trying to repeat over.
+You can use `${for ...}` to specifiy explicitly:
+so, above, instead, we could have written
+```
+# use derive_adhoc::{Adhoc, derive_adhoc};
+# #[derive(Adhoc)]
+# enum TestCase<A> { Variant(A) }
+# derive_adhoc! { TestCase:
+#     fn testcase<$tgens>() where
+${for fields { $ftype: Clone, }}
+#     {}
+# }
+```
+
+You can also use `${for ...}` rather than `$(...)`
+in cases where you feel
+it makes your macro code clearer.
 
 ## Some more advanced topics
 
@@ -913,6 +941,78 @@ we'll get a more useful error:
 error: template defined for struct, but applied to enum
 ```
 
+### Debugging templates
+
+When writing complex templates,
+it can sometimes be hard to figure out compiler errors.
+derive-adhoc has some features which can help:
+
+#### Syntax checking the expansion
+
+You can tell derive-adhoc what your macro is supposed to produce:
+
+```
+# use derive_adhoc::{Adhoc, define_derive_adhoc};
+define_derive_adhoc! {
+   Constructor for struct, expect items =
+
+   impl<$tgens> $ttype where $twheres {
+      // ...
+   }
+}
+# #[derive(Adhoc)]
+# #[derive_adhoc(Constructor)]
+# struct Test;
+```
+
+If the expansion fails to syntax check,
+you'll get not only an error pointing at
+the part of the template or structure which seems wrong,
+but also error messages pointing into a *copy of the actual expansion*.
+Hopefully you'll be able to see what's wrong, there.
+
+If your macro is supposed to expand to an expression,
+you can write `expect expr` instead of `expect items`.
+
+Alternatively,
+you can request this syntax check when you invoke the macro:
+
+```
+# use derive_adhoc::{Adhoc, define_derive_adhoc};
+# define_derive_adhoc! { Constructor = }
+#[derive(Adhoc)]
+#[derive_adhoc(Constructor[expect items])]
+struct MyStruct { /* ... */ }
+```
+
+#### Seeing a copy of the expansion
+
+Sometimes, the expansion syntax checks,
+but is wrong in some other way.
+
+You can ask derive-adhoc to simply print a copy of the expansion.
+
+```
+# use derive_adhoc::{Adhoc, define_derive_adhoc};
+# define_derive_adhoc! { Constructor = }
+#[derive(Adhoc)]
+#[derive_adhoc(Constructor[dbg])]
+struct MyStruct { /* ... */ }
+```
+
+You'll see the compiler print something like this:
+
+```ignore
+---------- derive-adhoc expansion of Constructor for MyStruct (start) ----------
+impl<> MyStruct where {
+    pub fn new(...) { ... }
+}
+---------- derive-adhoc expansion of Constructor for MyStruct (end) ----------
+```
+
+Like the `dbg!` macro, you don't want to
+leave this in your production code.
+
 ### Working with visibility
 
 Our `Constructor` template above doesn't really make sense
@@ -1140,26 +1240,16 @@ For example:
    to make user-defined reuseable template keywords,
    to save repetition in templates.
 
-Some of these can be seen in action in test cases in
-[our source repo](https://gitlab.torproject.org/Diziet/rust-derive-adhoc/-/tree/main/tests/expand)
-
-Full details are in the [reference].
+Full details are in the [reference],
+which also has a brief example demonstrating each construct.
 
 <!--
 
  TODO:
 
-> ## Explicit repetition
->
->   (When to use `${for}`?)
->
-> ## What else am I missing?
->
 > ## Links
 >
 >  - Link to more worked and commented examples.
->    - Try to clone some proc-macros that we use a lot, and see
->      if we can.
 >  - Link to each reference section.
 
 -->
