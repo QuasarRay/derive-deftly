@@ -443,18 +443,20 @@ define_derive_adhoc! {
 ```
 
 Here we meet two new expansions.
-`$tgens` ("top-level generics") becomes
+[`$tgens`](crate::doc_reference#tgens-tgnames-twheres-tdefgens--generics)
+("top-level generics") becomes
 the generic parameters as declared on the top-level type.
 (In our case, that's `$T:Clone, U`.)
-`$twheres` ("top-level where clauses") becomes
-the `where` constraints= as declared on the top-level type.
+[`$twheres`](crate::doc_reference#tgens-tgnames-twheres-tdefgens--generics)
+("top-level where clauses") becomes
+the `where` constraints as declared on the top-level type.
 (In our case, that's `U: Clone+Debug`.)
 
 Note that `$ttype` expands to the top-level _type_:
 that's now `MyItems<T,U>`,
 which is what we want.
 If we had wanted only `MyItems`,
-we would say `$tname` instead.
+we would say [`$tname`](crate::doc_reference#fname-vname-tname--names) instead.
 
 Will this template still work for non-parameterized types?
 Again, yes!
@@ -519,7 +521,9 @@ define_derive_adhoc! {
 }
 ```
 
-Here, we are using `$ftype`, the type of a field.
+Here, we are using
+[`$ftype`](crate::doc_reference#ftype-vtype-ttype-tdeftype--types),
+the type of a field.
 Since we're repeating it with `$( ... )`,
 we are requiring every field to be `Clone`.
 
