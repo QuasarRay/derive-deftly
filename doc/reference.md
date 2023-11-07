@@ -67,8 +67,9 @@ In all cases, `$KEYWORD` is equivalent to `${KEYWORD}`.
 by making derive-adhoc-generated pattern macros)
 by writing `$$`.</span>
 
-Many of the expansion keywords start with `f`, `v`, or `s` to indicate
-the depth of the thing being expanded:
+<span id="keyword-initial-letters">Many
+of the expansion keywords start with `f`, `v`, or `s` to indicate
+the depth of the thing being expanded:</span>
 
  * `f...`: Expand something belonging to a particular Field.
 
