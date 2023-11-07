@@ -793,7 +793,8 @@ define_derive_adhoc! {
 
 Here we see a couple of new constructs.
 
-First, we're using `${paste}`
+First, we're using
+[`${paste}`](crate::doc_reference#-paste---identifier-pasting)
 to glue several identifiers together into one.
 When we say `${paste $tname Discriminant}`,
 we are generating a new identifier from `$tname`
@@ -802,7 +803,8 @@ and the word Discriminant.
 So if the type name is `Foo`,
 the new type will be called `FooDiscriminant`.
 
-Second, we're using `${snake_case}`
+Second, we're using
+[`${snake_case}`](crate::doc_reference#case-changing)
 to transform an identifier into `snake_case`
 (that is, lowercase words separated by underscores).
 We use this to turn the name of each variant (`$vname`)
@@ -812,7 +814,7 @@ So if a variant is called `ExampleVariant`,
 and `${paste is_ ${snake_case $vname}}` will be
 `is_example_variant`.
 
-There are other case-changers:
+There are [other case-changers](crate::doc_reference#case-changing):
   * `${pascal_case my_ident}` becomes `MyIdent`.
     You can also write this as
     `${upper_camel_case ..}`.
@@ -836,7 +838,7 @@ Both `${paste ident ident..}` and `${snake_case ident}`
 are special cases of the following meta-syntax,
 which `derive_adhoc` uses everywhere:
 
-`${KEYWORD ARGS.. }`
+[`${KEYWORD ARGS.. }`](crate::doc_reference#named-and-positional-template-arguments-to-expansions-and-conditions)
 
 In fact, if you want,
 you can use this format
@@ -856,7 +858,7 @@ The syntax for this is:
 > see the template syntax reference for more information.
 
 If you ever need to write a literal `$`,
-you can write `$$`.
+you can write [`$$`](crate::doc_reference#dollar-dollar).
 
 
 ## Another example: Defining a constructor function.
