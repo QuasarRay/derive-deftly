@@ -89,7 +89,8 @@ MyStruct::print_name();
 But now suppose that you want to expose your template,
 so that people can use it from any crate.
 
-To do this, you use `pub` before the name of your macro.
+To do this, you use
+[`pub` before the name of your macro](define_derive_adhoc#exporting-a-template-for-use-by-other-crates).
 ```
 pub trait NamePrinter {
     fn print_name();
@@ -110,15 +111,19 @@ Note that this time,
 we've defined `NamePrinter` as a trait,
 and we've changed our template to refer to that trait as
 `$crate::NamePrinter`.
-The `$crate` syntax will expand to the name of the crate
+The
+[`$crate`](crate::doc_reference#crate--root-of-template-crate)
+syntax will expand to the name of the crate
 in which our template was defined,
 so that when later we expand this template,
 it can find the right template.
 
-We've also added a doc comment,
+We've also added a
+[doc comment](define_derive_adhoc#docs-in-define),
 which will appear in the public API documentation for our crate.
 
-Additionally, we need to re-export `derive_adhoc`
+Additionally,
+[we need to re-export `derive_adhoc`](define_derive_adhoc#you-must-re-export-derive_adhoc-usually-no-semver-implications)
 from our crate, so that users get the correct version:
 
 ```rust,ignore
