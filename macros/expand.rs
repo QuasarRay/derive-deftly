@@ -21,6 +21,7 @@ pub struct DeriveAdhocExpandInput {
 }
 
 /// Node in tree structure found in driver `#[adhoc(some(thing))]`
+#[derive(Debug)]
 pub enum FoundMetaNode<'l> {
     Unit(Span),
     Deeper(Span),
