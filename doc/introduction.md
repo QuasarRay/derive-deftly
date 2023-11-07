@@ -606,15 +606,18 @@ Then we match once for each field of each variant.
 (This is at the `$fname` and `$fpatname` level.)
 
 Let's go over the new expansions here.
-First, we have `$vpat`:
+First, we have
+[`$vpat`](crate::doc_reference#vpat-fpatname--pattern-matching-and-value-deconstruction):
 that expands to a pattern that can match and deconstruct
 a single variant.
-Then, we have `$vtype`:
+Then, we have
+[`$vtype`](crate::doc_reference#ftype-vtype-ttype-tdeftype--types):
 that's the type of the variant,
 suitable for use as a constructor.
 Then, inside the variant, we have `$fname`:
 that's our field name, which we've seen it before.
-Finally, we have `$fpatname`:
+Finally, we have
+[`$fpatname`](crate::doc_reference#vpat-fpatname--pattern-matching-and-value-deconstruction):
 that is the name of the variable that we used for this field
 in the pattern that deconstructed it.
 
@@ -715,7 +718,9 @@ if we just have `$ftype` in a top-level repetition,
 Sometimes, if you do something subtle,
 derive-adhoc may not be able to figure
 out what you're trying to repeat over.
-You can use `${for ...}` to specifiy explicitly:
+You can use 
+[`${for ...}`](crate::doc_reference#repetition-and-nesting)
+to specifiy explicitly:
 so, above, instead, we could have written
 ```
 # use derive_adhoc::{Adhoc, derive_adhoc};
