@@ -154,7 +154,8 @@ struct TheirStructure {
 
 ### If you're only deriving once...
 
-If you want, you can apply a template to an existing type
+If you want, you can
+[apply a template to an existing type](derive_adhoc)
 without having to name that template.
 You might want to do this if you have a template
 that you only want to apply to a single struct,
@@ -294,7 +295,10 @@ define_derive_adhoc! {
 
 Let's look at that template.  You've already seen `$ttype`: it expands
 to the type on which you are applying the macro.  There are two new
-pieces of syntax here, though: `$( ... )` and `$fname`.
+pieces of syntax here, though:
+[`$( ... )`](crate::doc_reference#repetition-and-nesting)
+and
+[`$fname`](crate::doc_reference#fname-vname-tname--names).
 
 
 In `derive_adhoc` templates, `$( ... )`  denotes repetition:
@@ -319,7 +323,8 @@ there's
 
 > ### On naming
 >
-> Many `derive_adhoc` expansions names start with
+> Many `derive_adhoc` expansions'
+> [names start with](crate::doc_reference#keyword-initial-letters)
 > `t` for **top-level**
 > (whatever you are applying the template to),
 > `v` for **variant**
