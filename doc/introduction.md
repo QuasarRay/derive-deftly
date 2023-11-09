@@ -1073,10 +1073,13 @@ define_derive_adhoc! {
 
 Here instead of saying `pub fn new`,
 we said `$tvis fn new`.
-The `$tvis` keyword will expand
+The
+[`$tvis`](crate::doc_reference#fvis-tvis-fdefvis--visibility)
+keyword will expand
 to the visibility of the top-level type.
 
-There is a similar similar `$fvis`
+There is a similar similar
+[`$fvis`](crate::doc_reference#fvis-tvis-fdefvis--visibility)
 that expands to the visibility of the current field.
 
 (Since enums variants are always visible, there is no `$vvis`.)
@@ -1118,7 +1121,8 @@ Here, instead of specifying "new"
 for the method name in our template,
 we give the name as `${tmeta(newfn)}`.
 This tells the template to look for an
-`#[adhoc(newfn="...")]` attribute on the type,
+[`#[adhoc(newfn="...")]`](Adhoc#adhoc-attribute)
+attribute on the type,
 and to use the value of that attribute
 in place of the keyword.
 
@@ -1129,12 +1133,17 @@ If we do, the template will look for an attribute like
 `#[adhoc(Constructor(newfn = "..."))]`.
 
 
-The `$tmeta` keyword that we used here
+The
+[`$tmeta`](crate::doc_reference#tmeta-vmeta-fmeta--adhoc-attributes)
+keyword that we used here
 tells the template
 to look at the `#[adhoc]` attributes for the _type_.
-We can, instead, use `$vmeta`
+We can, instead, use
+[`$vmeta`](crate::doc_reference#tmeta-vmeta-fmeta--adhoc-attributes)
 to look for `#[adhoc]` attributes for the current _variant_,
-or `$fmeta` to
+or
+[`$fmeta`](crate::doc_reference#tmeta-vmeta-fmeta--adhoc-attributes)
+to
 to look for `#[adhoc]` attributes for the current _field_.
 
  <!--
