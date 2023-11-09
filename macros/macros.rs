@@ -146,11 +146,13 @@ pub fn derive_adhoc(
 /// [`#[derive(Adhoc)]`](crate::Adhoc)
 /// `#[derive_adhoc(MyMacro)]`.
 ///
-/// `OPTIONS,..` is an optional comma-separated list of
+/// <span id="options-in-define">`OPTIONS,..`</span>
+/// is an optional comma-separated list of
 /// [expansion options](doc_reference/index.html#expansion-options),
 /// which will be applied whenever this template is expanded.
 ///
-/// `DOCS`, if supplied, are used as the rustdocs
+/// <span id="docs-in-define">`DOCS`</span>,
+/// if supplied, are used as the rustdocs
 /// for the captured template macro `derive_adhoc_template_MyMacro`.
 /// derive-adhoc will then also append a note about
 /// how to invoke the template.
@@ -250,12 +252,12 @@ pub fn define_derive_adhoc(
 ///     [`define_derive_adhoc!`](macro@crate::define_derive_adhoc).
 ///     Each such `MyMacro` is applied to the data structure.
 ///
-///     You can specify
+///     <span id="expansion-options">You can specify
 ///     [expansion options](doc_reference/index.html#expansion-options)
 ///     for each such template application, by writing
 ///     `#[derive_adhoc(MyMacro[OPTIONS,..])]`, where
 ///     `[OPTIONS,..]` is a comma-separated list of expansion options
-///     contained within `[ ]`.
+///     contained within `[ ]`.</span>
 ///
 ///
 /// ## Applying a template (derive-adhoc macro) from another crate

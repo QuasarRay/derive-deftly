@@ -89,7 +89,8 @@ MyStruct::print_name();
 But now suppose that you want to expose your template,
 so that people can use it from any crate.
 
-To do this, you use `pub` before the name of your macro.
+To do this, you use
+[`pub` before the name of your macro](define_derive_adhoc#exporting-a-template-for-use-by-other-crates).
 ```
 pub trait NamePrinter {
     fn print_name();
@@ -110,15 +111,19 @@ Note that this time,
 we've defined `NamePrinter` as a trait,
 and we've changed our template to refer to that trait as
 `$crate::NamePrinter`.
-The `$crate` syntax will expand to the name of the crate
+The
+[`$crate`](crate::doc_reference#crate--root-of-template-crate)
+syntax will expand to the name of the crate
 in which our template was defined,
 so that when later we expand this template,
 it can find the right template.
 
-We've also added a doc comment,
+We've also added a
+[doc comment](define_derive_adhoc#docs-in-define),
 which will appear in the public API documentation for our crate.
 
-Additionally, we need to re-export `derive_adhoc`
+Additionally,
+[we need to re-export `derive_adhoc`](define_derive_adhoc#you-must-re-export-derive_adhoc-usually-no-semver-implications)
 from our crate, so that users get the correct version:
 
 ```rust,ignore
@@ -149,7 +154,8 @@ struct TheirStructure {
 
 ### If you're only deriving once...
 
-If you want, you can apply a template to an existing type
+If you want, you can
+[apply a template to an existing type](derive_adhoc)
 without having to name that template.
 You might want to do this if you have a template
 that you only want to apply to a single struct,
@@ -289,7 +295,10 @@ define_derive_adhoc! {
 
 Let's look at that template.  You've already seen `$ttype`: it expands
 to the type on which you are applying the macro.  There are two new
-pieces of syntax here, though: `$( ... )` and `$fname`.
+pieces of syntax here, though:
+[`$( ... )`](crate::doc_reference#repetition-and-nesting)
+and
+[`$fname`](crate::doc_reference#fname-vname-tname--names).
 
 
 In `derive_adhoc` templates, `$( ... )`  denotes repetition:
@@ -314,7 +323,8 @@ there's
 
 > ### On naming
 >
-> Many `derive_adhoc` expansions names start with
+> Many `derive_adhoc` expansions'
+> [names start with](crate::doc_reference#keyword-initial-letters)
 > `t` for **top-level**
 > (whatever you are applying the template to),
 > `v` for **variant**
@@ -433,18 +443,20 @@ define_derive_adhoc! {
 ```
 
 Here we meet two new expansions.
-`$tgens` ("top-level generics") becomes
+[`$tgens`](crate::doc_reference#tgens-tgnames-twheres-tdefgens--generics)
+("top-level generics") becomes
 the generic parameters as declared on the top-level type.
 (In our case, that's `$T:Clone, U`.)
-`$twheres` ("top-level where clauses") becomes
-the `where` constraints= as declared on the top-level type.
+[`$twheres`](crate::doc_reference#tgens-tgnames-twheres-tdefgens--generics)
+("top-level where clauses") becomes
+the `where` constraints as declared on the top-level type.
 (In our case, that's `U: Clone+Debug`.)
 
 Note that `$ttype` expands to the top-level _type_:
 that's now `MyItems<T,U>`,
 which is what we want.
 If we had wanted only `MyItems`,
-we would say `$tname` instead.
+we would say [`$tname`](crate::doc_reference#fname-vname-tname--names) instead.
 
 Will this template still work for non-parameterized types?
 Again, yes!
@@ -509,7 +521,9 @@ define_derive_adhoc! {
 }
 ```
 
-Here, we are using `$ftype`, the type of a field.
+Here, we are using
+[`$ftype`](crate::doc_reference#ftype-vtype-ttype-tdeftype--types),
+the type of a field.
 Since we're repeating it with `$( ... )`,
 we are requiring every field to be `Clone`.
 
@@ -592,15 +606,18 @@ Then we match once for each field of each variant.
 (This is at the `$fname` and `$fpatname` level.)
 
 Let's go over the new expansions here.
-First, we have `$vpat`:
+First, we have
+[`$vpat`](crate::doc_reference#vpat-fpatname--pattern-matching-and-value-deconstruction):
 that expands to a pattern that can match and deconstruct
 a single variant.
-Then, we have `$vtype`:
+Then, we have
+[`$vtype`](crate::doc_reference#ftype-vtype-ttype-tdeftype--types):
 that's the type of the variant,
 suitable for use as a constructor.
 Then, inside the variant, we have `$fname`:
 that's our field name, which we've seen it before.
-Finally, we have `$fpatname`:
+Finally, we have
+[`$fpatname`](crate::doc_reference#vpat-fpatname--pattern-matching-and-value-deconstruction):
 that is the name of the variable that we used for this field
 in the pattern that deconstructed it.
 
@@ -701,7 +718,9 @@ if we just have `$ftype` in a top-level repetition,
 Sometimes, if you do something subtle,
 derive-adhoc may not be able to figure
 out what you're trying to repeat over.
-You can use `${for ...}` to specifiy explicitly:
+You can use 
+[`${for ...}`](crate::doc_reference#repetition-and-nesting)
+to specifiy explicitly:
 so, above, instead, we could have written
 ```
 # use derive_adhoc::{Adhoc, derive_adhoc};
@@ -774,7 +793,8 @@ define_derive_adhoc! {
 
 Here we see a couple of new constructs.
 
-First, we're using `${paste}`
+First, we're using
+[`${paste}`](crate::doc_reference#-paste---identifier-pasting)
 to glue several identifiers together into one.
 When we say `${paste $tname Discriminant}`,
 we are generating a new identifier from `$tname`
@@ -783,7 +803,8 @@ and the word Discriminant.
 So if the type name is `Foo`,
 the new type will be called `FooDiscriminant`.
 
-Second, we're using `${snake_case}`
+Second, we're using
+[`${snake_case}`](crate::doc_reference#case-changing)
 to transform an identifier into `snake_case`
 (that is, lowercase words separated by underscores).
 We use this to turn the name of each variant (`$vname`)
@@ -793,7 +814,7 @@ So if a variant is called `ExampleVariant`,
 and `${paste is_ ${snake_case $vname}}` will be
 `is_example_variant`.
 
-There are other case-changers:
+There are [other case-changers](crate::doc_reference#case-changing):
   * `${pascal_case my_ident}` becomes `MyIdent`.
     You can also write this as
     `${upper_camel_case ..}`.
@@ -817,7 +838,7 @@ Both `${paste ident ident..}` and `${snake_case ident}`
 are special cases of the following meta-syntax,
 which `derive_adhoc` uses everywhere:
 
-`${KEYWORD ARGS.. }`
+[`${KEYWORD ARGS.. }`](crate::doc_reference#named-and-positional-template-arguments-to-expansions-and-conditions)
 
 In fact, if you want,
 you can use this format
@@ -836,8 +857,10 @@ The syntax for this is:
 > For example, we can use this syntax to give optional arguments to `$vpat`;
 > see the template syntax reference for more information.
 
-If you ever need to write a literal `$`,
-you can write `$$`.
+If you ever need to write a literal `$`
+(say, if you want to confuse yourself
+by making derive-adhoc-generated pattern macros)
+you can write [`$$`](crate::doc_reference#dollar-dollar).
 
 
 ## Another example: Defining a constructor function.
@@ -936,7 +959,9 @@ define_derive_adhoc! {
 }
 ```
 
-(Note the use of `for struct` above at `// (1)`.)
+(Note the use of
+[`for struct`](crate::doc_reference#for-struct-for-enum-for-union--insist-on-a-particular-driver-kind)
+above at `// (1)`.)
 
 Now if we try to apply our template to an enum,
 we'll get a more useful error:
@@ -954,7 +979,8 @@ derive-adhoc has some features which can help:
 
 #### Syntax checking the expansion
 
-You can tell derive-adhoc what your macro is supposed to produce:
+You can
+[tell derive-adhoc what your macro is supposed to produce](crate::doc_reference#expect-items-expect-expr--syntax-check-the-expansion):
 
 ```
 # use derive_adhoc::{Adhoc, define_derive_adhoc};
@@ -980,7 +1006,8 @@ If your macro is supposed to expand to an expression,
 you can write `expect expr` instead of `expect items`.
 
 Alternatively,
-you can request this syntax check when you invoke the macro:
+you can request this syntax check
+[when you invoke the macro](Adhoc#expansion-options):
 
 ```
 # use derive_adhoc::{Adhoc, define_derive_adhoc};
@@ -995,7 +1022,8 @@ struct MyStruct { /* ... */ }
 Sometimes, the expansion syntax checks,
 but is wrong in some other way.
 
-You can ask derive-adhoc to simply print a copy of the expansion.
+You can ask derive-adhoc to simply
+[print a copy of the expansion](crate::doc_reference#dbg--print-the-expansion-to-stderr-for-debugging).
 
 ```
 # use derive_adhoc::{Adhoc, define_derive_adhoc};
@@ -1045,10 +1073,13 @@ define_derive_adhoc! {
 
 Here instead of saying `pub fn new`,
 we said `$tvis fn new`.
-The `$tvis` keyword will expand
+The
+[`$tvis`](crate::doc_reference#fvis-tvis-fdefvis--visibility)
+keyword will expand
 to the visibility of the top-level type.
 
-There is a similar similar `$fvis`
+There is a similar similar
+[`$fvis`](crate::doc_reference#fvis-tvis-fdefvis--visibility)
 that expands to the visibility of the current field.
 
 (Since enums variants are always visible, there is no `$vvis`.)
@@ -1090,7 +1121,8 @@ Here, instead of specifying "new"
 for the method name in our template,
 we give the name as `${tmeta(newfn)}`.
 This tells the template to look for an
-`#[adhoc(newfn="...")]` attribute on the type,
+[`#[adhoc(newfn="...")]`](Adhoc#adhoc-attribute)
+attribute on the type,
 and to use the value of that attribute
 in place of the keyword.
 
@@ -1101,12 +1133,17 @@ If we do, the template will look for an attribute like
 `#[adhoc(Constructor(newfn = "..."))]`.
 
 
-The `$tmeta` keyword that we used here
+The
+[`$tmeta`](crate::doc_reference#tmeta-vmeta-fmeta--adhoc-attributes)
+keyword that we used here
 tells the template
 to look at the `#[adhoc]` attributes for the _type_.
-We can, instead, use `$vmeta`
+We can, instead, use
+[`$vmeta`](crate::doc_reference#tmeta-vmeta-fmeta--adhoc-attributes)
 to look for `#[adhoc]` attributes for the current _variant_,
-or `$fmeta` to
+or
+[`$fmeta`](crate::doc_reference#tmeta-vmeta-fmeta--adhoc-attributes)
+to
 to look for `#[adhoc]` attributes for the current _field_.
 
  <!--
@@ -1144,7 +1181,9 @@ define_derive_adhoc! {
 
 Have a look at the line marked with `// (1)`.
 It introduces a new concept: _conditional expansion_.
-The `${if ...}` keyword checks whether a given _condition_ is true.
+The
+[`${if ...}`](crate::doc_reference#if-cond1----else-if-cond2----else-----conditional)
+keyword checks whether a given _condition_ is true.
 If it is, then it expands to one of its arguments.
 Otherwise, it expands to an "else" argument (if any).
 
@@ -1152,7 +1191,8 @@ Otherwise, it expands to an "else" argument (if any).
 > `${if COND1 { ... } else if COND2 { ... } else { ... }`
 > and so on!
 
-Here, the condition is `tmeta(newfn)`.
+Here, the condition is
+[`tmeta(newfn)`](crate::doc_reference#fmetaname-vmetaname-tmetaname--adhoc-attributes).
 That condition is true if the current type
 has an `#[adhoc(newfn)]` attribute,
 and false otherwise.
@@ -1200,23 +1240,29 @@ struct Foo {
 }
 ```
 
-Here we're using a new construct: `$when`.
+Here we're using a new construct:
+[`$when`](crate::doc_reference#when-condition--filtering-out-repetitions-by-a-predicate).
 It's only valid inside a loop like `$( ... )`.
 It causes the output of the loop to be surpressed
 whenever the condition is not true.
 
 The condition in this cases is `not(fmeta(Constructor(default)))`.
 You've seen `fmeta` before;
-`not` is just how we express negation.
+[`not`](crate::doc_reference#false-true-notcondition-anycond1cond2-allcond1cond2--boolean-logic)
+is just how we express negation.
 All together, this `$when` keyword causes each field
 that has `#[adhoc(Constructor(default))]` applied to it
 to be omitted from the list of arguments
 to the `new()` function.
 
 You can use other boolean operators in conditions too:
-there is an `any(...)` that is true
+there is an
+[`any(...)`](crate::doc_reference#false-true-notcondition-anycond1cond2-allcond1cond2--boolean-logic)
+that is true
 whenever at least one of its arguments is true,
-and an `all(...)` that is true
+and an
+[`all(...)`](crate::doc_reference#false-true-notcondition-anycond1cond2-allcond1cond2--boolean-logic)
+that is true
 when _all_ of its arguments are true.
 
 
@@ -1226,22 +1272,29 @@ derive-adhoc has many more features,
 that aren't yet explained in this tutorial.
 For example:
 
- * `is_enum`, `is_struct`, `is_union`;
-   `v_is_unit`, `is_named`, `is_tuple`;
-   `fvis`, `tvis`:
-   and `approx_equal`:
+ * [`is_enum`, `is_struct`, `is_union`](crate::doc_reference#is_struct-is_enum-is_union);
+   [`v_is_unit`, `is_named`, `is_tuple`](crate::doc_reference#v_is_unit-v_is_tuple-v_is_named);
+   [`fvis`, `tvis`](crate::doc_reference#fvis-tvis-fdefvis--test-for-public-visibility):
+   and [`approx_equal`](crate::doc_reference#approx_equalarg1-arg2--equality-comparison-token-comparison):
    more conditions for dealing with various cases by hand.
 
- * `$tdef*`, `$vdef*`, `$fdef*`
+ * [`$tdefkwd`](crate::doc_reference#tdefkwd--keyword-introducing-the-new-data-structure);
+   [`$tdeftype`](crate::doc_reference#ftype-vtype-ttype-tdeftype--types);
+   [`$fdefvis`](crate::doc_reference#fvis-tvis-fdefvis--visibility);
+   [`$fdefgens`](crate::doc_reference#tgens-tgnames-twheres-tdefgens--generics);
+   and
+   [`$tdefvariants`, `$vdefbody`, `$fdefine`](crate::doc_reference#tdefvariants-vdefbody-fdefine--tools-for-defining-types)
    for defining a new data structure
    in terms of features of the input data structure,
-   and `$Xattrs` for passing through attributes.
+   and
+   [`$Xattrs`](crate::doc_reference#fattrs--vattrs--tattrs---other-attributes)
+   for passing through attributes.
 
- * `${select1}`
+ * [`${select1}`](crate::doc_reference#select1-cond1----else-if-cond2----else-----expect-precisely-one-predicate)
    can help with writing careful templates
    that will reject incoherent inputs.
 
- * `#{define }` and `${defcond }`
+ * [`#{define }` and `${defcond }`](crate::doc_reference#define--defcond---user-defined-expansions-and-conditions)
    to make user-defined reuseable template keywords,
    to save repetition in templates.
 
@@ -1255,7 +1308,6 @@ which also has a brief example demonstrating each construct.
 > ## Links
 >
 >  - Link to more worked and commented examples.
->  - Link to each reference section.
 
 -->
 
