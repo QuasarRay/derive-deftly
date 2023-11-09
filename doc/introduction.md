@@ -857,7 +857,9 @@ The syntax for this is:
 > For example, we can use this syntax to give optional arguments to `$vpat`;
 > see the template syntax reference for more information.
 
-If you ever need to write a literal `$`,
+If you ever need to write a literal `$`
+(say, if you want to confuse yourself
+by making derive-adhoc-generated pattern macros)
 you can write [`$$`](crate::doc_reference#dollar-dollar).
 
 

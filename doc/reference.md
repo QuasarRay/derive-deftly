@@ -63,8 +63,6 @@ In general the syntax is:
 In all cases, `$KEYWORD` is equivalent to `${KEYWORD}`.
 
 <span id="dollar-dollar">You can pass a `$` through
-(e.g. if you want to confuse yourself
-by making derive-adhoc-generated pattern macros)
 by writing `$$`.</span>
 
 <span id="keyword-initial-letters">Many
