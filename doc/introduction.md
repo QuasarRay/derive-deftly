@@ -980,7 +980,7 @@ derive-adhoc has some features which can help:
 #### Syntax checking the expansion
 
 You can
-[tell derive-adhoc what your macro is supposed to produce](expect-items-expect-expr--syntax-check-the-expansion):
+[tell derive-adhoc what your macro is supposed to produce](crate::doc_reference#expect-items-expect-expr--syntax-check-the-expansion):
 
 ```
 # use derive_adhoc::{Adhoc, define_derive_adhoc};
