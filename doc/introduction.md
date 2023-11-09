@@ -1286,13 +1286,15 @@ For example:
    [`$tdefvariants`, `$vdefbody`, `$fdefine`](crate::doc_reference#tdefvariants-vdefbody-fdefine--tools-for-defining-types)
    for defining a new data structure
    in terms of features of the input data structure,
-   and `$Xattrs` for passing through attributes.
+   and
+   [`$Xattrs`](crate::doc_reference#fattrs--vattrs--tattrs---other-attributes)
+   for passing through attributes.
 
- * `${select1}`
+ * [`${select1}`](crate::doc_reference#select1-cond1----else-if-cond2----else-----expect-precisely-one-predicate)
    can help with writing careful templates
    that will reject incoherent inputs.
 
- * `#{define }` and `${defcond }`
+ * [`#{define }` and `${defcond }`](crate::doc_reference#define--defcond---user-defined-expansions-and-conditions)
    to make user-defined reuseable template keywords,
    to save repetition in templates.
 
