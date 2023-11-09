@@ -1240,23 +1240,29 @@ struct Foo {
 }
 ```
 
-Here we're using a new construct: `$when`.
+Here we're using a new construct:
+[`$when`](crate::doc_reference#when-condition--filtering-out-repetitions-by-a-predicate).
 It's only valid inside a loop like `$( ... )`.
 It causes the output of the loop to be surpressed
 whenever the condition is not true.
 
 The condition in this cases is `not(fmeta(Constructor(default)))`.
 You've seen `fmeta` before;
-`not` is just how we express negation.
+[`not`](crate::doc_reference#false-true-notcondition-anycond1cond2-allcond1cond2--boolean-logic)
+is just how we express negation.
 All together, this `$when` keyword causes each field
 that has `#[adhoc(Constructor(default))]` applied to it
 to be omitted from the list of arguments
 to the `new()` function.
 
 You can use other boolean operators in conditions too:
-there is an `any(...)` that is true
+there is an
+[`any(...)`](crate::doc_reference#false-true-notcondition-anycond1cond2-allcond1cond2--boolean-logic)
+that is true
 whenever at least one of its arguments is true,
-and an `all(...)` that is true
+and an
+[`all(...)`](crate::doc_reference#false-true-notcondition-anycond1cond2-allcond1cond2--boolean-logic)
+that is true
 when _all_ of its arguments are true.
 
 
