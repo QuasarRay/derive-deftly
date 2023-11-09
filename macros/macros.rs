@@ -252,12 +252,12 @@ pub fn define_derive_adhoc(
 ///     [`define_derive_adhoc!`](macro@crate::define_derive_adhoc).
 ///     Each such `MyMacro` is applied to the data structure.
 ///
-///     You can specify
+///     <span id="expansion-options">You can specify
 ///     [expansion options](doc_reference/index.html#expansion-options)
 ///     for each such template application, by writing
 ///     `#[derive_adhoc(MyMacro[OPTIONS,..])]`, where
 ///     `[OPTIONS,..]` is a comma-separated list of expansion options
-///     contained within `[ ]`.
+///     contained within `[ ]`.</span>
 ///
 ///
 /// ## Applying a template (derive-adhoc macro) from another crate
