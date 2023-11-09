@@ -1308,7 +1308,6 @@ which also has a brief example demonstrating each construct.
 > ## Links
 >
 >  - Link to more worked and commented examples.
->  - Link to each reference section.
 
 -->
 
