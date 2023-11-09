@@ -1278,7 +1278,12 @@ For example:
    and [`approx_equal`](crate::doc_reference#approx_equalarg1-arg2--equality-comparison-token-comparison):
    more conditions for dealing with various cases by hand.
 
- * `$tdef*`, `$vdef*`, `$fdef*`
+ * [`$tdefkwd`](crate::doc_reference#tdefkwd--keyword-introducing-the-new-data-structure);
+   [`$tdeftype`](crate::doc_reference#ftype-vtype-ttype-tdeftype--types);
+   [`$fdefvis`](crate::doc_reference#fvis-tvis-fdefvis--visibility);
+   [`$fdefgens`](crate::doc_reference#tgens-tgnames-twheres-tdefgens--generics);
+   and
+   [`$tdefvariants`, `$vdefbody`, `$fdefine`](crate::doc_reference#tdefvariants-vdefbody-fdefine--tools-for-defining-types)
    for defining a new data structure
    in terms of features of the input data structure,
    and `$Xattrs` for passing through attributes.
