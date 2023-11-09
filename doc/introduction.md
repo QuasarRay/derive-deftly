@@ -1181,7 +1181,9 @@ define_derive_adhoc! {
 
 Have a look at the line marked with `// (1)`.
 It introduces a new concept: _conditional expansion_.
-The `${if ...}` keyword checks whether a given _condition_ is true.
+The
+[`${if ...}`](crate::doc_reference#if-cond1----else-if-cond2----else-----conditional)
+keyword checks whether a given _condition_ is true.
 If it is, then it expands to one of its arguments.
 Otherwise, it expands to an "else" argument (if any).
 
@@ -1189,7 +1191,8 @@ Otherwise, it expands to an "else" argument (if any).
 > `${if COND1 { ... } else if COND2 { ... } else { ... }`
 > and so on!
 
-Here, the condition is `tmeta(newfn)`.
+Here, the condition is
+[`tmeta(newfn)`](crate::doc_reference#fmetaname-vmetaname-tmetaname--adhoc-attributes).
 That condition is true if the current type
 has an `#[adhoc(newfn)]` attribute,
 and false otherwise.
