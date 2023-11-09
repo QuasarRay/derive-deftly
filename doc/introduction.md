@@ -959,7 +959,9 @@ define_derive_adhoc! {
 }
 ```
 
-(Note the use of `for struct` above at `// (1)`.)
+(Note the use of
+[`for struct`](crate::doc_reference#for-struct-for-enum-for-union--insist-on-a-particular-driver-kind)
+above at `// (1)`.)
 
 Now if we try to apply our template to an enum,
 we'll get a more useful error:
@@ -977,7 +979,8 @@ derive-adhoc has some features which can help:
 
 #### Syntax checking the expansion
 
-You can tell derive-adhoc what your macro is supposed to produce:
+You can
+[tell derive-adhoc what your macro is supposed to produce](expect-items-expect-expr--syntax-check-the-expansion):
 
 ```
 # use derive_adhoc::{Adhoc, define_derive_adhoc};
@@ -1003,7 +1006,8 @@ If your macro is supposed to expand to an expression,
 you can write `expect expr` instead of `expect items`.
 
 Alternatively,
-you can request this syntax check when you invoke the macro:
+you can request this syntax check
+[when you invoke the macro](Adhoc#expansion-options):
 
 ```
 # use derive_adhoc::{Adhoc, define_derive_adhoc};
@@ -1018,7 +1022,8 @@ struct MyStruct { /* ... */ }
 Sometimes, the expansion syntax checks,
 but is wrong in some other way.
 
-You can ask derive-adhoc to simply print a copy of the expansion.
+You can ask derive-adhoc to simply
+[print a copy of the expansion](crate::doc_reference#dbg--print-the-expansion-to-stderr-for-debugging).
 
 ```
 # use derive_adhoc::{Adhoc, define_derive_adhoc};
