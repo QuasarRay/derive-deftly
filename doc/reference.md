@@ -61,10 +61,11 @@ In general the syntax is:
    [`${paste ...}`](#-paste---identifier-pasting)).
 
 In all cases, `$KEYWORD` is equivalent to `${KEYWORD}`.
-You can pass a `$` through
+
+<span id="dollar-dollar">You can pass a `$` through
 (e.g. if you want to confuse yourself
 by making derive-adhoc-generated pattern macros)
-by writing `$$`.
+by writing `$$`.</span>
 
 Many of the expansion keywords start with `f`, `v`, or `s` to indicate
 the depth of the thing being expanded:
