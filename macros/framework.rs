@@ -47,7 +47,36 @@ pub struct PreprocessedField {
 
 /// `#[adhoc(...)]` helper attributes
 pub type PreprocessedMetas = Vec<PreprocessedMeta>;
-pub type PreprocessedMeta = syn::Meta;
+
+/// An `#[adhoc()]` attribute, or a sub-tree within one
+#[derive(Debug, Clone)]
+pub struct PreprocessedMeta {
+    pub path: syn::Path,
+    pub value: PreprocessedMetaValue,
+}
+/// Content of a meta attribute
+///
+/// Examples in doc comments are for
+/// `PreprocessedMeta.path` of `foo`,
+/// ie the examples are for `#[adhoc(foo ..)]`.
+#[derive(Debug, Clone)]
+pub enum PreprocessedMetaValue {
+    /// `#[adhoc(foo)]`
+    Unit,
+    /// `#[adhoc(foo = "lit")]`
+    Value { equals: token::Eq, value: syn::Lit },
+    /// `#[adhoc(foo(...))]`
+    List(PreprocessedMetaList),
+}
+
+/// `#[adhoc(foo(content))]`, also used for the toplevel `#[adhoc(content)]`
+///
+/// Represents a part like `(foo,bar(baz),zonk="value")`
+#[derive(Debug, Clone)]
+pub struct PreprocessedMetaList {
+    pub paren: token::Paren,
+    pub content: Punctuated<PreprocessedMeta, token::Comma>,
+}
 
 #[derive(Debug, Clone)]
 pub struct WithinVariant<'c> {

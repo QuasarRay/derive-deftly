@@ -921,33 +921,27 @@ impl SubstMetaPath {
         F: FnMut(FoundMetaNode<'a>) -> Result<(), E>,
         G: FnMut(FoundNearbyMetaNode) -> Result<(), E>,
     {
-        #![allow(non_camel_case_types)]
-        use syn::Meta as sM;
+        use PreprocessedMetaValue as PMV;
 
-        if pmeta.path() != &self.path {
+        if pmeta.path != self.path {
             return Ok(());
         }
 
-        let vspan = pmeta.span();
-        let path_span = pmeta.path().span();
+        let path_span = pmeta.path.span();
 
         let mut nearby = |kind| g(FoundNearbyMetaNode { kind, path_span });
 
-        match (&self.deeper, pmeta) {
-            (None, sM::Path(_)) => f(FMN::Unit(vspan))?,
-            (None, sM::List(_)) => nearby(FNMNK::List)?,
-            (None, sM::NameValue(nv)) => f(FMN::Lit {
+        match (&self.deeper, &pmeta.value) {
+            (None, PMV::Unit) => f(FMN::Unit(path_span))?,
+            (None, PMV::List(_)) => nearby(FNMNK::List)?,
+            (None, PMV::Value { value, .. }) => f(FMN::Lit {
                 path_span,
-                lit: &nv.lit,
+                lit: value,
             })?,
-            (Some(_), sM::NameValue(_)) => nearby(FNMNK::Lit)?,
-            (Some(_), sM::Path(_)) => nearby(FNMNK::Unit)?,
-            (Some(d), sM::List(l)) => {
-                for nm in &l.nested {
-                    let m = match nm {
-                        syn::NestedMeta::Meta(m) => m,
-                        syn::NestedMeta::Lit(_) => continue,
-                    };
+            (Some(_), PMV::Value { .. }) => nearby(FNMNK::Lit)?,
+            (Some(_), PMV::Unit) => nearby(FNMNK::Unit)?,
+            (Some(d), PMV::List(l)) => {
+                for m in l.content.iter() {
                     d.search_1(m, &mut *f, &mut *g)?;
                 }
             }

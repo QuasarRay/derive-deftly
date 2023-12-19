@@ -205,15 +205,7 @@ pub struct SubstMetaPath {
     pub deeper: Option<Box<SubstMetaPath>>,
 }
 
-/// Parses `(foo,bar(baz),zonk="value")`
-///
-/// Like `NestedMeta` but doesn't allow lit,
-/// since we forbid `#[adhoc("some")]`
-/// And discards the paren and the `ahoc` introducer.
-#[derive(Debug, Clone)]
-struct AdhocAttrList {
-    meta: Punctuated<syn::Meta, token::Comma>,
-}
+type AdhocAttrList = PreprocessedMetaList;
 
 #[derive(Debug)]
 pub struct SubstVType {
@@ -501,9 +493,31 @@ impl<O: SubstParseContext> Parse for TemplateElement<O> {
 impl Parse for AdhocAttrList {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let meta;
-        let _paren = parenthesized!(meta in input);
-        let meta = Punctuated::parse_terminated(&meta)?;
-        Ok(AdhocAttrList { meta })
+        let paren = parenthesized!(meta in input);
+        let content = Punctuated::parse_terminated(&meta)?;
+        Ok(AdhocAttrList { paren, content })
+    }
+}
+
+impl Parse for PreprocessedMeta {
+    fn parse(input: ParseStream) -> syn::Result<Self> {
+        use PreprocessedMetaValue as PMV;
+
+        let path = input.parse()?;
+        let la = input.lookahead1();
+        let value = if la.peek(Token![=]) {
+            let equals = input.parse()?;
+            let value = input.parse()?;
+            PMV::Value { equals, value }
+        } else if la.peek(token::Paren) {
+            let list = input.parse()?;
+            PMV::List(list)
+        } else if la.peek(Token![,]) || input.is_empty() {
+            PMV::Unit
+        } else {
+            return Err(la.error());
+        };
+        Ok(PreprocessedMeta { path, value })
     }
 }
 
@@ -1170,7 +1184,7 @@ pub fn preprocess_attrs(
         })
         .map(|attr| {
             let attr: AdhocAttrList = syn::parse2(attr.tokens.clone())?;
-            Ok(attr.meta.into_iter())
+            Ok(attr.content)
         })
         .flatten_ok()
         .collect()
