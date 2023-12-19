@@ -573,6 +573,16 @@ it refers to the current crate, ie simply `crate`.
 This is similar to the `$crate` builtin expansion
 in `macro_rules!`.
 
+Due to limitations of Rust attributes, and clippy,
+you may see a spurious warning
+`clippy::crate-in-macro-def`
+
+> `crate` references the macro call's crate
+
+even though your template contains `$crate`, not `crate`.
+The best workaround is an `#[allow]` in the template.
+<!-- https://gitlab.torproject.org/Diziet/rust-derive-adhoc/-/issues/27 -->
+
 ### `$tdefkwd` -- keyword introducing the new data structure
 
 Expands to `struct`, `enum`, or `union`.
