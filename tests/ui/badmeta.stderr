@@ -73,8 +73,8 @@ error: attribute value expanded, but no suitable value in data structure definit
    |
 4  | / #[adhoc(wrong = "{")]
 5  | | #[adhoc(dot = ".")]
-6  | | #[adhoc(barelit("42"))]
-7  | | #[adhoc(multi("1", "2"))]
+6  | | //
+7  | | //
 ...  |
 10 | | #[adhoc(several_inner(several = "first", several = "second"))]
 11 | | struct DataType {}
@@ -96,52 +96,6 @@ error: attribute value expanded, but no suitable value in data structure definit
    |
 29 |     struct ${paste Bad ${tmeta(dot(has_equals)) as str}};
    |                                ^^^
-
-error: expected a leaf node, found a list with sub-attributes
-  --> ui/badmeta.rs:6:9
-   |
-6  |   #[adhoc(barelit("42"))]
-   |           ^^^^^^^
-...
-24 | / derive_adhoc! {
-25 | |     DataType:
-26 | |
-27 | |     struct ${paste Bad ${tmeta(dot) as str}};
-...  |
-36 | |     struct ${paste Bad ${tmeta(several_inner(several)) as str}};
-37 | | }
-   | |_- in this macro invocation
-   |
-   = note: this error originates in the macro `derive_adhoc_driver_DataType` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
-
-error: attribute value expanded, but no suitable value in data structure definition (expansion)
-  --> ui/badmeta.rs:31:32
-   |
-31 |     struct ${paste Bad ${tmeta(barelit) as str}};
-   |                                ^^^^^^^
-
-error: expected a leaf node, found a list with sub-attributes
-  --> ui/badmeta.rs:7:9
-   |
-7  |   #[adhoc(multi("1", "2"))]
-   |           ^^^^^
-...
-24 | / derive_adhoc! {
-25 | |     DataType:
-26 | |
-27 | |     struct ${paste Bad ${tmeta(dot) as str}};
-...  |
-36 | |     struct ${paste Bad ${tmeta(several_inner(several)) as str}};
-37 | | }
-   | |_- in this macro invocation
-   |
-   = note: this error originates in the macro `derive_adhoc_driver_DataType` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
-
-error: attribute value expanded, but no suitable value in data structure definition (expansion)
-  --> ui/badmeta.rs:33:32
-   |
-33 |     struct ${paste Bad ${tmeta(multi) as str}};
-   |                                ^^^^^
 
 error: tried to expand just attribute value, but it was specified multiple times (first occurrence)
   --> ui/badmeta.rs:8:9
@@ -228,8 +182,8 @@ error: attribute value expanded, but no value in data structure definition (in t
    |
 4  | / #[adhoc(wrong = "{")]
 5  | | #[adhoc(dot = ".")]
-6  | | #[adhoc(barelit("42"))]
-7  | | #[adhoc(multi("1", "2"))]
+6  | | //
+7  | | //
 ...  |
 10 | | #[adhoc(several_inner(several = "first", several = "second"))]
 11 | | struct DataType {}
@@ -272,8 +226,8 @@ error: attribute value expanded, but no suitable value in data structure definit
    |
 4  | / #[adhoc(wrong = "{")]
 5  | | #[adhoc(dot = ".")]
-6  | | #[adhoc(barelit("42"))]
-7  | | #[adhoc(multi("1", "2"))]
+6  | | //
+7  | | //
 ...  |
 10 | | #[adhoc(several_inner(several = "first", several = "second"))]
 11 | | struct DataType {}
@@ -316,3 +270,73 @@ error: expected literal
    | ------------------------------------- in this macro invocation
    |
    = note: this error originates in the macro `derive_adhoc_driver_MetaValueMustBeLit` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: expected a leaf node, found a list with sub-attributes
+  --> ui/badmeta.rs:66:9
+   |
+66 |   #[adhoc(barelit("42"))]
+   |           ^^^^^^^
+...
+73 | / derive_adhoc! {
+74 | |     WithBareLit:
+75 | |     struct ${paste Bad ${tmeta(barelit) as str}};
+76 | | }
+   | |_- in this macro invocation
+   |
+   = note: this error originates in the macro `derive_adhoc_driver_WithBareLit` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: attribute value expanded, but no suitable value in data structure definition (in this data structure)
+  --> ui/badmeta.rs:66:1
+   |
+66 | / #[adhoc(barelit("42"))]
+67 | | struct WithBareLit;
+   | |___________________^
+...
+73 | / derive_adhoc! {
+74 | |     WithBareLit:
+75 | |     struct ${paste Bad ${tmeta(barelit) as str}};
+76 | | }
+   | |_- in this macro invocation
+   |
+   = note: this error originates in the macro `derive_adhoc_driver_WithBareLit` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: attribute value expanded, but no suitable value in data structure definition (expansion)
+  --> ui/badmeta.rs:75:32
+   |
+75 |     struct ${paste Bad ${tmeta(barelit) as str}};
+   |                                ^^^^^^^
+
+error: expected a leaf node, found a list with sub-attributes
+  --> ui/badmeta.rs:70:9
+   |
+70 |   #[adhoc(multi("1", "2"))]
+   |           ^^^^^
+...
+78 | / derive_adhoc! {
+79 | |     WithBareLitMulti:
+80 | |     struct ${paste Bad ${tmeta(multi) as str}};
+81 | | }
+   | |_- in this macro invocation
+   |
+   = note: this error originates in the macro `derive_adhoc_driver_WithBareLitMulti` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: attribute value expanded, but no suitable value in data structure definition (in this data structure)
+  --> ui/badmeta.rs:70:1
+   |
+70 | / #[adhoc(multi("1", "2"))]
+71 | | struct WithBareLitMulti;
+   | |________________________^
+...
+78 | / derive_adhoc! {
+79 | |     WithBareLitMulti:
+80 | |     struct ${paste Bad ${tmeta(multi) as str}};
+81 | | }
+   | |_- in this macro invocation
+   |
+   = note: this error originates in the macro `derive_adhoc_driver_WithBareLitMulti` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: attribute value expanded, but no suitable value in data structure definition (expansion)
+  --> ui/badmeta.rs:80:32
+   |
+80 |     struct ${paste Bad ${tmeta(multi) as str}};
+   |                                ^^^^^
