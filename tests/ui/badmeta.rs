@@ -1,10 +1,8 @@
-use derive_adhoc::{derive_adhoc, Adhoc};
+use derive_adhoc::{define_derive_adhoc, derive_adhoc, Adhoc};
 
 #[derive(Adhoc)]
 #[adhoc(wrong = "{")]
 #[adhoc(dot = ".")]
-#[adhoc(barelit("42"))]
-#[adhoc(multi("1", "2"))]
 #[adhoc(several = "first")]
 #[adhoc(several = "second")]
 #[adhoc(several_inner(several = "first", several = "second"))]
@@ -27,10 +25,6 @@ derive_adhoc! {
     struct ${paste Bad ${tmeta(dot) as str}};
     // fails because `dot = ...` is not helpful
     struct ${paste Bad ${tmeta(dot(has_equals)) as str}};
-
-    struct ${paste Bad ${tmeta(barelit) as str}};
-
-    struct ${paste Bad ${tmeta(multi) as str}};
 
     struct ${paste Bad ${tmeta(several) as str}};
     struct ${paste Bad ${tmeta(several_inner(several)) as str}};
@@ -61,5 +55,41 @@ derive_adhoc! { TopLevelMetaLitForbidden: }
 #[adhoc(value = wrong)]
 struct MetaValueMustBeLit;
 derive_adhoc! { MetaValueMustBeLit: }
+
+#[derive(Adhoc)]
+#[adhoc(barelit("42"))]
+struct WithBareLit;
+
+#[derive(Adhoc)]
+#[adhoc(multi("1", "2"))]
+struct WithBareLitMulti;
+
+derive_adhoc! {
+    WithBareLit:
+    struct ${paste Bad ${tmeta(barelit) as str}};
+}
+
+derive_adhoc! {
+    WithBareLitMulti:
+    struct ${paste Bad ${tmeta(multi) as str}};
+}
+
+define_derive_adhoc! {
+    TestFunkyPath =
+    struct ${paste Bad ${tmeta(std::cell::Cell::<String>::ne)w as str}};
+}
+
+#[derive(Adhoc)]
+#[derive_adhoc(TestFunkyPath)]
+#[adhoc(std::cell::Cell::<String>::new)]
+struct WithFunkyPath;
+
+derive_adhoc! {
+    WithFunkyPath:
+}
+
+#[derive(Adhoc)]
+#[derive_adhoc(TestFunkyPath)]
+struct WithoutfunkyPath;
 
 fn main() {}
