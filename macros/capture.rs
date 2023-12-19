@@ -54,7 +54,7 @@ impl Parse for InvocationAttr {
 fn check_for_misplaced_atrs(data: &syn::Data) -> syn::Result<()> {
     let attrs = |attrs: &[syn::Attribute]| {
         for attr in attrs {
-            if attr.path.is_ident("derive_adhoc") {
+            if attr.path().is_ident("derive_adhoc") {
                 return Err(attr.error(
  "derive_adhoc attribute is only meaningful at the data structure toplevel"
                 ));
@@ -113,7 +113,7 @@ pub fn derive_adhoc_derive_macro(
         .attrs
         .iter()
         .map(|attr| {
-            if !attr.path.is_ident("derive_adhoc") {
+            if !attr.path().is_ident("derive_adhoc") {
                 return Ok(None);
             }
             let tokens = attr.tokens.clone();

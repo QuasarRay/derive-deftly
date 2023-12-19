@@ -1171,10 +1171,10 @@ pub fn preprocess_attrs(
                 syn::AttrStyle::Outer => {}
                 syn::AttrStyle::Inner(_) => return None,
             };
-            if attr.path.leading_colon.is_some() {
+            if attr.path().leading_colon.is_some() {
                 return None;
             }
-            let segment = attr.path.segments.iter().exactly_one().ok()?;
+            let segment = attr.path().segments.iter().exactly_one().ok()?;
             if segment.ident != "adhoc" {
                 return None;
             }

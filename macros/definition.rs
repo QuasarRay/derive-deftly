@@ -18,9 +18,9 @@ impl Parse for TemplateDefinition {
         // a template called `pub`.  See ticket #1.
         let doc_attrs = input.call(syn::Attribute::parse_outer)?;
         for attr in &doc_attrs {
-            if !attr.path.is_ident("doc") {
+            if !attr.path().is_ident("doc") {
                 return Err(attr
-                    .path
+                    .path()
                     .error("only doc attributes are supported"));
             }
         }

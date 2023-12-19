@@ -238,7 +238,7 @@ fn extract_structs(input: &Preprocessed) -> Vec<syn::DeriveInput> {
                     // IEFI simulates a long if let && chain
                     matches!(attr.style, syn::AttrStyle::Outer)
                         .then_some(())?;
-                    attr.path.is_ident("derive").then_some(())?;
+                    attr.path().is_ident("derive").then_some(())?;
                     let ml = match attr.parse_meta().ok()? {
                         syn::Meta::List(ml) => ml,
                         _ => None?,
