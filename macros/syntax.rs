@@ -205,8 +205,6 @@ pub struct SubstMetaPath {
     pub deeper: Option<Box<SubstMetaPath>>,
 }
 
-type AdhocAttrList = PreprocessedMetaList;
-
 #[derive(Debug)]
 pub struct SubstVType {
     pub self_: Option<Template<TokenAccumulator>>,
@@ -490,12 +488,12 @@ impl<O: SubstParseContext> Parse for TemplateElement<O> {
     }
 }
 
-impl Parse for AdhocAttrList {
+impl Parse for PreprocessedMetaList {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let meta;
         let paren = parenthesized!(meta in input);
         let content = Punctuated::parse_terminated(&meta)?;
-        Ok(AdhocAttrList { paren, content })
+        Ok(PreprocessedMetaList { paren, content })
     }
 }
 
@@ -1183,7 +1181,7 @@ pub fn preprocess_attrs(
             Some(attr)
         })
         .map(|attr| {
-            let attr: AdhocAttrList = syn::parse2(attr.tokens.clone())?;
+            let attr: PreprocessedMetaList = syn::parse2(attr.tokens.clone())?;
             Ok(attr.content)
         })
         .flatten_ok()
