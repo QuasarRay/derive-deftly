@@ -30,6 +30,8 @@ derive_adhoc! {
     // TODO: there is no way to get access to the multi("42"),
     // it probably ought to be rejected.
 
+    // Ignores the mixed(inner) = "yes" and finds the "no"
+    fn $<mixed_ ${fmeta(mixed)}>() {}
     // Ignores the mixed = "no" and finds the inner
     fn $<mixed_ ${fmeta(mixed(inner))}>() {}
   )

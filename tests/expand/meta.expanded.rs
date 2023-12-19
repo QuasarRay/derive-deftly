@@ -10,6 +10,7 @@ struct IgnoredThings {
 fn just_pfx_prefix() {}
 fn multi_hi_pfx() {}
 fn just_suffix_sfx() {}
+fn mixed_no() {}
 fn mixed_yes() {}
 #[adhoc("forbidden")]
 #[adhoc(value = wrong)]
