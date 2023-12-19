@@ -27,8 +27,6 @@ derive_adhoc! {
     // we can pick out "path::suffix" too
     fn $<just_suffix_ ${fmeta(multi(path::suffix))}>() {}
 
-    // XXXX if there were multi("42"), it ought to be rejected.
-
     // Ignores the mixed(inner) = "yes" and finds the "no"
     fn $<mixed_ ${fmeta(mixed)}>() {}
     // Ignores the mixed = "no" and finds the inner
