@@ -785,8 +785,8 @@ where
             pmetas,
             &mut |av: FoundMetaNode| {
                 if let Some(first) = &found {
-                    return Err([(first.span(), "first occurrence"),
-                            (av.span(), "second occurrence"),
+                    return Err([(first.path_span(), "first occurrence"),
+                            (av.path_span(), "second occurrence"),
                             self_loc()].error(
  "tried to expand just attribute value, but it was specified multiple times"
                 ));
@@ -957,9 +957,8 @@ impl SubstMetaPath {
     }
 }
 
-// XXXX Make this a method .path_span() instead.
-impl Spanned for FoundMetaNode<'_> {
-    fn span(&self) -> Span {
+impl FoundMetaNode<'_> {
+    fn path_span(&self) -> Span {
         match self {
             FMN::Unit(span) => *span,
             FMN::Lit { path_span, .. } => *path_span,
