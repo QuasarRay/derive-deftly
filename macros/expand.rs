@@ -755,7 +755,7 @@ where
         pmetas: &PreprocessedMetas,
     ) -> syn::Result<()> {
         let mut found = None;
-        let error_loc = || [(self.span(), "expansion"), ctx.error_loc()];
+        let error_loc = || [ctx.error_loc(), (self.span(), "expansion")];
 
         self.path.search(pmetas, &mut |av: FoundMetaNode| {
             if found.is_some() {
