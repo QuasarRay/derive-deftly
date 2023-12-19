@@ -127,10 +127,10 @@ error: tried to expand attribute which is nested list, not a value (template)
    |                                ^^^^^
 
 error: tried to expand just attribute value, but it was specified multiple times (first occurrence)
-  --> ui/badmeta.rs:8:19
+  --> ui/badmeta.rs:8:9
    |
 8  |   #[adhoc(several = "first")]
-   |                     ^^^^^^^
+   |           ^^^^^^^
 ...
 24 | / derive_adhoc! {
 25 | |     DataType:
@@ -144,10 +144,10 @@ error: tried to expand just attribute value, but it was specified multiple times
    = note: this error originates in the macro `derive_adhoc_driver_DataType` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: tried to expand just attribute value, but it was specified multiple times (second occurrence)
-  --> ui/badmeta.rs:9:19
+  --> ui/badmeta.rs:9:9
    |
 9  |   #[adhoc(several = "second")]
-   |                     ^^^^^^^^
+   |           ^^^^^^^
 ...
 24 | / derive_adhoc! {
 25 | |     DataType:
@@ -167,10 +167,10 @@ error: tried to expand just attribute value, but it was specified multiple times
    |                                ^^^^^^^
 
 error: tried to expand just attribute value, but it was specified multiple times (first occurrence)
-  --> ui/badmeta.rs:10:33
+  --> ui/badmeta.rs:10:23
    |
 10 |   #[adhoc(several_inner(several = "first", several = "second"))]
-   |                                   ^^^^^^^
+   |                         ^^^^^^^
 ...
 24 | / derive_adhoc! {
 25 | |     DataType:
@@ -184,10 +184,10 @@ error: tried to expand just attribute value, but it was specified multiple times
    = note: this error originates in the macro `derive_adhoc_driver_DataType` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: tried to expand just attribute value, but it was specified multiple times (second occurrence)
-  --> ui/badmeta.rs:10:52
+  --> ui/badmeta.rs:10:42
    |
 10 |   #[adhoc(several_inner(several = "first", several = "second"))]
-   |                                                      ^^^^^^^^
+   |                                            ^^^^^^^
 ...
 24 | / derive_adhoc! {
 25 | |     DataType:

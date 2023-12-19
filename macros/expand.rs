@@ -25,7 +25,7 @@ pub struct DeriveAdhocExpandInput {
 pub enum FoundMetaNode<'l> {
     Unit(Span),
     Deeper(Span),
-    Lit(&'l syn::Lit),
+    Lit { path_span: Span, lit: &'l syn::Lit },
 }
 
 /// What would `${fname}` expand to?  As type from [`syn`].
@@ -878,7 +878,10 @@ impl SubstMetaPath {
         match (&self.deeper, pmeta) {
             (None, sM::Path(_)) => f(FMN::Unit(vspan))?,
             (None, sM::List(_)) => f(FMN::Deeper(vspan))?,
-            (None, sM::NameValue(nv)) => f(FMN::Lit(&nv.lit))?,
+            (None, sM::NameValue(nv)) => f(FMN::Lit {
+                path_span: nv.path.span(),
+                lit: &nv.lit,
+            })?,
             (Some(_), sM::NameValue(_)) => {}
             (Some(_), sM::Path(_)) => {} // self is deeper than pmeta
             (Some(d), sM::List(l)) => {
@@ -895,12 +898,13 @@ impl SubstMetaPath {
     }
 }
 
+// XXXX Make this a method .path_span() instead.
 impl Spanned for FoundMetaNode<'_> {
     fn span(&self) -> Span {
         match self {
             FMN::Unit(span) => *span,
             FMN::Deeper(span) => *span,
-            FMN::Lit(lit) => lit.span(),
+            FMN::Lit { path_span, .. } => *path_span,
         }
     }
 }
@@ -924,7 +928,7 @@ impl<'l> FoundMetaNode<'l> {
             FMN::Deeper(vspan) => return Err(spans(*vspan).error(
  "tried to expand attribute which is nested list, not a value",
             )),
-            FMN::Lit(lit) => lit,
+            FMN::Lit { lit, .. } => lit,
         };
 
         use SubstMetaAs as SMA;
