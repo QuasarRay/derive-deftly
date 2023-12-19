@@ -3,8 +3,6 @@ use derive_adhoc::{define_derive_adhoc, derive_adhoc, Adhoc};
 #[derive(Adhoc)]
 #[adhoc(wrong = "{")]
 #[adhoc(dot = ".")]
-//
-//
 #[adhoc(several = "first")]
 #[adhoc(several = "second")]
 #[adhoc(several_inner(several = "first", several = "second"))]
@@ -27,10 +25,6 @@ derive_adhoc! {
     struct ${paste Bad ${tmeta(dot) as str}};
     // fails because `dot = ...` is not helpful
     struct ${paste Bad ${tmeta(dot(has_equals)) as str}};
-
-    //
-    //
-    //
 
     struct ${paste Bad ${tmeta(several) as str}};
     struct ${paste Bad ${tmeta(several_inner(several)) as str}};
