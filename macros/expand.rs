@@ -758,17 +758,20 @@ where
         let self_loc = || (self.span(), "expansion");
         let error_loc = || [ctx.error_loc(), self_loc()];
 
-        self.path.search(pmetas, &mut |av: FoundMetaNode| {
-            if let Some(first) = &found {
-                return Err([(first.span(), "first occurrence"),
+        self.path.search(
+            pmetas,
+            &mut |av: FoundMetaNode| {
+                if let Some(first) = &found {
+                    return Err([(first.span(), "first occurrence"),
                             (av.span(), "second occurrence"),
                             self_loc()].error(
  "tried to expand just attribute value, but it was specified multiple times"
                 ));
-            }
-            found = Some(av);
-            Ok(())
-        })?;
+                }
+                found = Some(av);
+                Ok(())
+            },
+        )?;
 
         let found = found.ok_or_else(|| {
             error_loc().error(
@@ -848,7 +851,11 @@ where
 }
 
 impl SubstMetaPath {
-    pub fn search<'a, A, F, E>(&self, pmetas: A, f: &mut F) -> Result<(), E>
+    pub fn search<'a, A, F, E>(
+        &self,
+        pmetas: A,
+        f: &mut F,
+    ) -> Result<(), E>
     where
         F: FnMut(FoundMetaNode<'a>) -> Result<(), E>,
         A: IntoIterator<Item = &'a PreprocessedMeta>,

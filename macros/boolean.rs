@@ -169,7 +169,10 @@ impl SubstMetaPath {
         &self,
         pmetas: &PreprocessedMetas,
     ) -> Result<(), Found> {
-        self.search(pmetas, &mut |_av| /* got it! */ Err(Found))
+        self.search(
+            pmetas,
+            &mut |_av| /* got it! */ Err(Found),
+        )
     }
 }
 
