@@ -1,4 +1,4 @@
-use derive_adhoc::{derive_adhoc, Adhoc};
+use derive_adhoc::{define_derive_adhoc, derive_adhoc, Adhoc};
 
 #[derive(Adhoc)]
 #[adhoc(wrong = "{")]
@@ -79,5 +79,23 @@ derive_adhoc! {
     WithBareLitMulti:
     struct ${paste Bad ${tmeta(multi) as str}};
 }
+
+define_derive_adhoc! {
+    TestFunkyPath =
+    struct ${paste Bad ${tmeta(std::cell::Cell::<String>::ne)w as str}};
+}
+
+#[derive(Adhoc)]
+#[derive_adhoc(TestFunkyPath)]
+#[adhoc(std::cell::Cell::<String>::new)]
+struct WithFunkyPath;
+
+derive_adhoc! {
+    WithFunkyPath:
+}
+
+#[derive(Adhoc)]
+#[derive_adhoc(TestFunkyPath)]
+struct WithoutfunkyPath;
 
 fn main() {}
