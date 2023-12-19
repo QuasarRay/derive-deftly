@@ -51,6 +51,46 @@ impl Parse for InvocationAttr {
     }
 }
 
+fn check_for_misplaced_atrs(data: &syn::Data) -> syn::Result<()> {
+    let attrs = |attrs: &[syn::Attribute]| {
+        for attr in attrs {
+            if attr.path.is_ident("derive_adhoc") {
+                return Err(attr.error(
+ "derive_adhoc attribute is only meaningful at the data structure toplevel"
+                ));
+            }
+        }
+        Ok(())
+    };
+
+    let fields = |fs: &Punctuated<syn::Field, _>| {
+        for f in fs.iter() {
+            attrs(&f.attrs)?;
+        }
+        Ok(())
+    };
+
+    let variantish = |fs: &syn::Fields| match fs {
+        syn::Fields::Unit => Ok(()),
+        syn::Fields::Named(n) => fields(&n.named),
+        syn::Fields::Unnamed(u) => fields(&u.unnamed),
+    };
+
+    let variants = |vs: &Punctuated<syn::Variant, _>| {
+        for v in vs.iter() {
+            attrs(&v.attrs)?;
+            variantish(&v.fields)?;
+        }
+        Ok(())
+    };
+
+    match data {
+        syn::Data::Struct(s) => variantish(&s.fields),
+        syn::Data::Union(u) => fields(&u.fields.named),
+        syn::Data::Enum(e) => variants(&e.variants),
+    }
+}
+
 /// This is #[derive(Adhoc)]
 pub fn derive_adhoc_derive_macro(
     driver_stream: TokenStream,
@@ -100,6 +140,8 @@ pub fn derive_adhoc_derive_macro(
             }
         })
         .collect::<syn::Result<Vec<_>>>()?;
+
+    check_for_misplaced_atrs(&driver.data)?;
 
     let expand_macro = expand_macro_name()?;
 
