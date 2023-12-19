@@ -1115,7 +1115,7 @@ impl<O: SubstParseContext> RepeatedTemplate<O> {
 
     fn parse(
         input: ParseStream,
-        span: Span,
+        span: DelimSpan,
         over: Option<RepeatOver>,
     ) -> Result<RepeatedTemplate<O>, syn::Error> {
         let mut template = Template::parse(input)?;

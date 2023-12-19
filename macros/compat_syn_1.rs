@@ -2,6 +2,9 @@
 
 use super::prelude::*;
 
+/// syn 2 has this distinct type for start/end delimiters for a group
+pub use proc_macro2::Span as DelimSpan;
+
 //---------- Spanned ----------
 
 pub use syn::spanned::Spanned;

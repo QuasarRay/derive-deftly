@@ -11,6 +11,8 @@
 
 use super::prelude::*;
 
+pub use proc_macro2::extra::DelimSpan;
+
 //---------- Spanned ----------
 
 /// Local version of `Spanned`

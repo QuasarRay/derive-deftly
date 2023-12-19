@@ -46,7 +46,7 @@ impl RepeatAnalysisVisitor {
         Ok(())
     }
 
-    pub fn finish(self, start: Span) -> Result<RepeatOver, syn::Error> {
+    pub fn finish(self, start: DelimSpan) -> Result<RepeatOver, syn::Error> {
         Ok(self
             .over
             .ok_or_else(|| {
