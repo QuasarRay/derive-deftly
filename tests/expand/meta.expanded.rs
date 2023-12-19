@@ -3,7 +3,7 @@
 use derive_adhoc::{derive_adhoc, Adhoc};
 struct IgnoredThings {
     #[adhoc(prefix = "pfx")]
-    #[adhoc(multi(hi, there(wombat), suffix = "sfx"))]
+    #[adhoc(multi(hi, there(wombat), path::suffix = "sfx"))]
     #[adhoc(mixed(inner = "yes"), mixed = "no")]
     f: String,
 }

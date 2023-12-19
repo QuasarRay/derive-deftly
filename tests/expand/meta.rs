@@ -7,7 +7,7 @@ use derive_adhoc::{derive_adhoc, Adhoc};
 #[derive(Adhoc)]
 struct IgnoredThings {
     #[adhoc(prefix = "pfx")]
-    #[adhoc(multi(hi, there(wombat), suffix = "sfx"))]
+    #[adhoc(multi(hi, there(wombat), path::suffix = "sfx"))]
     #[adhoc(mixed(inner = "yes"), mixed = "no")]
     f: String,
 }
@@ -24,8 +24,8 @@ derive_adhoc! {
       fn $<multi_hi_ ${fmeta(prefix)}>() {}
     }}
 
-    // we can pick out "suffix" too
-    fn $<just_suffix_ ${fmeta(multi(suffix))}>() {}
+    // we can pick out "path::suffix" too
+    fn $<just_suffix_ ${fmeta(multi(path::suffix))}>() {}
 
     // XXXX if there were multi("42"), it ought to be rejected.
 
