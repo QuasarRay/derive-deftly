@@ -249,7 +249,7 @@ error: attribute value expanded, but no suitable value in data structure definit
 52 |     struct ${paste Bad ${tmeta(several_inner) as str}};
    |                                ^^^^^^^^^^^^^
 
-error: expected identifier
+error: expected path
   --> ui/badmeta.rs:56:9
    |
 56 | #[adhoc("forbidden")]
@@ -271,7 +271,7 @@ error: expected literal
    |
    = note: this error originates in the macro `derive_adhoc_driver_MetaValueMustBeLit` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error: expected identifier
+error: expected path
   --> ui/badmeta.rs:66:17
    |
 66 |   #[adhoc(barelit("42"))]
@@ -285,7 +285,7 @@ error: expected identifier
    |
    = note: this error originates in the macro `derive_adhoc_driver_WithBareLit` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error: expected identifier
+error: expected path
   --> ui/badmeta.rs:70:15
    |
 70 |   #[adhoc(multi("1", "2"))]
@@ -309,6 +309,19 @@ error: expected path segment
    |          ----- in this derive macro expansion
    |
    = note: this error originates in the macro `derive_adhoc_template_TestFunkyPath` which comes from the expansion of the derive macro `Adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: expected path segment
+  --> ui/badmeta.rs:90:26
+   |
+90 |   #[adhoc(std::cell::Cell::<String>::new)]
+   |                            ^
+...
+93 | / derive_adhoc! {
+94 | |     WithFunkyPath:
+95 | | }
+   | |_- in this macro invocation
+   |
+   = note: this error originates in the macro `derive_adhoc_driver_WithFunkyPath` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: expected path segment
   --> ui/badmeta.rs:85:49

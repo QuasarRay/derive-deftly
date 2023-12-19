@@ -501,7 +501,7 @@ impl Parse for PreprocessedMeta {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         use PreprocessedMetaValue as PMV;
 
-        let path = input.parse()?;
+        let path = input.call(syn::Path::parse_mod_style)?;
         let la = input.lookahead1();
         let value = if la.peek(Token![=]) {
             let equals = input.parse()?;
