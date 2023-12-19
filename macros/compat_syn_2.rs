@@ -10,3 +10,20 @@
 //! if that turns out to be desirable.
 
 use super::prelude::*;
+
+//---------- Spanned ----------
+
+/// Local version of `Spanned`
+///
+/// Works around `Spanned` being sealed in syn 2.
+/// <https://github.com/dtolnay/syn/pull/1524>.
+/// (Not needed with syn 1, but would be harmless there.)
+pub trait Spanned {
+    fn span(&self) -> Span;
+}
+
+impl<T: syn::spanned::Spanned> Spanned for T {
+    fn span(&self) -> Span {
+        syn::spanned::Spanned::span(self)
+    }
+}

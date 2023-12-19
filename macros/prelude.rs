@@ -27,7 +27,6 @@ pub use strum::{EnumIter, EnumString};
 pub use syn::ext::IdentExt;
 pub use syn::parse::{Lookahead1, Parse, ParseBuffer, ParseStream, Parser};
 pub use syn::punctuated::Punctuated;
-pub use syn::spanned::Spanned;
 pub use syn::Token;
 pub use syn::{braced, bracketed, parenthesized};
 pub use syn::{parse_macro_input, token};
