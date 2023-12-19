@@ -409,7 +409,7 @@ which should affect how a set of fields should be processed.
  * `${tmeta(gentype) as str}`: `"Vec<i32>"`
  * `${vmeta(value)}`: `unit-toplevel`, `enum-variant`
  * `${fmeta(nested(inner))}` for `field` in `Struct`: `42`
- * `${fmeta(nested)}`: error, ``tried to expand attribute which is nested list``
+ * `${fmeta(nested)}`: error, ``expected a leaf node, found a list with sub-attributes``
 
 #### Examples involving pasting
 

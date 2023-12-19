@@ -24,8 +24,29 @@ pub struct DeriveAdhocExpandInput {
 #[derive(Debug)]
 pub enum FoundMetaNode<'l> {
     Unit(Span),
-    Deeper(Span),
     Lit { path_span: Span, lit: &'l syn::Lit },
+}
+
+/// Information about a nearby meta node we found
+///
+/// "Nearby" means that the node we found is a prefix (in tree descent)
+/// of the one we were looking for, or vice versa.
+#[derive(Debug)]
+pub struct FoundNearbyMetaNode {
+    pub kind: FoundNearbyMetaNodeKind,
+    /// Span of the identifier in the actual `#[adhoc]` driver attribute
+    pub path_span: Span,
+}
+
+/// How the nearby node relates to the one we were looking for
+#[derive(Debug)]
+pub enum FoundNearbyMetaNodeKind {
+    /// We were looking to go deeper, but found a unit in `#[adhoc]`
+    Unit,
+    /// We were looking to go deeper, but found a `name = value` in `#[adhoc]`
+    Lit,
+    /// We were looking for a leaf, but we found nested list in `#[adhoc]`
+    List,
 }
 
 /// What would `${fname}` expand to?  As type from [`syn`].
@@ -38,6 +59,7 @@ pub enum Fname<'r> {
 }
 
 pub use FoundMetaNode as FMN;
+pub use FoundNearbyMetaNodeKind as FNMNK;
 
 impl Parse for DeriveAdhocExpandInput {
     fn parse(input: ParseStream) -> syn::Result<Self> {
@@ -755,6 +777,7 @@ where
         pmetas: &PreprocessedMetas,
     ) -> syn::Result<()> {
         let mut found = None::<FoundMetaNode>;
+        let mut hint = None::<FoundNearbyMetaNode>;
         let self_loc = || (self.span(), "expansion");
         let error_loc = || [ctx.error_loc(), self_loc()];
 
@@ -771,12 +794,32 @@ where
                 found = Some(av);
                 Ok(())
             },
+            &mut |nearby| {
+                hint.get_or_insert(nearby);
+                Ok(())
+            },
         )?;
 
         let found = found.ok_or_else(|| {
-            error_loc().error(
+            if let Some(hint) = hint {
+                let hint_msg = match hint.kind {
+                    FNMNK::Unit =>
+ "expected a list with sub-attributes, found a unit",
+                    FNMNK::Lit =>
+ "expected a list with sub-attributes, found a simple value",
+                    FNMNK::List =>
+ "expected a leaf node, found a list with sub-attributes",
+                };
+                let mut err = hint.path_span.error(hint_msg);
+                err.combine(error_loc().error(
+ "attribute value expanded, but no suitable value in data structure definition"
+                ));
+                err
+            } else {
+                error_loc().error(
  "attribute value expanded, but no value in data structure definition"
-            )
+                )
+            }
         })?;
 
         found.expand(self.span(), &self.as_, out)?;
@@ -851,28 +894,32 @@ where
 }
 
 impl SubstMetaPath {
-    pub fn search<'a, A, F, E>(
+    pub fn search<'a, A, F, G, E>(
         &self,
         pmetas: A,
         f: &mut F,
+        g: &mut G,
     ) -> Result<(), E>
     where
         F: FnMut(FoundMetaNode<'a>) -> Result<(), E>,
+        G: FnMut(FoundNearbyMetaNode) -> Result<(), E>,
         A: IntoIterator<Item = &'a PreprocessedMeta>,
     {
         for pmeta in pmetas {
-            self.search_1(pmeta, &mut *f)?;
+            self.search_1(pmeta, &mut *f, &mut *g)?;
         }
         Ok(())
     }
 
-    fn search_1<'a, E, F>(
+    fn search_1<'a, E, F, G>(
         &self,
         pmeta: &'a PreprocessedMeta,
         f: &mut F,
+        g: &mut G,
     ) -> Result<(), E>
     where
         F: FnMut(FoundMetaNode<'a>) -> Result<(), E>,
+        G: FnMut(FoundNearbyMetaNode) -> Result<(), E>,
     {
         #![allow(non_camel_case_types)]
         use syn::Meta as sM;
@@ -882,25 +929,30 @@ impl SubstMetaPath {
         }
 
         let vspan = pmeta.span();
+        let path_span = pmeta.path().span();
+
+        let mut nearby = |kind| g(FoundNearbyMetaNode { kind, path_span });
+
         match (&self.deeper, pmeta) {
             (None, sM::Path(_)) => f(FMN::Unit(vspan))?,
-            (None, sM::List(_)) => f(FMN::Deeper(vspan))?,
+            (None, sM::List(_)) => nearby(FNMNK::List)?,
             (None, sM::NameValue(nv)) => f(FMN::Lit {
-                path_span: nv.path.span(),
+                path_span,
                 lit: &nv.lit,
             })?,
-            (Some(_), sM::NameValue(_)) => {}
-            (Some(_), sM::Path(_)) => {} // self is deeper than pmeta
+            (Some(_), sM::NameValue(_)) => nearby(FNMNK::Lit)?,
+            (Some(_), sM::Path(_)) => nearby(FNMNK::Unit)?,
             (Some(d), sM::List(l)) => {
                 for nm in &l.nested {
                     let m = match nm {
                         syn::NestedMeta::Meta(m) => m,
                         syn::NestedMeta::Lit(_) => continue,
                     };
-                    d.search_1(m, &mut *f)?;
+                    d.search_1(m, &mut *f, &mut *g)?;
                 }
             }
         }
+
         Ok(())
     }
 }
@@ -910,7 +962,6 @@ impl Spanned for FoundMetaNode<'_> {
     fn span(&self) -> Span {
         match self {
             FMN::Unit(span) => *span,
-            FMN::Deeper(span) => *span,
             FMN::Lit { path_span, .. } => *path_span,
         }
     }
@@ -931,9 +982,6 @@ impl<'l> FoundMetaNode<'l> {
         let lit = match self {
             FMN::Unit(vspan) => return Err(spans(*vspan).error(
  "tried to expand attribute which is just a unit, not a literal"
-            )),
-            FMN::Deeper(vspan) => return Err(spans(*vspan).error(
- "tried to expand attribute which is nested list, not a value",
             )),
             FMN::Lit { lit, .. } => lit,
         };

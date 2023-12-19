@@ -51,7 +51,24 @@ error: probably-invalid input to identifier pasting
    |
    = note: this error originates in the macro `derive_adhoc_driver_DataType` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error: attribute value expanded, but no value in data structure definition (in this data structure)
+error: expected a list with sub-attributes, found a simple value
+  --> ui/badmeta.rs:5:9
+   |
+5  |   #[adhoc(dot = ".")]
+   |           ^^^
+...
+24 | / derive_adhoc! {
+25 | |     DataType:
+26 | |
+27 | |     struct ${paste Bad ${tmeta(dot) as str}};
+...  |
+36 | |     struct ${paste Bad ${tmeta(several_inner(several)) as str}};
+37 | | }
+   | |_- in this macro invocation
+   |
+   = note: this error originates in the macro `derive_adhoc_driver_DataType` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: attribute value expanded, but no suitable value in data structure definition (in this data structure)
   --> ui/badmeta.rs:4:1
    |
 4  | / #[adhoc(wrong = "{")]
@@ -74,17 +91,17 @@ error: attribute value expanded, but no value in data structure definition (in t
    |
    = note: this error originates in the macro `derive_adhoc_driver_DataType` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error: attribute value expanded, but no value in data structure definition (expansion)
+error: attribute value expanded, but no suitable value in data structure definition (expansion)
   --> ui/badmeta.rs:29:32
    |
 29 |     struct ${paste Bad ${tmeta(dot(has_equals)) as str}};
    |                                ^^^
 
-error: tried to expand attribute which is nested list, not a value (attribute value)
+error: expected a leaf node, found a list with sub-attributes
   --> ui/badmeta.rs:6:9
    |
 6  |   #[adhoc(barelit("42"))]
-   |           ^^^^^^^^
+   |           ^^^^^^^
 ...
 24 | / derive_adhoc! {
 25 | |     DataType:
@@ -97,17 +114,17 @@ error: tried to expand attribute which is nested list, not a value (attribute va
    |
    = note: this error originates in the macro `derive_adhoc_driver_DataType` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error: tried to expand attribute which is nested list, not a value (template)
+error: attribute value expanded, but no suitable value in data structure definition (expansion)
   --> ui/badmeta.rs:31:32
    |
 31 |     struct ${paste Bad ${tmeta(barelit) as str}};
    |                                ^^^^^^^
 
-error: tried to expand attribute which is nested list, not a value (attribute value)
+error: expected a leaf node, found a list with sub-attributes
   --> ui/badmeta.rs:7:9
    |
 7  |   #[adhoc(multi("1", "2"))]
-   |           ^^^^^^
+   |           ^^^^^
 ...
 24 | / derive_adhoc! {
 25 | |     DataType:
@@ -120,7 +137,7 @@ error: tried to expand attribute which is nested list, not a value (attribute va
    |
    = note: this error originates in the macro `derive_adhoc_driver_DataType` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error: tried to expand attribute which is nested list, not a value (template)
+error: attribute value expanded, but no suitable value in data structure definition (expansion)
   --> ui/badmeta.rs:33:32
    |
 33 |     struct ${paste Bad ${tmeta(multi) as str}};
@@ -234,11 +251,11 @@ error: attribute value expanded, but no value in data structure definition (expa
 45 |     struct ${paste Bad ${tmeta(barelit(is_value)) as str}};
    |                                ^^^^^^^
 
-error: tried to expand attribute which is nested list, not a value (attribute value)
+error: expected a leaf node, found a list with sub-attributes
   --> ui/badmeta.rs:10:9
    |
 10 |   #[adhoc(several_inner(several = "first", several = "second"))]
-   |           ^^^^^^^^^^^^^^
+   |           ^^^^^^^^^^^^^
 ...
 48 | / derive_adhoc! {
 49 | |     DataType:
@@ -250,7 +267,29 @@ error: tried to expand attribute which is nested list, not a value (attribute va
    |
    = note: this error originates in the macro `derive_adhoc_driver_DataType` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error: tried to expand attribute which is nested list, not a value (template)
+error: attribute value expanded, but no suitable value in data structure definition (in this data structure)
+  --> ui/badmeta.rs:4:1
+   |
+4  | / #[adhoc(wrong = "{")]
+5  | | #[adhoc(dot = ".")]
+6  | | #[adhoc(barelit("42"))]
+7  | | #[adhoc(multi("1", "2"))]
+...  |
+10 | | #[adhoc(several_inner(several = "first", several = "second"))]
+11 | | struct DataType {}
+   | |_________________^
+...
+48 | / derive_adhoc! {
+49 | |     DataType:
+50 | |
+51 | |     // fails because `several_inner(...)` is not helpful
+52 | |     struct ${paste Bad ${tmeta(several_inner) as str}};
+53 | | }
+   | |_- in this macro invocation
+   |
+   = note: this error originates in the macro `derive_adhoc_driver_DataType` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: attribute value expanded, but no suitable value in data structure definition (expansion)
   --> ui/badmeta.rs:52:32
    |
 52 |     struct ${paste Bad ${tmeta(several_inner) as str}};
