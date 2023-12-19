@@ -754,12 +754,15 @@ where
         out: &mut O,
         pmetas: &PreprocessedMetas,
     ) -> syn::Result<()> {
-        let mut found = None;
-        let error_loc = || [ctx.error_loc(), (self.span(), "expansion")];
+        let mut found = None::<FoundMetaNode>;
+        let self_loc = || (self.span(), "expansion");
+        let error_loc = || [ctx.error_loc(), self_loc()];
 
         self.path.search(pmetas, &mut |av: FoundMetaNode| {
-            if found.is_some() {
-                return Err(error_loc().error(
+            if let Some(first) = &found {
+                return Err([(first.span(), "first occurrence"),
+                            (av.span(), "second occurrence"),
+                            self_loc()].error(
  "tried to expand just attribute value, but it was specified multiple times"
                 ));
             }

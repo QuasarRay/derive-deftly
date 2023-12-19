@@ -126,17 +126,28 @@ error: tried to expand attribute which is nested list, not a value (template)
 33 |     struct ${paste Bad ${tmeta(multi) as str}};
    |                                ^^^^^
 
-error: tried to expand just attribute value, but it was specified multiple times (in this data structure)
-  --> ui/badmeta.rs:4:1
+error: tried to expand just attribute value, but it was specified multiple times (first occurrence)
+  --> ui/badmeta.rs:8:19
    |
-4  | / #[adhoc(wrong = "{")]
-5  | | #[adhoc(dot = ".")]
-6  | | #[adhoc(barelit("42"))]
-7  | | #[adhoc(multi("1", "2"))]
+8  |   #[adhoc(several = "first")]
+   |                     ^^^^^^^
+...
+24 | / derive_adhoc! {
+25 | |     DataType:
+26 | |
+27 | |     struct ${paste Bad ${tmeta(dot) as str}};
 ...  |
-10 | | #[adhoc(several_inner(several = "first", several = "second"))]
-11 | | struct DataType {}
-   | |_________________^
+36 | |     struct ${paste Bad ${tmeta(several_inner(several)) as str}};
+37 | | }
+   | |_- in this macro invocation
+   |
+   = note: this error originates in the macro `derive_adhoc_driver_DataType` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: tried to expand just attribute value, but it was specified multiple times (second occurrence)
+  --> ui/badmeta.rs:9:19
+   |
+9  |   #[adhoc(several = "second")]
+   |                     ^^^^^^^^
 ...
 24 | / derive_adhoc! {
 25 | |     DataType:
@@ -154,6 +165,40 @@ error: tried to expand just attribute value, but it was specified multiple times
    |
 35 |     struct ${paste Bad ${tmeta(several) as str}};
    |                                ^^^^^^^
+
+error: tried to expand just attribute value, but it was specified multiple times (first occurrence)
+  --> ui/badmeta.rs:10:33
+   |
+10 |   #[adhoc(several_inner(several = "first", several = "second"))]
+   |                                   ^^^^^^^
+...
+24 | / derive_adhoc! {
+25 | |     DataType:
+26 | |
+27 | |     struct ${paste Bad ${tmeta(dot) as str}};
+...  |
+36 | |     struct ${paste Bad ${tmeta(several_inner(several)) as str}};
+37 | | }
+   | |_- in this macro invocation
+   |
+   = note: this error originates in the macro `derive_adhoc_driver_DataType` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: tried to expand just attribute value, but it was specified multiple times (second occurrence)
+  --> ui/badmeta.rs:10:52
+   |
+10 |   #[adhoc(several_inner(several = "first", several = "second"))]
+   |                                                      ^^^^^^^^
+...
+24 | / derive_adhoc! {
+25 | |     DataType:
+26 | |
+27 | |     struct ${paste Bad ${tmeta(dot) as str}};
+...  |
+36 | |     struct ${paste Bad ${tmeta(several_inner(several)) as str}};
+37 | | }
+   | |_- in this macro invocation
+   |
+   = note: this error originates in the macro `derive_adhoc_driver_DataType` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: tried to expand just attribute value, but it was specified multiple times (expansion)
   --> ui/badmeta.rs:36:32
