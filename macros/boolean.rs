@@ -169,7 +169,15 @@ impl SubstMetaPath {
         &self,
         pmetas: &PreprocessedMetas,
     ) -> Result<(), Found> {
-        self.search(pmetas, &mut |_av| /* got it! */ Err(Found))
+        self.search(
+            pmetas,
+            &mut |_av| /* got it! */ Err(Found),
+            &mut |nearby| match nearby.kind {
+                FNMNK::List => Err(Found), // there's more, that'll do
+                FNMNK::Unit => Ok(()),
+                FNMNK::Lit => Ok(()),
+            },
+        )
     }
 }
 
