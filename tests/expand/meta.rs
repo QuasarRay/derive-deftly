@@ -8,6 +8,7 @@ use derive_adhoc::{derive_adhoc, Adhoc};
 struct IgnoredThings {
     #[adhoc(prefix = "pfx")]
     #[adhoc(multi("42", hi, there(wombat), suffix = "sfx"))]
+    #[adhoc(mixed(inner = "yes"), mixed = "no")]
     f: String,
 }
 
@@ -28,6 +29,9 @@ derive_adhoc! {
 
     // TODO: there is no way to get access to the multi("42"),
     // it probably ought to be rejected.
+
+    // Ignores the mixed = "no" and finds the inner
+    fn $<mixed_ ${fmeta(mixed(inner))}>() {}
   )
 }
 
