@@ -4,14 +4,11 @@
 by Rust data structures, just like proc macro derive macros,
 but without having to wrestle with the proc macro system.
 
-**Stability and useability warning**
+**Stability warning**
 
-We do plan to make a `1.x` version of this library,
-but right now we are still gaining experience with the template syntax.
-So the template syntax is still subject to change.
-
-derive-adhoc has seen limited, if any, real-world use.
-So there may well be sharp edges.
+We plan to make a `1.x` version of this library fairly soon.
+However, right now the template syntax and other details
+are still subject to change.
 
 ## Overview
 
