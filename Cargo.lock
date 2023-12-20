@@ -46,7 +46,7 @@ dependencies = [
  "quote",
  "sha3",
  "strum 0.25.0",
- "syn 1.0.109",
+ "syn 2.0.38",
  "void",
 ]
 
@@ -123,7 +123,7 @@ dependencies = [
  "quote",
  "sha3",
  "strum 0.25.0",
- "syn 1.0.109",
+ "syn 2.0.38",
  "void",
 ]
 
@@ -151,7 +151,7 @@ dependencies = [
  "regex",
  "sha3",
  "strum 0.25.0",
- "syn 1.0.109",
+ "syn 2.0.38",
  "trybuild",
  "void",
 ]
