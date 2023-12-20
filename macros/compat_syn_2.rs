@@ -27,3 +27,19 @@ impl<T: syn::spanned::Spanned> Spanned for T {
         syn::spanned::Spanned::span(self)
     }
 }
+
+//---------- Attribute methods ----------
+
+impl AttributeExt12 for syn::Attribute {
+    fn call_in_parens<T, F>(&self, f: F) -> syn::Result<T>
+    where
+        F: FnOnce(ParseStream<'_>) -> syn::Result<T>,
+    {
+        let list = self.meta.require_list()?;
+        let _paren: syn::token::Paren = match list.delimiter {
+            syn::MacroDelimiter::Paren(p) => p,
+            _ => return Err(list.error("expected parenthesised attributes")),
+        };
+        f.parse2(list.tokens.clone())
+    }
+}

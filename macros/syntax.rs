@@ -1187,8 +1187,8 @@ pub fn preprocess_attrs(
             Some(attr)
         })
         .map(|attr| {
-            let attr = PreprocessedMetaList::parse_outer
-                .parse2(attr.tokens.clone())?;
+            let attr =
+                attr.call_in_parens(PreprocessedMetaList::parse_inner)?;
             Ok(attr.content)
         })
         .flatten_ok()
