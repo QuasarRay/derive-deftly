@@ -43,10 +43,8 @@ impl Parse for InvocationEntry {
 }
 
 impl Parse for InvocationAttr {
-    fn parse(outer: ParseStream) -> syn::Result<Self> {
-        let input;
-        let _paren = parenthesized!(input in outer);
-        let entries = Punctuated::parse_terminated(&input)?;
+    fn parse(input: ParseStream) -> syn::Result<Self> {
+        let entries = Punctuated::parse_terminated(input)?;
         Ok(InvocationAttr { entries })
     }
 }
@@ -116,8 +114,7 @@ pub fn derive_adhoc_derive_macro(
             if !attr.path().is_ident("derive_adhoc") {
                 return Ok(None);
             }
-            let tokens = attr.tokens.clone();
-            let InvocationAttr { entries } = syn::parse2(tokens)?;
+            let InvocationAttr { entries } = attr.parse_in_parens()?;
             Ok(Some(entries))
         })
         .flatten_ok()
