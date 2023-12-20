@@ -43,3 +43,15 @@ impl AttributeExt12 for syn::Attribute {
         f.parse2(list.tokens.clone())
     }
 }
+
+//---------- VisPublic ----------
+
+pub trait VisPublicExt {
+    /// syn 1 has a separate `VisPublic` type with a `pub_token` field
+    fn pub_token(self) -> syn::token::Pub;
+}
+impl VisPublicExt for syn::token::Pub {
+    fn pub_token(self) -> syn::token::Pub {
+        self
+    }
+}

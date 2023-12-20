@@ -31,3 +31,14 @@ impl AttributeExt12 for syn::Attribute {
         .parse2(self.tokens.clone())
     }
 }
+
+//---------- VisPublic ----------
+
+pub trait VisPublicExt {
+    fn pub_token(self) -> syn::token::Pub;
+}
+impl VisPublicExt for syn::VisPublic {
+    fn pub_token(self) -> syn::token::Pub {
+        self.pub_token
+    }
+}
