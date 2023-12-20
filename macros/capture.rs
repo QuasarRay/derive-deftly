@@ -5,7 +5,7 @@ use super::prelude::*;
 /// Contents of an entry in a `#[derive_adhoc(..)]` attribute
 enum InvocationEntry {
     Precanned(syn::Path, UnprocessedOptions),
-    Pub(syn::VisPublic),
+    Pub(syn::token::Pub),
 }
 
 // (CannedName, CannedName, ...)
@@ -17,7 +17,7 @@ impl Parse for InvocationEntry {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let entry = if input.lookahead1().peek(Token![pub]) {
             let vis = match input.parse()? {
-                syn::Visibility::Public(vis) => vis,
+                syn::Visibility::Public(vis) => vis.pub_token,
                 other => {
                     return Err(other
                         .error("only `pub`, nor no visibility, is allowed"))
