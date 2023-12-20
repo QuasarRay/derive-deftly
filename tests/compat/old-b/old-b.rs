@@ -14,6 +14,7 @@ pub mod adhoc_template {
         pub_a::ADriver:
 
         impl<$tgens> NumFields for $ttype {
+            #[allow(clippy::identity_op)]
             fn num_fields() -> usize {
                 $( let _: $ftype; )
 
