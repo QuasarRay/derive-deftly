@@ -488,11 +488,17 @@ impl<O: SubstParseContext> Parse for TemplateElement<O> {
     }
 }
 
-impl Parse for PreprocessedMetaList {
-    fn parse(input: ParseStream) -> syn::Result<Self> {
+impl PreprocessedMetaList {
+    fn parse_outer(input: ParseStream) -> syn::Result<Self> {
         let meta;
         let _paren = parenthesized!(meta in input);
-        let content = Punctuated::parse_terminated(&meta)?;
+        Self::parse_inner(&meta)
+    }
+}
+
+impl PreprocessedMetaList {
+    pub fn parse_inner(input: ParseStream) -> syn::Result<Self> {
+        let content = Punctuated::parse_terminated(input)?;
         Ok(PreprocessedMetaList { content })
     }
 }
@@ -508,7 +514,7 @@ impl Parse for PreprocessedMeta {
             let value = input.parse()?;
             PMV::Value { equals, value }
         } else if la.peek(token::Paren) {
-            let list = input.parse()?;
+            let list = input.call(PreprocessedMetaList::parse_outer)?;
             PMV::List(list)
         } else if la.peek(Token![,]) || input.is_empty() {
             PMV::Unit
@@ -1181,7 +1187,8 @@ pub fn preprocess_attrs(
             Some(attr)
         })
         .map(|attr| {
-            let attr: PreprocessedMetaList = syn::parse2(attr.tokens.clone())?;
+            let attr = PreprocessedMetaList::parse_outer
+                .parse2(attr.tokens.clone())?;
             Ok(attr.content)
         })
         .flatten_ok()
