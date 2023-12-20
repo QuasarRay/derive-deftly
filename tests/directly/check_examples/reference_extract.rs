@@ -238,18 +238,12 @@ fn extract_structs(input: &Preprocessed) -> Vec<syn::DeriveInput> {
                     // IEFI simulates a long if let && chain
                     matches!(attr.style, syn::AttrStyle::Outer)
                         .then_some(())?;
-                    attr.path.is_ident("derive").then_some(())?;
-                    let ml = match attr.parse_meta().ok()? {
-                        syn::Meta::List(ml) => ml,
-                        _ => None?,
-                    };
-                    ml.nested.iter().find_map(|nm| match nm {
-                        syn::NestedMeta::Meta(syn::Meta::Path(p))
-                            if p.is_ident("Adhoc") =>
-                        {
-                            Some(())
-                        }
-                        _ => None,
+                    attr.path().is_ident("derive").then_some(())?;
+                    let derives = attr
+                        .call_in_parens(PreprocessedMetaList::parse_inner)
+                        .ok()?;
+                    derives.content.iter().find_map(|pm| {
+                        pm.path.is_ident("Adhoc").then_some(())
                     })?;
 
                     seen_d_a = true;

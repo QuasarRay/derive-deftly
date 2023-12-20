@@ -27,7 +27,6 @@ pub use strum::{EnumIter, EnumString};
 pub use syn::ext::IdentExt;
 pub use syn::parse::{Lookahead1, Parse, ParseBuffer, ParseStream, Parser};
 pub use syn::punctuated::Punctuated;
-pub use syn::spanned::Spanned;
 pub use syn::Token;
 pub use syn::{braced, bracketed, parenthesized};
 pub use syn::{parse_macro_input, token};
@@ -46,6 +45,9 @@ pub use super::utils::{braced_group, delimit_token_group};
 pub use super::utils::{Concatenated, Discard};
 pub use super::utils::{ErrorLoc, IdentAny, MakeError};
 pub(super) use super::{check, dbg_allkw, framework};
+
+pub use super::compat_syn_1::*;
+pub use super::compat_syn_common::*;
 
 pub use super::expand::*;
 pub use super::options::*;

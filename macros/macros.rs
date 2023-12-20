@@ -30,6 +30,9 @@ pub(crate) mod paste;
 pub(crate) mod repeat;
 pub(crate) mod syntax;
 
+pub(crate) mod compat_syn_1;
+pub(crate) mod compat_syn_common;
+
 #[doc=include_str!("HACKING.md")]
 mod _doc_hacking {}
 

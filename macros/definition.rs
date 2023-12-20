@@ -5,7 +5,7 @@ use super::prelude::*;
 #[derive(Debug, Clone)]
 struct TemplateDefinition {
     doc_attrs: Vec<syn::Attribute>,
-    vis: Option<syn::VisPublic>,
+    vis: Option<syn::token::Pub>,
     templ_name: syn::Ident,
     options: UnprocessedOptions,
     template: TokenStream,
@@ -18,9 +18,9 @@ impl Parse for TemplateDefinition {
         // a template called `pub`.  See ticket #1.
         let doc_attrs = input.call(syn::Attribute::parse_outer)?;
         for attr in &doc_attrs {
-            if !attr.path.is_ident("doc") {
+            if !attr.path().is_ident("doc") {
                 return Err(attr
-                    .path
+                    .path()
                     .error("only doc attributes are supported"));
             }
         }
@@ -31,7 +31,7 @@ impl Parse for TemplateDefinition {
         let template = input.parse()?;
         Ok(TemplateDefinition {
             doc_attrs,
-            vis: vis.map(|pub_token| syn::VisPublic { pub_token }),
+            vis,
             templ_name,
             options,
             template,
@@ -147,7 +147,7 @@ To use it, write: `#[derive(Adhoc)] #[derive_adhoc({})]`."#,
             vis_export = quote! {};
             expand_macro = expand_macro_name()?;
         }
-        Some(syn::VisPublic { pub_token }) => {
+        Some(pub_token) => {
             let span = pub_token.span();
             vis_export = quote_spanned!(span=> #[macro_export]);
             expand_macro = quote_spanned!(span=> $crate::derive_adhoc::derive_adhoc_expand);

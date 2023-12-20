@@ -1024,7 +1024,7 @@ impl RawAttr {
                 RawAttr::Default => {
                     if ["adhoc", "derive_adhoc"]
                         .iter()
-                        .all(|exclude| !attr.path.is_ident(exclude))
+                        .all(|exclude| !attr.path().is_ident(exclude))
                     {
                         out.append(attr);
                     }
@@ -1036,7 +1036,7 @@ impl RawAttr {
                     }
                 }
                 RawAttr::Exclude { exclusions } => {
-                    if !exclusions.iter().any(|excl| excl == &attr.path) {
+                    if !exclusions.iter().any(|excl| excl == attr.path()) {
                         out.append(attr);
                     }
                 }
@@ -1048,7 +1048,7 @@ impl RawAttr {
 
 impl RawAttrEntry {
     fn matches(&self, attr: &syn::Attribute) -> bool {
-        &self.path == &attr.path
+        &self.path == attr.path()
     }
 
     fn expand(
