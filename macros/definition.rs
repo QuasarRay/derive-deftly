@@ -59,6 +59,15 @@ impl Parse for TemplateDefinition {
 /// with strange behaviour.
 /// No-one is likely to notice this.
 ///
+/// Additionally, if we're turning `$crate` into `$orig_dollar crate`,
+/// we change the keyword `crate` to `_da_intern_crate`
+/// (and `${crate}` likewise), with the span of the original.
+/// This is necessary to avoid clippy seeing the bare `crate`
+/// and thinking the user should have written `$crate`
+/// (whereas, in fact, they did),
+/// and emitting a spurious lint `crate_in_macro_def`.
+/// `$_da_intern_crate` is an internal alias for d-a's `$crate`.
+///
 /// ### Alternative tactics we rejected:
 ///
 ///  * Pass a literal dollar sign `$` into the template pattern macro,
@@ -82,26 +91,59 @@ impl Parse for TemplateDefinition {
 ///   or as an extra generic on `SubstContext`
 ///   (producing two monomorphised copies of the whole template engine).
 pub fn escape_dollars(input: TokenStream) -> TokenStream {
-    let mut out = TokenStream::new();
-    for tt in input {
-        out.extend([match tt {
+    enum St {
+        Dollar,
+        DollarBrace,
+        Other,
+    }
+
+    impl St {
+        fn exp_kw(&self) -> bool {
+            match self {
+                St::Dollar | St::DollarBrace => true,
+                St::Other => false,
+            }
+        }
+    }
+
+    fn handle_tt(itt: TokenTree, st: St, out: &mut TokenStream) -> St {
+        let ott = match itt {
             TT::Group(g) => {
                 let delim = g.delimiter();
                 let span = g.span_open();
                 let stream = g.stream();
-                let stream = escape_dollars(stream);
+                let st = match (st, delim) {
+                    (St::Dollar, Delimiter::Brace) => St::DollarBrace,
+                    _ => St::Other,
+                };
+                let stream = handle_ts(stream, st);
                 let mut g = proc_macro2::Group::new(delim, stream);
                 g.set_span(span);
                 TT::Group(g)
             }
             TT::Punct(p) if p.as_char() == '$' => {
                 out.extend(quote_spanned! {p.span()=> #p orig_dollar });
-                continue;
+                return St::Dollar;
+            }
+            TT::Ident(i) if st.exp_kw() && i == "crate" => {
+                out.extend(quote_spanned! {i.span()=> _da_intern_crate });
+                return St::Other;
             }
             other => other,
-        }])
+        };
+        out.extend([ott]);
+        St::Other
     }
-    out
+
+    fn handle_ts(input: TokenStream, mut st: St) -> TokenStream {
+        let mut out = TokenStream::new();
+        for itt in input {
+            st = handle_tt(itt, st, &mut out);
+        }
+        out
+    }
+
+    handle_ts(input, St::Other)
 }
 
 /// This is `define_derive_adhoc!`
