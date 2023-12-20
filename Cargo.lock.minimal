@@ -31,7 +31,7 @@ dependencies = [
  "quote",
  "sha3",
  "strum",
- "syn",
+ "syn 2.0.1",
  "void",
 ]
 
@@ -83,7 +83,7 @@ dependencies = [
  "proc-macro2",
  "quote",
  "strum",
- "syn",
+ "syn 1.0.61",
  "void",
 ]
 
@@ -98,7 +98,7 @@ dependencies = [
  "quote",
  "sha3",
  "strum",
- "syn",
+ "syn 2.0.1",
  "void",
 ]
 
@@ -126,7 +126,7 @@ dependencies = [
  "regex",
  "sha3",
  "strum",
- "syn",
+ "syn 2.0.1",
  "trybuild",
  "void",
 ]
@@ -167,7 +167,7 @@ checksum = "244bedfdc8964d3352120556537296ac40291ca4dc959b161b6d2c94191411d9"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn",
+ "syn 1.0.61",
 ]
 
 [[package]]
@@ -337,9 +337,9 @@ dependencies = [
 
 [[package]]
 name = "quote"
-version = "1.0.0"
+version = "1.0.26"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7ab938ebe6f1c82426b5fb82eaf10c3e3028c53deaa3fbe38f5904b37cf4d767"
+checksum = "4424af4bf778aae2051a77b60283332f386554255d722233d09fbfc7e30da2fc"
 dependencies = [
  "proc-macro2",
 ]
@@ -374,7 +374,7 @@ checksum = "c48f91977f4ef3be5358c15d131d3f663f6b4d7a112555bf3bf52ad23b6659e5"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn",
+ "syn 1.0.61",
 ]
 
 [[package]]
@@ -394,7 +394,7 @@ checksum = "a8c6faef9a2e64b0064f48570289b4bf8823b7581f1d6157c1b52152306651d0"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn",
+ "syn 1.0.61",
 ]
 
 [[package]]
@@ -438,7 +438,7 @@ dependencies = [
  "proc-macro2",
  "quote",
  "rustversion",
- "syn",
+ "syn 1.0.61",
 ]
 
 [[package]]
@@ -450,6 +450,17 @@ dependencies = [
  "proc-macro2",
  "quote",
  "unicode-xid",
+]
+
+[[package]]
+name = "syn"
+version = "2.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "55ee2415bee46ba26eac9cd8e52966995c46bf0e842b6304eb8fcf99826548ed"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "unicode-ident",
 ]
 
 [[package]]
@@ -478,7 +489,7 @@ checksum = "7765189610d8241a44529806d6fd1f2e0a08734313a35d5b3a556f92b381f3c0"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn",
+ "syn 1.0.61",
 ]
 
 [[package]]

@@ -59,7 +59,7 @@ error[E0433]: failed to resolve: use of undeclared type `Left`
 47 |     assert_eq!(format!("{:?}", &Left::default()), "Left { a: 0 }",)
    |                                 ^^^^ use of undeclared type `Left`
    |
-help: there is an enum variant `core::fmt::Alignment::Left` and 5 others; try using the variant's enum
+help: there is an enum variant `core::fmt::Alignment::Left` and 4 others; try using the variant's enum
    |
 47 |     assert_eq!(format!("{:?}", &core::fmt::Alignment()), "Left { a: 0 }",)
    |                                 ~~~~~~~~~~~~~~~~~~~~
@@ -69,4 +69,3 @@ help: there is an enum variant `core::fmt::Alignment::Left` and 5 others; try us
    |                                 ~~~~~~~~~~~~~~~~~~~~~~~
 47 |     assert_eq!(format!("{:?}", &std::fmt::Alignment()), "Left { a: 0 }",)
    |                                 ~~~~~~~~~~~~~~~~~~~
-     and 1 other candidate

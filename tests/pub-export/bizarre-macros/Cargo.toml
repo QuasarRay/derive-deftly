@@ -28,7 +28,7 @@ proc-macro2 = "1.0.53"
 quote = "1"
 sha3 = { version = "0.10", optional = true }
 strum = { version = ">=0.24, <0.26", features = ["derive"] }
-syn = { version = "1.0.61", features = ["extra-traits"] }
+syn = { version = "2.0.1", features = ["extra-traits"] }
 void = "1"
 
 heck = { version = "0.4", optional = true }

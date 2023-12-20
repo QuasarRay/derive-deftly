@@ -246,7 +246,7 @@ error: attribute value expanded, but no suitable value in data structure definit
 46 |     struct ${paste Bad ${tmeta(several_inner) as str}};
    |                                ^^^^^^^^^^^^^
 
-error: expected path
+error: expected identifier
   --> ui/badmeta.rs:50:9
    |
 50 | #[adhoc("forbidden")]
@@ -268,7 +268,7 @@ error: expected literal
    |
    = note: this error originates in the macro `derive_adhoc_driver_MetaValueMustBeLit` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error: expected path
+error: expected identifier
   --> ui/badmeta.rs:60:17
    |
 60 |   #[adhoc(barelit("42"))]
@@ -282,7 +282,7 @@ error: expected path
    |
    = note: this error originates in the macro `derive_adhoc_driver_WithBareLit` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error: expected path
+error: expected identifier
   --> ui/badmeta.rs:64:15
    |
 64 |   #[adhoc(multi("1", "2"))]
@@ -296,7 +296,7 @@ error: expected path
    |
    = note: this error originates in the macro `derive_adhoc_driver_WithBareLitMulti` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error: expected path segment
+error: expected path segment after `::`
   --> ui/badmeta.rs:79:49
    |
 79 |     struct ${paste Bad ${tmeta(std::cell::Cell::<String>::ne)w as str}};
@@ -307,7 +307,7 @@ error: expected path segment
    |
    = note: this error originates in the macro `derive_adhoc_template_TestFunkyPath` which comes from the expansion of the derive macro `Adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error: expected path segment
+error: expected path segment after `::`
   --> ui/badmeta.rs:84:26
    |
 84 |   #[adhoc(std::cell::Cell::<String>::new)]
@@ -320,7 +320,7 @@ error: expected path segment
    |
    = note: this error originates in the macro `derive_adhoc_driver_WithFunkyPath` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error: expected path segment
+error: expected path segment after `::`
   --> ui/badmeta.rs:79:49
    |
 79 |     struct ${paste Bad ${tmeta(std::cell::Cell::<String>::ne)w as str}};
