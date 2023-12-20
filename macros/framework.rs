@@ -74,7 +74,6 @@ pub enum PreprocessedMetaValue {
 /// Represents a part like `(foo,bar(baz),zonk="value")`
 #[derive(Debug, Clone)]
 pub struct PreprocessedMetaList {
-    pub paren: token::Paren,
     pub content: Punctuated<PreprocessedMeta, token::Comma>,
 }
 
