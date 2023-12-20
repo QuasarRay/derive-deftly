@@ -491,9 +491,9 @@ impl<O: SubstParseContext> Parse for TemplateElement<O> {
 impl Parse for PreprocessedMetaList {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let meta;
-        let paren = parenthesized!(meta in input);
+        let _paren = parenthesized!(meta in input);
         let content = Punctuated::parse_terminated(&meta)?;
-        Ok(PreprocessedMetaList { paren, content })
+        Ok(PreprocessedMetaList { content })
     }
 }
 
