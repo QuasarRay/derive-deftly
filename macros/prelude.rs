@@ -47,5 +47,8 @@ pub use super::utils::{Concatenated, Discard};
 pub use super::utils::{ErrorLoc, IdentAny, MakeError};
 pub(super) use super::{check, dbg_allkw, framework};
 
+pub use super::compat_syn_1::*;
+pub use super::compat_syn_common::*;
+
 pub use super::expand::*;
 pub use super::options::*;
