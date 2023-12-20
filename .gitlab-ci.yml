@@ -165,14 +165,14 @@ check-doc-links:
 # We don't enable any of the optional fatures in derive-adhoc-tests.
 minimal-versions:
   stage: comprehensive
-  image: "rust:1.54.0"
+  image: "rust:1.56.0"
   script:
     - mv Cargo.lock.minimal Cargo.lock
-    - cargo +1.54.0 test --locked --workspace --no-default-features --features=derive-adhoc-tests/full
+    - cargo +1.56.0 test --locked --workspace --no-default-features --features=derive-adhoc-tests/full
 
 minimal-versions-minfeatures:
   stage: comprehensive
-  image: "rust:1.54.0"
+  image: "rust:1.56.0"
   script:
     - mv Cargo.lock.minimal Cargo.lock
-    - cargo +1.54.0 test --locked  -p derive-adhoc-tests --no-default-features
+    - cargo +1.56.0 test --locked  -p derive-adhoc-tests --no-default-features
