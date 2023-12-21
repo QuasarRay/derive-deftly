@@ -59,7 +59,7 @@ impl Parse for TemplateDefinition {
 /// with strange behaviour.
 /// No-one is likely to notice this.
 ///
-/// Other tactics:
+/// ### Alternative tactics we rejected:
 ///
 ///  * Pass a literal dollar sign `$` into the template pattern macro,
 ///    capture it with a macro rules parameter `$dollar:tt`,
