@@ -356,6 +356,10 @@ pub fn define_derive_adhoc(
 /// in the source tree,
 /// for a fuller discussion of the implications,
 /// and some advice.
+///
+/// If you do this, you must **pin your derive-adhoc** to a minor version,
+/// as you may need to treat *minor* version updates in derive-adhoc
+/// as semver breaks for your crate.
 //
 // This is the implementation of #[derive(Adhoc)]
 //
