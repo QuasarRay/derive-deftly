@@ -217,16 +217,16 @@ pub fn derive_adhoc(
 /// will be rare, and specially marked in the derive-adhoc
 /// changelog.
 ///
-/// ### Namespacing within an exported template
+/// ## Namespacing within a template
 ///
 /// Within the template,
 /// items within your crate can be referred to with `$crate`.
 ///
 /// For other items,
 /// including from the standard library e.g., `std::option::Option`,
-/// you may rely on the crate which uses the template
+/// you may rely on the context which uses the template
 /// to have a reasonable namespace,
-/// or use an explicit path starting with `std`
+/// or use a explicit paths starting with `std` or `core`
 /// or `$crate` (perhaps naming a re-export).
 ///
 /// Overall, the situation is similar to defining
