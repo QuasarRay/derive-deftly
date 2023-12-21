@@ -262,7 +262,6 @@ pub fn define_derive_adhoc(
 ///     `[OPTIONS,..]` is a comma-separated list of expansion options
 ///     contained within `[ ]`.</span>
 ///
-///
 /// ## Applying a template (derive-adhoc macro) from another crate
 ///
 /// `#[derive_adhoc(some_crate::MyMacro)]`
