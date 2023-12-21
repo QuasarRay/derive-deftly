@@ -262,24 +262,16 @@ pub fn define_derive_adhoc(
 ///     `[OPTIONS,..]` is a comma-separated list of expansion options
 ///     contained within `[ ]`.</span>
 ///
-/// ## Applying a template (derive-adhoc macro) from another crate
+/// ## `#[adhoc]` attribute
 ///
-/// `#[derive_adhoc(some_crate::MyMacro)]`
-/// applies an exported (`pub`) template
-/// defined and exported by `some_crate`.
+/// The contents of `#[adhoc]` attributes are made available
+/// to templates via the
+/// [`${Xmeta}`](doc_reference/index.html#tmeta-vmeta-fmeta--adhoc-attributes)
+/// expansions.
 ///
-/// You can import a template from another crate,
-/// so you can apply it with an unqualified name,
-/// with `use`,
-/// but you have to refer to
-/// the actual pattern macro name `derive_adhoc_template_MyMacro`:
-/// ```ignore
-/// use other_crate::derive_adhoc_template_TheirMacro;
-/// #[derive(Adhoc)]
-/// #[derive_Adhoc(TheirMacro)]
-/// struct MyStruct { // ...
-/// # }
-/// ```
+/// If the template(s) don't use them, they are ignored.
+/// `derive-adhoc` does not impose any namespacing within `#[adhoc]`:
+/// all templates see the same adhoc meta attributes.
 ///
 /// ## Captured data structure definition `derive_adhoc_driver_TYPE`
 ///
@@ -303,16 +295,24 @@ pub fn define_derive_adhoc(
 /// may need to precede its uses, in crate and module lexical order.
 /// (This can even be affected by the order of *modules* within a crate.)
 ///
-/// ## `#[adhoc]` attribute
+/// ## Applying a template (derive-adhoc macro) from another crate
 ///
-/// The contents of `#[adhoc]` attributes are made available
-/// to templates via the
-/// [`${Xmeta}`](doc_reference/index.html#tmeta-vmeta-fmeta--adhoc-attributes)
-/// expansions.
+/// `#[derive_adhoc(some_crate::MyMacro)]`
+/// applies an exported (`pub`) template
+/// defined and exported by `some_crate`.
 ///
-/// If the template(s) don't use them, they are ignored.
-/// `derive-adhoc` does not impose any namespacing within `#[adhoc]`:
-/// all templates see the same adhoc meta attributes.
+/// You can import a template from another crate,
+/// so you can apply it with an unqualified name,
+/// with `use`,
+/// but you have to refer to
+/// the actual pattern macro name `derive_adhoc_template_MyMacro`:
+/// ```ignore
+/// use other_crate::derive_adhoc_template_TheirMacro;
+/// #[derive(Adhoc)]
+/// #[derive_Adhoc(TheirMacro)]
+/// struct MyStruct { // ...
+/// # }
+/// ```
 ///
 /// ## Exporting the driver for downstream crates' templates
 ///
