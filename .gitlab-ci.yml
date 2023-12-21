@@ -134,6 +134,14 @@ stable-minfeatures:
   script:
     - cargo test --locked  -p derive-adhoc-tests --no-default-features --features=derive-adhoc-tests/recent
 
+# Test that users who like clippy don't get spurious warnings.
+# (eg, that the #27 lint avoidance technique hasn't regressed).
+stable-user-clippy:
+  stage: comprehensive
+  script:
+    - rustup component add clippy
+    - cargo clippy --locked -p pub-a -p pub-b --no-deps --all-features -- -Dwarnings
+
 # Check that the docs build
 cargo-doc:
   stage: comprehensive
