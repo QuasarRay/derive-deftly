@@ -81,6 +81,12 @@ pub mod b_driver {
     pub enum BDriver<T: Default> {
         Variant(BField<T>),
     }
+
+    use pub_a::derive_adhoc_template_IsEnum as derive_adhoc_template_ImportedIsEnum;
+
+    #[derive(Adhoc)]
+    #[derive_adhoc(ImportedIsEnum)]
+    pub struct BDriver2;
 }
 
 #[test]
