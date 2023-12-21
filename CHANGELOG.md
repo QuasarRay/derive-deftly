@@ -23,6 +23,47 @@ We expect to increase it cautiously and only with good reason.
 
 ## Changelog
 
+### 0.8.0
+
+#### Nominally breaking -- transitive for exported templates; minor
+
+**We recommend you do *not* treat these changes as semver-breaking
+for template-defining crates.**
+
+ * Reject misplaced `#[derive_adhoc]` attributes.
+ * Reject malformed attributes like `#[adhoc("42")]`
+   and `#[adhoc(std::cell::<String>)]`.
+
+Technically these are breaking changes, since users of exported
+templates might have provided these wrong attributes, which were
+previously ignored and are now properly rejected.  The attributes are
+interpreted by the version of derive-adhoc which defines the template.
+However, the likelihood of this breaking a working build seems low.
+
+#### MSRV
+
+ * MSRV increased from 1.54 to 1.56.
+   Principally because we need this to update to syn 2.
+   1.56 is the first release with Rust 2021, but
+   we're not updating to the 2021 edition yet.
+
+#### Fixed
+
+ * Fixed a spurious clippy lint `crate_in_macro_def` (#27).
+ * More reasonable handling of `#[adhoc(..)]` attributes whose meta
+   information has paths some of which are nested sub-paths of others.
+ * Work around a strange bug with literals and spans which can cause
+   a `compiler/fallback mismatch` panic during error reporting
+   with some compiler versions. (!182)
+
+#### Improved
+
+ * Docuemntation improvements (notably, many cross-references added
+   from the tutorial to the reference).
+ * Dependency updates (notably, we're now using syn 2).
+ * Improvements to tests, CI, `HACKING.md`, Cargo lockfile handling.
+ * Lockfile (`Cargo.lock`) is now committed to git under that name.
+
 ### 0.7.3
 
 #### Added
