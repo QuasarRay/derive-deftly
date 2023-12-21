@@ -1,6 +1,4 @@
-//! Macros for `derive_adhoc`
-//!
-//! **Import `derive_adhoc` instead.**
+#![doc=include_str!("README.md")]
 //
 // This is the actual proc-macro crate.
 //
