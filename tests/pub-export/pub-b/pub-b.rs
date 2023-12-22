@@ -44,7 +44,7 @@ pub mod adhoc_template {
     use pub_a::a_driver::*;
 
     derive_adhoc! {
-        // When expanding a template for a remote struct, pass
+        // When expanding a template for a foreign struct, pass
         // the crate name and struct name to `derive_adhoc!`.
         //
         // (Macro scoping rules mean that the driver is visible
