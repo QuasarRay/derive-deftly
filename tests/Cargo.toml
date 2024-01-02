@@ -23,7 +23,10 @@ case = []
 [dependencies]
 derive-adhoc = { path = "..", version = "0.8.1", default_features = false, features = ["minimal-1"] }
 easy-ext = "1"
-educe = "0.4.6"
+# educe 0.5.0 to 0.5.10 inclusive are broken but cargo cannot express this
+#  https://github.com/magiclen/educe/issues/14
+#  https://github.com/magiclen/educe/pull/15
+educe = ">=0.4.6, <0.6"
 glob = "0.3"
 regex = "1"
 
