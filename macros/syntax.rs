@@ -412,7 +412,13 @@ impl<O: SubstParseContext> Template<O> {
 ///
 /// Do not construct this yourself.
 /// Only `deescape_orig_dollar` is allowed to do that.
-pub struct OrigDollarDeescapedProofToken {}
+pub enum OrigDollarDeescaped {
+    /// We didn't find any `orig_dollar`
+    NotFound,
+    /// We *did* find `orig_dollar`; if we now see *another* `$`
+    /// things get even stranger.
+    Found,
+}
 
 /// Skip over any `orig_dollar`
 ///
@@ -421,15 +427,15 @@ pub struct OrigDollarDeescapedProofToken {}
 /// [`definition::escape_dollars`](escape_dollars).
 pub fn deescape_orig_dollar(
     input: ParseStream,
-) -> syn::Result<OrigDollarDeescapedProofToken> {
+) -> syn::Result<OrigDollarDeescaped> {
     input.step(|cursor| {
-        let rest = (|| {
+        let (found, rest) = (|| {
             let (ident, rest) = cursor.ident()?;
             (ident == "orig_dollar").then(|| ())?;
-            Some(rest)
+            Some((OrigDollarDeescaped::Found, rest))
         })()
-        .unwrap_or(*cursor);
-        Ok((OrigDollarDeescapedProofToken {}, rest))
+        .unwrap_or((OrigDollarDeescaped::NotFound, *cursor));
+        Ok((found, rest))
     })
 }
 
@@ -477,6 +483,19 @@ impl<O: SubstParseContext> Parse for TemplateElement<O> {
                 if la.peek(Token![$]) {
                     // $$
                     let dollar: Punct = input.parse()?;
+                    match deescaped {
+                        OrigDollarDeescaped::NotFound => {},
+                        OrigDollarDeescaped::Found => {
+                            match deescape_orig_dollar(input)? {
+                                OrigDollarDeescaped::Found => {},
+                                OrigDollarDeescaped::NotFound => {
+                                    return Err(dollar.error(
+ "found `$orig_dollar $` not followed by another orig_dollar!"
+                                    ))
+                                },
+                            }
+                        },
+                    }
                     TE::Punct(dollar, not_in_paste()?)
                 } else if la.peek(token::Paren) {
                     RepeatedTemplate::parse_in_parens(input)?
@@ -744,11 +763,12 @@ impl<O: SubstParseContext> Subst<O> {
 
     /// Parses everything after the `$`, possibly including a pair of `{ }`
     ///
-    /// You must have called [`deescape_orig_dollar`].
+    /// You must have called [`deescape_orig_dollar`],
+    /// and handled the `$$` case.
     fn parse_after_dollar(
         la: Lookahead1,
         input: ParseStream,
-        _deescaped: OrigDollarDeescapedProofToken,
+        _deescaped: OrigDollarDeescaped,
     ) -> syn::Result<Self> {
         if la.peek(token::Brace) {
             let exp;
