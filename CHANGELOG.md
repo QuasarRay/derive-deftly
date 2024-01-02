@@ -23,6 +23,18 @@ We expect to increase it cautiously and only with good reason.
 
 ## Changelog
 
+### 0.8.1
+
+#### Fixed
+
+ * Fix doubled dollar deescaping in precanned d-a macros.
+   Fixes `macro_rules! .. { { $$m:expr .. } ... }`.
+
+#### Improved
+
+ * Improvements to macro rustdoc documentation.
+ * Minor internal improvements.
+
 ### 0.8.0
 
 #### Nominally breaking -- transitive for exported templates; minor
