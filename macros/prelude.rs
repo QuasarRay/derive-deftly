@@ -18,15 +18,15 @@ pub use itertools::{chain, izip, Either, Itertools};
 pub use proc_macro2::{Delimiter, Ident, Punct};
 pub use proc_macro2::{Span, TokenStream, TokenTree};
 pub use quote::{format_ident, quote, quote_spanned, ToTokens};
+pub use strum::EnumString;
 pub use strum::IntoEnumIterator as _;
 pub use strum::{AsRefStr, Display, EnumCount};
-pub use strum::EnumString;
 pub use syn::ext::IdentExt;
 pub use syn::parse::{Lookahead1, Parse, ParseBuffer, ParseStream, Parser};
 pub use syn::punctuated::Punctuated;
+pub use syn::token;
 pub use syn::Token;
 pub use syn::{braced, bracketed, parenthesized};
-pub use syn::token;
 pub use void::{ResultVoidErrExt as _, ResultVoidExt as _, Void};
 
 pub use TokenTree as TT;
