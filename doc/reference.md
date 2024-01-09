@@ -119,7 +119,7 @@ which can in turn contain multiple fields;
 there are also attributes.
 
 Correspondingly,
-sections of the template, indicated by `${for ...}` and `$( ...)`,
+sections of the template, indicated by `${for ...}` and `$(...)`,
 are expanded multiple times.
 
 With `${for ...}`, what is iterated over is specified explicitly.
@@ -131,7 +131,7 @@ what possibly-repeated part of the driver they correspond to.
 All the expansions directly within `$(...)`
 must have the same repetition level.
 
-With both `${for }` and `$( ... )`,
+With both `${for }` and `$(...)`,
 if the repetition level is "deeper" than the level
 of the surrounding template,
 the surrounding levels are also repeated over,
@@ -208,7 +208,7 @@ eg when defining a derived method.
 `$fdefvis` is precisely what was written in the driver field definition,
 so always expands to nothing for enum fields -
 even though those might be public.
-Use `$deffvis` when defining a new enum.
+Use `$fdefvis` when defining a new enum.
 
 #### Examples
 
