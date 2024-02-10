@@ -28,7 +28,7 @@
 use std::env;
 use std::ffi::OsString;
 use std::fs::{self, File};
-use std::process::{self, Command, Stdio};
+use std::process::{self, Command};
 
 /// Get `name` from the environment, sensibly
 fn env(name: &str) -> Option<String> {
@@ -59,6 +59,9 @@ fn one_collection(coll: &str, compiles: Result<(), ()>) {
         format!("{}/stderr/{}.real-stderr", outer_manifest_dir, coll);
     let stderr_file_new = format!("{}.new", stderr_file);
     eprintln!("stderr file {}", &stderr_file);
+
+    let stdout_file = format!("{}/messages-stdout.jsor", inner_cwd);
+    eprintln!("stdout file {}", &stdout_file);
 
     //Command::new("sh").args(["-xec", "env | sort"]).status().unwrap();
 
@@ -96,13 +99,29 @@ fn one_collection(coll: &str, compiles: Result<(), ()>) {
     eprintln!();
     let mut command = Command::new(command);
     command.current_dir(&inner_cwd);
-    command.stdout(Stdio::null());
+    command.stdout(File::create(&stdout_file).unwrap());
     command.stderr(File::create(stderr_file_new).unwrap());
     command.args(args);
 
     let status = command.status().unwrap();
+    let status_ok = status.success().then(|| ()).ok_or(());
 
-    assert_eq!(status.success(), compiles.is_ok());
+    match (status_ok, compiles) {
+        (Ok(()), Ok(())) => {}
+        (Err(()), Err(())) => {}
+        (Ok(()), Err(())) => panic!("compliation unexpectedly succeeded"),
+        (Err(()), Ok(())) => {
+            let rstatus = Command::new("jq")
+                .arg(".message.rendered")
+                .stdin(File::open(&stdout_file).unwrap())
+                .status()
+                .unwrap();
+            if !rstatus.success() {
+                eprintln!("(failed to print message jq: {})", status);
+            }
+            panic!("compliation failed: {}", status);
+        }
+    }
     eprintln!("exit status: {} (error, as expected)", status);
 
     let mut scriptlet = Command::new("bash");
