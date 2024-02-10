@@ -18,12 +18,14 @@ members = [
 	"tests",
 	"tests/pub-export/pub-a",
 	"tests/pub-export/pub-b",
-	"tests/compat/old-a",
-	"tests/compat/new-b",
-	"tests/compat/old-b",
-	"tests/compat/edrv-old-a",
-	"tests/compat/edrv-new-b",
-	"tests/compat/edrv-old-b",
+# AFTER 0.9.0 XXXX: Update dependency version and re-enable these
+#	"tests/compat/old-a",
+#	"tests/compat/new-b",
+#	"tests/compat/old-b",
+# AFTER 0.9.0 XXXX: Update dependency version and re-enable these
+#	"tests/compat/edrv-old-a",
+#	"tests/compat/edrv-new-b",
+#	"tests/compat/edrv-old-b",
 	"tests/stderr",
 ]
 

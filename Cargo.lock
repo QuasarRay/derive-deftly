@@ -74,16 +74,6 @@ dependencies = [
 
 [[package]]
 name = "derive-adhoc"
-version = "0.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c524def97cf33ab9f9a7bc41c5392b4c1618fa9baea3d836c227b41c60de2abc"
-dependencies = [
- "derive-adhoc-macros 0.2.0",
- "heck",
-]
-
-[[package]]
-name = "derive-adhoc"
 version = "0.9.0"
 dependencies = [
  "derive-adhoc-macros 0.9.0",
@@ -125,14 +115,14 @@ dependencies = [
 name = "derive-adhoc-stderr-test"
 version = "0.0.1"
 dependencies = [
- "derive-adhoc 0.9.0",
+ "derive-adhoc",
 ]
 
 [[package]]
 name = "derive-adhoc-tests"
 version = "0.0.1"
 dependencies = [
- "derive-adhoc 0.9.0",
+ "derive-adhoc",
  "easy-ext",
  "educe",
  "glob",
@@ -171,29 +161,6 @@ name = "easy-ext"
 version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "49457524c7e65648794c98283282a0b7c73b10018e7091f1cdcfff314fd7ae59"
-
-[[package]]
-name = "edrv-new-b"
-version = "0.0.1"
-dependencies = [
- "bizarre-derive-adhoc",
- "edrv-old-a",
-]
-
-[[package]]
-name = "edrv-old-a"
-version = "0.0.1"
-dependencies = [
- "derive-adhoc 0.2.0",
-]
-
-[[package]]
-name = "edrv-old-b"
-version = "0.0.1"
-dependencies = [
- "derive-adhoc 0.2.0",
- "pub-a",
-]
 
 [[package]]
 name = "educe"
@@ -338,29 +305,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "523dc4f511e55ab87b694dc30d0f820d60906ef06413f93d4d7a1385599cc149"
 
 [[package]]
-name = "new-b"
-version = "0.0.1"
-dependencies = [
- "bizarre-derive-adhoc",
- "old-a",
-]
-
-[[package]]
-name = "old-a"
-version = "0.0.1"
-dependencies = [
- "derive-adhoc 0.2.0",
-]
-
-[[package]]
-name = "old-b"
-version = "0.0.1"
-dependencies = [
- "derive-adhoc 0.2.0",
- "pub-a",
-]
-
-[[package]]
 name = "once_cell"
 version = "1.19.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -409,7 +353,7 @@ dependencies = [
 name = "pub-a"
 version = "0.0.1"
 dependencies = [
- "derive-adhoc 0.9.0",
+ "derive-adhoc",
 ]
 
 [[package]]
