@@ -12,6 +12,7 @@
 use derive_adhoc::{derive_adhoc, Adhoc};
 
 #[derive(Adhoc)]
+
 enum Enum<T = (), const N: usize = 1> {
     Unit,
     Tuple([T; N]),

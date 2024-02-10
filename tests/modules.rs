@@ -94,6 +94,7 @@ pub mod has_driver {
 
     #[derive(Adhoc)]
     #[derive_adhoc(IsEnum)]
+    
     pub enum Driver<T: Default> {
         Variant(Field<T>),
     }

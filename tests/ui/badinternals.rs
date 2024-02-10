@@ -7,6 +7,7 @@
 use derive_adhoc::{define_derive_adhoc, Adhoc};
 
 #[derive(Adhoc)]
+
 struct Driver;
 
 define_derive_adhoc! {

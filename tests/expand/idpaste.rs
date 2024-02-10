@@ -9,6 +9,7 @@ use derive_adhoc::{derive_adhoc, Adhoc};
 type FieldType = ();
 
 #[derive(Adhoc)]
+
 struct TypeNames {
     /// We use std::slice::Chunks here because that way we can test
     /// identifier pasting with a whole path.  The macro `TypeNames`
@@ -27,6 +28,7 @@ derive_adhoc! {
 }
 
 #[derive(Adhoc)]
+
 struct TopName<F> {
     top_name_field: F,
 }
@@ -43,6 +45,7 @@ derive_adhoc! {
 }
 
 #[derive(Adhoc)]
+
 struct ExpandName {
     #[adhoc(prefix = "attr", suffix = "24")]
     f: FieldType,
@@ -68,6 +71,7 @@ derive_adhoc! {
 }
 
 #[derive(Adhoc)]
+
 enum EdgeCases {
     Tuple(u32),
     Struct { r#for: u32, r#unneeded: u32 },

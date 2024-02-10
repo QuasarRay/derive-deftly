@@ -1,48 +1,48 @@
 error: unknown derive-adhoc keyword
-  --> ui/badargs.rs:13:9
+  --> ui/badargs.rs:14:9
    |
-13 |     fn $unknown() { }
+14 |     fn $unknown() { }
    |         ^^^^^^^
 
 error: no contained expansion field determined what to repeat here
-  --> ui/badargs.rs:15:6
+  --> ui/badargs.rs:16:6
    |
-15 |       $(
+16 |       $(
    |  ______^
-16 | |     )
+17 | |     )
    | |_____^
 
 error: unexpected arguments to expansion keyword
-  --> ui/badargs.rs:19:19
+  --> ui/badargs.rs:20:19
    |
-19 |         f ${fname junk}() { }
+20 |         f ${fname junk}() { }
    |                   ^^^^
 
 error: unexpected arguments to expansion keyword
-  --> ui/badargs.rs:22:29
+  --> ui/badargs.rs:23:29
    |
-22 |     ${if false { } else { } forbidden}
+23 |     ${if false { } else { } forbidden}
    |                             ^^^^^^^^^
 
 error: `Xmeta as ...` not allowed in conditions
-  --> ui/badargs.rs:24:27
+  --> ui/badargs.rs:25:27
    |
-24 |     ${if tmeta(some_path) as lit { }}
+25 |     ${if tmeta(some_path) as lit { }}
    |                           ^^
 
 error: unexpected arguments to expansion keyword
-  --> ui/badargs.rs:30:26
+  --> ui/badargs.rs:31:26
    |
-30 |     type Alias = ${ttype $junk};
+31 |     type Alias = ${ttype $junk};
    |                          ^
 ...
-33 | #[derive(Adhoc)]
+34 | #[derive(Adhoc)]
    |          ----- in this derive macro expansion
    |
    = note: this error originates in the macro `derive_adhoc_template_Broken` which comes from the expansion of the derive macro `Adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: approx_equal() requires two comma-separated arguments
-  --> ui/badargs.rs:40:10
+  --> ui/badargs.rs:42:10
    |
-40 |     ${if approx_equal(1,2,3) {}}
+42 |     ${if approx_equal(1,2,3) {}}
    |          ^^^^^^^^^^^^

@@ -5,6 +5,7 @@
 use derive_adhoc::{derive_adhoc, Adhoc};
 
 #[derive(Adhoc)]
+
 struct IgnoredThings {
     #[adhoc(prefix = "pfx")]
     #[adhoc(multi(hi, there(wombat), path::suffix = "sfx"))]

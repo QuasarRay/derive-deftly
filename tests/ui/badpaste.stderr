@@ -1,35 +1,35 @@
 error: multiple nontrivial entries in ${paste ...}
-  --> ui/badpaste.rs:14:18
+  --> ui/badpaste.rs:15:18
    |
-14 |         ${paste $ttype _ $ftype}
+15 |         ${paste $ttype _ $ftype}
    |                  ^^^^^
 
 error: multiple nontrivial entries in ${paste ...}
-  --> ui/badpaste.rs:14:27
+  --> ui/badpaste.rs:15:27
    |
-14 |         ${paste $ttype _ $ftype}
+15 |         ${paste $ttype _ $ftype}
    |                           ^^^^^
 
 error: not allowed in within ${paste ...} (or case_changing)
-  --> ui/badpaste.rs:21:29
+  --> ui/badpaste.rs:22:29
    |
-21 |     struct ${paste $tname _ 42};
+22 |     struct ${paste $tname _ 42};
    |                             ^^
 
 error: multiple nontrivial entries in ${paste ...}
-  --> ui/badpaste.rs:27:21
+  --> ui/badpaste.rs:28:21
    |
-27 |     struct ${paste $ttype ${tmeta(something) as ty}};
+28 |     struct ${paste $ttype ${tmeta(something) as ty}};
    |                     ^^^^^
 
 error: multiple nontrivial entries in ${paste ...}
-  --> ui/badpaste.rs:27:35
+  --> ui/badpaste.rs:28:35
    |
-27 |     struct ${paste $ttype ${tmeta(something) as ty}};
+28 |     struct ${paste $ttype ${tmeta(something) as ty}};
    |                                   ^^^^^^^^^
 
 error: expected one of `!` or `::`, found `Broken`
-  --> ui/badpaste.rs:34:23
+  --> ui/badpaste.rs:35:23
    |
-34 |     ${paste tdefkwed} Broken { }
+35 |     ${paste tdefkwed} Broken { }
    |                       ^^^^^^ expected one of `!` or `::`

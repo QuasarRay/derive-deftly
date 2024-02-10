@@ -1,6 +1,7 @@
 use derive_adhoc::{define_derive_adhoc, derive_adhoc, Adhoc};
 
 #[derive(Adhoc)]
+
 #[adhoc(wrong = "{")]
 #[adhoc(dot = ".")]
 #[adhoc(several = "first")]
@@ -47,20 +48,24 @@ derive_adhoc! {
 }
 
 #[derive(Adhoc)]
+
 #[adhoc("forbidden")]
 struct TopLevelMetaLitForbidden;
 derive_adhoc! { TopLevelMetaLitForbidden: }
 
 #[derive(Adhoc)]
+
 #[adhoc(value = wrong)]
 struct MetaValueMustBeLit;
 derive_adhoc! { MetaValueMustBeLit: }
 
 #[derive(Adhoc)]
+
 #[adhoc(barelit("42"))]
 struct WithBareLit;
 
 #[derive(Adhoc)]
+
 #[adhoc(multi("1", "2"))]
 struct WithBareLitMulti;
 
@@ -80,6 +85,7 @@ define_derive_adhoc! {
 }
 
 #[derive(Adhoc)]
+
 #[derive_adhoc(TestFunkyPath)]
 #[adhoc(std::cell::Cell::<String>::new)]
 struct WithFunkyPath;

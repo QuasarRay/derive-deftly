@@ -15,6 +15,7 @@ define_derive_adhoc! {
 
 #[derive(Adhoc)]
 #[derive_adhoc(DefineAndUseMacroRulesMacro[dbg])]
+
 struct S(usize);
 
 derive_adhoc! {

@@ -3,6 +3,7 @@
 use derive_adhoc::{define_derive_adhoc, derive_adhoc, Adhoc};
 
 #[derive(Adhoc)]
+
 struct ReserveDriver;
 
 derive_adhoc! {

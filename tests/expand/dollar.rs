@@ -10,6 +10,7 @@ define_derive_adhoc! {
 
 #[derive(Adhoc)]
 #[derive_adhoc(ReuseableTemplate)]
+
 #[doc=stringify!(one $ dollar $template end)]
 struct OneDollar;
 
@@ -20,6 +21,7 @@ derive_adhoc! {
 }
 
 #[derive(Adhoc)]
+
 #[derive_adhoc(ReuseableTemplate)]
 #[doc=stringify!(two $$ dollars)]
 struct TwoDollars;

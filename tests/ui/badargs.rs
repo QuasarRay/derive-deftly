@@ -1,6 +1,7 @@
 use derive_adhoc::{define_derive_adhoc, derive_adhoc, Adhoc};
 
 #[derive(Adhoc)]
+
 struct DataType {
     foo: u8,
     #[adhoc(hash(skip))]
@@ -32,6 +33,7 @@ define_derive_adhoc! {
 
 #[derive(Adhoc)]
 #[derive_adhoc(Broken)]
+
 struct ForBroken;
 
 derive_adhoc! {

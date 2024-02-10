@@ -57,6 +57,7 @@ mod local_use {
     // even though it was an exported template.
     #[derive(Adhoc)]
     #[derive_adhoc(IsEnum)]
+    
     pub(crate) struct Local;
 }
 
@@ -95,6 +96,7 @@ pub mod a_driver {
     /// on pain of risking breakages due to `cargo update`.
     #[derive(Adhoc)]
     #[derive_adhoc(pub)]
+    
     pub struct ADriver<T: Default> {
         pub field: AField<T>,
     }
