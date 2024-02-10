@@ -726,6 +726,7 @@ so, above, instead, we could have written
 ```
 # use derive_adhoc::{Adhoc, derive_adhoc};
 # #[derive(Adhoc)]
+# #[derive_truly_adhoc]
 # enum TestCase<A> { Variant(A) }
 # derive_adhoc! { TestCase:
 #     fn testcase<$tgens>() where

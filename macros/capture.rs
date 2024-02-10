@@ -141,6 +141,18 @@ pub fn derive_adhoc_derive_macro(
         })
         .collect::<syn::Result<Vec<_>>>()?;
 
+    let truly_adhoc: Option<()> = driver
+        .attrs
+        .iter()
+        .filter(|attr| attr.path().is_ident("derive_truly_adhoc"))
+        .map(|attr| {
+            let _: &syn::Path = attr.meta.require_path_only()?;
+            Ok(())
+        })
+        .collect::<syn::Result<Vec<()>>>()?
+        // allow this attr to be repeated
+        .pop();
+
     check_for_misplaced_atrs(&driver.data)?;
 
     let expand_macro = expand_macro_name()?;
@@ -176,7 +188,10 @@ pub fn derive_adhoc_derive_macro(
     // full of important `$`s) we can probably live with the wrong spans.
     let driver_escaped = escape_dollars(driver_stream);
 
-    let mut output = quote! {
+    let mut output = TokenStream::new();
+
+    if let Some(()) = truly_adhoc {
+      output.extend(quote! {
         #[allow(unused_macros)]
         #macro_export
         macro_rules! #driver_mac_name {
@@ -200,7 +215,8 @@ pub fn derive_adhoc_derive_macro(
                 )}
             };
         }
-    };
+      });
+    }
 
     for (mut templ_path, aoptions) in precanned_paths {
         if templ_path.segments.is_empty() {
