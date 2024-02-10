@@ -52,7 +52,10 @@ impl Parse for InvocationAttr {
 fn check_for_misplaced_atrs(data: &syn::Data) -> syn::Result<()> {
     let attrs = |attrs: &[syn::Attribute]| {
         for attr in attrs {
-            if attr.path().is_ident("derive_adhoc") {
+            if let Some(_) = ["derive_adhoc", "derive_truly_adhoc"]
+                .iter()
+                .find(|forbidden| attr.path().is_ident(forbidden))
+            {
                 return Err(attr.error(
  "attribute is only meaningful at the data structure toplevel"
                 ));
