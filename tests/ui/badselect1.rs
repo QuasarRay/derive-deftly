@@ -10,7 +10,7 @@ use derive_adhoc::{derive_adhoc, Adhoc};
 use std::fmt::Debug;
 
 #[derive(Adhoc, Default, Debug)]
-
+#[derive_truly_adhoc]
 struct Both {
     #[adhoc(left)]
     a: usize,

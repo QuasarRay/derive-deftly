@@ -1,6 +1,7 @@
 //! Tests for Xmeta etc. edge cases
 #![allow(dead_code, unused_variables)]
 use derive_adhoc::{derive_adhoc, Adhoc};
+#[derive_truly_adhoc]
 struct IgnoredThings {
     #[adhoc(prefix = "pfx")]
     #[adhoc(multi(hi, there(wombat), path::suffix = "sfx"))]

@@ -79,7 +79,7 @@ define_derive_adhoc! {
 
 #[derive(Adhoc)]
 #[derive_adhoc(Trait, GetUsize)]
-
+#[derive_truly_adhoc]
 struct Unit;
 
 #[derive(Adhoc)]

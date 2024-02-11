@@ -69,9 +69,10 @@ error: expected a list with sub-attributes, found a simple value
    = note: this error originates in the macro `derive_adhoc_driver_DataType` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: attribute value expanded, but no suitable value in data structure definition (in this data structure)
-  --> ui/badmeta.rs:5:1
+  --> ui/badmeta.rs:4:1
    |
-5  | / #[adhoc(wrong = "{")]
+4  | / #[derive_truly_adhoc]
+5  | | #[adhoc(wrong = "{")]
 6  | | #[adhoc(dot = ".")]
 7  | | #[adhoc(several = "first")]
 8  | | #[adhoc(several = "second")]
@@ -177,9 +178,10 @@ error: tried to expand just attribute value, but it was specified multiple times
    |                                ^^^^^^^^^^^^^
 
 error: attribute value expanded, but no value in data structure definition (in this data structure)
-  --> ui/badmeta.rs:5:1
+  --> ui/badmeta.rs:4:1
    |
-5  | / #[adhoc(wrong = "{")]
+4  | / #[derive_truly_adhoc]
+5  | | #[adhoc(wrong = "{")]
 6  | | #[adhoc(dot = ".")]
 7  | | #[adhoc(several = "first")]
 8  | | #[adhoc(several = "second")]
@@ -220,9 +222,10 @@ error: expected a leaf node, found a list with sub-attributes
    = note: this error originates in the macro `derive_adhoc_driver_DataType` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: attribute value expanded, but no suitable value in data structure definition (in this data structure)
-  --> ui/badmeta.rs:5:1
+  --> ui/badmeta.rs:4:1
    |
-5  | / #[adhoc(wrong = "{")]
+4  | / #[derive_truly_adhoc]
+5  | | #[adhoc(wrong = "{")]
 6  | | #[adhoc(dot = ".")]
 7  | | #[adhoc(several = "first")]
 8  | | #[adhoc(several = "second")]

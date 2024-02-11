@@ -1,7 +1,7 @@
 use derive_adhoc::{derive_adhoc, Adhoc};
 
 #[derive(Adhoc)]
-
+#[derive_truly_adhoc]
 #[adhoc(something = "Box<char>")]
 struct DataType {
     foo: u8,

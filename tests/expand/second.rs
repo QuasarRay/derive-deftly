@@ -3,7 +3,7 @@
 use derive_adhoc::{derive_adhoc, Adhoc};
 
 #[derive(Adhoc, Default)]
-
+#[derive_truly_adhoc]
 /// Some docs
 pub struct ChannelsParams {
     /// thing

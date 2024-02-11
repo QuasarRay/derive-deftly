@@ -31,7 +31,7 @@ error: template defined for union, but applied to struct (actual kind)
   --> ui/badoptions.rs:11:1
    |
 11 | / #[derive_adhoc(BadOptionsTemplate[dbg])]
-12 | |
+12 | | #[derive_truly_adhoc]
 13 | | struct BadOptionsDriver;
    | |________________________^
 ...

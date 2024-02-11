@@ -8,6 +8,7 @@
 //! compiler.
 #![allow(dead_code)]
 use derive_adhoc::{derive_adhoc, Adhoc};
+#[derive_truly_adhoc]
 enum Enum<T = (), const N: usize = 1> {
     Unit,
     Tuple([T; N]),
