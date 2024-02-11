@@ -8,7 +8,7 @@ set -e
 set -o pipefail
 
 ORIGIN=origin
-BASE_BRANCHES='main'
+BASE_BRANCHES='main stable'
 
 tlref () {
     echo "refs/remotes/$ORIGIN/$tbranch"
