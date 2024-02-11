@@ -5,7 +5,6 @@ use super::prelude::*;
 /// Contents of an entry in a `#[derive_adhoc(..)]` attribute
 enum InvocationEntry {
     Precanned(syn::Path, UnprocessedOptions),
-    Pub(syn::token::Pub),
 }
 
 // (CannedName, CannedName, ...)
@@ -13,17 +12,16 @@ struct InvocationAttr {
     entries: Punctuated<InvocationEntry, token::Comma>,
 }
 
+/// Contents of an entry in a `#[derive_truly_adhoc(..)]` attribute
+#[derive(Default)]
+struct TrulyAdhocAttr {
+    pub_: Option<syn::token::Pub>,
+}
+
 impl Parse for InvocationEntry {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let entry = if input.lookahead1().peek(Token![pub]) {
-            let vis = match input.parse()? {
-                syn::Visibility::Public(vis) => vis.pub_token(),
-                other => {
-                    return Err(other
-                        .error("only `pub`, nor no visibility, is allowed"))
-                }
-            };
-            InvocationEntry::Pub(vis)
+            return Err(input.error("`pub` must be in #[derive_truly_adhoc]"));
         } else {
             let path = syn::Path::parse_mod_style(input)?;
             let options = if input.peek(syn::token::Bracket) {
@@ -108,8 +106,6 @@ pub fn derive_adhoc_derive_macro(
     let driver_mac_name =
         format_ident!("derive_adhoc_driver_{}", &driver.ident);
 
-    let mut vis_pub = None;
-
     let precanned_paths: Vec<(syn::Path, UnprocessedOptions)> = driver
         .attrs
         .iter()
@@ -127,43 +123,50 @@ pub fn derive_adhoc_derive_macro(
             Ok(InvocationEntry::Precanned(path, options)) => {
                 Some(Ok((path, options)))
             }
-            Ok(InvocationEntry::Pub(vis)) => {
-                let this_span = vis.span();
-                if let Some(prev) = mem::replace(&mut vis_pub, Some(vis)) {
-                    return Some(Err([
-                        (prev.span(), "first `pub`"),
-                        (this_span, "second `pub`"),
-                    ]
-                    .error("`pub` specified multiple times")));
-                };
-                None
-            }
         })
         .collect::<syn::Result<Vec<_>>>()?;
 
-    let truly_adhoc: Option<()> = driver
+    let truly_adhoc: Option<TrulyAdhocAttr> = driver
         .attrs
         .iter()
         .filter(|attr| attr.path().is_ident("derive_truly_adhoc"))
+        .inspect(|_: &&syn::Attribute| ())
         .map(|attr| {
-            let _: &syn::Path = attr.meta.require_path_only()?;
-            Ok(())
+            let truly_adhoc = match &attr.meta {
+                syn::Meta::Path(_) => TrulyAdhocAttr { pub_: None },
+                syn::Meta::NameValue(nv) => {
+                    return Err(nv
+                        .eq_token
+                        .error("arguments (if any) must be in parens"))
+                }
+                syn::Meta::List(syn::MetaList {
+                    path: _,
+                    delimiter,
+                    tokens,
+                }) => {
+                    match delimiter {
+                        syn::MacroDelimiter::Paren(_) => Ok(()),
+                        syn::MacroDelimiter::Brace(t) => Err(t.span),
+                        syn::MacroDelimiter::Bracket(t) => Err(t.span),
+                    }
+                    .map_err(|span| span.error("expected parentheses"))?;
+                    let pub_ = syn::parse2(tokens.clone())?;
+                    TrulyAdhocAttr { pub_ }
+                }
+            };
+            Ok::<TrulyAdhocAttr, syn::Error>(truly_adhoc)
         })
-        .collect::<syn::Result<Vec<()>>>()?
-        // allow this attr to be repeated
-        .pop();
+        .inspect(|_: &Result<TrulyAdhocAttr, _>| ())
+        // allow this attr to be repeated; any pub makes it pub
+        .reduce(|a, b| {
+            let pub_ = chain!(a?.pub_, b?.pub_).next();
+            Ok(TrulyAdhocAttr { pub_ })
+        })
+        .transpose()?;
 
     check_for_misplaced_atrs(&driver.data)?;
 
     let expand_macro = expand_macro_name()?;
-
-    let macro_export = vis_pub
-        .map(|vis_pub| {
-            let macro_export =
-                quote_spanned!(vis_pub.span()=> #[macro_export]);
-            Ok::<_, syn::Error>(macro_export)
-        })
-        .transpose()?;
 
     // If the driver contains any $ tokens, we must do something about them.
     // Otherwise, they might get mangled by the macro_rules expander.
@@ -190,7 +193,16 @@ pub fn derive_adhoc_derive_macro(
 
     let mut output = TokenStream::new();
 
-    if let Some(()) = truly_adhoc {
+    if let Some(truly_adhoc) = truly_adhoc {
+        let macro_export = truly_adhoc
+            .pub_
+            .map(|vis_pub| {
+                let macro_export =
+                    quote_spanned!(vis_pub.span()=> #[macro_export]);
+                Ok::<_, syn::Error>(macro_export)
+            })
+            .transpose()?;
+
       output.extend(quote! {
         #[allow(unused_macros)]
         #macro_export

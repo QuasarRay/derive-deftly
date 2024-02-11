@@ -95,8 +95,7 @@ pub mod a_driver {
     /// Anyone who *uses* an exported driver should refer to those docs,
     /// on pain of risking breakages due to `cargo update`.
     #[derive(Adhoc)]
-    #[derive_adhoc(pub)]
-    #[derive_truly_adhoc]
+    #[derive_truly_adhoc(pub)]
     pub struct ADriver<T: Default> {
         pub field: AField<T>,
     }
