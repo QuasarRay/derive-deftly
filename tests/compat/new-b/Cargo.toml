@@ -9,6 +9,10 @@ authors=["Ian Jackson <ijackson@chiark.greenend.org.uk>",
 description="compat testing crates - new part B, uses bizarre version"
 publish = false
 
+[features]
+default = ["skip_imported_driver"]
+skip_imported_driver = []
+
 [dependencies]
 pub-a = { package = "old-a", path = "../old-a", version = "0.0.1" }
 derive-adhoc = { package = "bizarre-derive-adhoc", path = "../../pub-export/bizarre-facade", version = "0.0.666" }

@@ -26,3 +26,11 @@ This reuses pub-a.rs (which expects vanilla derive-adhoc)
 and a filtered version of pub-b.rs called old-b.rs.
 pub-b.rs expects bizarre derive-adhoc but there is no published
 old version, so we have maint/update-bizarre filter out the _bizarres.
+
+## Two sets of these tests
+
+There are `new-b`, `old-a` and `old-b`.
+These test compatibility of *template exports* only.
+
+There are also `edrv-new-b`, `edrv-old-a` and `edrv-old-b`.
+These test compatibility of exporting driver structs.

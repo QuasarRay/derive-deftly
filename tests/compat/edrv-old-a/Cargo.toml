@@ -1,0 +1,22 @@
+# See tests/compat/README.md
+[package]
+name = "edrv-old-a"
+version = "0.0.1"
+edition = "2018"
+license="MIT"
+authors=["Ian Jackson <ijackson@chiark.greenend.org.uk>",
+         "and the contributors to Rust derive-adhoc"]
+description="driver export compat testing - old part A"
+publish = false
+
+[dependencies]
+# If and when we bump the earliest tested compatible version to
+# 0.2.2 or later, remove the `dummy-derive-adhoc-macros` entry
+# in tests/pub-export/bizarre-macros/Cargo.toml, which comes from
+# maint/update-bizarre.
+derive-adhoc = "=0.2.0"
+
+[lib]
+path = "../../pub-export/pub-a/pub-a.rs"
+doc = false
+doctest = false

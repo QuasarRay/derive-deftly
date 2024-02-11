@@ -1,6 +1,7 @@
 /// Forward/backward compatibility tests
 /// See tests/compat/README.md
 
+#[cfg(not(feature = "skip_imported_driver"))]
 pub mod adhoc_template {
     use derive_adhoc::derive_adhoc;
 
@@ -43,9 +44,14 @@ pub mod b_driver {
 }
 
 #[test]
-fn invoke() {
-    use adhoc_template::NumFields;
+fn invoke_template() {
     use pub_a::a_trait::IsEnum;
-    assert_eq!(pub_a::a_driver::ADriver::<()>::num_fields(), 1);
     assert!(b_driver::BDriver::<()>::is_enum().is_some());
+}
+
+#[cfg(not(feature = "skip_imported_driver"))]
+#[test]
+fn invoke_exported_driver() {
+    use adhoc_template::NumFields;
+    assert_eq!(pub_a::a_driver::ADriver::<()>::num_fields(), 1);
 }

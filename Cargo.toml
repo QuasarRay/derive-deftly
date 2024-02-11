@@ -21,6 +21,9 @@ members = [
 	"tests/compat/old-a",
 	"tests/compat/new-b",
 	"tests/compat/old-b",
+	"tests/compat/edrv-old-a",
+	"tests/compat/edrv-new-b",
+	"tests/compat/edrv-old-b",
 	"tests/stderr",
 ]
 
