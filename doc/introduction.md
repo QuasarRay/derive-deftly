@@ -169,6 +169,7 @@ you could have said:
 use derive_adhoc::{Adhoc, derive_adhoc};
 
 #[derive(Clone, Debug, Adhoc)]
+#[derive_truly_adhoc]
 pub struct MyStruct;
 
 derive_adhoc!{

@@ -663,6 +663,7 @@ See also the [`dbg` expansion option](#dbg--print-the-expansion-to-stderr-for-de
 ```rust
 # use derive_adhoc::{Adhoc, derive_adhoc};
 #[derive(Adhoc)]
+#[derive_truly_adhoc]
 enum Enum {
     Unit,
     Tuple(usize),
