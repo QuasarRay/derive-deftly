@@ -340,7 +340,7 @@ pub fn define_derive_adhoc(
 //
 /// To cause the macro embodying the driver struct to be exported,
 /// write:
-/// `#[derive_adhoc(pub)]`.
+/// `#[derive_truly_adhoc(pub)]`.
 /// The driver can then be derived from in other crates,
 /// with `derive_adhoc! { exporting_crate::DriverStruct: ... }`.
 ///
