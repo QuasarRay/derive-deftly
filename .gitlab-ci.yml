@@ -53,6 +53,7 @@ maint-check-test-deps:
 # the CI, but still get it all to run - useful for iterating through CI.
 maint-check-todos:
   stage: comprehensive
+  dependencies: []
   script:
     - apt-get -y update
     - apt-get -y install libtoml-perl git
