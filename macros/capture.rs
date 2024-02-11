@@ -54,7 +54,7 @@ fn check_for_misplaced_atrs(data: &syn::Data) -> syn::Result<()> {
         for attr in attrs {
             if attr.path().is_ident("derive_adhoc") {
                 return Err(attr.error(
- "derive_adhoc attribute is only meaningful at the data structure toplevel"
+ "attribute is only meaningful at the data structure toplevel"
                 ));
             }
         }
