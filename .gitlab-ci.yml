@@ -54,6 +54,8 @@ maint-check-test-deps:
 maint-check-todos:
   stage: comprehensive
   script:
+    - apt-get -y update
+    - apt-get -y install libtoml-perl git
     - maint/check-blocking-todos
 
 # Warning-only checks

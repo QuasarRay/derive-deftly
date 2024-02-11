@@ -4,10 +4,21 @@
 # in any case.  The word is not matched if there are word-characters
 # abutted to it.
 #
-# We also fail with X X X (three or more)
+# We also fail with X X X (three or more), but we tolerate
+#    AFTER <current version> X X X
 
 set -e
 set -o pipefail
+
+version_re=$(perl <Cargo.toml -e '
+	use TOML;
+	use autodie;
+	$/ = undef; my $d = <STDIN>;
+	$d = from_toml($d) or die $!;
+	my $version = $d->{package}{version} // die $!;
+	$version =~ s/\W/\\$&/g;
+	printf "%s\n", $version or die $!;
+');
 
 rcs=' '
 check1 () {
@@ -17,7 +28,7 @@ check1 () {
     set -e
 }
 check1 git --no-pager grep -i '\bfixme\b'
-check1 git --no-pager grep '\bXXX*\b'
+check1 git --no-pager grep '(?<!'"$version_re"')\bXXX*\b'
 
 case "$rcs" in
     " 1 1 ")
