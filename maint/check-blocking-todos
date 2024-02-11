@@ -3,6 +3,8 @@
 # We fail CI if the word "F I X M E" is detedcted, as a whole word,
 # in any case.  The word is not matched if there are word-characters
 # abutted to it.
+#
+# We also fail with X X X (three or more)
 
 set -e
 set -o pipefail
@@ -15,7 +17,7 @@ check1 () {
     set -e
 }
 check1 git --no-pager grep -i '\bfixme\b'
-check1 git --no-pager grep '\bXXXX*\b'
+check1 git --no-pager grep '\bXXX*\b'
 
 case "$rcs" in
     " 1 1 ")
