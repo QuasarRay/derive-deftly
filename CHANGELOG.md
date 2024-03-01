@@ -23,6 +23,13 @@ We expect to increase it cautiously and only with good reason.
 
 ## Changelog
 
+### 0.9.0
+
+### Breaking
+
+ * `#[derive_truly_adhoc]` is now required for `derive_adhoc!`
+   (ie, non-precanned templates).
+
 ### 0.8.1
 
 #### Fixed
