@@ -23,6 +23,13 @@ We expect to increase it cautiously and only with good reason.
 
 ## Changelog
 
+### 0.9.1
+
+#### Improved
+
+ * Documentation and error message fixes, tidying up after renames.
+ * Other minor documentation improvements.
+
 ### 0.9.0
 
 ### Breaking
