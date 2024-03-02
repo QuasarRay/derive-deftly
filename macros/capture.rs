@@ -50,7 +50,7 @@ impl Parse for InvocationAttr {
 fn check_for_misplaced_atrs(data: &syn::Data) -> syn::Result<()> {
     let attrs = |attrs: &[syn::Attribute]| {
         for attr in attrs {
-            if let Some(_) = ["derive_adhoc", "derive_deftly_adhoc"]
+            if let Some(_) = ["derive_deftly", "derive_deftly_adhoc"]
                 .iter()
                 .find(|forbidden| attr.path().is_ident(forbidden))
             {
@@ -110,7 +110,7 @@ pub fn derive_adhoc_derive_macro(
         .attrs
         .iter()
         .map(|attr| {
-            if !attr.path().is_ident("derive_adhoc") {
+            if !attr.path().is_ident("derive_deftly") {
                 return Ok(None);
             }
             let InvocationAttr { entries } = attr.parse_in_parens()?;
