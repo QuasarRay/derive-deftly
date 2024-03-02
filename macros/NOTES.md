@@ -58,8 +58,6 @@ Ideally that attribute macro would be `#[derive_deftly]`.  However:
 
  * It is not possible to have an attribute macro and a function-like macro with the same name; even though the invocation syntaxes (and implementing macro function signatures) are different.
 
-We are using `derive_deftly_adhoc!` for the main truly adhoc from-struct derivation.  I don't think we want to change that.  So we need a different name for the attribute macro.
-
 ## Proposed taxonomy of macros and attributes
 
 We won't implement all of this right away,
@@ -73,7 +71,7 @@ won't get in the way.
 
  * **`define_derive_deftly!{ [pub] MACNAME = TEMPLATE }`**: define a reusable template, which may be invoked as `#[derive_deftly(MACNAME)]` (within a struct annotated with `#[derive(Deftly)]` or `#[item_derive_deftly(MACNAME)]`.
 
- * **`derive_deftly_adhoc!{ DRIVERNAME: TEMPLATE }`**: truly-adhoc derivation from something previously annotated with `#[derive(Ahoc)]` or `#[item_derive_deftly]`.  `DRIVERNAME` is an item path; we conflate the type and value namespaces.
+ * **`derive_deftly_adhoc!{ DRIVERNAME: TEMPLATE }`**: adhoc derivation from something previously annotated with `#[derive(Deftly)]` or `#[item_derive_deftly]`.  `DRIVERNAME` is an item path; we conflate the type and value namespaces.
 
  * **`#[item_derive_deftly]`**: attribute macro to be applied to items.  The item is reproduced unchanged, except that `#[deftly]` attributes *in places where we would look for them* are filtered out. `#[item_derive_deftly(MACNAME)]` can be used to apply a reuseable template.
 
@@ -93,8 +91,8 @@ won't get in the way.
 
 # Things to check before declaring 1.0
 
-Ensure we haven't painted ourselves into a corner for adhoc-derive
-from a trait, fn, impl block, ... .  And for being able to apply adhoc
+Ensure we haven't painted ourselves into a corner for deftly-derive
+from a trait, fn, impl block, ... .  And for being able to apply deftly
 derive as an attribute macro, rather than derive macro, thus arranging
 that the decorated struct is not actually emitted.
 
