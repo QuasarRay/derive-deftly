@@ -112,7 +112,7 @@ resulting in a call to `derive_deftly_engine`:
     }
 ```
 
-## Implementation approach - truly ad-hoc macros
+## Implementation approach - ad-hoc macro applications
 
 ### 1. `#[derive(Deftly)]` proc macro for saving struct definitions
 
