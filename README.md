@@ -7,8 +7,17 @@ but without having to wrestle with the proc macro system.
 **Stability warning**
 
 We plan to make a `1.x` version of this library fairly soon.
-However, right now the template syntax and other details
-are still subject to change.
+
+However, it will have a different name:
+[`derive-deftly`](https://lib.rs/crates/derive-deftly).
+If you are considering this for a new project,
+you should probably go straight to `derive-deftly`.
+
+Some further breaking changes are expected for that library,
+so if you're already using `derive-adhoc`
+you should stick with it for now.
+
+The template syntax isn't likely to change very much.
 
 ## Overview
 
