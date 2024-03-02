@@ -592,7 +592,7 @@ impl Parse for SubstMetaPath {
         if path.segments.is_empty() {
             return Err(paren
                 .span
-                .error("adhoc attribute must have nonempty path"));
+                .error("`deftly` attribute must have nonempty path"));
         }
 
         let deeper = if input.is_empty() {
