@@ -906,13 +906,14 @@ impl SubstMetaLabel {
         A: IntoIterator<Item = &'a PreprocessedMeta>,
     {
         for pmeta in pmetas {
-            self.search_1(pmeta, &mut *f, &mut *g)?;
+            Self::search_1(&self.lpaths, pmeta, &mut *f, &mut *g)?;
         }
         Ok(())
     }
 
     fn search_1<'a, E, F, G>(
-        &self,
+        // Nonempty
+        lpaths: &[syn::Path],
         pmeta: &'a PreprocessedMeta,
         f: &mut F,
         g: &mut G,
@@ -923,7 +924,7 @@ impl SubstMetaLabel {
     {
         use PreprocessedMetaValue as PMV;
 
-        if pmeta.path != self.path {
+        if pmeta.path != lpaths[0] {
             return Ok(());
         }
 
@@ -931,7 +932,13 @@ impl SubstMetaLabel {
 
         let mut nearby = |kind| g(FoundNearbyMetaNode { kind, path_span });
 
-        match (&self.deeper, &pmeta.value) {
+        let deeper = if lpaths.len() <= 1 {
+            None
+        } else {
+            Some(&lpaths[1..])
+        };
+
+        match (deeper, &pmeta.value) {
             (None, PMV::Unit) => f(FMN::Unit(path_span))?,
             (None, PMV::List(_)) => nearby(FNMNK::List)?,
             (None, PMV::Value { value, .. }) => f(FMN::Lit {
@@ -942,7 +949,7 @@ impl SubstMetaLabel {
             (Some(_), PMV::Unit) => nearby(FNMNK::Unit)?,
             (Some(d), PMV::List(l)) => {
                 for m in l.content.iter() {
-                    d.search_1(m, &mut *f, &mut *g)?;
+                    Self::search_1(d, m, &mut *f, &mut *g)?;
                 }
             }
         }
