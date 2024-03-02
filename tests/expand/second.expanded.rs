@@ -1,5 +1,5 @@
 //! Example including attribute filtering
-use derive_adhoc::{derive_deftly_adhoc, Deftly};
+use derive_deftly::{derive_deftly_adhoc, Deftly};
 #[derive_deftly_adhoc]
 /// Some docs
 pub struct ChannelsParams {

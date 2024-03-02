@@ -1,6 +1,6 @@
 //! Tests for Xmeta etc. edge cases
 #![allow(dead_code, unused_variables)]
-use derive_adhoc::{derive_deftly_adhoc, Deftly};
+use derive_deftly::{derive_deftly_adhoc, Deftly};
 #[derive_deftly_adhoc]
 struct IgnoredThings {
     #[deftly(prefix = "pfx")]

@@ -6,8 +6,8 @@
 
 use std::fmt::{self, Debug, Formatter};
 
-use derive_adhoc::define_derive_deftly;
-use derive_adhoc::{derive_deftly_adhoc, Deftly};
+use derive_deftly::define_derive_deftly;
+use derive_deftly::{derive_deftly_adhoc, Deftly};
 
 use derive_adhoc_tests::*;
 

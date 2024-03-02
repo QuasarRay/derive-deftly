@@ -38,7 +38,7 @@ To define a template, you use
 [`define_derive_deftly!`](crate::define_derive_deftly), as in
 
 ```
-use derive_adhoc::define_derive_deftly;
+use derive_deftly::define_derive_deftly;
 
 define_derive_deftly! {
     NamePrinter =
@@ -65,7 +65,7 @@ with
 as in:
 
 ```
-# use derive_adhoc::define_derive_deftly;
+# use derive_deftly::define_derive_deftly;
 # define_derive_deftly! {
 #    NamePrinter =
 #
@@ -75,7 +75,7 @@ as in:
 #        }
 #    }
 # }
-use derive_adhoc::Deftly;
+use derive_deftly::Deftly;
 
 #[derive(Clone, Debug, Deftly)]
 #[derive_deftly(NamePrinter)]
@@ -96,7 +96,7 @@ pub trait NamePrinter {
     fn print_name();
 }
 
-derive_adhoc::define_derive_deftly! {
+derive_deftly::define_derive_deftly! {
     /// Derives `NamePrinter`, providing `print_name`
     pub NamePrinter =
     impl $crate::NamePrinter for $ttype {
@@ -143,7 +143,7 @@ use name_printer::{
     // (We might come up with a better syntax for this later).
     derive_deftly_template_NamePrinter.
 };
-use derive_adhoc::Deftly;
+use derive_deftly::Deftly;
 
 #[derive(Deftly)]
 #[derive_deftly(NamePrinter)]
@@ -166,7 +166,7 @@ and `MyStruct` alone,
 you could have said:
 
 ```
-use derive_adhoc::{Deftly, derive_deftly_adhoc};
+use derive_deftly::{Deftly, derive_deftly_adhoc};
 
 #[derive(Clone, Debug, Deftly)]
 #[derive_deftly_adhoc]
@@ -279,7 +279,7 @@ And here's how that pseudocode translates into
 a `derive_adhoc` template:
 
 ```
-use derive_adhoc::define_derive_deftly;
+use derive_deftly::define_derive_deftly;
 
 define_derive_deftly! {
     MyClone =
@@ -427,7 +427,7 @@ impl<T:Clone, U> Clone for MyItems<T,U>
 We can expand our `MyClone` definition to look that way:
 
 ```
-# use derive_adhoc::define_derive_deftly;
+# use derive_deftly::define_derive_deftly;
 define_derive_deftly! {
     MyClone =
 
@@ -505,7 +505,7 @@ that derives `Clone` only for the cases
 where the _actual_ required constraints are met:
 
 ```
-# use derive_adhoc::define_derive_deftly;
+# use derive_deftly::define_derive_deftly;
 define_derive_deftly! {
     MyClone =
 
@@ -579,7 +579,7 @@ each of the three variants.
 We can do that as follow
 (For simplicity, we're going to ignore generics for now.)
 ```
-# use derive_adhoc::define_derive_deftly;
+# use derive_deftly::define_derive_deftly;
 define_derive_deftly! {
     MyClone =
 
@@ -682,7 +682,7 @@ Now let's see how it works when we try to handle generics again.
 (It's surprisingly straightforward!)
 
 ```
-# use derive_adhoc::{Deftly, define_derive_deftly};
+# use derive_deftly::{Deftly, define_derive_deftly};
 define_derive_deftly! {
     MyClone =
 
@@ -724,7 +724,7 @@ You can use
 to specifiy explicitly:
 so, above, instead, we could have written
 ```
-# use derive_adhoc::{Deftly, derive_deftly_adhoc};
+# use derive_deftly::{Deftly, derive_deftly_adhoc};
 # #[derive(Deftly)]
 # #[derive_deftly_adhoc]
 # enum TestCase<A> { Variant(A) }
@@ -763,7 +763,7 @@ to detect each variant.
 
 You can do that like this:
 ```
-# use derive_adhoc::define_derive_deftly;
+# use derive_deftly::define_derive_deftly;
 define_derive_deftly! {
     Discriminant =
 
@@ -878,7 +878,7 @@ without having to write out all of its arguments.
 Let's start with the following (struct-only) template:
 
 ```
-# use derive_adhoc::define_derive_deftly;
+# use derive_deftly::define_derive_deftly;
 define_derive_deftly! {
    Constructor =
 
@@ -895,7 +895,7 @@ define_derive_deftly! {
 When you apply the above template to a type like this:
 
 ```
-# use derive_adhoc::define_derive_deftly;
+# use derive_deftly::define_derive_deftly;
 # define_derive_deftly! {
 #   Constructor =
 #
@@ -907,7 +907,7 @@ When you apply the above template to a type like this:
 #       }
 #   }
 # }
-use derive_adhoc::Deftly;
+use derive_deftly::Deftly;
 #[derive(Deftly)]
 #[derive_deftly(Constructor)]
 struct Ex<A> {
@@ -947,7 +947,7 @@ We can tell `derive_adhoc` about this restriction,
 to help it generate more useful error messages:
 
 ```
-# use derive_adhoc::define_derive_deftly;
+# use derive_deftly::define_derive_deftly;
 define_derive_deftly! {
    Constructor for struct = // (1)
 
@@ -985,7 +985,7 @@ You can
 [tell derive-deftly what your macro is supposed to produce](crate::doc_reference#expect-items-expect-expr--syntax-check-the-expansion):
 
 ```
-# use derive_adhoc::{Deftly, define_derive_deftly};
+# use derive_deftly::{Deftly, define_derive_deftly};
 define_derive_deftly! {
    Constructor for struct, expect items =
 
@@ -1012,7 +1012,7 @@ you can request this syntax check
 [when you invoke the macro](Deftly#expansion-options):
 
 ```
-# use derive_adhoc::{Deftly, define_derive_deftly};
+# use derive_deftly::{Deftly, define_derive_deftly};
 # define_derive_deftly! { Constructor = }
 #[derive(Deftly)]
 #[derive_deftly(Constructor[expect items])]
@@ -1028,7 +1028,7 @@ You can ask derive-deftly to simply
 [print a copy of the expansion](crate::doc_reference#dbg--print-the-expansion-to-stderr-for-debugging).
 
 ```
-# use derive_adhoc::{Deftly, define_derive_deftly};
+# use derive_deftly::{Deftly, define_derive_deftly};
 # define_derive_deftly! { Constructor = }
 #[derive(Deftly)]
 #[derive_deftly(Constructor[dbg])]
@@ -1059,7 +1059,7 @@ Let's fix this, and have it give our constructor
 the same visibility as the type itself:
 
 ```
-# use derive_adhoc::define_derive_deftly;
+# use derive_deftly::define_derive_deftly;
 define_derive_deftly! {
    Constructor for struct =
 
@@ -1095,7 +1095,7 @@ we'd like to be able to give the `new` function a different name.
 We could do this as follows:
 
 ```
-# use derive_adhoc::define_derive_deftly;
+# use derive_deftly::define_derive_deftly;
 define_derive_deftly! {
    Constructor for struct =
 
@@ -1109,7 +1109,7 @@ define_derive_deftly! {
    }
 }
 
-use derive_adhoc::Deftly;
+use derive_deftly::Deftly;
 #[derive(Deftly)]
 #[derive_deftly(Constructor)]
 #[deftly(newfn="construct_example")]
@@ -1165,7 +1165,7 @@ the template won't make a function name at all!
 
 Let's show how to fix that:
 ```
-# use derive_adhoc::define_derive_deftly;
+# use derive_deftly::define_derive_deftly;
 define_derive_deftly! {
    Constructor for struct =
 
@@ -1212,7 +1212,7 @@ and not take them as arguments.
 
 We could do this with an explicit conditional for each field:
 ```
-# use derive_adhoc::define_derive_deftly;
+# use derive_deftly::define_derive_deftly;
 define_derive_deftly! {
    Constructor =
 
@@ -1232,7 +1232,7 @@ define_derive_deftly! {
    }
 }
 
-use derive_adhoc::Deftly;
+use derive_deftly::Deftly;
 #[derive(Deftly)]
 #[derive_deftly(Constructor)]
 struct Foo {

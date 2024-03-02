@@ -9,7 +9,7 @@
 
 #![allow(dead_code)]
 
-use derive_adhoc::{define_derive_deftly, Deftly};
+use derive_deftly::{define_derive_deftly, Deftly};
 
 define_derive_deftly! {
     // The output from this `dbg` is tested via tests/stderr/stderr-lib.rs

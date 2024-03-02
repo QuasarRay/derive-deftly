@@ -661,7 +661,7 @@ See also the [`dbg` expansion option](#dbg--print-the-expansion-to-stderr-for-de
 #### Example
 
 ```rust
-# use derive_adhoc::{Deftly, derive_deftly_adhoc};
+# use derive_deftly::{Deftly, derive_deftly_adhoc};
 #[derive(Deftly)]
 #[derive_deftly_adhoc]
 enum Enum {
@@ -970,7 +970,7 @@ See also the [`$dbg_all_keywords` expansion](#dbg_all_keywords--dump-expansions-
 ### Expansion options example
 
 ```
-# use derive_adhoc::{define_derive_deftly, Deftly};
+# use derive_deftly::{define_derive_deftly, Deftly};
 define_derive_deftly! { Nothing for struct, expect items = }
 
 #[derive(Deftly)]

@@ -4,7 +4,7 @@
 
 #![allow(dead_code, unused_variables)]
 
-use derive_adhoc::{derive_deftly_adhoc, Deftly};
+use derive_deftly::{derive_deftly_adhoc, Deftly};
 
 type FieldType = ();
 

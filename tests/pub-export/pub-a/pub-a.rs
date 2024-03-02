@@ -20,7 +20,7 @@ pub use a_driver::ADriver;
 //    cannot be referred to by absolute paths
 #[macro_use]
 pub mod a_trait {
-    use derive_adhoc::define_derive_deftly;
+    use derive_deftly::define_derive_deftly;
 
     /// Demonstrates use of a local name in a template.
     /// We must make it visible everywhere the template will be expanded.
@@ -51,7 +51,7 @@ pub mod a_trait {
 }
 
 mod local_use {
-    use derive_adhoc::Deftly;
+    use derive_deftly::Deftly;
 
     // When we refer to a local template, we do so without a path,
     // even though it was an exported template.
@@ -62,7 +62,7 @@ mod local_use {
 }
 
 pub mod a_driver {
-    use derive_adhoc::Deftly;
+    use derive_deftly::Deftly;
 
     /// A struct which is exported as a derive-deftly driver (iw with
     /// `#[derive_deftly(pub)]` must be *visilbe* outside the crate.

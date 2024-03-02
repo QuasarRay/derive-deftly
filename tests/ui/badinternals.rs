@@ -4,7 +4,7 @@
 // test is not particularly realistic.  But it does exercise the error
 // generation code paths.
 
-use derive_adhoc::{define_derive_deftly, Deftly};
+use derive_deftly::{define_derive_deftly, Deftly};
 
 #[derive(Deftly)]
 #[derive_deftly_adhoc]
@@ -16,10 +16,10 @@ define_derive_deftly! {
 
 derive_deftly_driver_Driver! { GARBAGE -> DRIVER }
 derive_deftly_template_Template! { GARBAGE -> TEMPLATE }
-derive_adhoc::derive_deftly_engine! { GARBAGE -> INNARDS }
+derive_deftly::derive_deftly_engine! { GARBAGE -> INNARDS }
 
 // OpCompatVersions 1.0, ie our own, and the earliest released
-derive_adhoc::derive_deftly_engine! {
+derive_deftly::derive_deftly_engine! {
     { pub struct StructName {} }
     [1 0]
     { }
@@ -28,7 +28,7 @@ derive_adhoc::derive_deftly_engine! {
 }
 
 // OpCompatVersions 1.200, some imaginary future compatible one
-derive_adhoc::derive_deftly_engine! {
+derive_deftly::derive_deftly_engine! {
     { pub struct StructName {} }
     [1 200]
     { }
@@ -37,7 +37,7 @@ derive_adhoc::derive_deftly_engine! {
 }
 
 // OpCompatVersions 200.1, some imaginary future incompatible one
-derive_adhoc::derive_deftly_engine! {
+derive_deftly::derive_deftly_engine! {
     { pub struct StructName {} }
     [200 0]
     { }

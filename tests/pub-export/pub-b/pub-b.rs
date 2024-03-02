@@ -28,7 +28,7 @@
 
 #[cfg(not(feature = "skip_imported_driver"))]
 pub mod adhoc_template {
-    use derive_adhoc::derive_deftly_adhoc;
+    use derive_deftly::derive_deftly_adhoc;
 
     pub trait NumFields {
         fn num_fields() -> usize;
@@ -67,7 +67,7 @@ pub mod adhoc_template {
 }
 
 pub mod b_driver {
-    use derive_adhoc::Deftly;
+    use derive_deftly::Deftly;
 
     pub struct BField<T: Default>(T);
 

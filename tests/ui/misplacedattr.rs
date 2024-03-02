@@ -1,4 +1,4 @@
-use derive_adhoc::Deftly;
+use derive_deftly::Deftly;
 
 #[derive(Deftly)]
 struct Struct {

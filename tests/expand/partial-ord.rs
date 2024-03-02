@@ -7,7 +7,7 @@
 
 use std::cmp::Ordering::{self, *};
 
-use derive_adhoc::{define_derive_deftly, Deftly};
+use derive_deftly::{define_derive_deftly, Deftly};
 
 define_derive_deftly! {
     VeryPartialOrd =

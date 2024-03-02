@@ -38,7 +38,7 @@ and the docs for the individual proc macros.
 ## Simple example - providing `Vec` containing enum variant names
 
 ```
-use derive_adhoc::{define_derive_deftly, Deftly};
+use derive_deftly::{define_derive_deftly, Deftly};
 
 define_derive_deftly! {
     ListVariants =

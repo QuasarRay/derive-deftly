@@ -1,6 +1,6 @@
 //! Define and use macro_rules macros in a template!
 
-use derive_adhoc::{define_derive_deftly, derive_deftly_adhoc, Deftly};
+use derive_deftly::{define_derive_deftly, derive_deftly_adhoc, Deftly};
 
 define_derive_deftly! {
     DefineAndUseMacroRulesMacro =

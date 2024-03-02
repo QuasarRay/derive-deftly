@@ -5,7 +5,7 @@
 //! values (from the same enum) at once - in particular, patterns
 //! with a different prefix.
 use std::cmp::Ordering::{self, *};
-use derive_adhoc::{define_derive_deftly, Deftly};
+use derive_deftly::{define_derive_deftly, Deftly};
 #[derive_deftly(VeryPartialOrd)]
 enum Enum<F: PartialEq = (), G = ()>
 where

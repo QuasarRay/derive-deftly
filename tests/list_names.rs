@@ -1,6 +1,6 @@
 //! Test name macros and several scopes of iteration.
 
-use derive_adhoc::{define_derive_deftly, Deftly};
+use derive_deftly::{define_derive_deftly, Deftly};
 
 define_derive_deftly! {
     ListFields =

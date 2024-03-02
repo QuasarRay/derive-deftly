@@ -25,21 +25,21 @@ error: wrong input to derive-deftly template inner macro derive_deftly_template_
 error: bad input to derive_deftly_engine inner template expansion proc macro; might be due to incompatible derive-deftly versions(s)
   --> ui/badinternals.rs:19:1
    |
-19 | derive_adhoc::derive_deftly_engine! { GARBAGE -> INNARDS }
+19 | derive_deftly::derive_deftly_engine! { GARBAGE -> INNARDS }
    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
    |
-   = note: this error originates in the macro `derive_adhoc::derive_deftly_engine` (in Nightly builds, run with -Z macro-backtrace for more info)
+   = note: this error originates in the macro `derive_deftly::derive_deftly_engine` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: expected curly braces
   --> ui/badinternals.rs:19:39
    |
-19 | derive_adhoc::derive_deftly_engine! { GARBAGE -> INNARDS }
+19 | derive_deftly::derive_deftly_engine! { GARBAGE -> INNARDS }
    |                                       ^^^^^^^
 
 error: bad input to derive_deftly_engine inner template expansion proc macro; might be due to incompatible derive-deftly versions(s)
   --> ui/badinternals.rs:40:1
    |
-40 | / derive_adhoc::derive_deftly_engine! {
+40 | / derive_deftly::derive_deftly_engine! {
 41 | |     { pub struct StructName {} }
 42 | |     [200 0]
 43 | |     { }
@@ -48,12 +48,12 @@ error: bad input to derive_deftly_engine inner template expansion proc macro; mi
 46 | | }
    | |_^
    |
-   = note: this error originates in the macro `derive_adhoc::derive_deftly_engine` (in Nightly builds, run with -Z macro-backtrace for more info)
+   = note: this error originates in the macro `derive_deftly::derive_deftly_engine` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: Incompatible major version for AOPTIONS (driver 200, template/engine 1)
   --> ui/badinternals.rs:40:1
    |
-40 | / derive_adhoc::derive_deftly_engine! {
+40 | / derive_deftly::derive_deftly_engine! {
 41 | |     { pub struct StructName {} }
 42 | |     [200 0]
 43 | |     { }
@@ -62,4 +62,4 @@ error: Incompatible major version for AOPTIONS (driver 200, template/engine 1)
 46 | | }
    | |_^
    |
-   = note: this error originates in the macro `derive_adhoc::derive_deftly_engine` (in Nightly builds, run with -Z macro-backtrace for more info)
+   = note: this error originates in the macro `derive_deftly::derive_deftly_engine` (in Nightly builds, run with -Z macro-backtrace for more info)

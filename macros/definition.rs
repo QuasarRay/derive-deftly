@@ -192,7 +192,7 @@ To use it, write: `#[derive(Deftly)] #[derive_deftly({})]`."#,
         Some(pub_token) => {
             let span = pub_token.span();
             vis_export = quote_spanned!(span=> #[macro_export]);
-            expand_macro = quote_spanned!(span=> $crate::derive_adhoc::derive_deftly_engine);
+            expand_macro = quote_spanned!(span=> $crate::derive_deftly::derive_deftly_engine);
         }
     }
 

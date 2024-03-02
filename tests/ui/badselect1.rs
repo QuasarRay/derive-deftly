@@ -5,7 +5,7 @@
 //#![feature(trace_macros)]
 //trace_macros!(true);
 
-use derive_adhoc::{derive_deftly_adhoc, Deftly};
+use derive_deftly::{derive_deftly_adhoc, Deftly};
 
 use std::fmt::Debug;
 

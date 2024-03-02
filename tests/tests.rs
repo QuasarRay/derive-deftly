@@ -3,7 +3,7 @@
 //! **Internal, unpublished crate.**
 //!
 //! Separating these tests into their own crate arranges that they
-//! can go through the "front door" of `use derive_adhoc::...`,
+//! can go through the "front door" of `use derive_deftly::...`,
 //! and in particular makes the cross-crate tests uniform with the others.
 //!
 //! ## Invoking the tests
@@ -148,7 +148,7 @@ pub use tutils::*;
 // These mostly serve to avoid rustdoc warnings from directly::macros,
 // which is macros.rs re-built outside the proc macro system.
 #[allow(unused_imports)]
-use derive_adhoc::{define_derive_deftly, derive_deftly_adhoc, Deftly};
+use derive_deftly::{define_derive_deftly, derive_deftly_adhoc, Deftly};
 
 //---------- modules containing straightforwrad `#[test]` tests ----------
 

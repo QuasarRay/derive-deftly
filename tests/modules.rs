@@ -37,7 +37,7 @@ trait NumFields {
 /// are basically the same as those for a `macro_rules!` macro.
 #[macro_use]
 mod has_template {
-    use derive_adhoc::define_derive_deftly;
+    use derive_deftly::define_derive_deftly;
 
     /// Demonstrates use of a local name in a template.
     /// We must make it visible everywhere the template will be expanded.
@@ -80,7 +80,7 @@ mod has_template {
 /// definition.
 #[macro_use]
 pub mod has_driver {
-    use derive_adhoc::Deftly;
+    use derive_deftly::Deftly;
 
     // Additionally, for a driver to be useable outside its module, the
     // driver type name and types of its fields etc., need to be visible,
@@ -101,7 +101,7 @@ pub mod has_driver {
 }
 
 mod adhoc_template {
-    use derive_adhoc::derive_deftly_adhoc;
+    use derive_deftly::derive_deftly_adhoc;
 
     // When applying a template to a driver struct defined in another
     // module, the driver's own type name, and the names used for field
