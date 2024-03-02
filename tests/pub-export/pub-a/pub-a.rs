@@ -20,7 +20,7 @@ pub use a_driver::ADriver;
 //    cannot be referred to by absolute paths
 #[macro_use]
 pub mod a_trait {
-    use derive_adhoc::define_derive_adhoc;
+    use derive_adhoc::define_derive_deftly;
 
     /// Demonstrates use of a local name in a template.
     /// We must make it visible everywhere the template will be expanded.
@@ -28,7 +28,7 @@ pub mod a_trait {
         fn is_enum() -> Option<()>;
     }
 
-    define_derive_adhoc! {
+    define_derive_deftly! {
         pub IsEnum =
 
         // When the template wants to refer to things in its own

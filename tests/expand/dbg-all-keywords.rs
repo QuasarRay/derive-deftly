@@ -1,6 +1,6 @@
-use derive_adhoc::{define_derive_adhoc, Adhoc};
+use derive_adhoc::{define_derive_deftly, Adhoc};
 
-define_derive_adhoc! { Dbg = $dbg_all_keywords }
+define_derive_deftly! { Dbg = $dbg_all_keywords }
 
 #[allow(dead_code)]
 #[derive(Adhoc)]

@@ -1,4 +1,4 @@
-use derive_adhoc::{define_derive_adhoc, derive_adhoc, Adhoc};
+use derive_adhoc::{define_derive_deftly, derive_adhoc, Adhoc};
 
 #[derive(Adhoc)]
 #[derive_truly_adhoc]
@@ -79,7 +79,7 @@ derive_adhoc! {
     struct ${paste Bad ${tmeta(multi) as str}};
 }
 
-define_derive_adhoc! {
+define_derive_deftly! {
     TestFunkyPath =
     struct ${paste Bad ${tmeta(std::cell::Cell::<String>::ne)w as str}};
 }

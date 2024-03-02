@@ -1,4 +1,4 @@
-use derive_adhoc::{define_derive_adhoc, derive_adhoc, Adhoc};
+use derive_adhoc::{define_derive_deftly, derive_adhoc, Adhoc};
 
 #[derive(Adhoc)]
 #[derive_truly_adhoc]
@@ -25,7 +25,7 @@ derive_adhoc! {
     ${if tmeta(some_path) as lit { }}
 }
 
-define_derive_adhoc! {
+define_derive_deftly! {
     Broken =
 
     type Alias = ${ttype $junk};

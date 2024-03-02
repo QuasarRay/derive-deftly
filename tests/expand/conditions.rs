@@ -2,7 +2,7 @@
 //!
 //! This gives a basic demonstration of how to handle an enum.
 
-use derive_adhoc::{define_derive_adhoc, derive_adhoc, Adhoc};
+use derive_adhoc::{define_derive_deftly, derive_adhoc, Adhoc};
 
 trait Trait {
     fn shape_top(&self) -> &'static str;
@@ -11,7 +11,7 @@ trait Trait {
     fn has_vmeta(&self) -> bool;
 }
 
-define_derive_adhoc! {
+define_derive_deftly! {
     Trait =
 
     impl Trait for $ttype {
@@ -59,7 +59,7 @@ trait GetUsize {
     fn get_usize(&self) -> Option<usize>;
 }
 
-define_derive_adhoc! {
+define_derive_deftly! {
     GetUsize =
 
     impl GetUsize for $ttype {

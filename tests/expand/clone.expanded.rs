@@ -1,5 +1,5 @@
 //! Very simple example for deriving Clone.
-use derive_adhoc::{define_derive_adhoc, Adhoc};
+use derive_adhoc::{define_derive_deftly, Adhoc};
 use std::sync::Arc;
 #[derive_adhoc(MyClone)]
 struct DecoratedError<E> {

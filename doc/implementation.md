@@ -104,13 +104,13 @@ whose template syntax resembles the expansion syntax from `macro_rules`.
 
 ## Implementation approach - reusable template macros
 
-## 1. `define_derive_adhoc!` macro for defining a reuseable template
+## 1. `define_derive_deftly!` macro for defining a reuseable template
 
-Implemented in `definition.rs::define_derive_adhoc_func_macro`.
+Implemented in `definition.rs::define_derive_deftly_func_macro`.
 
 When used like this
 ```rust,ignore
-    define_derive_adhoc! {
+    define_derive_deftly! {
         MyMacro TOPTIONS... =
         TEMPLATE...
     }

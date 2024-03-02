@@ -2,9 +2,9 @@
 //!
 //! This gives a basic demonstration of how to handle an enum.
 
-use derive_adhoc::{define_derive_adhoc, Adhoc};
+use derive_adhoc::{define_derive_deftly, Adhoc};
 
-define_derive_adhoc! {
+define_derive_deftly! {
     PreciseClone =
 
     impl<$tgens> Clone for $ttype

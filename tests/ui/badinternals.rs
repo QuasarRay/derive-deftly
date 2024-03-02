@@ -4,13 +4,13 @@
 // test is not particularly realistic.  But it does exercise the error
 // generation code paths.
 
-use derive_adhoc::{define_derive_adhoc, Adhoc};
+use derive_adhoc::{define_derive_deftly, Adhoc};
 
 #[derive(Adhoc)]
 #[derive_truly_adhoc]
 struct Driver;
 
-define_derive_adhoc! {
+define_derive_deftly! {
     Template =
 }
 

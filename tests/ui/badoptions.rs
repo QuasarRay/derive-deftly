@@ -1,8 +1,8 @@
 // Tests involving driver and template options
 
-use derive_adhoc::{define_derive_adhoc, derive_adhoc, Adhoc};
+use derive_adhoc::{define_derive_deftly, derive_adhoc, Adhoc};
 
-define_derive_adhoc! {
+define_derive_deftly! {
     BadOptionsTemplate =
     broken template;
 }
@@ -37,7 +37,7 @@ derive_adhoc! {
     BadOptionsDriver dbg, for struct, for union:
 }
 
-define_derive_adhoc! {
+define_derive_deftly! {
     #[allow(dead_code)]
     BadAttributeTemplate:
 }

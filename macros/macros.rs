@@ -136,7 +136,7 @@ pub fn derive_adhoc(
 /// Define a reuseable template
 ///
 /// ```text
-/// define_derive_adhoc! {
+/// define_derive_deftly! {
 ///     [/// DOCS]
 ///     [pub] MyMacro OPTIONS,.. =
 ///     TEMPLATE
@@ -165,7 +165,7 @@ pub fn derive_adhoc(
 /// which is referenced when the template is applied.
 ///
 /// The template definition macro
-/// from `define_derive_adhoc!`
+/// from `define_derive_deftly!`
 /// must be in scope at the point where you try to use it
 /// (with `#[derive(Adhoc)] #[derive_adhoc(MyMacro)]`).
 /// See the
@@ -173,7 +173,7 @@ pub fn derive_adhoc(
 ///
 /// ## Exporting a template for use by other crates
 ///
-/// With `pub MyMacro`, `define_derive_adhoc!` exports the template
+/// With `pub MyMacro`, `define_derive_deftly!` exports the template
 /// for use by other crates.
 /// Then, it is referred to in other crates
 /// with `#[derive_ahdoc(this_crate::MyMacro)]`.
@@ -231,11 +231,11 @@ pub fn derive_adhoc(
 /// Overall, the situation is similar to defining
 /// an exported `macro_rules` macro.
 #[cfg_attr(proc_macro, proc_macro)]
-pub fn define_derive_adhoc(
+pub fn define_derive_deftly(
     input: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
     let input = TokenStream::from(input);
-    let output = definition::define_derive_adhoc_func_macro(input)
+    let output = definition::define_derive_deftly_func_macro(input)
         .unwrap_or_else(|e| e.into_compile_error());
     output.into()
 }
@@ -247,7 +247,7 @@ pub fn define_derive_adhoc(
 ///  1. If `#[derive_adhoc(MyMacro)]` attributes are also specified,
 ///     they are taken to refer to reuseable templates
 ///     defined with
-///     [`define_derive_adhoc!`](macro@crate::define_derive_adhoc).
+///     [`define_derive_deftly!`](macro@crate::define_derive_deftly).
 ///     Each such `MyMacro` is applied to the data structure.
 ///
 ///     <span id="expansion-options">You can specify
@@ -284,12 +284,12 @@ pub fn define_derive_adhoc(
 ///
 /// **Summary of required ordering**
 ///
-///  1. `define_derive_adhoc! { MyMacro = ... }`
+///  1. `define_derive_deftly! { MyMacro = ... }`
 ///  2. `#[derive(Adhoc)] #[derive_adhoc(MyMacro)] struct MyStruct { ... }`
 ///  3. `derive_adhoc! { MyStruct: ... }`
 ///
 /// Any reusable templates defined with
-/// `define_derive_adhoc!` must lexically their precede
+/// `define_derive_deftly!` must lexically their precede
 /// uses with `#[derive(Adhoc) #[derive_adhoc(...)]`.
 ///
 /// And, for one-off templates (`derive_adhoc!`),

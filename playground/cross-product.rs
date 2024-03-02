@@ -7,7 +7,7 @@
 //
 // This demonstrates use of the outer context facility.
 
-define_derive_adhoc!{
+define_derive_deftly!{
     Squared =
 
     // New expansions:

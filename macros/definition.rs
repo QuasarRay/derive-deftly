@@ -1,4 +1,4 @@
-//! Macro impl for defining a template `define_derive_adhoc!`
+//! Macro impl for defining a template `define_derive_deftly!`
 
 use super::prelude::*;
 
@@ -146,8 +146,8 @@ pub fn escape_dollars(input: TokenStream) -> TokenStream {
     handle_ts(input, St::Other)
 }
 
-/// This is `define_derive_adhoc!`
-pub fn define_derive_adhoc_func_macro(
+/// This is `define_derive_deftly!`
+pub fn define_derive_deftly_func_macro(
     input: TokenStream,
 ) -> Result<TokenStream, syn::Error> {
     // eprintln!(

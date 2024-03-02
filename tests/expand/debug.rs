@@ -6,12 +6,12 @@
 
 use std::fmt::{self, Debug, Formatter};
 
-use derive_adhoc::define_derive_adhoc;
+use derive_adhoc::define_derive_deftly;
 use derive_adhoc::{derive_adhoc, Adhoc};
 
 use derive_adhoc_tests::*;
 
-define_derive_adhoc! {
+define_derive_deftly! {
     MyDebug =
 
     impl Debug for $ttype

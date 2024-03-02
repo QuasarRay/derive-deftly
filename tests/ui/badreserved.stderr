@@ -46,10 +46,10 @@ error: expected one of: `$`, parentheses, curly braces, identifier, `<`
 45 |     $0
    |      ^
 
-warning: unused import: `define_derive_adhoc`
+warning: unused import: `define_derive_deftly`
  --> ui/badreserved.rs:3:20
   |
-3 | use derive_adhoc::{define_derive_adhoc, derive_adhoc, Adhoc};
+3 | use derive_adhoc::{define_derive_deftly, derive_adhoc, Adhoc};
   |                    ^^^^^^^^^^^^^^^^^^^
   |
   = note: `#[warn(unused_imports)]` on by default

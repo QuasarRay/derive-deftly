@@ -7,9 +7,9 @@
 
 use std::cmp::Ordering::{self, *};
 
-use derive_adhoc::{define_derive_adhoc, Adhoc};
+use derive_adhoc::{define_derive_deftly, Adhoc};
 
-define_derive_adhoc! {
+define_derive_deftly! {
     VeryPartialOrd =
 
     impl<$tgens> PartialOrd for $ttype

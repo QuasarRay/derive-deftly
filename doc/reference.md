@@ -909,7 +909,7 @@ which will be applied to each relevant template expansion:
 derive_adhoc! { DataStructureType OPTIONS,... : TEMPLATE }
 
 // Define a template Template which always expands with OPTIONS
-define_derive_adhoc! { Template OPTIONS,... = TEMPLATE }
+define_derive_deftly! { Template OPTIONS,... = TEMPLATE }
 
 // Expand Template for DataStructureType, with OPTIONS
 #[derive(Adhoc)]
@@ -970,8 +970,8 @@ See also the [`$dbg_all_keywords` expansion](#dbg_all_keywords--dump-expansions-
 ### Expansion options example
 
 ```
-# use derive_adhoc::{define_derive_adhoc, Adhoc};
-define_derive_adhoc! { Nothing for struct, expect items = }
+# use derive_adhoc::{define_derive_deftly, Adhoc};
+define_derive_deftly! { Nothing for struct, expect items = }
 
 #[derive(Adhoc)]
 #[derive_adhoc(Nothing[expect items, dbg])]

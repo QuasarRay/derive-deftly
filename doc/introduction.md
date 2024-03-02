@@ -35,12 +35,12 @@ structs and enums
 and then _applying_ those templates to your types.
 
 To define a template, you use
-[`define_derive_adhoc!`](crate::define_derive_adhoc), as in
+[`define_derive_deftly!`](crate::define_derive_deftly), as in
 
 ```
-use derive_adhoc::define_derive_adhoc;
+use derive_adhoc::define_derive_deftly;
 
-define_derive_adhoc! {
+define_derive_deftly! {
     NamePrinter =
 
     impl $ttype {
@@ -65,8 +65,8 @@ with
 as in:
 
 ```
-# use derive_adhoc::define_derive_adhoc;
-# define_derive_adhoc! {
+# use derive_adhoc::define_derive_deftly;
+# define_derive_deftly! {
 #    NamePrinter =
 #
 #    impl $ttype {
@@ -90,13 +90,13 @@ But now suppose that you want to expose your template,
 so that people can use it from any crate.
 
 To do this, you use
-[`pub` before the name of your macro](define_derive_adhoc#exporting-a-template-for-use-by-other-crates).
+[`pub` before the name of your macro](define_derive_deftly#exporting-a-template-for-use-by-other-crates).
 ```
 pub trait NamePrinter {
     fn print_name();
 }
 
-derive_adhoc::define_derive_adhoc! {
+derive_adhoc::define_derive_deftly! {
     /// Derives `NamePrinter`, providing `print_name`
     pub NamePrinter =
     impl $crate::NamePrinter for $ttype {
@@ -119,11 +119,11 @@ so that when later we expand this template,
 it can find the right template.
 
 We've also added a
-[doc comment](define_derive_adhoc#docs-in-define),
+[doc comment](define_derive_deftly#docs-in-define),
 which will appear in the public API documentation for our crate.
 
 Additionally,
-[we need to re-export `derive_adhoc`](define_derive_adhoc#you-must-re-export-derive_adhoc-usually-no-semver-implications)
+[we need to re-export `derive_adhoc`](define_derive_deftly#you-must-re-export-derive_adhoc-usually-no-semver-implications)
 from our crate, so that users get the correct version:
 
 ```rust,ignore
@@ -279,9 +279,9 @@ And here's how that pseudocode translates into
 a `derive_adhoc` template:
 
 ```
-use derive_adhoc::define_derive_adhoc;
+use derive_adhoc::define_derive_deftly;
 
-define_derive_adhoc! {
+define_derive_deftly! {
     MyClone =
 
     impl Clone for $ttype {
@@ -427,8 +427,8 @@ impl<T:Clone, U> Clone for MyItems<T,U>
 We can expand our `MyClone` definition to look that way:
 
 ```
-# use derive_adhoc::define_derive_adhoc;
-define_derive_adhoc! {
+# use derive_adhoc::define_derive_deftly;
+define_derive_deftly! {
     MyClone =
 
     impl<$tgens> Clone for $ttype
@@ -505,8 +505,8 @@ that derives `Clone` only for the cases
 where the _actual_ required constraints are met:
 
 ```
-# use derive_adhoc::define_derive_adhoc;
-define_derive_adhoc! {
+# use derive_adhoc::define_derive_deftly;
+define_derive_deftly! {
     MyClone =
 
     impl<$tgens> Clone for $ttype
@@ -579,8 +579,8 @@ each of the three variants.
 We can do that as follow
 (For simplicity, we're going to ignore generics for now.)
 ```
-# use derive_adhoc::define_derive_adhoc;
-define_derive_adhoc! {
+# use derive_adhoc::define_derive_deftly;
+define_derive_deftly! {
     MyClone =
 
     impl Clone for $ttype
@@ -682,8 +682,8 @@ Now let's see how it works when we try to handle generics again.
 (It's surprisingly straightforward!)
 
 ```
-# use derive_adhoc::{Adhoc, define_derive_adhoc};
-define_derive_adhoc! {
+# use derive_adhoc::{Adhoc, define_derive_deftly};
+define_derive_deftly! {
     MyClone =
 
     impl<$tgens> Clone for $ttype
@@ -763,8 +763,8 @@ to detect each variant.
 
 You can do that like this:
 ```
-# use derive_adhoc::define_derive_adhoc;
-define_derive_adhoc! {
+# use derive_adhoc::define_derive_deftly;
+define_derive_deftly! {
     Discriminant =
 
     #[derive(Copy,Clone,Eq,PartialEq,Debug)]
@@ -878,8 +878,8 @@ without having to write out all of its arguments.
 Let's start with the following (struct-only) template:
 
 ```
-# use derive_adhoc::define_derive_adhoc;
-define_derive_adhoc! {
+# use derive_adhoc::define_derive_deftly;
+define_derive_deftly! {
    Constructor =
 
    impl<$tgens> $ttype where $twheres {
@@ -895,8 +895,8 @@ define_derive_adhoc! {
 When you apply the above template to a type like this:
 
 ```
-# use derive_adhoc::define_derive_adhoc;
-# define_derive_adhoc! {
+# use derive_adhoc::define_derive_deftly;
+# define_derive_deftly! {
 #   Constructor =
 #
 #   impl<$tgens> $ttype where $twheres {
@@ -947,8 +947,8 @@ We can tell `derive_adhoc` about this restriction,
 to help it generate more useful error messages:
 
 ```
-# use derive_adhoc::define_derive_adhoc;
-define_derive_adhoc! {
+# use derive_adhoc::define_derive_deftly;
+define_derive_deftly! {
    Constructor for struct = // (1)
 
    impl<$tgens> $ttype where $twheres {
@@ -985,8 +985,8 @@ You can
 [tell derive-adhoc what your macro is supposed to produce](crate::doc_reference#expect-items-expect-expr--syntax-check-the-expansion):
 
 ```
-# use derive_adhoc::{Adhoc, define_derive_adhoc};
-define_derive_adhoc! {
+# use derive_adhoc::{Adhoc, define_derive_deftly};
+define_derive_deftly! {
    Constructor for struct, expect items =
 
    impl<$tgens> $ttype where $twheres {
@@ -1012,8 +1012,8 @@ you can request this syntax check
 [when you invoke the macro](Adhoc#expansion-options):
 
 ```
-# use derive_adhoc::{Adhoc, define_derive_adhoc};
-# define_derive_adhoc! { Constructor = }
+# use derive_adhoc::{Adhoc, define_derive_deftly};
+# define_derive_deftly! { Constructor = }
 #[derive(Adhoc)]
 #[derive_adhoc(Constructor[expect items])]
 struct MyStruct { /* ... */ }
@@ -1028,8 +1028,8 @@ You can ask derive-adhoc to simply
 [print a copy of the expansion](crate::doc_reference#dbg--print-the-expansion-to-stderr-for-debugging).
 
 ```
-# use derive_adhoc::{Adhoc, define_derive_adhoc};
-# define_derive_adhoc! { Constructor = }
+# use derive_adhoc::{Adhoc, define_derive_deftly};
+# define_derive_deftly! { Constructor = }
 #[derive(Adhoc)]
 #[derive_adhoc(Constructor[dbg])]
 struct MyStruct { /* ... */ }
@@ -1059,8 +1059,8 @@ Let's fix this, and have it give our constructor
 the same visibility as the type itself:
 
 ```
-# use derive_adhoc::define_derive_adhoc;
-define_derive_adhoc! {
+# use derive_adhoc::define_derive_deftly;
+define_derive_deftly! {
    Constructor for struct =
 
    impl<$tgens> $ttype where $twheres {
@@ -1095,8 +1095,8 @@ we'd like to be able to give the `new` function a different name.
 We could do this as follows:
 
 ```
-# use derive_adhoc::define_derive_adhoc;
-define_derive_adhoc! {
+# use derive_adhoc::define_derive_deftly;
+define_derive_deftly! {
    Constructor for struct =
 
    impl<$tgens> $ttype where $twheres {
@@ -1165,8 +1165,8 @@ the template won't make a function name at all!
 
 Let's show how to fix that:
 ```
-# use derive_adhoc::define_derive_adhoc;
-define_derive_adhoc! {
+# use derive_adhoc::define_derive_deftly;
+define_derive_deftly! {
    Constructor for struct =
 
    impl<$tgens> $ttype where $twheres {
@@ -1212,8 +1212,8 @@ and not take them as arguments.
 
 We could do this with an explicit conditional for each field:
 ```
-# use derive_adhoc::define_derive_adhoc;
-define_derive_adhoc! {
+# use derive_adhoc::define_derive_deftly;
+define_derive_deftly! {
    Constructor =
 
    impl<$tgens> $ttype where $twheres {

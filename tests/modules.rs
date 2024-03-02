@@ -37,14 +37,14 @@ trait NumFields {
 /// are basically the same as those for a `macro_rules!` macro.
 #[macro_use]
 mod has_template {
-    use derive_adhoc::define_derive_adhoc;
+    use derive_adhoc::define_derive_deftly;
 
     /// Demonstrates use of a local name in a template.
     /// We must make it visible everywhere the template will be expanded.
     pub(super) const ENUM_MARKER: Option<super::EnumMarker> =
         Some(super::EnumMarker);
 
-    define_derive_adhoc! {
+    define_derive_deftly! {
         IsEnum =
 
         // When the template wants to refer to things, it is usually most

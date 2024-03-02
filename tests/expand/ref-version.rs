@@ -9,9 +9,9 @@
 
 #![allow(dead_code)]
 
-use derive_adhoc::{define_derive_adhoc, Adhoc};
+use derive_adhoc::{define_derive_deftly, Adhoc};
 
-define_derive_adhoc! {
+define_derive_deftly! {
     // The output from this `dbg` is tested via tests/stderr/stderr-lib.rs
     ReferenceVersion dbg =
 

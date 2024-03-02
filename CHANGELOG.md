@@ -157,7 +157,7 @@ However, the likelihood of this breaking a working build seems low.
 
 #### Added
 
- * `define_derive_adhoc!` supports doc comments.
+ * `define_derive_deftly!` supports doc comments.
  * `$fdefvis`/`fdefvis` for the textual visibility of a field.
 
 #### Fixed

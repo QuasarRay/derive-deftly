@@ -1,8 +1,8 @@
 //! Test name macros and several scopes of iteration.
 
-use derive_adhoc::{define_derive_adhoc, Adhoc};
+use derive_adhoc::{define_derive_deftly, Adhoc};
 
-define_derive_adhoc! {
+define_derive_deftly! {
     ListFields =
 
     impl $ttype {
@@ -16,7 +16,7 @@ define_derive_adhoc! {
     }
 }
 
-define_derive_adhoc! {
+define_derive_deftly! {
     ListVariants =
 
     impl $ttype {

@@ -1,7 +1,7 @@
 //! Test cases for conditions
 //!
 //! This gives a basic demonstration of how to handle an enum.
-use derive_adhoc::{define_derive_adhoc, derive_adhoc, Adhoc};
+use derive_adhoc::{define_derive_deftly, derive_adhoc, Adhoc};
 trait Trait {
     fn shape_top(&self) -> &'static str;
     fn shape_fields(&self) -> &'static str;

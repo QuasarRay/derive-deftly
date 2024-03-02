@@ -12,7 +12,7 @@ error: wrong input to derive-adhoc driver inner macro derive_adhoc_driver_Driver
 error: wrong input to derive-adhoc template inner macro derive_adhoc_template_Template; might be due to incompatible derive-adhoc versions(s)
   --> ui/badinternals.rs:13:1
    |
-13 | / define_derive_adhoc! {
+13 | / define_derive_deftly! {
 14 | |     Template =
 15 | | }
    | |_^
