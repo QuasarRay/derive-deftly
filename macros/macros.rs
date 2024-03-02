@@ -266,7 +266,7 @@ pub fn define_derive_deftly(
 ///
 /// The contents of `#[deftly]` attributes are made available
 /// to templates via the
-/// [`${Xmeta}`](doc_reference/index.html#tmeta-vmeta-fmeta--adhoc-attributes)
+/// [`${Xmeta}`](doc_reference/index.html#tmeta-vmeta-fmeta--deftly-attributes)
 /// expansions.
 ///
 /// If the template(s) don't use them, they are ignored.

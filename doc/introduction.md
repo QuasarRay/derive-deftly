@@ -1123,7 +1123,7 @@ Here, instead of specifying "new"
 for the method name in our template,
 we give the name as `${tmeta(newfn)}`.
 This tells the template to look for an
-[`#[deftly(newfn="...")]`](Deftly#adhoc-attribute)
+[`#[deftly(newfn="...")]`](Deftly#deftly-attribute)
 attribute on the type,
 and to use the value of that attribute
 in place of the keyword.
@@ -1136,15 +1136,15 @@ If we do, the template will look for an attribute like
 
 
 The
-[`$tmeta`](crate::doc_reference#tmeta-vmeta-fmeta--adhoc-attributes)
+[`$tmeta`](crate::doc_reference#tmeta-vmeta-fmeta--deftly-attributes)
 keyword that we used here
 tells the template
 to look at the `#[deftly]` attributes for the _type_.
 We can, instead, use
-[`$vmeta`](crate::doc_reference#tmeta-vmeta-fmeta--adhoc-attributes)
+[`$vmeta`](crate::doc_reference#tmeta-vmeta-fmeta--deftly-attributes)
 to look for `#[deftly]` attributes for the current _variant_,
 or
-[`$fmeta`](crate::doc_reference#tmeta-vmeta-fmeta--adhoc-attributes)
+[`$fmeta`](crate::doc_reference#tmeta-vmeta-fmeta--deftly-attributes)
 to
 to look for `#[deftly]` attributes for the current _field_.
 
@@ -1194,7 +1194,7 @@ Otherwise, it expands to an "else" argument (if any).
 > and so on!
 
 Here, the condition is
-[`tmeta(newfn)`](crate::doc_reference#fmetaname-vmetaname-tmetaname--adhoc-attributes).
+[`tmeta(newfn)`](crate::doc_reference#fmetaname-vmetaname-tmetaname--deftly-attributes).
 That condition is true if the current type
 has an `#[deftly(newfn)]` attribute,
 and false otherwise.
