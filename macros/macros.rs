@@ -271,7 +271,7 @@ pub fn define_derive_deftly(
 ///
 /// If the template(s) don't use them, they are ignored.
 /// `derive-deftly` does not impose any namespacing within `#[deftly]`:
-/// all templates see the same adhoc meta attributes.
+/// all templates see the same `deftly` meta attributes.
 ///
 /// ## Captured data structure definition `derive_deftly_driver_TYPE`
 ///
@@ -322,7 +322,7 @@ pub fn define_derive_deftly(
 /// ```ignore
 /// use other_crate::derive_deftly_template_TheirMacro;
 /// #[derive(Deftly)]
-/// #[derive_Adhoc(TheirMacro)]
+/// #[derive_deftly(TheirMacro)]
 /// struct MyStruct { // ...
 /// # }
 /// ```
