@@ -47,9 +47,9 @@ error: expected one of: `$`, parentheses, curly braces, identifier, `<`
    |      ^
 
 warning: unused import: `define_derive_deftly`
- --> ui/badreserved.rs:3:20
+ --> ui/badreserved.rs:3:21
   |
 3 | use derive_deftly::{define_derive_deftly, derive_deftly_adhoc, Deftly};
-  |                    ^^^^^^^^^^^^^^^^^^^^
+  |                     ^^^^^^^^^^^^^^^^^^^^
   |
   = note: `#[warn(unused_imports)]` on by default

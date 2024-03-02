@@ -26,15 +26,15 @@ error: bad input to derive_deftly_engine inner template expansion proc macro; mi
   --> ui/badinternals.rs:19:1
    |
 19 | derive_deftly::derive_deftly_engine! { GARBAGE -> INNARDS }
-   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
    |
    = note: this error originates in the macro `derive_deftly::derive_deftly_engine` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: expected curly braces
-  --> ui/badinternals.rs:19:39
+  --> ui/badinternals.rs:19:40
    |
 19 | derive_deftly::derive_deftly_engine! { GARBAGE -> INNARDS }
-   |                                       ^^^^^^^
+   |                                        ^^^^^^^
 
 error: bad input to derive_deftly_engine inner template expansion proc macro; might be due to incompatible derive-deftly versions(s)
   --> ui/badinternals.rs:40:1
