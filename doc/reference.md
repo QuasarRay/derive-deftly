@@ -460,10 +460,10 @@ that come *after* the `#[derive(..., Deftly, ...)]`.
 <!--##examples-for `Unit`##-->
 
  * `${tattrs}`: ``#[derive(Clone)]``
- * `${tattrs ! adhoc}`: ``#[derive(Clone)]``
+ * `${tattrs ! deftly}`: ``#[derive(Clone)]``
  * `${tattrs missing}`: nothing
  * `${tattrs derive}`: ``#[derive(Clone)]``
- * `${vattrs adhoc}`: nothing
+ * `${vattrs deftly}`: nothing
 
 ##### For `Tuple`
 
@@ -471,12 +471,12 @@ that come *after* the `#[derive(..., Deftly, ...)]`.
 
  * `${tattrs}`: ``#[doc=" Title for `Tuple`"] #[repr(C)]``
  * `${tattrs repr}`: ``#[repr(C)]``
- * `${tattrs repr, adhoc}`: ``#[deftly(unused)] #[repr(C)]``
+ * `${tattrs repr, deftly}`: ``#[deftly(unused)] #[repr(C)]``
  * `${tattrs ! derive, doc}`: ``#[deftly(unused)] #[repr(C)] #[derive_deftly(SomeOtherTemplate)]``
 
 ##### For `Enum`
 
- * `${vattrs adhoc}` for `UnitVariant`: `#[deftly(value="enum-variant")]`
+ * `${vattrs deftly}` for `UnitVariant`: `#[deftly(value="enum-variant")]`
 
 ### `$<...>`, `${paste ...}` -- identifier pasting
 
