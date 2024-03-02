@@ -5,7 +5,7 @@ error: wrong input to derive-adhoc driver inner macro derive_deftly_driver_Drive
    |          ^^^^^^
 ...
 17 | derive_deftly_driver_Driver! { GARBAGE -> DRIVER }
-   | ------------------------------------------------- in this macro invocation
+   | -------------------------------------------------- in this macro invocation
    |
    = note: this error originates in the macro `derive_deftly_driver_Driver` (in Nightly builds, run with -Z macro-backtrace for more info)
 
@@ -18,7 +18,7 @@ error: wrong input to derive-adhoc template inner macro derive_deftly_template_T
    | |_^
 ...
 18 |   derive_deftly_template_Template! { GARBAGE -> TEMPLATE }
-   |   ------------------------------------------------------- in this macro invocation
+   |   -------------------------------------------------------- in this macro invocation
    |
    = note: this error originates in the macro `derive_deftly_template_Template` (in Nightly builds, run with -Z macro-backtrace for more info)
 
