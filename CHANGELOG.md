@@ -27,8 +27,27 @@ We expect to increase it cautiously and only with good reason.
 
 ### Breaking
 
+ * Crate renamed to `derive-deftly`, and many other renamings:
  * `#[derive_deftly_adhoc]` is now required for `derive_deftly_adhoc!`
    (ie, non-precanned templates).
+ * To export a driver, `#[derive_deftly_adhoc(pub)]` is now needed,
+   rather than `#[derive_adhoc(pub)]`.
+
+```text
+Old name (0.8.x and earlier)	New name (0.9.x and later)
+
+define_derive_adhoc!            define_derive_deftly!
+
+#[derive(Adhoc)]                #[derive(Deftly)]
+#[derive_adhoc(Template)]       #[derive_deftly(Template)]
+#[adhoc(...)]                   #[deftly(...)]
+
+derive_adhoc_driver!            derive_deftly_driver!
+derive_adhoc_template!          derive_deftly_template!
+derive_adhoc_expand!            derive_deftly_engine!
+
+derive_adhoc!                   derive_deftly_adhoc!
+```
 
 ### 0.8.1
 
