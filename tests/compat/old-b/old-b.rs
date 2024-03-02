@@ -3,7 +3,7 @@
 
 #[cfg(not(feature = "skip_imported_driver"))]
 pub mod adhoc_template {
-    use derive_adhoc::derive_adhoc;
+    use derive_adhoc::derive_deftly_adhoc;
 
     pub trait NumFields {
         fn num_fields() -> usize;

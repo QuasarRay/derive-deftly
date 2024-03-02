@@ -101,7 +101,7 @@ pub mod has_driver {
 }
 
 mod adhoc_template {
-    use derive_adhoc::derive_adhoc;
+    use derive_adhoc::derive_deftly_adhoc;
 
     // When applying a template to a driver struct defined in another
     // module, the driver's own type name, and the names used for field
