@@ -438,7 +438,7 @@ With `${Xattrs}`, unlike `${Xmeta}`,
    * The expansion is the whole of each attribute, including the `#[...]`;
    * All attributes are included.
    * But `#[adhoc(...)]` `#[derive_adhoc(...)]`
-     and `#[derive_truly_adhoc(...)]`
+     and `#[derive_deftly_adhoc(...)]`
      are *excluded* by default,
      because typically they would be rejected by the compiler:
      the expanded output is (perhaps) no longer within `#[derive(Deftly)]`,
@@ -663,7 +663,7 @@ See also the [`dbg` expansion option](#dbg--print-the-expansion-to-stderr-for-de
 ```rust
 # use derive_adhoc::{Deftly, derive_adhoc};
 #[derive(Deftly)]
-#[derive_truly_adhoc]
+#[derive_deftly_adhoc]
 enum Enum {
     Unit,
     Tuple(usize),

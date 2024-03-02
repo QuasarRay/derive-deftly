@@ -5,7 +5,7 @@
 use derive_adhoc::{derive_adhoc, Deftly};
 
 #[derive(Deftly)]
-#[derive_truly_adhoc]
+#[derive_deftly_adhoc]
 struct IgnoredThings {
     #[adhoc(prefix = "pfx")]
     #[adhoc(multi(hi, there(wombat), path::suffix = "sfx"))]

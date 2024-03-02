@@ -10,7 +10,7 @@ use derive_adhoc::{derive_adhoc, Deftly};
 use std::fmt::Debug;
 
 #[derive(Deftly, Default, Debug)]
-#[derive_truly_adhoc]
+#[derive_deftly_adhoc]
 struct Both {
     #[adhoc(left)]
     a: usize,

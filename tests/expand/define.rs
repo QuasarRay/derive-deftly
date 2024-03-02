@@ -4,7 +4,7 @@
 use derive_adhoc::{derive_adhoc, Deftly};
 
 #[derive(Deftly)]
-#[derive_truly_adhoc]
+#[derive_deftly_adhoc]
 struct S {
     a: i32,
     b: i32,
@@ -43,7 +43,7 @@ derive_adhoc! {
 }
 
 #[derive(Deftly)]
-#[derive_truly_adhoc]
+#[derive_deftly_adhoc]
 enum T<'g> {
     /// Expected value
     E(i32),

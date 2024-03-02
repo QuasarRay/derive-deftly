@@ -12,7 +12,7 @@ trait GetUsize {
     fn get_usize(&self) -> Option<usize>;
 }
 #[derive_adhoc(Trait, GetUsize)]
-#[derive_truly_adhoc]
+#[derive_deftly_adhoc]
 struct Unit;
 impl Trait for Unit {
     fn shape_top(&self) -> &'static str {

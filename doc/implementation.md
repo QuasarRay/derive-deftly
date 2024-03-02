@@ -35,7 +35,7 @@ to what is conceptually the first macro's output.
 Implemented in `capture.rs::derive_adhoc_derive_macro`.
 
 When applied to (e.g.) `pub struct StructName`,
-with `#[derive_truly_adhoc]` specified
+with `#[derive_deftly_adhoc]` specified
 generates this
 
 ```rust,ignore

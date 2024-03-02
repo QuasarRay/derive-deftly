@@ -79,7 +79,7 @@ define_derive_deftly! {
 
 #[derive(Deftly)]
 #[derive_adhoc(Trait, GetUsize)]
-#[derive_truly_adhoc]
+#[derive_deftly_adhoc]
 struct Unit;
 
 #[derive(Deftly)]

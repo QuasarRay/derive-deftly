@@ -165,7 +165,7 @@ value, field field:
         $fattrs      =>  
 ---------- derive-adhoc expansions dump for Struct (end) ----------
 ---------- derive-adhoc expansion of ReferenceVersion for Tuple (start) ----------
-#[derive(Deftly)] #[derive_truly_adhoc] struct TupleReference < 'reference, F
+#[derive(Deftly)] #[derive_deftly_adhoc] struct TupleReference < 'reference, F
 = (), > (& 'reference F,) ; impl < 'reference, F, > From < & 'reference Tuple
 :: < F > > for TupleReference < 'reference, F, >
 {
@@ -184,7 +184,7 @@ value, field field:
 }
 ---------- derive-adhoc expansion of ReferenceVersion for Tuple (end) ----------
 ---------- derive-adhoc expansion of ReferenceVersion for Struct (start) ----------
-#[derive(Deftly)] #[derive_truly_adhoc] struct StructReference < 'reference, F
+#[derive(Deftly)] #[derive_deftly_adhoc] struct StructReference < 'reference, F
 = (), > { field : & 'reference F, } impl < 'reference, F, > From < &
 'reference Struct :: < F > > for StructReference < 'reference, F, >
 {
@@ -209,7 +209,7 @@ value, field field:
 }
 ---------- derive-adhoc expansion of ReferenceVersion for Struct (end) ----------
 ---------- derive-adhoc expansion of ReferenceVersion for Enum (start) ----------
-#[derive(Deftly)] #[derive_truly_adhoc] enum EnumReference < 'reference, F =
+#[derive(Deftly)] #[derive_deftly_adhoc] enum EnumReference < 'reference, F =
 (), > { Unit, Tuple(& 'reference F,), Struct { field : & 'reference F, } }
 impl < 'reference, F, > From < & 'reference Enum :: < F > > for EnumReference
 < 'reference, F, >

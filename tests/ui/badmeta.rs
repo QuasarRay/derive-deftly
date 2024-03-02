@@ -1,7 +1,7 @@
 use derive_adhoc::{define_derive_deftly, derive_adhoc, Deftly};
 
 #[derive(Deftly)]
-#[derive_truly_adhoc]
+#[derive_deftly_adhoc]
 #[adhoc(wrong = "{")]
 #[adhoc(dot = ".")]
 #[adhoc(several = "first")]
@@ -48,24 +48,24 @@ derive_adhoc! {
 }
 
 #[derive(Deftly)]
-#[derive_truly_adhoc]
+#[derive_deftly_adhoc]
 #[adhoc("forbidden")]
 struct TopLevelMetaLitForbidden;
 derive_adhoc! { TopLevelMetaLitForbidden: }
 
 #[derive(Deftly)]
-#[derive_truly_adhoc]
+#[derive_deftly_adhoc]
 #[adhoc(value = wrong)]
 struct MetaValueMustBeLit;
 derive_adhoc! { MetaValueMustBeLit: }
 
 #[derive(Deftly)]
-#[derive_truly_adhoc]
+#[derive_deftly_adhoc]
 #[adhoc(barelit("42"))]
 struct WithBareLit;
 
 #[derive(Deftly)]
-#[derive_truly_adhoc]
+#[derive_deftly_adhoc]
 #[adhoc(multi("1", "2"))]
 struct WithBareLitMulti;
 
@@ -85,7 +85,7 @@ define_derive_deftly! {
 }
 
 #[derive(Deftly)]
-#[derive_truly_adhoc]
+#[derive_deftly_adhoc]
 #[derive_adhoc(TestFunkyPath)]
 #[adhoc(std::cell::Cell::<String>::new)]
 struct WithFunkyPath;

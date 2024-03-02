@@ -12,7 +12,7 @@ struct InvocationAttr {
     entries: Punctuated<InvocationEntry, token::Comma>,
 }
 
-/// Contents of an entry in a `#[derive_truly_adhoc(..)]` attribute
+/// Contents of an entry in a `#[derive_deftly_adhoc(..)]` attribute
 #[derive(Default)]
 struct TrulyAdhocAttr {
     pub_: Option<syn::token::Pub>,
@@ -21,7 +21,7 @@ struct TrulyAdhocAttr {
 impl Parse for InvocationEntry {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let entry = if input.lookahead1().peek(Token![pub]) {
-            return Err(input.error("`pub` must be in #[derive_truly_adhoc]"));
+            return Err(input.error("`pub` must be in #[derive_deftly_adhoc]"));
         } else {
             let path = syn::Path::parse_mod_style(input)?;
             let options = if input.peek(syn::token::Bracket) {
@@ -50,7 +50,7 @@ impl Parse for InvocationAttr {
 fn check_for_misplaced_atrs(data: &syn::Data) -> syn::Result<()> {
     let attrs = |attrs: &[syn::Attribute]| {
         for attr in attrs {
-            if let Some(_) = ["derive_adhoc", "derive_truly_adhoc"]
+            if let Some(_) = ["derive_adhoc", "derive_deftly_adhoc"]
                 .iter()
                 .find(|forbidden| attr.path().is_ident(forbidden))
             {
@@ -129,7 +129,7 @@ pub fn derive_adhoc_derive_macro(
     let truly_adhoc: Option<TrulyAdhocAttr> = driver
         .attrs
         .iter()
-        .filter(|attr| attr.path().is_ident("derive_truly_adhoc"))
+        .filter(|attr| attr.path().is_ident("derive_deftly_adhoc"))
         .inspect(|_: &&syn::Attribute| ())
         .map(|attr| {
             let truly_adhoc = match &attr.meta {

@@ -12,7 +12,7 @@
 use derive_adhoc::{derive_adhoc, Deftly};
 
 #[derive(Deftly)]
-#[derive_truly_adhoc]
+#[derive_deftly_adhoc]
 enum Enum<T = (), const N: usize = 1> {
     Unit,
     Tuple([T; N]),

@@ -3,7 +3,7 @@
 use derive_adhoc::{derive_adhoc, Deftly};
 
 #[derive(Deftly, Default)]
-#[derive_truly_adhoc]
+#[derive_deftly_adhoc]
 /// Some docs
 pub struct ChannelsParams {
     /// thing

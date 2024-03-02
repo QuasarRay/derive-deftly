@@ -7,7 +7,7 @@
 use derive_adhoc::{define_derive_deftly, Deftly};
 
 #[derive(Deftly)]
-#[derive_truly_adhoc]
+#[derive_deftly_adhoc]
 struct Driver;
 
 define_derive_deftly! {

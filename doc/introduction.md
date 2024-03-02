@@ -169,7 +169,7 @@ you could have said:
 use derive_adhoc::{Deftly, derive_adhoc};
 
 #[derive(Clone, Debug, Deftly)]
-#[derive_truly_adhoc]
+#[derive_deftly_adhoc]
 pub struct MyStruct;
 
 derive_adhoc!{
@@ -726,7 +726,7 @@ so, above, instead, we could have written
 ```
 # use derive_adhoc::{Deftly, derive_adhoc};
 # #[derive(Deftly)]
-# #[derive_truly_adhoc]
+# #[derive_deftly_adhoc]
 # enum TestCase<A> { Variant(A) }
 # derive_adhoc! { TestCase:
 #     fn testcase<$tgens>() where

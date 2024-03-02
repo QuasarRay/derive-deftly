@@ -3,7 +3,7 @@
 use derive_adhoc::{define_derive_deftly, derive_adhoc, Deftly};
 
 #[derive(Deftly)]
-#[derive_truly_adhoc]
+#[derive_deftly_adhoc]
 struct ReserveDriver;
 
 derive_adhoc! {

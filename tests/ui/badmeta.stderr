@@ -71,7 +71,7 @@ error: expected a list with sub-attributes, found a simple value
 error: attribute value expanded, but no suitable value in data structure definition (in this data structure)
   --> ui/badmeta.rs:4:1
    |
-4  | / #[derive_truly_adhoc]
+4  | / #[derive_deftly_adhoc]
 5  | | #[adhoc(wrong = "{")]
 6  | | #[adhoc(dot = ".")]
 7  | | #[adhoc(several = "first")]
@@ -180,7 +180,7 @@ error: tried to expand just attribute value, but it was specified multiple times
 error: attribute value expanded, but no value in data structure definition (in this data structure)
   --> ui/badmeta.rs:4:1
    |
-4  | / #[derive_truly_adhoc]
+4  | / #[derive_deftly_adhoc]
 5  | | #[adhoc(wrong = "{")]
 6  | | #[adhoc(dot = ".")]
 7  | | #[adhoc(several = "first")]
@@ -224,7 +224,7 @@ error: expected a leaf node, found a list with sub-attributes
 error: attribute value expanded, but no suitable value in data structure definition (in this data structure)
   --> ui/badmeta.rs:4:1
    |
-4  | / #[derive_truly_adhoc]
+4  | / #[derive_deftly_adhoc]
 5  | | #[adhoc(wrong = "{")]
 6  | | #[adhoc(dot = ".")]
 7  | | #[adhoc(several = "first")]

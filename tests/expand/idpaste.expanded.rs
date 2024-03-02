@@ -4,7 +4,7 @@
 #![allow(dead_code, unused_variables)]
 use derive_adhoc::{derive_adhoc, Deftly};
 type FieldType = ();
-#[derive_truly_adhoc]
+#[derive_deftly_adhoc]
 struct TypeNames {
     /// We use std::slice::Chunks here because that way we can test
     /// identifier pasting with a whole path.  The macro `TypeNames`
@@ -14,7 +14,7 @@ struct TypeNames {
 struct PreTypeNamesPost {
     error: std::slice::RChunksMut<'static, ()>,
 }
-#[derive_truly_adhoc]
+#[derive_deftly_adhoc]
 struct TopName<F> {
     top_name_field: F,
 }
@@ -23,7 +23,7 @@ struct PreTopNamePost<F> {
     TopNameField: F,
 }
 impl<F> std::panic::RefUnwindSafe for PreTopNamePost<F> {}
-#[derive_truly_adhoc]
+#[derive_deftly_adhoc]
 struct ExpandName {
     #[adhoc(prefix = "attr", suffix = "24")]
     f: FieldType,
@@ -34,7 +34,7 @@ struct PreExpandNamePost {
     k: String,
 }
 struct WomExpandNameBat;
-#[derive_truly_adhoc]
+#[derive_deftly_adhoc]
 enum EdgeCases {
     Tuple(u32),
     Struct { r#for: u32, unneeded: u32 },

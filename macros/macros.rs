@@ -257,7 +257,7 @@ pub fn define_derive_deftly(
 ///     `[OPTIONS,..]` is a comma-separated list of expansion options
 ///     contained within `[ ]`.</span>
 ///
-///  2. If `#[derive_truly_adhoc]` is specified,
+///  2. If `#[derive_deftly_adhoc]` is specified,
 ///     captures the data structure definition,
 ///     so that it can be used with calls to
 ///     [`derive_adhoc!`](macro@crate::derive_adhoc).
@@ -340,7 +340,7 @@ pub fn define_derive_deftly(
 //
 /// To cause the macro embodying the driver struct to be exported,
 /// write:
-/// `#[derive_truly_adhoc(pub)]`.
+/// `#[derive_deftly_adhoc(pub)]`.
 /// The driver can then be derived from in other crates,
 /// with `derive_adhoc! { exporting_crate::DriverStruct: ... }`.
 ///
@@ -378,7 +378,7 @@ pub fn define_derive_deftly(
     proc_macro,
     proc_macro_derive(
         Deftly,
-        attributes(adhoc, derive_adhoc, derive_truly_adhoc)
+        attributes(adhoc, derive_adhoc, derive_deftly_adhoc)
     )
 )]
 pub fn derive_adhoc_derive_macro(

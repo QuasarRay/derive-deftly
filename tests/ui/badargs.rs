@@ -1,7 +1,7 @@
 use derive_adhoc::{define_derive_deftly, derive_adhoc, Deftly};
 
 #[derive(Deftly)]
-#[derive_truly_adhoc]
+#[derive_deftly_adhoc]
 struct DataType {
     foo: u8,
     #[adhoc(hash(skip))]
@@ -33,7 +33,7 @@ define_derive_deftly! {
 
 #[derive(Deftly)]
 #[derive_adhoc(Broken)]
-#[derive_truly_adhoc]
+#[derive_deftly_adhoc]
 struct ForBroken;
 
 derive_adhoc! {

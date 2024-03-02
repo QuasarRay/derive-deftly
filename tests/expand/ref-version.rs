@@ -20,7 +20,7 @@ define_derive_deftly! {
     ${define REF_TYPE { $REFERENCE<'reference, $tgnames> }}
 
     #[derive(Deftly)]
-    #[derive_truly_adhoc]
+    #[derive_deftly_adhoc]
     $tvis $tdefkwd $REFERENCE<'reference, $tdefgens>
     ${tdefvariants $(
         ${vdefbody $vname $(

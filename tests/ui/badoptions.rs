@@ -9,7 +9,7 @@ define_derive_deftly! {
 
 #[derive(Deftly)]
 #[derive_adhoc(BadOptionsTemplate[dbg])]
-#[derive_truly_adhoc]
+#[derive_deftly_adhoc]
 struct BadOptionsDriver;
 
 derive_adhoc! {
