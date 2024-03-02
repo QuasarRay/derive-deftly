@@ -23,6 +23,16 @@ We expect to increase it cautiously and only with good reason.
 
 ## Changelog
 
+This is the changelog for the *stable branch* 0.8.x.
+This branch is currently maintained but will not receive new features.
+
+### 0.8.2
+
+#### Improved
+
+ * Minor documentation edits, to reflect the existence
+   of `derive-deftly`, the new name for this crate.
+
 ### 0.8.1
 
 #### Fixed
