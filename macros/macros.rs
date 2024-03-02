@@ -260,7 +260,7 @@ pub fn define_derive_deftly(
 ///  2. If `#[derive_deftly_adhoc]` is specified,
 ///     captures the data structure definition,
 ///     so that it can be used with calls to
-///     [`derive_deftly_adhoc!`](macro@crate::derive_deftly).
+///     [`derive_deftly_adhoc!`](macro@crate::derive_deftly_adhoc).
 ///
 /// ## `#[deftly]` attribute
 ///

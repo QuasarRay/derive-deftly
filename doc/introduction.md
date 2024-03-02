@@ -155,7 +155,7 @@ struct TheirStructure {
 ### If you're only deriving once...
 
 If you want, you can
-[apply a template to an existing type](derive_deftly)
+[apply a template to an existing type](derive_deftly_adhoc)
 without having to name that template.
 You might want to do this if you have a template
 that you only want to apply to a single struct,
