@@ -6,10 +6,14 @@ but without having to wrestle with the proc macro system.
 
 **Stability warning**
 
-This is going to replace
-[`derive-deftly`](https://lib.rs/crates/derive-deftly).
-But, please continue to use that for now.
+We intend to make a 1.x release of this crate fairly soon,
+but right now we have some breaking changes planned.
 
+We aren't planning changes to the template language before 1.0.
+
+This is the new name for
+[`derive-adhoc`](https://lib.rs/crates/derive-adhoc).
+If you are aready using that, please continue to use it for now:
 We intend to make several further breaking changes,
 besides the renamings.
 

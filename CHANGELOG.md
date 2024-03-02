@@ -23,6 +23,12 @@ We expect to increase it cautiously and only with good reason.
 
 ## Changelog
 
+### 0.9.2
+
+#### Improved
+
+ * docs: Fixed the README.md cross-reference and stability information.
+
 ### 0.9.1
 
 #### Improved
