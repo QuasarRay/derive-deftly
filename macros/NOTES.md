@@ -20,7 +20,7 @@ text is allowed.  Expansion is a single string literal.  FTAOD
 `${string ${string "y"}}` expands to `r#""y""#`
 
 Do we need this?  Perhaps we should just expect people
-to use `stringify!` from `std`, which works well with derive-adhoc.
+to use `stringify!` from `std`, which works well with derive-deftly.
 
 Would we support case conversion ?
 
@@ -101,4 +101,4 @@ that the decorated struct is not actually emitted.
 See
 [Future plans wrt macro namespace questions](#future-plans-wrt-macro-namespace-questions)
 and the feedback request ticket
-<https://gitlab.torproject.org/Diziet/rust-derive-adhoc/-/issues/3>
+<https://gitlab.torproject.org/Diziet/rust-derive-deftly/-/issues/3>

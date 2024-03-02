@@ -52,10 +52,10 @@ impl<T: Parse> Parse for Concatenated<T> {
     }
 }
 
-/// Add a warning about derive-adhoc version incompatibility
+/// Add a warning about derive-deftly version incompatibility
 pub fn advise_incompatibility(err_needing_advice: syn::Error) -> syn::Error {
     let mut advice = Span::call_site().error(
-        "bad input to derive_deftly_engine inner template expansion proc macro; might be due to incompatible derive-adhoc versions(s)"
+        "bad input to derive_deftly_engine inner template expansion proc macro; might be due to incompatible derive-deftly versions(s)"
     );
     advice.combine(err_needing_advice);
     advice
@@ -215,7 +215,7 @@ impl Drop for ErrorAccumulator {
 
 /// Like `syn::Ident` but parses using `parse_any`, accepting keywords
 ///
-/// Used for derive-adhoc's own keywords, which can be Rust keywords,
+/// Used for derive-deftly's own keywords, which can be Rust keywords,
 /// or identifiers.
 ///
 /// Needs care when used with user data, since it might be a keyword,
@@ -253,13 +253,13 @@ impl<T: AsRef<str> + ?Sized> PartialEq<T> for IdentAny {
 /// handle imports and proc-macro crates,
 /// which I think we can't properly solve here.)
 pub fn expand_macro_name() -> Result<TokenStream, syn::Error> {
-    let name = crate_name("derive-adhoc-macros")
-        .or_else(|_| crate_name("derive-adhoc"));
+    let name = crate_name("derive-deftly-macros")
+        .or_else(|_| crate_name("derive-deftly"));
 
     // See `tests/pub-export/pub-b/pub-b.rs`.  (The bizarre version
     // has a different crate name, which we must handle heree.)
     #[cfg(feature = "bizarre")]
-    let name = name.or_else(|_| crate_name("bizarre-derive-adhoc"));
+    let name = name.or_else(|_| crate_name("bizarre-derive-deftly"));
 
     match name {
         Ok(FoundCrate::Itself) => Ok(quote!( crate::derive_deftly_engine )),
@@ -268,7 +268,7 @@ pub fn expand_macro_name() -> Result<TokenStream, syn::Error> {
             Ok(quote!( ::#ident::derive_deftly_engine ))
         }
         Err(e) => Err(Span::call_site().error(
-            format_args!("Expected derive-adhoc or derive-adhoc-macro to be present in Cargo.toml: {}", e)
+            format_args!("Expected derive-deftly or derive-deftly-macro to be present in Cargo.toml: {}", e)
         )),
     }
 }

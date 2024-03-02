@@ -82,7 +82,7 @@ impl Checking<'_> {
             .map_err(|e| {
                 Span::call_site()
                     .error(format!(
- "derive-adhoc was unable to write out the expansion to a file for fuller syntax error reporting: {}",
+ "derive-deftly was unable to write out the expansion to a file for fuller syntax error reporting: {}",
                     e
                 ))
                     .into_compile_error()
@@ -113,7 +113,7 @@ fn expand_via_file(
         hash[0..12].iter().map(|b| format!("{:02x}", b)).collect()
     };
 
-    let dir: PathBuf = [env!("OUT_DIR"), "derive-adhoc~expansions~"]
+    let dir: PathBuf = [env!("OUT_DIR"), "derive-deftly~expansions~"]
         .iter()
         .collect();
 

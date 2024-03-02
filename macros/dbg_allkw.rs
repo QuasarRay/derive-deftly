@@ -12,7 +12,7 @@ pub fn dump(ctx: &Context) {
         let mut w = String::new();
 
         let description =
-            format!("derive-adhoc expansions dump for {}", ctx.top.ident);
+            format!("derive-deftly expansions dump for {}", ctx.top.ident);
 
         writeln!(w, "---------- {} (start) ----------", description)?;
         dump_whole(&mut w, ctx)?;

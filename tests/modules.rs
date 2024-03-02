@@ -33,7 +33,7 @@ trait NumFields {
 /// (Exporting of a template to other crates is demonstrated in
 /// `tests/pub-export/pub-b/pub-a.rs` and `pub-b.rs`.)
 ///
-/// The remaining principles about use of names in a derive-adhoc template
+/// The remaining principles about use of names in a derive-deftly template
 /// are basically the same as those for a `macro_rules!` macro.
 #[macro_use]
 mod has_template {
@@ -60,7 +60,7 @@ mod has_template {
                 // We do that here with `ENUM_MARKER`.
                 //
                 // (`super::` isn't adviseable in a macro, including in a
-                // derive-adhoc template, because its meaning at the
+                // derive-deftly template, because its meaning at the
                 // expansion site would depend on the scope context there
                 // (eg, module depth.)
                 ${if is_enum {
@@ -118,7 +118,7 @@ mod adhoc_template {
         // namespacing awkwardness and should be used only with crate.)
         //
         // (Passing a path doesn't work for a struct with an unexported
-        // derive-adhoc driver, because the name here is turned into
+        // derive-deftly driver, because the name here is turned into
         // the name of a `macro_rules!` macro, and a crate-local one
         // of those those doesn't have any path scope.)
         Driver:

@@ -4,7 +4,7 @@
 //! provides a trait derivable with derive_adhoc (ie, a trait
 //! and corresponding reuseable template).
 //!
-//! It also provides a struct exported as a derive-adhoc driver.
+//! It also provides a struct exported as a derive-deftly driver.
 
 // Any crate exposing a derive_adhoc template must re-export derive_adhoc
 // itself at the top level.  This will be used during template invocation
@@ -64,7 +64,7 @@ mod local_use {
 pub mod a_driver {
     use derive_adhoc::Deftly;
 
-    /// A struct which is exported as a derive-adhoc driver (iw with
+    /// A struct which is exported as a derive-deftly driver (iw with
     /// `#[derive_deftly(pub)]` must be *visilbe* outside the crate.
     ///
     /// Doing this effectively turns the body of the struct into a macro,

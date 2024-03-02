@@ -34,7 +34,7 @@ process () {
 	my $new = "'"$version"'";
         if (m{^version *= }) {
             s{$eligible}{"$1$new"};
-        } elsif (m{^derive-adhoc.*.*path = }) {
+        } elsif (m{^derive-deftly.*.*path = }) {
             s{\bversion *= *$eligible}{version = "$1$new"}g;
         }
     ' "$1"

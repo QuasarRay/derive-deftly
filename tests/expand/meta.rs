@@ -37,7 +37,7 @@ derive_deftly_adhoc! {
 
 // Arguably it is wrong that this is accepted.  However, rejecting it
 // would have complex semver implications.  Maybe the template is
-// from a newer derive-adhoc which handles this case, for example.
+// from a newer derive-deftly which handles this case, for example.
 #[derive(Deftly)]
 #[deftly("forbidden")]
 #[deftly(value = wrong)]

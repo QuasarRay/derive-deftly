@@ -219,9 +219,9 @@ To use it, write: `#[derive(Deftly)] #[derive_deftly({})]`."#,
             };
             { $($wrong:tt)* } => {
                 compile_error!{concat!(
-                    "wrong input to derive-adhoc template inner macro ",
+                    "wrong input to derive-deftly template inner macro ",
                     stringify!(#templ_mac_name),
-                    "; might be due to incompatible derive-adhoc versions(s)",
+                    "; might be due to incompatible derive-deftly versions(s)",
                 )}
             };
         }

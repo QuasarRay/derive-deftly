@@ -16,7 +16,7 @@ All of the above features are enabled by default.
 
 ## MSRV and MSRV policy
 
-The Minimum Supported Rust Version for derive-adhoc is 1.56.
+The Minimum Supported Rust Version for derive-deftly is 1.56.
 
 We expect to increase it cautiously and only with good reason.
 (However, MSRV increase would be a minor version bump.)
@@ -56,7 +56,7 @@ for template-defining crates.**
 Technically these are breaking changes, since users of exported
 templates might have provided these wrong attributes, which were
 previously ignored and are now properly rejected.  The attributes are
-interpreted by the version of derive-adhoc which defines the template.
+interpreted by the version of derive-deftly which defines the template.
 However, the likelihood of this breaking a working build seems low.
 
 #### MSRV
@@ -238,24 +238,24 @@ However, the likelihood of this breaking a working build seems low.
  * docs: Various corrections to reference docs.
  * docs: Reference documentation retitled and module renamed.
  * error handling: Better messages from certain situations involving
-   multiple (incompatible) derive-adhoc versions.
+   multiple (incompatible) derive-deftly versions.
  * tests: Made less fragile (more pinning of test dependencies).
  * tests: Improved CI checks on documentation, TODOs, etc.
- * internal: new HACKING.md file for helping develop derive-adhoc.
+ * internal: new HACKING.md file for helping develop derive-deftly.
 
 ### 0.2.2
 
 #### Fixed (future compatibility)
 
- * Pinned dependency from `derive-adhoc` to `derive-adhoc-macros`.
+ * Pinned dependency from `derive-deftly` to `derive-deftly-macros`.
  * Handling of certain supposedly-future-compatible options fixed.
    ("future driver options" argument to `d_a_t_T`).
 
 #### Improved
 
  * Better error messages with usupported combinations of features
-   with mixed derive-adhoc versions.  #10.
- * Compatibility with derive-adhoc 0.2.0 tested in CI.
+   with mixed derive-deftly versions.  #10.
+ * Compatibility with derive-deftly 0.2.0 tested in CI.
 
 ### 0.2.1
 
@@ -274,7 +274,7 @@ However, the likelihood of this breaking a working build seems low.
 
  * `$tgens` no longer includes defaults for generics.
  * `$Xattrs` by default
-   outputs all attributes except derive-adhoc ones,
+   outputs all attributes except derive-deftly ones,
    rather than nothing (breaking bugfix).
  * `$vmeta` for a struct (not enum) processes top-level attributes,
    rather than imagining that there are no variant/value attributes.

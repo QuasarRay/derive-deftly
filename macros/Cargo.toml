@@ -1,14 +1,14 @@
 [package]
-name = "derive-adhoc-macros"
+name = "derive-deftly-macros"
 version = "0.9.0"
 edition = "2018"
 readme = "../README.md"
 authors=["Ian Jackson <ijackson@chiark.greenend.org.uk>",
-         "and the contributors to Rust derive-adhoc"]
+         "and the contributors to Rust derive-deftly"]
 license = "MIT"
 description="Macros that implement the derive_adhoc crate"
-homepage = "https://gitlab.torproject.org/Diziet/rust-derive-adhoc"
-repository = "https://gitlab.torproject.org/Diziet/rust-derive-adhoc"
+homepage = "https://gitlab.torproject.org/Diziet/rust-derive-deftly"
+repository = "https://gitlab.torproject.org/Diziet/rust-derive-deftly"
 
 # After editing this file, you will probably need to run
 #   maint/update-bizarre

@@ -4,12 +4,12 @@ version = "0.0.1"
 edition = "2018"
 license="MIT"
 authors=["Ian Jackson <ijackson@chiark.greenend.org.uk>",
-         "and the contributors to Rust derive-adhoc"]
+         "and the contributors to Rust derive-deftly"]
 description="pub testing crates - part A"
 publish = false
 
 [dependencies]
-derive-adhoc = { path = "../../..", version = "0.9.0" }
+derive-deftly = { path = "../../..", version = "0.9.0" }
 
 [lib]
 path = "pub-a.rs"

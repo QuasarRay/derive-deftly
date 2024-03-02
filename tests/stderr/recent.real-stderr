@@ -1,4 +1,4 @@
----------- derive-adhoc expansions dump for Enum (start) ----------
+---------- derive-deftly expansions dump for Enum (start) ----------
 top-level:
         $tname       =>  Enum
         $ttype       =>  Enum
@@ -62,8 +62,8 @@ variant Struct, field field:
         fvis         =   false
         fdefvis      =   false
         $fattrs      =>  
----------- derive-adhoc expansions dump for Enum (end) ----------
----------- derive-adhoc expansions dump for Unit (start) ----------
+---------- derive-deftly expansions dump for Enum (end) ----------
+---------- derive-deftly expansions dump for Unit (start) ----------
 top-level:
         $tname       =>  Unit
         $ttype       =>  Unit
@@ -89,8 +89,8 @@ value:
         v_is_tuple   =   false
         v_is_named   =   false
         $vattrs      =>  
----------- derive-adhoc expansions dump for Unit (end) ----------
----------- derive-adhoc expansions dump for Tuple (start) ----------
+---------- derive-deftly expansions dump for Unit (end) ----------
+---------- derive-deftly expansions dump for Tuple (start) ----------
 top-level:
         $tname       =>  Tuple
         $ttype       =>  Tuple
@@ -126,8 +126,8 @@ value, field 0:
         fvis         =   false
         fdefvis      =   false
         $fattrs      =>  
----------- derive-adhoc expansions dump for Tuple (end) ----------
----------- derive-adhoc expansions dump for Struct (start) ----------
+---------- derive-deftly expansions dump for Tuple (end) ----------
+---------- derive-deftly expansions dump for Struct (start) ----------
 top-level:
         $tname       =>  Struct
         $ttype       =>  Struct
@@ -163,8 +163,8 @@ value, field field:
         fvis         =   false
         fdefvis      =   false
         $fattrs      =>  
----------- derive-adhoc expansions dump for Struct (end) ----------
----------- derive-adhoc expansion of ReferenceVersion for Tuple (start) ----------
+---------- derive-deftly expansions dump for Struct (end) ----------
+---------- derive-deftly expansion of ReferenceVersion for Tuple (start) ----------
 #[derive(Deftly)] #[derive_deftly_adhoc] struct TupleReference < 'reference, F
 = (), > (& 'reference F,) ; impl < 'reference, F, > From < & 'reference Tuple
 :: < F > > for TupleReference < 'reference, F, >
@@ -182,8 +182,8 @@ value, field field:
         { Self { 0 : f_0, } => Tuple :: < F > { 0 : (* * f_0).clone(), }, }
     }
 }
----------- derive-adhoc expansion of ReferenceVersion for Tuple (end) ----------
----------- derive-adhoc expansion of ReferenceVersion for Struct (start) ----------
+---------- derive-deftly expansion of ReferenceVersion for Tuple (end) ----------
+---------- derive-deftly expansion of ReferenceVersion for Struct (start) ----------
 #[derive(Deftly)] #[derive_deftly_adhoc] struct StructReference < 'reference,
 F = (), > { field : & 'reference F, } impl < 'reference, F, > From < &
 'reference Struct :: < F > > for StructReference < 'reference, F, >
@@ -207,8 +207,8 @@ F = (), > { field : & 'reference F, } impl < 'reference, F, > From < &
         }
     }
 }
----------- derive-adhoc expansion of ReferenceVersion for Struct (end) ----------
----------- derive-adhoc expansion of ReferenceVersion for Enum (start) ----------
+---------- derive-deftly expansion of ReferenceVersion for Struct (end) ----------
+---------- derive-deftly expansion of ReferenceVersion for Enum (start) ----------
 #[derive(Deftly)] #[derive_deftly_adhoc] enum EnumReference < 'reference, F =
 (), > { Unit, Tuple(& 'reference F,), Struct { field : & 'reference F, } }
 impl < 'reference, F, > From < & 'reference Enum :: < F > > for EnumReference
@@ -238,8 +238,8 @@ impl < 'reference, F, > From < & 'reference Enum :: < F > > for EnumReference
         }
     }
 }
----------- derive-adhoc expansion of ReferenceVersion for Enum (end) ----------
----------- derive-adhoc expansions dump for EnumReference (start) ----------
+---------- derive-deftly expansion of ReferenceVersion for Enum (end) ----------
+---------- derive-deftly expansions dump for EnumReference (start) ----------
 top-level:
         $tname       =>  EnumReference
         $ttype       =>  EnumReference :: < 'reference, F, >
@@ -303,4 +303,4 @@ variant Struct, field field:
         fvis         =   false
         fdefvis      =   false
         $fattrs      =>  
----------- derive-adhoc expansions dump for EnumReference (end) ----------
+---------- derive-deftly expansions dump for EnumReference (end) ----------

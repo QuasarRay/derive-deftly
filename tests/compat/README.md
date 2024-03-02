@@ -1,7 +1,7 @@
 # Introduction
 
 These three crates test forward/backward compatibility with the
-version of derive-adhoc prior at the  most recent flag day.
+version of derive-deftly prior at the  most recent flag day.
 
 ## Tests
 
@@ -12,7 +12,7 @@ I. Forward compatibility (higher layer crate is more up to date)
     V
   old-a -> old derive_adhoc
 
-This reuses pub-b.rs (which expects bizarre derive-adhoc)
+This reuses pub-b.rs (which expects bizarre derive-deftly)
 and pub-a.rs.
 
 2. Backward compatibility (lower layer crate is more up to date)
@@ -22,9 +22,9 @@ and pub-a.rs.
     V
   pub-a -> current derive_adhoc
 
-This reuses pub-a.rs (which expects vanilla derive-adhoc)
+This reuses pub-a.rs (which expects vanilla derive-deftly)
 and a filtered version of pub-b.rs called old-b.rs.
-pub-b.rs expects bizarre derive-adhoc but there is no published
+pub-b.rs expects bizarre derive-deftly but there is no published
 old version, so we have maint/update-bizarre filter out the _bizarres.
 
 ## Two sets of these tests

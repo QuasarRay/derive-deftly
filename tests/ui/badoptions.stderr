@@ -9,7 +9,7 @@ error: expected one of `!` or `::`, found `template`
    |
    = note: this error originates in the macro `derive_deftly_template_BadOptionsTemplate` which comes from the expansion of the derive macro `Deftly` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error: unknown derive-adhoc option
+error: unknown derive-deftly option
   --> ui/badoptions.rs:16:22
    |
 16 |     BadOptionsDriver with unknown option:
@@ -49,7 +49,7 @@ error: expected `!`
    |            ^^^^^
 
 error: expected one of `!` or `::`, found `error`
- --> $OUT_DIR[derive-adhoc-macros]/derive-adhoc~expansions~/d-a-3d116ce28698f5b3e5000583.rs
+ --> $OUT_DIR[derive-deftly-macros]/derive-deftly~expansions~/d-a-3d116ce28698f5b3e5000583.rs
   |
   | syntax error ;
   |        ^^^^^ expected one of `!` or `::`

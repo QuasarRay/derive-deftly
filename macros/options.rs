@@ -140,7 +140,7 @@ impl OpContext {
             OC::Template => Ok(()),
             OC::DriverApplicationCapture | OC::DriverApplicationPassed => {
                 Err(option.kw_span.error(
-                    "this derive-adhoc option is only supported in templates",
+                    "this derive-deftly option is only supported in templates",
                 ))
             }
         }
@@ -283,7 +283,7 @@ impl Parse for DaOption {
         keyword! { "for": For(input.parse()?) }
         keyword! { expect(input.parse()?) }
 
-        Err(kw.error("unknown derive-adhoc option"))
+        Err(kw.error("unknown derive-deftly option"))
     }
 }
 

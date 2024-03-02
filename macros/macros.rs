@@ -57,7 +57,7 @@ mod check {
     impl FromStr for Target {
         type Err = Void;
         fn from_str(_: &str) -> Result<Self, Void> {
-            panic!("output syntax checking not supported, enable `expect` feature of `derive-adhoc`")
+            panic!("output syntax checking not supported, enable `expect` feature of `derive-deftly`")
         }
     }
 
@@ -80,7 +80,7 @@ impl DaOptValDescribable for check::Target {
 ///
 /// Normally you do not need to mention this macro.
 ///
-/// derive-adhoc does its work by
+/// derive-deftly does its work by
 /// (defining and then) invoking various interrelated macros
 /// including `macro_rules` macros and proc macros.
 /// These ultimately end up calling this macro,
@@ -155,7 +155,7 @@ pub fn derive_deftly_adhoc(
 /// <span id="docs-in-define">`DOCS`</span>,
 /// if supplied, are used as the rustdocs
 /// for the captured template macro `derive_deftly_template_MyMacro`.
-/// derive-adhoc will then also append a note about
+/// derive-deftly will then also append a note about
 /// how to invoke the template.
 ///
 /// ## Template definition macro `derive_deftly_template_MyMacro`
@@ -197,23 +197,23 @@ pub fn derive_deftly_adhoc(
 /// ```
 /// This is used to find the template expansion engine,
 /// and will arrange that your template is expanded
-/// by the right version of derive-adhoc.
-/// The template syntax is that for *your* version of `derive-adhoc`,
-/// even if the depending crate uses a different version of derive-adhoc.
+/// by the right version of derive-deftly.
+/// The template syntax is that for *your* version of `derive-deftly`,
+/// even if the depending crate uses a different version of derive-deftly.
 ///
 /// You should *not* treat a breaking change
-/// to derive-adhoc's template syntax
-/// (which is a major change to derive-adhoc),
+/// to derive-deftly's template syntax
+/// (which is a major change to derive-deftly),
 /// nor a requirement to use a newer template feature,
 /// as a breaking changes in the API of your crate.
 /// (You *should* use `#[doc(hidden)]`, or other approaches,
 /// to discourage downstream crates from using
-/// the derive-adhoc version you re-export.
+/// the derive-deftly version you re-export.
 /// Such use would be outside the semver guarantees.)
 ///
 /// Changes that would require a semver bump
 /// for all libraries that export templates,
-/// will be rare, and specially marked in the derive-adhoc
+/// will be rare, and specially marked in the derive-deftly
 /// changelog.
 ///
 /// ## Namespacing within a template
@@ -270,7 +270,7 @@ pub fn define_derive_deftly(
 /// expansions.
 ///
 /// If the template(s) don't use them, they are ignored.
-/// `derive-adhoc` does not impose any namespacing within `#[deftly]`:
+/// `derive-deftly` does not impose any namespacing within `#[deftly]`:
 /// all templates see the same adhoc meta attributes.
 ///
 /// ## Captured data structure definition `derive_deftly_driver_TYPE`
@@ -308,7 +308,7 @@ pub fn define_derive_deftly(
 /// the `mod` statement will need `#[macro_use]`.
 /// So the placement and order of `mod` statements can matter.
 ///
-/// ## Applying a template (derive-adhoc macro) from another crate
+/// ## Applying a template (derive-deftly macro) from another crate
 ///
 /// `#[derive_deftly(some_crate::MyMacro)]`
 /// applies an exported (`pub`) template
@@ -356,8 +356,8 @@ pub fn define_derive_deftly(
 /// for a fuller discussion of the implications,
 /// and some advice.
 ///
-/// If you do this, you must **pin your derive-adhoc** to a minor version,
-/// as you may need to treat *minor* version updates in derive-adhoc
+/// If you do this, you must **pin your derive-deftly** to a minor version,
+/// as you may need to treat *minor* version updates in derive-deftly
 /// as semver breaks for your crate.
 //
 // This is the implementation of #[derive(Deftly)]

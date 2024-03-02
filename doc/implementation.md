@@ -1,6 +1,6 @@
 # Implementation approach - how does this work?
 
-**You do not need to understand this in order to use derive-adhoc.**
+**You do not need to understand this in order to use derive-deftly.**
 
 Also, you should not rely on the details here.
 They don't form part of the public interface.

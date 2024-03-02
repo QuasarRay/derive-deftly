@@ -8,7 +8,7 @@ set -o pipefail
 # nailing-cargo -E --- maint/check-doc-links
 
 ${CARGO-cargo ${NAILINGCARGO_TOOLCHAIN}} \
-    doc --locked  --all-features -pderive-adhoc
+    doc --locked  --all-features -pderive-deftly
 
 chk_dir=target/doc.link-check
 

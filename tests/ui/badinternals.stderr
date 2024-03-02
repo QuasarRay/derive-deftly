@@ -1,4 +1,4 @@
-error: wrong input to derive-adhoc driver inner macro derive_deftly_driver_Driver; might be due to incompatible derive-adhoc versions(s)
+error: wrong input to derive-deftly driver inner macro derive_deftly_driver_Driver; might be due to incompatible derive-deftly versions(s)
   --> ui/badinternals.rs:9:10
    |
 9  | #[derive(Deftly)]
@@ -9,7 +9,7 @@ error: wrong input to derive-adhoc driver inner macro derive_deftly_driver_Drive
    |
    = note: this error originates in the macro `derive_deftly_driver_Driver` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error: wrong input to derive-adhoc template inner macro derive_deftly_template_Template; might be due to incompatible derive-adhoc versions(s)
+error: wrong input to derive-deftly template inner macro derive_deftly_template_Template; might be due to incompatible derive-deftly versions(s)
   --> ui/badinternals.rs:13:1
    |
 13 | / define_derive_deftly! {
@@ -22,7 +22,7 @@ error: wrong input to derive-adhoc template inner macro derive_deftly_template_T
    |
    = note: this error originates in the macro `derive_deftly_template_Template` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error: bad input to derive_deftly_engine inner template expansion proc macro; might be due to incompatible derive-adhoc versions(s)
+error: bad input to derive_deftly_engine inner template expansion proc macro; might be due to incompatible derive-deftly versions(s)
   --> ui/badinternals.rs:19:1
    |
 19 | derive_adhoc::derive_deftly_engine! { GARBAGE -> INNARDS }
@@ -36,7 +36,7 @@ error: expected curly braces
 19 | derive_adhoc::derive_deftly_engine! { GARBAGE -> INNARDS }
    |                                       ^^^^^^^
 
-error: bad input to derive_deftly_engine inner template expansion proc macro; might be due to incompatible derive-adhoc versions(s)
+error: bad input to derive_deftly_engine inner template expansion proc macro; might be due to incompatible derive-deftly versions(s)
   --> ui/badinternals.rs:40:1
    |
 40 | / derive_adhoc::derive_deftly_engine! {

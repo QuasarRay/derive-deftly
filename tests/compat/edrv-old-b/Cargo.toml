@@ -5,13 +5,13 @@ version = "0.0.1"
 edition = "2018"
 license="MIT"
 authors=["Ian Jackson <ijackson@chiark.greenend.org.uk>",
-         "and the contributors to Rust derive-adhoc"]
+         "and the contributors to Rust derive-deftly"]
 description="driver export compat testing - old part B"
 publish = false
 
 [dependencies]
 pub-a = { path = "../../pub-export/pub-a", version = "0.0.1" }
-derive-adhoc = "=0.2.0"
+derive-deftly = "=0.2.0"
 
 [lib]
 path = "../old-b/old-b.rs"

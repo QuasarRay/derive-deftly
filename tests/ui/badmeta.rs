@@ -32,7 +32,7 @@ derive_deftly_adhoc! {
 }
 
 // Something somewhere deduplicates errors, so if we want to see them
-// all we need to re-invoke derive-adhoc:
+// all we need to re-invoke derive-deftly:
 derive_deftly_adhoc! {
     DataType:
 

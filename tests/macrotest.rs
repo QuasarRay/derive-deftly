@@ -7,7 +7,7 @@ use derive_adhoc_tests::*;
 //
 // We don't do expansion match tests other than on our pinned compiler.
 //
-// We don't do these tests without all derive-adhoc features enabled.
+// We don't do these tests without all derive-deftly features enabled.
 // So there is n testing of what feature controls what.
 // That's OK, we're not going to have very many features.
 #[cfg(feature = "macrotest")]

@@ -149,7 +149,7 @@ pub trait SubstParseContext: Sized {
 
     fn bool_only(span: &impl Spanned) -> syn::Result<Self::BoolOnly> {
         Err(span.error(
-            "derive-adhoc keyword is a condition - not valid as an expansion",
+            "derive-deftly keyword is a condition - not valid as an expansion",
         ))
     }
 
@@ -421,12 +421,12 @@ impl<'c> Context<'c> {
         let ident = &self.top.ident;
         if let Some(templ) = &self.template_name {
             format!(
-                "derive-adhoc expansion of {} for {}",
+                "derive-deftly expansion of {} for {}",
                 templ.to_token_stream(),
                 ident,
             )
         } else {
-            format!("derive-adhoc expansion, for {}", ident,)
+            format!("derive-deftly expansion, for {}", ident,)
         }
     }
 }

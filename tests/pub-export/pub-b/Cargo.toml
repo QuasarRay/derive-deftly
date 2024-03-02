@@ -4,13 +4,13 @@ version = "0.0.1"
 edition = "2018"
 license="MIT"
 authors=["Ian Jackson <ijackson@chiark.greenend.org.uk>",
-         "and the contributors to Rust derive-adhoc"]
+         "and the contributors to Rust derive-deftly"]
 description="pub testing crates - part B, uses bizarre version"
 publish = false
 
 [dependencies]
 pub-a = { path = "../pub-a", version = "0.0.1" }
-derive-adhoc = { package = "bizarre-derive-adhoc", path = "../bizarre-facade", version = "0.0.666" }
+derive-deftly = { package = "bizarre-derive-deftly", path = "../bizarre-facade", version = "0.0.666" }
 	
 [lib]
 path = "pub-b.rs"

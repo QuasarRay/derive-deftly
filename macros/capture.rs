@@ -221,9 +221,9 @@ pub fn derive_adhoc_derive_macro(
                 };
                 { $($wrong:tt)* } => {
                     compile_error!{concat!(
-                        "wrong input to derive-adhoc driver inner macro ",
+                        "wrong input to derive-deftly driver inner macro ",
                         stringify!(#driver_mac_name),
-                     "; might be due to incompatible derive-adhoc versions(s)",
+                     "; might be due to incompatible derive-deftly versions(s)",
                     )}
                 };
             }

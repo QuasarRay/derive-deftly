@@ -41,7 +41,7 @@
    * [Structs used in examples](#structs-used-in-examples)
 
 **Reference documentation for the actual proc macros** is in
-the [crate-level docs for derive-adhoc](../index.html#macros).
+the [crate-level docs for derive-deftly](../index.html#macros).
 
 ## Template syntax overview
 
@@ -143,7 +143,7 @@ it will iterate over all of the fields in each of the variants
 in turn.
 
 structs and unions do not have variants, but
-derive-adhoc treats them as having a single (unnamed) variant.
+derive-deftly treats them as having a single (unnamed) variant.
 
 #### Examples
 
@@ -251,7 +251,7 @@ where `FNAME` is the actual field name (or tuple field number).
    When using this, use pasting (`$<FPREFIX $fname>`)
    rather than `$fpatname`.
 
-These use derive-adhoc's usual
+These use derive-deftly's usual
 [syntax for named arguments](#named-and-positional-template-arguments-to-expansions-and-conditions).
 
 #### Examples
@@ -301,7 +301,7 @@ Use `$vpat` for that.
 These can be used with pasting
 to name related (derived) types and variants.
 
-They use derive-adhoc's usual
+They use derive-deftly's usual
 [syntax for named arguments](#named-and-positional-template-arguments-to-expansions-and-conditions).
 
 #### Examples
@@ -450,7 +450,7 @@ With `${Xattrs}`, unlike `${Xmeta}`,
 Note that derive macros,
 only see attributes
 that come *after* the `#[derive(...)]` that invoked them.
-So derive-adhoc templates only see attributes
+So derive-deftly templates only see attributes
 that come *after* the `#[derive(..., Deftly, ...)]`.
 
 #### Examples
@@ -688,7 +688,7 @@ evaluating `CONDITION`.
 `NAME` is an identifier.
 It may not start with a lowercase letter or underscore:
 those expansion names are reserved for
-derive-adhoc's built-in functionality.
+derive-deftly's built-in functionality.
 
 `BODY` is in the
 [standard syntax for positional arguments](#named-and-positional-template-arguments-to-expansions-and-conditions).
@@ -699,7 +699,7 @@ derive-adhoc's built-in functionality.
 including in inner templates and groups.
 Definitions may be re-defined by inner scopes.
 Scope is dynamic,
-both for derive-adhoc built-ins and user definitions:
+both for derive-deftly built-ins and user definitions:
 `BODY` and `CONDITION` are captured
 without expansion/evaluation at the site of `$define`/`$defcond`,
 and the contents expanded/evaluated
@@ -857,7 +857,7 @@ are treated as different:
 for example, `Vec<u8>` is not equal to `Vec<u8, Global>`
 and `std::os::raw::c_char` is not equal to `std::ffi::c_char`.)
 
-The `ARG`s are in derive-adhoc's usual
+The `ARG`s are in derive-deftly's usual
 [syntax for positional arguments](#named-and-positional-template-arguments-to-expansions-and-conditions).
 
 ### `false`, `true`, `not(CONDITION)`, `any(COND1,COND2,...)`, `all(COND1,COND2,...)` -- boolean logic
@@ -947,7 +947,7 @@ against the `for` option value.
 If it doesn't match, it is an error.
 
 This is useful to produce good error messages:
-Normally, derive-adhoc does not explicitly check the driver kind,
+Normally, derive-deftly does not explicitly check the driver kind,
 and simply makes it available to the template via expansion variables.
 But, often,
 a template is written only with a particular driver kind in mind,

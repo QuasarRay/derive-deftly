@@ -1,11 +1,11 @@
-//! Arrangements for testing derive-adhoc code directly
+//! Arrangements for testing derive-deftly code directly
 //!
 //! We don't want to include all the exciting test code in
-//! `derive-adhoc-macros`'s `cargo test`.
+//! `derive-deftly-macros`'s `cargo test`.
 //!
 //! Instead, we re-import the same source files here.
 //!
-//! Currently, this makes a testing version of derive-adhoc without any
+//! Currently, this makes a testing version of derive-deftly without any
 //! of the optional features.
 
 use macros::framework::*;

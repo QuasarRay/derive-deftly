@@ -1,6 +1,6 @@
-# Introduction to derive-adhoc
+# Introduction to derive-deftly
 
-`derive-adhoc` allows you to write `#[derive]` macros
+`derive-deftly` allows you to write `#[derive]` macros
 -- macros driven by Rust data structures -
 by writing templates in a fairly straightforward template language.
 
@@ -717,7 +717,7 @@ if we just have `$ftype` in a top-level repetition,
 `derive_adhoc` will iterate over all fields in all variants.
 
 Sometimes, if you do something subtle,
-derive-adhoc may not be able to figure
+derive-deftly may not be able to figure
 out what you're trying to repeat over.
 You can use 
 [`${for ...}`](crate::doc_reference#repetition-and-nesting)
@@ -861,7 +861,7 @@ The syntax for this is:
 
 If you ever need to write a literal `$`
 (say, if you want to confuse yourself
-by making derive-adhoc-generated pattern macros)
+by making derive-deftly-generated pattern macros)
 you can write [`$$`](crate::doc_reference#dollar-dollar).
 
 
@@ -977,12 +977,12 @@ error: template defined for struct, but applied to enum
 
 When writing complex templates,
 it can sometimes be hard to figure out compiler errors.
-derive-adhoc has some features which can help:
+derive-deftly has some features which can help:
 
 #### Syntax checking the expansion
 
 You can
-[tell derive-adhoc what your macro is supposed to produce](crate::doc_reference#expect-items-expect-expr--syntax-check-the-expansion):
+[tell derive-deftly what your macro is supposed to produce](crate::doc_reference#expect-items-expect-expr--syntax-check-the-expansion):
 
 ```
 # use derive_adhoc::{Deftly, define_derive_deftly};
@@ -1024,7 +1024,7 @@ struct MyStruct { /* ... */ }
 Sometimes, the expansion syntax checks,
 but is wrong in some other way.
 
-You can ask derive-adhoc to simply
+You can ask derive-deftly to simply
 [print a copy of the expansion](crate::doc_reference#dbg--print-the-expansion-to-stderr-for-debugging).
 
 ```
@@ -1038,11 +1038,11 @@ struct MyStruct { /* ... */ }
 You'll see the compiler print something like this:
 
 ```ignore
----------- derive-adhoc expansion of Constructor for MyStruct (start) ----------
+---------- derive-deftly expansion of Constructor for MyStruct (start) ----------
 impl<> MyStruct where {
     pub fn new(...) { ... }
 }
----------- derive-adhoc expansion of Constructor for MyStruct (end) ----------
+---------- derive-deftly expansion of Constructor for MyStruct (end) ----------
 ```
 
 Like the `dbg!` macro, you don't want to
@@ -1270,7 +1270,7 @@ when _all_ of its arguments are true.
 
 ## Other features
 
-derive-adhoc has many more features,
+derive-deftly has many more features,
 that aren't yet explained in this tutorial.
 For example:
 

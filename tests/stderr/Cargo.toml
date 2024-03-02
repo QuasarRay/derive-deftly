@@ -1,17 +1,17 @@
 # See `tests/stderr.rs`
 
 [package]
-name = "derive-adhoc-stderr-test"
+name = "derive-deftly-stderr-test"
 version = "0.0.1"
 edition = "2018"
 license="MIT"
 authors=["Ian Jackson <ijackson@chiark.greenend.org.uk>",
-         "and the contributors to Rust derive-adhoc"]
+         "and the contributors to Rust derive-deftly"]
 description="stderr testing crates - does not build"
 publish = false
 
 [dependencies]
-derive-adhoc = { path = "../..", version = "0.9.0", features = ["full"] }
+derive-deftly = { path = "../..", version = "0.9.0", features = ["full"] }
 
 [features]
 # The purpose of this crate is to fail the build, with error messages

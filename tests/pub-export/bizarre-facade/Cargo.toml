@@ -4,13 +4,13 @@
 # of the bizarre-* crates.
 
 [package]
-name = "bizarre-derive-adhoc"
+name = "bizarre-derive-deftly"
 version = "0.0.666"
 edition = "2018"
 license="MIT"
 authors=["Ian Jackson <ijackson@chiark.greenend.org.uk>",
-         "and the contributors to Rust derive-adhoc"]
-description="Bizarrely incompatible copy of derive-adhoc, for testing"
+         "and the contributors to Rust derive-deftly"]
+description="Bizarrely incompatible copy of derive-deftly, for testing"
 
 publish = false
 rust-version = "1.56"
@@ -22,11 +22,11 @@ default = ["full"]
 full = ["case", "expect", "minimal-1"]
 minimal-1 = []
 
-case = ["derive-adhoc-macros/case", "heck"]
-expect = ["derive-adhoc-macros/expect"]
+case = ["derive-deftly-macros/case", "heck"]
+expect = ["derive-deftly-macros/expect"]
 
 [dependencies]
-derive-adhoc-macros = { package = "bizarre-derive-adhoc-macros", path = "../bizarre-macros", version = "0.0.666" }
+derive-deftly-macros = { package = "bizarre-derive-deftly-macros", path = "../bizarre-macros", version = "0.0.666" }
 heck = { version = "0.4", optional = true }
 
 [lib]

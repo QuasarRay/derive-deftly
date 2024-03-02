@@ -25,8 +25,8 @@ pub fn for_every_example_context<E>(
 
 /// Limit on the contexts (in the example structs) that this test is for
 ///
-/// This was (at an early stage) done with derive-adhoc conditions.
-/// However, derive-adhoc conditions throw an error when applied
+/// This was (at an early stage) done with derive-deftly conditions.
+/// However, derive-deftly conditions throw an error when applied
 /// in contexts that lack all the information
 /// (for example, `$fname` outside a field).
 /// Also, they make it difficult to analyse what `Others` means.
@@ -102,7 +102,7 @@ impl Limit {
 
 type LimitViaDaCond = dyn Fn(()) -> SubstDetails<BooleanContext>;
 
-/// Table mapping limit regexp to derive-adhoc `SubstDetails`
+/// Table mapping limit regexp to derive-deftly `SubstDetails`
 // Breaking this out here allows us to format it nicely
 #[rustfmt::skip]
 const LIMIT_DA_COND_REGEXPS: &[(&str, &'static LimitViaDaCond)] = &[

@@ -468,7 +468,7 @@ impl<O: SubstParseContext> Parse for TemplateElement<O> {
                 if let Ok(attr) = syn::Attribute::parse_inner(&backtracked) {
                     if let Some(attr) = attr.first() {
                         return Err(attr.error(
-    "inner attributes are reserved syntax, anywhere in derive-adhoc templates"
+    "inner attributes are reserved syntax, anywhere in derive-deftly templates"
                         ));
                     }
                 }
@@ -560,7 +560,7 @@ impl<O: SubstParseContext> SubstMetaAs<O> {
         keyword! { tokens(nb, not_in_paste()?) }
         keyword! { ty(nb) }
 
-        Err(kw.error("unknown derive-adhoc 'as' syntax type keyword"))
+        Err(kw.error("unknown derive-deftly 'as' syntax type keyword"))
     }
 }
 
@@ -979,7 +979,7 @@ impl<O: SubstParseContext> Parse for Subst<O> {
             return from_sd(SD::UserDefined(user_defined));
         }
 
-        Err(kw.error("unknown derive-adhoc keyword"))
+        Err(kw.error("unknown derive-deftly keyword"))
     }
 }
 

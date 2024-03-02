@@ -1,4 +1,4 @@
-# **Hacking on derive-adhoc (`HACKING.md`)**
+# **Hacking on derive-deftly (`HACKING.md`)**
 
 Rust procedural macros are a somewhat awkward environment,
 and, especially, testing them can be complex.
@@ -26,7 +26,7 @@ and, especially, testing them can be complex.
 
 ## Required reading
 
-derive-adhoc uses types and traits from [`syn`] and [`mod@quote`],
+derive-deftly uses types and traits from [`syn`] and [`mod@quote`],
 extensively.
 
 It will be very helpful to run
@@ -48,7 +48,7 @@ maintained by scripts in `maint/`.
 
 ### `tests/pub-export/bizarre-facade/*` etc., updated by `maint/update-bizarre`
 
-"Bizarre" version of `derive-adhoc`,
+"Bizarre" version of `derive-deftly`,
 used for [cross-crate compatibility testing](../../pub_b/index.html).
 
 CI will check that these outputs are
@@ -84,7 +84,7 @@ Checked by CI, but it's only a warning if it's not up to date.
 
 ## Testing - see `tests/tests.rs`
 
-derive-adhoc has comprehensive tests.
+derive-deftly has comprehensive tests.
 
 But, they are complicated
 (mostly because testing proc macros is complicated).
