@@ -1202,7 +1202,7 @@ pub fn preprocess_attrs(
                 return None;
             }
             let segment = attr.path().segments.iter().exactly_one().ok()?;
-            if segment.ident != "adhoc" {
+            if segment.ident != "deftly" {
                 return None;
             }
             Some(attr)

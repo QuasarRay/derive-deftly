@@ -378,7 +378,7 @@ pub fn define_derive_deftly(
     proc_macro,
     proc_macro_derive(
         Deftly,
-        attributes(adhoc, derive_deftly, derive_deftly_adhoc)
+        attributes(deftly, derive_deftly, derive_deftly_adhoc)
     )
 )]
 pub fn derive_adhoc_derive_macro(

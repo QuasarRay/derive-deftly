@@ -1022,7 +1022,7 @@ impl RawAttr {
         for attr in attrs {
             match self {
                 RawAttr::Default => {
-                    if ["adhoc", "derive_deftly", "derive_deftly_adhoc"]
+                    if ["deftly", "derive_deftly", "derive_deftly_adhoc"]
                         .iter()
                         .all(|exclude| !attr.path().is_ident(exclude))
                     {
