@@ -180,7 +180,7 @@ pub enum SubstVis {
 #[derive(Debug, Clone)]
 pub struct SubstMeta<O: SubstParseContext> {
     pub level: SubstMetaLevel,
-    pub path: SubstMetaLabel,
+    pub label: SubstMetaLabel,
     pub as_: Option<SubstMetaAs<O>>,
 }
 
@@ -336,7 +336,7 @@ impl<O: SubstParseContext> Spanned for Subst<O> {
 
 impl<O: SubstParseContext> Spanned for SubstMeta<O> {
     fn span(&self) -> Span {
-        self.path.span()
+        self.label.span()
     }
 }
 
@@ -566,7 +566,7 @@ impl<O: SubstParseContext> SubstMetaAs<O> {
 
 impl<O: SubstParseContext> SubstMeta<O> {
     fn parse(input: ParseStream, level: SubstMetaLevel) -> syn::Result<Self> {
-        let path: SubstMetaLabel = input.parse()?;
+        let label: SubstMetaLabel = input.parse()?;
 
         let as_;
 
@@ -580,7 +580,7 @@ impl<O: SubstParseContext> SubstMeta<O> {
             as_ = None;
         }
 
-        Ok(SubstMeta { path, as_, level })
+        Ok(SubstMeta { label, as_, level })
     }
 }
 

@@ -781,7 +781,7 @@ where
         let self_loc = || (self.span(), "expansion");
         let error_loc = || [ctx.error_loc(), self_loc()];
 
-        self.path.search(
+        self.label.search(
             pmetas,
             &mut |av: FoundMetaNode| {
                 if let Some(first) = &found {
