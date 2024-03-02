@@ -661,7 +661,7 @@ See also the [`dbg` expansion option](#dbg--print-the-expansion-to-stderr-for-de
 #### Example
 
 ```rust
-# use derive_adhoc::{Deftly, derive_adhoc};
+# use derive_adhoc::{Deftly, derive_deftly_adhoc};
 #[derive(Deftly)]
 #[derive_deftly_adhoc]
 enum Enum {

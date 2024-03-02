@@ -1,6 +1,6 @@
 #![allow(dead_code)]
 
-use derive_adhoc::{define_derive_deftly, derive_adhoc, Deftly};
+use derive_adhoc::{define_derive_deftly, derive_deftly_adhoc, Deftly};
 
 define_derive_deftly! {
     ReuseableTemplate =

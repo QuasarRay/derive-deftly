@@ -166,7 +166,7 @@ and `MyStruct` alone,
 you could have said:
 
 ```
-use derive_adhoc::{Deftly, derive_adhoc};
+use derive_adhoc::{Deftly, derive_deftly_adhoc};
 
 #[derive(Clone, Debug, Deftly)]
 #[derive_deftly_adhoc]
@@ -724,7 +724,7 @@ You can use
 to specifiy explicitly:
 so, above, instead, we could have written
 ```
-# use derive_adhoc::{Deftly, derive_adhoc};
+# use derive_adhoc::{Deftly, derive_deftly_adhoc};
 # #[derive(Deftly)]
 # #[derive_deftly_adhoc]
 # enum TestCase<A> { Variant(A) }

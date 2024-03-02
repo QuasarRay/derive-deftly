@@ -2,7 +2,7 @@
 //!
 //! This gives a basic demonstration of how to handle an enum.
 
-use derive_adhoc::{define_derive_deftly, derive_adhoc, Deftly};
+use derive_adhoc::{define_derive_deftly, derive_deftly_adhoc, Deftly};
 
 trait Trait {
     fn shape_top(&self) -> &'static str;
