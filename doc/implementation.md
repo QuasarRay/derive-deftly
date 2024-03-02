@@ -32,7 +32,7 @@ to what is conceptually the first macro's output.
 
 ### 1. `#[derive(Deftly)]` proc macro for saving struct definitions
 
-Implemented in `capture.rs::derive_adhoc_derive_macro`.
+Implemented in `capture.rs::derive_deftly`.
 
 When applied to (e.g.) `pub struct StructName`,
 with `#[derive_deftly_adhoc]` specified
@@ -147,7 +147,7 @@ include space for future expansion.)
 
 ## 2. `#[derive_deftly(Template)]`, implemented in `#[derive(Deftly)]`
 
-Template reuse is also implemented in `capture.rs::derive_adhoc_derive_macro`.
+Template reuse is also implemented in `capture.rs::derive_deftly`.
 
 This
 

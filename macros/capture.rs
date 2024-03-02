@@ -91,7 +91,7 @@ fn check_for_misplaced_atrs(data: &syn::Data) -> syn::Result<()> {
 }
 
 /// This is #[derive(Deftly)]
-pub fn derive_adhoc_derive_macro(
+pub fn derive_deftly(
     driver_stream: TokenStream,
 ) -> Result<TokenStream, syn::Error> {
     // TODO optimisation: parse this in a way that doesn't actually

@@ -381,11 +381,11 @@ pub fn define_derive_deftly(
         attributes(deftly, derive_deftly, derive_deftly_adhoc)
     )
 )]
-pub fn derive_adhoc_derive_macro(
+pub fn derive_deftly(
     input: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
     let input = TokenStream::from(input);
-    let output = capture::derive_adhoc_derive_macro(input)
+    let output = capture::derive_deftly(input)
         .unwrap_or_else(|e| e.into_compile_error());
     output.into()
 }
