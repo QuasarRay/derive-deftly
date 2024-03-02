@@ -11,7 +11,7 @@ error: this file contains an unclosed delimiter
 16 | | }
    | |_- in this macro invocation
    |
-   = note: this error originates in the macro `::derive_adhoc::derive_adhoc_expand` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+   = note: this error originates in the macro `::derive_adhoc::derive_deftly_engine` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: cannot parse string into token stream
   --> ui/badmeta.rs:3:10
@@ -26,7 +26,7 @@ error: cannot parse string into token stream
 16 | | }
    | |_- in this macro invocation
    |
-   = note: this error originates in the macro `::derive_adhoc::derive_adhoc_expand` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+   = note: this error originates in the macro `::derive_adhoc::derive_deftly_engine` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: constructed identifier "Bad." is invalid
   --> ui/badmeta.rs:26:14

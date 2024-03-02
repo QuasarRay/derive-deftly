@@ -44,7 +44,7 @@ generates this
         { ($orig_dollar:tt) $(future:tt)* }
         $($tpassthrough:tt)* 
      } => {
-        derive_adhoc_expand!{
+        derive_deftly_engine!{
             { pub struct StructName { /* original struct definition */ } }
             { }
             { $($template)* }
@@ -82,12 +82,12 @@ Expands to
 
 ### 3. Function-like proc macro to do the actual expansion
 
-Implemented in `expand.rs::derive_adhoc_expand_func_macro`.
+Implemented in `expand.rs::derive_deftly_engine_func_macro`.
 
 The result of expanding the above is this:
 
 ```rust,ignore
-    derive_adhoc_expand!{
+    derive_deftly_engine!{
         { pub struct StructName { /* original struct definition */ } }
         { }
         { TEMPLATE... }
@@ -95,7 +95,7 @@ The result of expanding the above is this:
     }
 ```
 
-`derive_adhoc_expand` parses `pub struct StructName`,
+`derive_deftly_engine` parses `pub struct StructName`,
 and implements a bespoke template expander,
 whose template syntax resembles the expansion syntax from `macro_rules`.
 
@@ -123,7 +123,7 @@ Expands to
         { $($future:tt)* }
         $($dpassthrough:tt)*
     } => {
-        derive_adhoc_expand! {
+        derive_deftly_engine! {
             { $($driver)* }
          $( [ $(aoptions)* ] )?
             { $($dpassthrough)* }
@@ -174,10 +174,10 @@ see above.
 
 The call to `derive_adhoc_template_Template!`
 is expanded according to the `macro_rules!` definition,
-resulting in a call to `derive_adhoc_expand`:
+resulting in a call to `derive_deftly_engine`:
 
 ```rust,ignore
-    derive_adhoc_expand!{
+    derive_deftly_engine!{
         { pub struct StructName { /* original struct definition */ } }
         [1 0 AOPTIONS]    // but only if AOPTIONS is nonempty
         { }

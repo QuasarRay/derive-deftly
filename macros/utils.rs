@@ -55,7 +55,7 @@ impl<T: Parse> Parse for Concatenated<T> {
 /// Add a warning about derive-adhoc version incompatibility
 pub fn advise_incompatibility(err_needing_advice: syn::Error) -> syn::Error {
     let mut advice = Span::call_site().error(
-        "bad input to derive_adhoc_expand inner template expansion proc macro; might be due to incompatible derive-adhoc versions(s)"
+        "bad input to derive_deftly_engine inner template expansion proc macro; might be due to incompatible derive-adhoc versions(s)"
     );
     advice.combine(err_needing_advice);
     advice
@@ -245,7 +245,7 @@ impl<T: AsRef<str> + ?Sized> PartialEq<T> for IdentAny {
 
 //---------- expand_macro_name ----------
 
-/// Return a full path to the location of `derive_adhoc_expand`.
+/// Return a full path to the location of `derive_deftly_engine`.
 ///
 /// (This may not work properly if the user
 /// imports the crate under a different name.
@@ -262,10 +262,10 @@ pub fn expand_macro_name() -> Result<TokenStream, syn::Error> {
     let name = name.or_else(|_| crate_name("bizarre-derive-adhoc"));
 
     match name {
-        Ok(FoundCrate::Itself) => Ok(quote!( crate::derive_adhoc_expand )),
+        Ok(FoundCrate::Itself) => Ok(quote!( crate::derive_deftly_engine )),
         Ok(FoundCrate::Name(name)) => {
             let ident = Ident::new(&name, Span::call_site());
-            Ok(quote!( ::#ident::derive_adhoc_expand ))
+            Ok(quote!( ::#ident::derive_deftly_engine ))
         }
         Err(e) => Err(Span::call_site().error(
             format_args!("Expected derive-adhoc or derive-adhoc-macro to be present in Cargo.toml: {}", e)

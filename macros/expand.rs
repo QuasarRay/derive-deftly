@@ -1,14 +1,14 @@
-//! Expansion of a template into output tokens, plus `derive_adhoc_expand!()`
+//! Expansion of a template into output tokens, plus `derive_deftly_engine!()`
 //!
 //! Contains the implementations of `fn expand()`
 //! for the various template types in [`super::syntax`].
 //!
 //! Also contains the top-level "do the work" macro function -
-//! the implementation of `derive_adhoc_expand!()`.
+//! the implementation of `derive_deftly_engine!()`.
 
 use super::framework::*;
 
-/// Input to `derive_adhoc_expand!`
+/// Input to `derive_deftly_engine!`
 #[derive(Debug)]
 pub struct DeriveAdhocExpandInput {
     pub driver_brace: token::Brace,
@@ -1149,19 +1149,19 @@ impl ToTokens for Fname<'_> {
     }
 }
 
-/// `derive_adhoc_expand!` -- implements the actual template engine
+/// `derive_deftly_engine!` -- implements the actual template engine
 ///
 /// In my design, the input contains, firstly, literally the definition
 /// that #[derive(Adhoc)] was applied to (see NOTES.txt).
 /// Using the literal input, rather than some pre-parsed version, is
 /// slower, but means that we aren't inventing a nontrivial data format which
 /// potentially crosses crate boundaries with semver implications.
-pub fn derive_adhoc_expand_func_macro(
+pub fn derive_deftly_engine_func_macro(
     input: TokenStream,
 ) -> syn::Result<TokenStream> {
-    // eprintln!("derive_adhoc_expand! {}", &input);
+    // eprintln!("derive_deftly_engine! {}", &input);
     let input: DeriveAdhocExpandInput = syn::parse2(input)?;
-    // eprintln!("derive_adhoc_expand! crate = {:?}", &input.template_crate);
+    // eprintln!("derive_deftly_engine! crate = {:?}", &input.template_crate);
 
     let DaOptions {
         dbg,

@@ -22,24 +22,24 @@ error: wrong input to derive-adhoc template inner macro derive_adhoc_template_Te
    |
    = note: this error originates in the macro `derive_adhoc_template_Template` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error: bad input to derive_adhoc_expand inner template expansion proc macro; might be due to incompatible derive-adhoc versions(s)
+error: bad input to derive_deftly_engine inner template expansion proc macro; might be due to incompatible derive-adhoc versions(s)
   --> ui/badinternals.rs:19:1
    |
-19 | derive_adhoc::derive_adhoc_expand! { GARBAGE -> INNARDS }
+19 | derive_adhoc::derive_deftly_engine! { GARBAGE -> INNARDS }
    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
    |
-   = note: this error originates in the macro `derive_adhoc::derive_adhoc_expand` (in Nightly builds, run with -Z macro-backtrace for more info)
+   = note: this error originates in the macro `derive_adhoc::derive_deftly_engine` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: expected curly braces
   --> ui/badinternals.rs:19:38
    |
-19 | derive_adhoc::derive_adhoc_expand! { GARBAGE -> INNARDS }
+19 | derive_adhoc::derive_deftly_engine! { GARBAGE -> INNARDS }
    |                                      ^^^^^^^
 
-error: bad input to derive_adhoc_expand inner template expansion proc macro; might be due to incompatible derive-adhoc versions(s)
+error: bad input to derive_deftly_engine inner template expansion proc macro; might be due to incompatible derive-adhoc versions(s)
   --> ui/badinternals.rs:40:1
    |
-40 | / derive_adhoc::derive_adhoc_expand! {
+40 | / derive_adhoc::derive_deftly_engine! {
 41 | |     { pub struct StructName {} }
 42 | |     [200 0]
 43 | |     { }
@@ -48,12 +48,12 @@ error: bad input to derive_adhoc_expand inner template expansion proc macro; mig
 46 | | }
    | |_^
    |
-   = note: this error originates in the macro `derive_adhoc::derive_adhoc_expand` (in Nightly builds, run with -Z macro-backtrace for more info)
+   = note: this error originates in the macro `derive_adhoc::derive_deftly_engine` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: Incompatible major version for AOPTIONS (driver 200, template/engine 1)
   --> ui/badinternals.rs:40:1
    |
-40 | / derive_adhoc::derive_adhoc_expand! {
+40 | / derive_adhoc::derive_deftly_engine! {
 41 | |     { pub struct StructName {} }
 42 | |     [200 0]
 43 | |     { }
@@ -62,4 +62,4 @@ error: Incompatible major version for AOPTIONS (driver 200, template/engine 1)
 46 | | }
    | |_^
    |
-   = note: this error originates in the macro `derive_adhoc::derive_adhoc_expand` (in Nightly builds, run with -Z macro-backtrace for more info)
+   = note: this error originates in the macro `derive_adhoc::derive_deftly_engine` (in Nightly builds, run with -Z macro-backtrace for more info)

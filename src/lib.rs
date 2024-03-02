@@ -14,7 +14,7 @@
 // Also this crate is where the docs live, right here as crate-level
 // docs.
 
-pub use derive_adhoc_macros::derive_adhoc_expand;
+pub use derive_adhoc_macros::derive_deftly_engine;
 pub use derive_adhoc_macros::{define_derive_deftly, derive_adhoc, Adhoc};
 
 // We (ab)use the module system as places to hang our documentation.

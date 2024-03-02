@@ -90,11 +90,11 @@ impl DaOptValDescribable for check::Target {
 /// This macro's behvaiour is not currently stable or documented.
 /// If you invoke it yourself, you get to keep all the pieces.
 #[cfg_attr(proc_macro, proc_macro)]
-pub fn derive_adhoc_expand(
+pub fn derive_deftly_engine(
     input: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
     let input: proc_macro2::TokenStream = input.into();
-    let output = expand::derive_adhoc_expand_func_macro(input)
+    let output = expand::derive_deftly_engine_func_macro(input)
         .unwrap_or_else(|e| e.into_compile_error());
     output.into()
 }
@@ -102,7 +102,7 @@ pub fn derive_adhoc_expand(
 /// Expand an ad-hoc template, on a data structure decorated `#[derive(Adhoc)]`
 ///
 /// ```ignore
-/// # use derive_adhoc_macros::{Adhoc, derive_adhoc, derive_adhoc_expand};
+/// # use derive_adhoc_macros::{Adhoc, derive_adhoc, derive_deftly_engine};
 /// # #[derive(Adhoc)] struct DataStructureType;
 /// # fn main() {
 /// # const TEMPLATE: () = ();
