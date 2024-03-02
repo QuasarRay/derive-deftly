@@ -124,7 +124,7 @@ pub fn derive_deftly_engine(
 /// and the resulting `derive_adhoc_driver_TYPE` macro must be
 /// available in scope.
 #[cfg_attr(proc_macro, proc_macro)]
-pub fn derive_adhoc(
+pub fn derive_deftly(
     input: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
     let input = TokenStream::from(input);
@@ -145,7 +145,7 @@ pub fn derive_adhoc(
 ///
 /// Then, `MyMacro` can be used with
 /// [`#[derive(Deftly)]`](crate::Deftly)
-/// `#[derive_adhoc(MyMacro)]`.
+/// `#[derive_deftly(MyMacro)]`.
 ///
 /// <span id="options-in-define">`OPTIONS,..`</span>
 /// is an optional comma-separated list of
@@ -167,7 +167,7 @@ pub fn derive_adhoc(
 /// The template definition macro
 /// from `define_derive_deftly!`
 /// must be in scope at the point where you try to use it
-/// (with `#[derive(Deftly)] #[derive_adhoc(MyMacro)]`).
+/// (with `#[derive(Deftly)] #[derive_deftly(MyMacro)]`).
 /// See the
 /// [documentation for `#[derive(Deftly)]`](derive.Deftly.html#scoping-and-ordering-within-the-same-crate).
 ///
@@ -244,7 +244,7 @@ pub fn define_derive_deftly(
 ///
 /// This macro does two things:
 ///
-///  1. If `#[derive_adhoc(MyMacro)]` attributes are also specified,
+///  1. If `#[derive_deftly(MyMacro)]` attributes are also specified,
 ///     they are taken to refer to reuseable templates
 ///     defined with
 ///     [`define_derive_deftly!`](macro@crate::define_derive_deftly).
@@ -253,7 +253,7 @@ pub fn define_derive_deftly(
 ///     <span id="expansion-options">You can specify
 ///     [expansion options](doc_reference/index.html#expansion-options)
 ///     for each such template application, by writing
-///     `#[derive_adhoc(MyMacro[OPTIONS,..])]`, where
+///     `#[derive_deftly(MyMacro[OPTIONS,..])]`, where
 ///     `[OPTIONS,..]` is a comma-separated list of expansion options
 ///     contained within `[ ]`.</span>
 ///
@@ -285,12 +285,12 @@ pub fn define_derive_deftly(
 /// **Summary of required ordering**
 ///
 ///  1. `define_derive_deftly! { MyMacro = ... }`
-///  2. `#[derive(Deftly)] #[derive_adhoc(MyMacro)] struct MyStruct { ... }`
+///  2. `#[derive(Deftly)] #[derive_deftly(MyMacro)] struct MyStruct { ... }`
 ///  3. `derive_adhoc! { MyStruct: ... }`
 ///
 /// Any reusable templates defined with
 /// `define_derive_deftly!` must lexically their precede
-/// uses with `#[derive(Deftly) #[derive_adhoc(...)]`.
+/// uses with `#[derive(Deftly) #[derive_deftly(...)]`.
 ///
 /// And, for one-off templates (`derive_adhoc!`),
 /// the data structure with its `#[derive(Deftly)]`
@@ -310,7 +310,7 @@ pub fn define_derive_deftly(
 ///
 /// ## Applying a template (derive-adhoc macro) from another crate
 ///
-/// `#[derive_adhoc(some_crate::MyMacro)]`
+/// `#[derive_deftly(some_crate::MyMacro)]`
 /// applies an exported (`pub`) template
 /// defined and exported by `some_crate`.
 ///

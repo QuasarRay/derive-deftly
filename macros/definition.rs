@@ -14,7 +14,7 @@ struct TemplateDefinition {
 impl Parse for TemplateDefinition {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         // This rejects Rust keywords, which is good because
-        // for example `#[derive_adhoc(pub)]` ought not to mean to apply
+        // for example `#[derive_deftly(pub)]` ought not to mean to apply
         // a template called `pub`.  See ticket #1.
         let doc_attrs = input.call(syn::Attribute::parse_outer)?;
         for attr in &doc_attrs {
@@ -176,7 +176,7 @@ pub fn define_derive_deftly_func_macro(
             r#"
 
 This is a `derive_adhoc` template.  Do not invoke it directly.
-To use it, write: `#[derive(Deftly)] #[derive_adhoc({})]`."#,
+To use it, write: `#[derive(Deftly)] #[derive_deftly({})]`."#,
             templ_name
         );
         quote!( #[doc = #addendum] )

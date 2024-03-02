@@ -44,11 +44,11 @@ define_derive_deftly! {
 }
 
 #[derive(Deftly)]
-#[derive_adhoc(ListFields)]
+#[derive_deftly(ListFields)]
 struct UnitStruct;
 
 #[derive(Deftly)]
-#[derive_adhoc(ListFields)]
+#[derive_deftly(ListFields)]
 #[allow(dead_code)]
 struct SimpleStruct {
     small: u8,
@@ -57,12 +57,12 @@ struct SimpleStruct {
 }
 
 #[derive(Deftly)]
-#[derive_adhoc(ListFields)]
+#[derive_deftly(ListFields)]
 struct TupleStruct(u8, u16, String);
 
 #[derive(Deftly)]
-#[derive_adhoc(ListFields)]
-#[derive_adhoc(ListVariants)]
+#[derive_deftly(ListFields)]
+#[derive_deftly(ListVariants)]
 #[allow(dead_code)]
 enum Enum {
     UnitVariant,

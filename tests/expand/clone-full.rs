@@ -23,21 +23,21 @@ define_derive_deftly! {
 }
 
 #[derive(Deftly)]
-#[derive_adhoc(PreciseClone)]
+#[derive_deftly(PreciseClone)]
 struct Unit;
 
 #[derive(Deftly)]
-#[derive_adhoc(PreciseClone)]
+#[derive_deftly(PreciseClone)]
 struct Tuple<F>(F);
 
 #[derive(Deftly)]
-#[derive_adhoc(PreciseClone)]
+#[derive_deftly(PreciseClone)]
 struct Struct<F> {
     field: F,
 }
 
 #[derive(Deftly)]
-#[derive_adhoc(PreciseClone)]
+#[derive_deftly(PreciseClone)]
 enum Enum<F> {
     Unit,
     Tuple(F),
@@ -45,7 +45,7 @@ enum Enum<F> {
 }
 
 #[derive(Deftly)]
-#[derive_adhoc(PreciseClone)]
+#[derive_deftly(PreciseClone)]
 enum AllTypes {
     NoData,
     Tuple(u16, u32),

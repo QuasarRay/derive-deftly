@@ -52,21 +52,21 @@ define_derive_deftly! {
 //   We can't do this for a Unit because it would end up with
 //   an unused lifetime.
 // #[derive(Deftly)]
-// #[derive_adhoc(ReferenceVersion)]
+// #[derive_deftly(ReferenceVersion)]
 // struct Unit;
 
 #[derive(Deftly)]
-#[derive_adhoc(ReferenceVersion)]
+#[derive_deftly(ReferenceVersion)]
 struct Tuple<F = ()>(F);
 
 #[derive(Deftly)]
-#[derive_adhoc(ReferenceVersion)]
+#[derive_deftly(ReferenceVersion)]
 struct Struct<F = ()> {
     field: F,
 }
 
 #[derive(Deftly)]
-#[derive_adhoc(ReferenceVersion)]
+#[derive_deftly(ReferenceVersion)]
 enum Enum<F = ()> {
     Unit,
     Tuple(F),

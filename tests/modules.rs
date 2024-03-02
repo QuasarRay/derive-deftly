@@ -93,7 +93,7 @@ pub mod has_driver {
     use super::{EnumMarker, IsEnum};
 
     #[derive(Deftly)]
-    #[derive_adhoc(IsEnum)]
+    #[derive_deftly(IsEnum)]
     #[derive_deftly_adhoc]
     pub enum Driver<T: Default> {
         Variant(Field<T>),
@@ -114,7 +114,7 @@ mod adhoc_template {
         // just the name of the struct to `derive_adhoc!`.
         //
         // (Exporting of the driver so that other crates can derive from it
-        // is supported via `#[derive_adhoc(pub)]` but it brings
+        // is supported via `#[derive_deftly(pub)]` but it brings
         // namespacing awkwardness and should be used only with crate.)
         //
         // (Passing a path doesn't work for a struct with an unexported

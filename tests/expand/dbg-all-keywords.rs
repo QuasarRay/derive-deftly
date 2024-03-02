@@ -4,7 +4,7 @@ define_derive_deftly! { Dbg = $dbg_all_keywords }
 
 #[allow(dead_code)]
 #[derive(Deftly)]
-#[derive_adhoc(Dbg)]
+#[derive_deftly(Dbg)]
 enum Enum {
     Unit,
     Tuple(usize),
@@ -13,17 +13,17 @@ enum Enum {
 
 #[allow(dead_code)]
 #[derive(Deftly)]
-#[derive_adhoc(Dbg)]
+#[derive_deftly(Dbg)]
 struct Unit;
 
 #[allow(dead_code)]
 #[derive(Deftly)]
-#[derive_adhoc(Dbg)]
+#[derive_deftly(Dbg)]
 struct Tuple(usize);
 
 #[allow(dead_code)]
 #[derive(Deftly)]
-#[derive_adhoc(Dbg)]
+#[derive_deftly(Dbg)]
 struct Struct {
     field: String,
 }

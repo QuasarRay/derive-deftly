@@ -6,7 +6,7 @@
 //! with a different prefix.
 use std::cmp::Ordering::{self, *};
 use derive_adhoc::{define_derive_deftly, Deftly};
-#[derive_adhoc(VeryPartialOrd)]
+#[derive_deftly(VeryPartialOrd)]
 enum Enum<F: PartialEq = (), G = ()>
 where
     G: PartialEq,

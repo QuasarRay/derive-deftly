@@ -51,7 +51,7 @@ define_derive_deftly! {
 }
 
 #[derive(Deftly)]
-#[derive_adhoc(ListVariants)]
+#[derive_deftly(ListVariants)]
 enum Enum {
     UnitVariant,
     StructVariant { a: u8, b: u16 },

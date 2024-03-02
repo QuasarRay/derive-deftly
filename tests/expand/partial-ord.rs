@@ -36,7 +36,7 @@ define_derive_deftly! {
 }
 
 #[derive(Deftly, PartialEq)]
-#[derive_adhoc(VeryPartialOrd)]
+#[derive_deftly(VeryPartialOrd)]
 enum Enum<F: PartialEq = (), G = ()>
 where
     G: PartialEq,

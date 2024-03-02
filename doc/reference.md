@@ -437,7 +437,7 @@ With `${Xattrs}`, unlike `${Xmeta}`,
 
    * The expansion is the whole of each attribute, including the `#[...]`;
    * All attributes are included.
-   * But `#[adhoc(...)]` `#[derive_adhoc(...)]`
+   * But `#[adhoc(...)]` `#[derive_deftly(...)]`
      and `#[derive_deftly_adhoc(...)]`
      are *excluded* by default,
      because typically they would be rejected by the compiler:
@@ -472,7 +472,7 @@ that come *after* the `#[derive(..., Deftly, ...)]`.
  * `${tattrs}`: ``#[doc=" Title for `Tuple`"] #[repr(C)]``
  * `${tattrs repr}`: ``#[repr(C)]``
  * `${tattrs repr, adhoc}`: ``#[adhoc(unused)] #[repr(C)]``
- * `${tattrs ! derive, doc}`: ``#[adhoc(unused)] #[repr(C)] #[derive_adhoc(SomeOtherTemplate)]``
+ * `${tattrs ! derive, doc}`: ``#[adhoc(unused)] #[repr(C)] #[derive_deftly(SomeOtherTemplate)]``
 
 ##### For `Enum`
 
@@ -913,7 +913,7 @@ define_derive_deftly! { Template OPTIONS,... = TEMPLATE }
 
 // Expand Template for DataStructureType, with OPTIONS
 #[derive(Deftly)]
-#[derive_adhoc(Template[OPTIONS,...])]
+#[derive_deftly(Template[OPTIONS,...])]
 struct DataStructureType {
 # }
 ```
@@ -974,7 +974,7 @@ See also the [`$dbg_all_keywords` expansion](#dbg_all_keywords--dump-expansions-
 define_derive_deftly! { Nothing for struct, expect items = }
 
 #[derive(Deftly)]
-#[derive_adhoc(Nothing[expect items, dbg])]
+#[derive_deftly(Nothing[expect items, dbg])]
 struct Unit;
 ```
 
@@ -1009,7 +1009,7 @@ pub struct Unit<const C: usize = 1>;
 /// Title for `Tuple`
 #[adhoc(unused)]
 #[repr(C)]
-#[derive_adhoc(SomeOtherTemplate)]
+#[derive_deftly(SomeOtherTemplate)]
 struct Tuple<'a, 'l: 'a, T: Display = usize, const C: usize = 1>(
     &'a &'l T,
 );

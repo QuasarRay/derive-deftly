@@ -27,7 +27,7 @@ define_derive_deftly! {
 }
 
 #[derive(Deftly)]
-#[derive_adhoc(MyHash)]
+#[derive_deftly(MyHash)]
 struct DataType {
     foo: u8,
     #[adhoc(hash(skip))]
@@ -35,7 +35,7 @@ struct DataType {
 }
 
 #[derive(Deftly)]
-#[derive_adhoc(MyHash)]
+#[derive_deftly(MyHash)]
 struct Pair<S, T: Debug>
 where
     S: Debug,
@@ -45,7 +45,7 @@ where
 }
 
 #[derive(Deftly)]
-#[derive_adhoc(MyHash)]
+#[derive_deftly(MyHash)]
 struct IntPair(usize, usize);
 
 fn main() {

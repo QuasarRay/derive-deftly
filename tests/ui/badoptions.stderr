@@ -30,7 +30,7 @@ error: template defined for union, but applied to struct (expected kind)
 error: template defined for union, but applied to struct (actual kind)
   --> ui/badoptions.rs:11:1
    |
-11 | / #[derive_adhoc(BadOptionsTemplate[dbg])]
+11 | / #[derive_deftly(BadOptionsTemplate[dbg])]
 12 | | #[derive_deftly_adhoc]
 13 | | struct BadOptionsDriver;
    | |________________________^

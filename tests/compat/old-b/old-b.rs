@@ -31,7 +31,7 @@ pub mod b_driver {
     pub struct BField<T: Default>(T);
 
     #[derive(Deftly)]
-    #[derive_adhoc(pub_a::IsEnum)]
+    #[derive_deftly(pub_a::IsEnum)]
     pub enum BDriver<T: Default> {
         Variant(BField<T>),
     }
@@ -39,7 +39,7 @@ pub mod b_driver {
     use pub_a::derive_adhoc_template_IsEnum as derive_adhoc_template_ImportedIsEnum;
 
     #[derive(Deftly)]
-    #[derive_adhoc(ImportedIsEnum)]
+    #[derive_deftly(ImportedIsEnum)]
     pub struct BDriver2;
 }
 

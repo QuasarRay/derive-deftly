@@ -1,7 +1,7 @@
 //! Very simple example for deriving Clone.
 use derive_adhoc::{define_derive_deftly, Deftly};
 use std::sync::Arc;
-#[derive_adhoc(MyClone)]
+#[derive_deftly(MyClone)]
 struct DecoratedError<E> {
     context: String,
     error: Arc<E>,

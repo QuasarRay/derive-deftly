@@ -2,7 +2,7 @@
 
 use super::prelude::*;
 
-/// Contents of an entry in a `#[derive_adhoc(..)]` attribute
+/// Contents of an entry in a `#[derive_deftly(..)]` attribute
 enum InvocationEntry {
     Precanned(syn::Path, UnprocessedOptions),
 }

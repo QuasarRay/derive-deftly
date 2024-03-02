@@ -86,7 +86,7 @@ define_derive_deftly! {
 
 #[derive(Deftly)]
 #[derive_deftly_adhoc]
-#[derive_adhoc(TestFunkyPath)]
+#[derive_deftly(TestFunkyPath)]
 #[adhoc(std::cell::Cell::<String>::new)]
 struct WithFunkyPath;
 
@@ -95,7 +95,7 @@ derive_adhoc! {
 }
 
 #[derive(Deftly)]
-#[derive_adhoc(TestFunkyPath)]
+#[derive_deftly(TestFunkyPath)]
 struct WithoutfunkyPath;
 
 fn main() {}

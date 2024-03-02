@@ -78,7 +78,7 @@ pub mod b_driver {
     /// The template, in `pub-a.rs`, is referenced by its crate,
     /// but *not* its module (`pub_a::a_trait`).
     #[derive(Deftly)]
-    #[derive_adhoc(pub_a::IsEnum)]
+    #[derive_deftly(pub_a::IsEnum)]
     pub enum BDriver<T: Default> {
         Variant(BField<T>),
     }
@@ -86,7 +86,7 @@ pub mod b_driver {
     use pub_a::derive_adhoc_template_IsEnum as derive_adhoc_template_ImportedIsEnum;
 
     #[derive(Deftly)]
-    #[derive_adhoc(ImportedIsEnum)]
+    #[derive_deftly(ImportedIsEnum)]
     pub struct BDriver2;
 }
 

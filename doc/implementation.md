@@ -145,7 +145,7 @@ The template expansion engine treats `$orig_dollar` as just a single `$`.
 (Again, the extra `{ }` parts after the driver and template
 include space for future expansion.)
 
-## 2. `#[derive_adhoc(Template)]`, implemented in `#[derive(Deftly)]`
+## 2. `#[derive_deftly(Template)]`, implemented in `#[derive(Deftly)]`
 
 Template reuse is also implemented in `capture.rs::derive_adhoc_derive_macro`.
 
@@ -153,7 +153,7 @@ This
 
 ```rust,ignore
     #[derive(Deftly)]
-    #[derive_adhoc(Template[AOPTIONS,...])]
+    #[derive_deftly(Template[AOPTIONS,...])]
     pub struct StructName { ... }
 ```
 
@@ -161,7 +161,7 @@ Generates (in addition to the `derive_adhoc_driver_StructName` definition)
 
 ```rust,ignore
     derive_adhoc_template_Template! {
-        { #[derive_adhoc(Template)] struct StructName { ... } }
+        { #[derive_deftly(Template)] struct StructName { ... } }
         [1 0 AOPTIONS]    // but only if AOPTIONS is nonempty
         { }
     }

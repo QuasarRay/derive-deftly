@@ -11,7 +11,7 @@ trait Trait {
 trait GetUsize {
     fn get_usize(&self) -> Option<usize>;
 }
-#[derive_adhoc(Trait, GetUsize)]
+#[derive_deftly(Trait, GetUsize)]
 #[derive_deftly_adhoc]
 struct Unit;
 impl Trait for Unit {
@@ -49,7 +49,7 @@ impl GetUsize for Unit {
         #[allow(unreachable_code)] None
     }
 }
-#[derive_adhoc(Trait, GetUsize)]
+#[derive_deftly(Trait, GetUsize)]
 #[adhoc(hi(ferris))]
 struct Tuple(usize);
 impl Trait for Tuple {
@@ -89,7 +89,7 @@ impl GetUsize for Tuple {
         #[allow(unreachable_code)] None
     }
 }
-#[derive_adhoc(Trait, GetUsize)]
+#[derive_deftly(Trait, GetUsize)]
 #[adhoc(hello(there = 42))]
 struct Struct {
     field: usize,
@@ -131,7 +131,7 @@ impl GetUsize for Struct {
         #[allow(unreachable_code)] None
     }
 }
-#[derive_adhoc(Trait, GetUsize)]
+#[derive_deftly(Trait, GetUsize)]
 enum Enum {
     #[adhoc(hello(there))]
     Unit,
@@ -188,7 +188,7 @@ impl GetUsize for Enum {
         #[allow(unreachable_code)] None
     }
 }
-#[derive_adhoc(Trait)]
+#[derive_deftly(Trait)]
 union Union {
     field: usize,
 }

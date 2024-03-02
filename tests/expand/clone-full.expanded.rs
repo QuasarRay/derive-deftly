@@ -2,7 +2,7 @@
 //!
 //! This gives a basic demonstration of how to handle an enum.
 use derive_adhoc::{define_derive_deftly, Deftly};
-#[derive_adhoc(PreciseClone)]
+#[derive_deftly(PreciseClone)]
 struct Unit;
 impl Clone for Unit {
     fn clone(&self) -> Self {
@@ -11,7 +11,7 @@ impl Clone for Unit {
         }
     }
 }
-#[derive_adhoc(PreciseClone)]
+#[derive_deftly(PreciseClone)]
 struct Tuple<F>(F);
 impl<F> Clone for Tuple<F>
 where
@@ -23,7 +23,7 @@ where
         }
     }
 }
-#[derive_adhoc(PreciseClone)]
+#[derive_deftly(PreciseClone)]
 struct Struct<F> {
     field: F,
 }
@@ -41,7 +41,7 @@ where
         }
     }
 }
-#[derive_adhoc(PreciseClone)]
+#[derive_deftly(PreciseClone)]
 enum Enum<F> {
     Unit,
     Tuple(F),
@@ -64,7 +64,7 @@ where
         }
     }
 }
-#[derive_adhoc(PreciseClone)]
+#[derive_deftly(PreciseClone)]
 enum AllTypes {
     NoData,
     Tuple(u16, u32),

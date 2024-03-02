@@ -8,7 +8,7 @@
 //! and handling of visibility attributes.
 #![allow(dead_code)]
 use derive_adhoc::{define_derive_deftly, Deftly};
-#[derive_adhoc(ReferenceVersion)]
+#[derive_deftly(ReferenceVersion)]
 struct Tuple<F = ()>(F);
 #[derive_deftly_adhoc]
 struct TupleReference<'reference, F = ()>(&'reference F);
@@ -29,7 +29,7 @@ where
         }
     }
 }
-#[derive_adhoc(ReferenceVersion)]
+#[derive_deftly(ReferenceVersion)]
 struct Struct<F = ()> {
     field: F,
 }
@@ -62,7 +62,7 @@ where
         }
     }
 }
-#[derive_adhoc(ReferenceVersion)]
+#[derive_deftly(ReferenceVersion)]
 enum Enum<F = ()> {
     Unit,
     Tuple(F),

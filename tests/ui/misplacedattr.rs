@@ -2,27 +2,27 @@ use derive_adhoc::Deftly;
 
 #[derive(Deftly)]
 struct Struct {
-    #[derive_adhoc(Lemons)]
+    #[derive_deftly(Lemons)]
     field: usize,
 }
 
 #[derive(Deftly)]
 struct Tuple(
-    #[derive_adhoc(Limes)] //
+    #[derive_deftly(Limes)] //
     usize,
 );
 
 #[derive(Deftly)]
 union Union {
-    #[derive_adhoc(Oranges)]
+    #[derive_deftly(Oranges)]
     variant: usize,
 }
 
 #[derive(Deftly)]
 enum Apples {
-    #[derive_adhoc(Apples)]
+    #[derive_deftly(Apples)]
     Apples {
-        #[derive_adhoc(OnlyThePreviousMisplacedAttributeIsReported)]
+        #[derive_deftly(OnlyThePreviousMisplacedAttributeIsReported)]
         apples: String,
     },
 }
@@ -30,7 +30,7 @@ enum Apples {
 #[derive(Deftly)]
 enum Pears {
     Pears {
-        #[derive_adhoc(Pears)]
+        #[derive_deftly(Pears)]
         pears: String,
     },
 }
@@ -38,7 +38,7 @@ enum Pears {
 #[derive(Deftly)]
 enum Quince {
     Quince(
-        #[derive_adhoc(Quince)] //
+        #[derive_deftly(Quince)] //
         String,
     ),
 }
@@ -50,7 +50,7 @@ struct Ludicrous {
     field: Const<
         {
             // accepted due to https://github.com/rust-lang/rust/issues/119116
-            #[derive_adhoc(Silly)]
+            #[derive_deftly(Silly)]
             #[adhoc(foolish)]
             mod inner {}
 

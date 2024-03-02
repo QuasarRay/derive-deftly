@@ -32,7 +32,7 @@ define_derive_deftly! {
 }
 
 #[derive(Deftly)]
-#[derive_adhoc(Broken)]
+#[derive_deftly(Broken)]
 #[derive_deftly_adhoc]
 struct ForBroken;
 

@@ -20,7 +20,7 @@ pub enum OpContext {
     Template,
     /// In the driver's application
     ///
-    /// `#[derive_adhoc(Template[OPTIONS])]`
+    /// `#[derive_deftly(Template[OPTIONS])]`
     DriverApplicationCapture,
     /// Driver's application options as they appear in the ultimate expansion
     ///

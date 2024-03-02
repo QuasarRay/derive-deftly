@@ -78,24 +78,24 @@ define_derive_deftly! {
 }
 
 #[derive(Deftly)]
-#[derive_adhoc(Trait, GetUsize)]
+#[derive_deftly(Trait, GetUsize)]
 #[derive_deftly_adhoc]
 struct Unit;
 
 #[derive(Deftly)]
-#[derive_adhoc(Trait, GetUsize)]
+#[derive_deftly(Trait, GetUsize)]
 #[adhoc(hi(ferris))]
 struct Tuple(usize);
 
 #[derive(Deftly)]
-#[derive_adhoc(Trait, GetUsize)]
+#[derive_deftly(Trait, GetUsize)]
 #[adhoc(hello(there = 42))]
 struct Struct {
     field: usize,
 }
 
 #[derive(Deftly)]
-#[derive_adhoc(Trait, GetUsize)]
+#[derive_deftly(Trait, GetUsize)]
 enum Enum {
     #[adhoc(hello(there))]
     Unit,
@@ -107,7 +107,7 @@ enum Enum {
 }
 
 #[derive(Deftly)]
-#[derive_adhoc(Trait)]
+#[derive_deftly(Trait)]
 union Union {
     field: usize,
 }

@@ -5,7 +5,7 @@ use derive_adhoc::define_derive_deftly;
 use derive_adhoc::{derive_adhoc, Deftly};
 use std::fmt::Debug;
 use std::hash::{Hash, Hasher};
-#[derive_adhoc(MyHash)]
+#[derive_deftly(MyHash)]
 struct DataType {
     foo: u8,
     #[adhoc(hash(skip))]
@@ -19,7 +19,7 @@ where
         self.foo.hash(state);
     }
 }
-#[derive_adhoc(MyHash)]
+#[derive_deftly(MyHash)]
 struct Pair<S, T: Debug>
 where
     S: Debug,
@@ -38,7 +38,7 @@ where
         self.second.hash(state);
     }
 }
-#[derive_adhoc(MyHash)]
+#[derive_deftly(MyHash)]
 struct IntPair(usize, usize);
 impl Hash for IntPair
 where

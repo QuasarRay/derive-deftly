@@ -14,7 +14,7 @@ define_derive_deftly! {
 }
 
 #[derive(Deftly)]
-#[derive_adhoc(DefineAndUseMacroRulesMacro[dbg])]
+#[derive_deftly(DefineAndUseMacroRulesMacro[dbg])]
 #[derive_deftly_adhoc]
 struct S(usize);
 

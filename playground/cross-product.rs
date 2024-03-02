@@ -25,7 +25,7 @@ define_derive_deftly!{
 }
 
 #[derive(Deftly)]
-#[derive_adhoc(Squared)]
+#[derive_deftly(Squared)]
 enum Greek { 
     Alpha,
     Beta,

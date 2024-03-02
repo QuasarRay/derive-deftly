@@ -72,7 +72,7 @@ impl<T: Clone> From<&Vec<T>> for PrettyVec<T> {
 struct Opaque;
 
 #[derive(Deftly)]
-#[derive_adhoc(MyDebug)]
+#[derive_deftly(MyDebug)]
 #[allow(dead_code)]
 struct DataType {
     foo: u8,

@@ -56,7 +56,7 @@ mod local_use {
     // When we refer to a local template, we do so without a path,
     // even though it was an exported template.
     #[derive(Deftly)]
-    #[derive_adhoc(IsEnum)]
+    #[derive_deftly(IsEnum)]
     #[derive_deftly_adhoc]
     pub(crate) struct Local;
 }
@@ -65,7 +65,7 @@ pub mod a_driver {
     use derive_adhoc::Deftly;
 
     /// A struct which is exported as a derive-adhoc driver (iw with
-    /// `#[derive_adhoc(pub)]` must be *visilbe* outside the crate.
+    /// `#[derive_deftly(pub)]` must be *visilbe* outside the crate.
     ///
     /// Doing this effectively turns the body of the struct into a macro,
     /// with very limited support for namespacing and hygiene!

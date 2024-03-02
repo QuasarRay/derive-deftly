@@ -9,7 +9,7 @@ define_derive_deftly! {
 }
 
 #[derive(Deftly)]
-#[derive_adhoc(ReuseableTemplate)]
+#[derive_deftly(ReuseableTemplate)]
 #[derive_deftly_adhoc]
 #[doc=stringify!(one $ dollar $template end)]
 struct OneDollar;
@@ -22,7 +22,7 @@ derive_adhoc! {
 
 #[derive(Deftly)]
 #[derive_deftly_adhoc]
-#[derive_adhoc(ReuseableTemplate)]
+#[derive_deftly(ReuseableTemplate)]
 #[doc=stringify!(two $$ dollars)]
 struct TwoDollars;
 

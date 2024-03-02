@@ -29,7 +29,7 @@ define_derive_deftly! {
 // If we were to `#[derive(Clone)]`, DecoratedError<io::Error> wouldn't
 // be Clone, because io::Error isn't, even though the Arc means we can clone.
 #[derive(Deftly)]
-#[derive_adhoc(MyClone)]
+#[derive_deftly(MyClone)]
 struct DecoratedError<E> {
     context: String,
     error: Arc<E>,

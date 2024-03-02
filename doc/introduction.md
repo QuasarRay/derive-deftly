@@ -78,7 +78,7 @@ as in:
 use derive_adhoc::Deftly;
 
 #[derive(Clone, Debug, Deftly)]
-#[derive_adhoc(NamePrinter)]
+#[derive_deftly(NamePrinter)]
 pub struct MyStruct;
 
 MyStruct::print_name();
@@ -146,7 +146,7 @@ use name_printer::{
 use derive_adhoc::Deftly;
 
 #[derive(Deftly)]
-#[derive_adhoc(NamePrinter)]
+#[derive_deftly(NamePrinter)]
 struct TheirStructure {
     // ...
 }
@@ -704,7 +704,7 @@ define_derive_deftly! {
     }
 }
 # #[derive(Deftly)]
-# #[derive_adhoc(MyClone)]
+# #[derive_deftly(MyClone)]
 # enum TestCase<A> { Variant(A) }
 ```
 
@@ -909,7 +909,7 @@ When you apply the above template to a type like this:
 # }
 use derive_adhoc::Deftly;
 #[derive(Deftly)]
-#[derive_adhoc(Constructor)]
+#[derive_deftly(Constructor)]
 struct Ex<A> {
   a: f64,
   b: A,
@@ -994,7 +994,7 @@ define_derive_deftly! {
    }
 }
 # #[derive(Deftly)]
-# #[derive_adhoc(Constructor)]
+# #[derive_deftly(Constructor)]
 # struct Test;
 ```
 
@@ -1015,7 +1015,7 @@ you can request this syntax check
 # use derive_adhoc::{Deftly, define_derive_deftly};
 # define_derive_deftly! { Constructor = }
 #[derive(Deftly)]
-#[derive_adhoc(Constructor[expect items])]
+#[derive_deftly(Constructor[expect items])]
 struct MyStruct { /* ... */ }
 ```
 
@@ -1031,7 +1031,7 @@ You can ask derive-adhoc to simply
 # use derive_adhoc::{Deftly, define_derive_deftly};
 # define_derive_deftly! { Constructor = }
 #[derive(Deftly)]
-#[derive_adhoc(Constructor[dbg])]
+#[derive_deftly(Constructor[dbg])]
 struct MyStruct { /* ... */ }
 ```
 
@@ -1111,7 +1111,7 @@ define_derive_deftly! {
 
 use derive_adhoc::Deftly;
 #[derive(Deftly)]
-#[derive_adhoc(Constructor)]
+#[derive_deftly(Constructor)]
 #[adhoc(newfn="construct_example")]
 struct Example {
     a: f64,
@@ -1234,7 +1234,7 @@ define_derive_deftly! {
 
 use derive_adhoc::Deftly;
 #[derive(Deftly)]
-#[derive_adhoc(Constructor)]
+#[derive_deftly(Constructor)]
 struct Foo {
     #[adhoc(Constructor(default))]
     s: Vec<String>,
