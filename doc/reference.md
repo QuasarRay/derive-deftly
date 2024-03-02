@@ -437,7 +437,9 @@ With `${Xattrs}`, unlike `${Xmeta}`,
 
    * The expansion is the whole of each attribute, including the `#[...]`;
    * All attributes are included.
-   * But `#[adhoc(...)]` and `#[derive_adhoc(...)]` are *excluded* by default,
+   * But `#[adhoc(...)]` `#[derive_adhoc(...)]`
+     and `#[derive_truly_adhoc(...)]`
+     are *excluded* by default,
      because typically they would be rejected by the compiler:
      the expanded output is (perhaps) no longer within `#[derive(Adhoc)]`,
      so those attributes might be unrecognised there.
@@ -661,6 +663,7 @@ See also the [`dbg` expansion option](#dbg--print-the-expansion-to-stderr-for-de
 ```rust
 # use derive_adhoc::{Adhoc, derive_adhoc};
 #[derive(Adhoc)]
+#[derive_truly_adhoc]
 enum Enum {
     Unit,
     Tuple(usize),

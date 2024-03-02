@@ -9,6 +9,7 @@ define_derive_adhoc! {
 
 #[derive(Adhoc)]
 #[derive_adhoc(BadOptionsTemplate[dbg])]
+#[derive_truly_adhoc]
 struct BadOptionsDriver;
 
 derive_adhoc! {

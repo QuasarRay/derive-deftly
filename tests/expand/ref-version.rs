@@ -20,6 +20,7 @@ define_derive_adhoc! {
     ${define REF_TYPE { $REFERENCE<'reference, $tgnames> }}
 
     #[derive(Adhoc)]
+    #[derive_truly_adhoc]
     $tvis $tdefkwd $REFERENCE<'reference, $tdefgens>
     ${tdefvariants $(
         ${vdefbody $vname $(

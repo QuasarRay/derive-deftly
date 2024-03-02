@@ -1,5 +1,6 @@
 //! Example including attribute filtering
 use derive_adhoc::{derive_adhoc, Adhoc};
+#[derive_truly_adhoc]
 /// Some docs
 pub struct ChannelsParams {
     /// thing

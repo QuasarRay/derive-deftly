@@ -244,11 +244,7 @@ pub fn define_derive_adhoc(
 ///
 /// This macro does two things:
 ///
-///  1. It captures the data structure definition,
-///     so that it can be used with calls to
-///     [`derive_adhoc!`](macro@crate::derive_adhoc).
-///
-///  2. If `#[derive_adhoc(MyMacro)]` attributes are also specified,
+///  1. If `#[derive_adhoc(MyMacro)]` attributes are also specified,
 ///     they are taken to refer to reuseable templates
 ///     defined with
 ///     [`define_derive_adhoc!`](macro@crate::define_derive_adhoc).
@@ -260,6 +256,11 @@ pub fn define_derive_adhoc(
 ///     `#[derive_adhoc(MyMacro[OPTIONS,..])]`, where
 ///     `[OPTIONS,..]` is a comma-separated list of expansion options
 ///     contained within `[ ]`.</span>
+///
+///  2. If `#[derive_truly_adhoc]` is specified,
+///     captures the data structure definition,
+///     so that it can be used with calls to
+///     [`derive_adhoc!`](macro@crate::derive_adhoc).
 ///
 /// ## `#[adhoc]` attribute
 ///
@@ -339,7 +340,7 @@ pub fn define_derive_adhoc(
 //
 /// To cause the macro embodying the driver struct to be exported,
 /// write:
-/// `#[derive_adhoc(pub)]`.
+/// `#[derive_truly_adhoc(pub)]`.
 /// The driver can then be derived from in other crates,
 /// with `derive_adhoc! { exporting_crate::DriverStruct: ... }`.
 ///
@@ -375,7 +376,10 @@ pub fn define_derive_adhoc(
 // is right.
 #[cfg_attr(
     proc_macro,
-    proc_macro_derive(Adhoc, attributes(adhoc, derive_adhoc))
+    proc_macro_derive(
+        Adhoc,
+        attributes(adhoc, derive_adhoc, derive_truly_adhoc)
+    )
 )]
 pub fn derive_adhoc_derive_macro(
     input: proc_macro::TokenStream,

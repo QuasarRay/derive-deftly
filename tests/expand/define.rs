@@ -4,6 +4,7 @@
 use derive_adhoc::{derive_adhoc, Adhoc};
 
 #[derive(Adhoc)]
+#[derive_truly_adhoc]
 struct S {
     a: i32,
     b: i32,
@@ -42,6 +43,7 @@ derive_adhoc! {
 }
 
 #[derive(Adhoc)]
+#[derive_truly_adhoc]
 enum T<'g> {
     /// Expected value
     E(i32),

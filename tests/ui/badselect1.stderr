@@ -1,71 +1,71 @@
 error: multiple conditions matched (in this field)
-  --> ui/badselect1.rs:18:5
+  --> ui/badselect1.rs:19:5
    |
-18 | /     #[adhoc(right)]
-19 | |     #[adhoc(left)]
-20 | |     c: usize,
+19 | /     #[adhoc(right)]
+20 | |     #[adhoc(left)]
+21 | |     c: usize,
    | |____________^
 ...
-23 | / derive_adhoc! {
-24 | |     Both:
-25 | |
-26 | |     #[derive(Default, Debug)]
+24 | / derive_adhoc! {
+25 | |     Both:
+26 | |
+27 | |     #[derive(Default, Debug)]
 ...  |
-43 | |     }
-44 | | }
+44 | |     }
+45 | | }
    | |_- in this macro invocation
    |
    = note: this error originates in the macro `derive_adhoc_driver_Both` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: multiple conditions matched (true condition)
-  --> ui/badselect1.rs:30:15
+  --> ui/badselect1.rs:31:15
    |
-30 |               fmeta(left) { $fname: $ftype, }
+31 |               fmeta(left) { $fname: $ftype, }
    |               ^^^^^
 
 error: multiple conditions matched (true condition)
-  --> ui/badselect1.rs:31:15
+  --> ui/badselect1.rs:32:15
    |
-31 |               fmeta(right) { }
+32 |               fmeta(right) { }
    |               ^^^^^
 
 error: no conditions matched, and no else clause (in this field)
-  --> ui/badselect1.rs:14:5
+  --> ui/badselect1.rs:15:5
    |
-14 | /     #[adhoc(left)]
-15 | |     a: usize,
+15 | /     #[adhoc(left)]
+16 | |     a: usize,
    | |____________^
 ...
-23 | / derive_adhoc! {
-24 | |     Both:
-25 | |
-26 | |     #[derive(Default, Debug)]
+24 | / derive_adhoc! {
+25 | |     Both:
+26 | |
+27 | |     #[derive(Default, Debug)]
 ...  |
-43 | |     }
-44 | | }
+44 | |     }
+45 | | }
    | |_- in this macro invocation
    |
    = note: this error originates in the macro `derive_adhoc_driver_Both` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: no conditions matched, and no else clause (select1 expansion)
-  --> ui/badselect1.rs:38:15
+  --> ui/badselect1.rs:39:15
    |
-38 |             ${select1
+39 |             ${select1
    |               ^^^^^^^
 
 error[E0433]: failed to resolve: use of undeclared type `Left`
-  --> ui/badselect1.rs:47:33
+  --> ui/badselect1.rs:48:33
    |
-47 |     assert_eq!(format!("{:?}", &Left::default()), "Left { a: 0 }",)
+48 |     assert_eq!(format!("{:?}", &Left::default()), "Left { a: 0 }",)
    |                                 ^^^^ use of undeclared type `Left`
    |
 help: there is an enum variant `core::fmt::Alignment::Left` and 4 others; try using the variant's enum
    |
-47 |     assert_eq!(format!("{:?}", &core::fmt::Alignment()), "Left { a: 0 }",)
+48 |     assert_eq!(format!("{:?}", &core::fmt::Alignment()), "Left { a: 0 }",)
    |                                 ~~~~~~~~~~~~~~~~~~~~
-47 |     assert_eq!(format!("{:?}", &itertools::Either()), "Left { a: 0 }",)
+48 |     assert_eq!(format!("{:?}", &itertools::Either()), "Left { a: 0 }",)
    |                                 ~~~~~~~~~~~~~~~~~
-47 |     assert_eq!(format!("{:?}", &itertools::EitherOrBoth()), "Left { a: 0 }",)
+48 |     assert_eq!(format!("{:?}", &itertools::EitherOrBoth()), "Left { a: 0 }",)
    |                                 ~~~~~~~~~~~~~~~~~~~~~~~
-47 |     assert_eq!(format!("{:?}", &std::fmt::Alignment()), "Left { a: 0 }",)
+48 |     assert_eq!(format!("{:?}", &std::fmt::Alignment()), "Left { a: 0 }",)
    |                                 ~~~~~~~~~~~~~~~~~~~

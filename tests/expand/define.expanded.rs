@@ -1,6 +1,7 @@
 //! Test `${define }` and `${defcond }`
 #![allow(dead_code)]
 use derive_adhoc::{derive_adhoc, Adhoc};
+#[derive_truly_adhoc]
 struct S {
     a: i32,
     b: i32,
@@ -22,6 +23,7 @@ const L: &[(i32, i32)] = &[
     (203, 203),
     (343, 343),
 ];
+#[derive_truly_adhoc]
 enum T<'g> {
     /// Expected value
     E(i32),

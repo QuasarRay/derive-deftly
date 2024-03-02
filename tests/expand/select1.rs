@@ -7,6 +7,7 @@ use derive_adhoc::{derive_adhoc, Adhoc};
 use derive_adhoc_tests::*;
 
 #[derive(Adhoc, Default, Debug)]
+#[derive_truly_adhoc]
 struct Both {
     #[adhoc(left)]
     a: usize,

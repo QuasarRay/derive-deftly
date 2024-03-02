@@ -1,34 +1,34 @@
-error: derive_adhoc attribute is only meaningful at the data structure toplevel
+error: attribute is only meaningful at the data structure toplevel
  --> ui/misplacedattr.rs:5:5
   |
 5 |     #[derive_adhoc(Lemons)]
   |     ^^^^^^^^^^^^^^^^^^^^^^^
 
-error: derive_adhoc attribute is only meaningful at the data structure toplevel
+error: attribute is only meaningful at the data structure toplevel
   --> ui/misplacedattr.rs:11:5
    |
 11 |     #[derive_adhoc(Limes)] //
    |     ^^^^^^^^^^^^^^^^^^^^^^
 
-error: derive_adhoc attribute is only meaningful at the data structure toplevel
+error: attribute is only meaningful at the data structure toplevel
   --> ui/misplacedattr.rs:17:5
    |
 17 |     #[derive_adhoc(Oranges)]
    |     ^^^^^^^^^^^^^^^^^^^^^^^^
 
-error: derive_adhoc attribute is only meaningful at the data structure toplevel
+error: attribute is only meaningful at the data structure toplevel
   --> ui/misplacedattr.rs:23:5
    |
 23 |     #[derive_adhoc(Apples)]
    |     ^^^^^^^^^^^^^^^^^^^^^^^
 
-error: derive_adhoc attribute is only meaningful at the data structure toplevel
+error: attribute is only meaningful at the data structure toplevel
   --> ui/misplacedattr.rs:33:9
    |
 33 |         #[derive_adhoc(Pears)]
    |         ^^^^^^^^^^^^^^^^^^^^^^
 
-error: derive_adhoc attribute is only meaningful at the data structure toplevel
+error: attribute is only meaningful at the data structure toplevel
   --> ui/misplacedattr.rs:41:9
    |
 41 |         #[derive_adhoc(Quince)] //
