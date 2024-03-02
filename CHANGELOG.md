@@ -49,14 +49,14 @@ We expect to increase it cautiously and only with good reason.
 **We recommend you do *not* treat these changes as semver-breaking
 for template-defining crates.**
 
- * Reject misplaced `#[derive_deftly]` attributes.
- * Reject malformed attributes like `#[deftly("42")]`
-   and `#[deftly(std::cell::<String>)]`.
+ * Reject misplaced `#[derive_adhoc]` attributes.
+ * Reject malformed attributes like `#[adhoc("42")]`
+   and `#[adhoc(std::cell::<String>)]`.
 
 Technically these are breaking changes, since users of exported
 templates might have provided these wrong attributes, which were
 previously ignored and are now properly rejected.  The attributes are
-interpreted by the version of derive-deftly which defines the template.
+interpreted by the version of derive-adhoc which defines the template.
 However, the likelihood of this breaking a working build seems low.
 
 #### MSRV
@@ -69,7 +69,7 @@ However, the likelihood of this breaking a working build seems low.
 #### Fixed
 
  * Fixed a spurious clippy lint `crate_in_macro_def` (#27).
- * More reasonable handling of `#[deftly(..)]` attributes whose meta
+ * More reasonable handling of `#[adhoc(..)]` attributes whose meta
    information has paths some of which are nested sub-paths of others.
  * Work around a strange bug with literals and spans which can cause
    a `compiler/fallback mismatch` panic during error reporting
@@ -157,7 +157,7 @@ However, the likelihood of this breaking a working build seems low.
 
 #### Added
 
- * `define_derive_deftly!` supports doc comments.
+ * `define_derive_adhoc!` supports doc comments.
  * `$fdefvis`/`fdefvis` for the textual visibility of a field.
 
 #### Fixed
@@ -195,7 +195,7 @@ However, the likelihood of this breaking a working build seems low.
  * `${Xmeta... as lit}` is abolished, in favour of `... as str`
    (which has more consistent semantics).
  * `${Xmeta}` without `as` is no longer allowed in `${paste ...}`.
- * In `#[deftly(attr="VALUE")]`, now only *string* literals are allowed.
+ * In `#[adhoc(attr="VALUE")]`, now only *string* literals are allowed.
 
 #### Added
 
@@ -238,24 +238,24 @@ However, the likelihood of this breaking a working build seems low.
  * docs: Various corrections to reference docs.
  * docs: Reference documentation retitled and module renamed.
  * error handling: Better messages from certain situations involving
-   multiple (incompatible) derive-deftly versions.
+   multiple (incompatible) derive-adhoc versions.
  * tests: Made less fragile (more pinning of test dependencies).
  * tests: Improved CI checks on documentation, TODOs, etc.
- * internal: new HACKING.md file for helping develop derive-deftly.
+ * internal: new HACKING.md file for helping develop derive-adhoc.
 
 ### 0.2.2
 
 #### Fixed (future compatibility)
 
- * Pinned dependency from `derive-deftly` to `derive-deftly-macros`.
+ * Pinned dependency from `derive-adhoc` to `derive-adhoc-macros`.
  * Handling of certain supposedly-future-compatible options fixed.
    ("future driver options" argument to `d_a_t_T`).
 
 #### Improved
 
  * Better error messages with usupported combinations of features
-   with mixed derive-deftly versions.  #10.
- * Compatibility with derive-deftly 0.2.0 tested in CI.
+   with mixed derive-adhoc versions.  #10.
+ * Compatibility with derive-adhoc 0.2.0 tested in CI.
 
 ### 0.2.1
 
@@ -274,7 +274,7 @@ However, the likelihood of this breaking a working build seems low.
 
  * `$tgens` no longer includes defaults for generics.
  * `$Xattrs` by default
-   outputs all attributes except derive-deftly ones,
+   outputs all attributes except derive-adhoc ones,
    rather than nothing (breaking bugfix).
  * `$vmeta` for a struct (not enum) processes top-level attributes,
    rather than imagining that there are no variant/value attributes.
