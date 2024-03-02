@@ -1,7 +1,7 @@
 //! Test case / example for `${select }`
 use std::fmt::Debug;
 use derive_deftly::{derive_deftly_adhoc, Deftly};
-use derive_adhoc_tests::*;
+use derive_deftly_tests::*;
 #[derive_deftly_adhoc]
 struct Both {
     #[deftly(left)]

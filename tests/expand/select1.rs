@@ -4,7 +4,7 @@ use std::fmt::Debug;
 
 use derive_deftly::{derive_deftly_adhoc, Deftly};
 
-use derive_adhoc_tests::*;
+use derive_deftly_tests::*;
 
 #[derive(Deftly, Default, Debug)]
 #[derive_deftly_adhoc]

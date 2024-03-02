@@ -90,7 +90,7 @@ But, they are complicated
 (mostly because testing proc macros is complicated).
 
 You have to use **a particular version of Nightly Rust**.
-**See [`tests/tests.rs`](../../derive_adhoc_tests/index.html)**
+**See [`tests/tests.rs`](../../derive_deftly_tests/index.html)**
 for information on how to run and update the tests.
 
 ## Reporting errors during template parsing and expansion

@@ -1,5 +1,5 @@
 #[allow(unused_imports)]
-use derive_adhoc_tests::*;
+use derive_deftly_tests::*;
 
 // We don't run this unless the CI explicitly enables it.
 // That's done only for the "cargo-test" test,
