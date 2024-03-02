@@ -103,7 +103,10 @@ pub fn derive_deftly_engine(
 ///
 /// ```ignore
 /// # use derive_deftly_macros::{Deftly, derive_deftly_adhoc, derive_deftly_engine};
-/// # #[derive(Deftly)] struct DataStructureType;
+/// #[derive(Deftly)]
+/// #[derive_deftly_adhoc]
+/// struct DataStructureType { }
+///
 /// # fn main() {
 /// # const TEMPLATE: () = ();
 /// derive_deftly_adhoc! {
