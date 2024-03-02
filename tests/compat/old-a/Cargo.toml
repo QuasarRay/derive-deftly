@@ -14,7 +14,7 @@ publish = false
 # 0.2.2 or later, remove the `dummy-derive-deftly-macros` entry
 # in tests/pub-export/bizarre-macros/Cargo.toml, which comes from
 # maint/update-bizarre.
-derive-deftly = "=0.2.0"
+derive-deftly = "=0.9.0"
 
 [lib]
 path = "../../pub-export/pub-a/pub-a.rs"

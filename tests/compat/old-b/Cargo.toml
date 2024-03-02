@@ -15,7 +15,7 @@ skip_imported_driver = []
 
 [dependencies]
 pub-a = { path = "../../pub-export/pub-a", version = "0.0.1" }
-derive-deftly = "=0.2.0"
+derive-deftly = "=0.9.0"
 
 [lib]
 path = "old-b.rs"

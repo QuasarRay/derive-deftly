@@ -56,7 +56,17 @@ dependencies = [
 name = "derive-deftly"
 version = "0.9.0"
 dependencies = [
- "derive-deftly-macros",
+ "derive-deftly-macros 0.9.0",
+ "heck",
+]
+
+[[package]]
+name = "derive-deftly"
+version = "0.9.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "240a5d1d6a51e56d59dddb4ae03e3c82726fb461e58725f60f43143d51fcdd11"
+dependencies = [
+ "derive-deftly-macros 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "heck",
 ]
 
@@ -76,17 +86,34 @@ dependencies = [
 ]
 
 [[package]]
+name = "derive-deftly-macros"
+version = "0.9.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4f4f74880c5690d0786b91b8430802689c9642e36f4b721b24301920bac86566"
+dependencies = [
+ "heck",
+ "itertools",
+ "proc-macro-crate",
+ "proc-macro2",
+ "quote",
+ "sha3",
+ "strum",
+ "syn 2.0.1",
+ "void",
+]
+
+[[package]]
 name = "derive-deftly-stderr-test"
 version = "0.0.1"
 dependencies = [
- "derive-deftly",
+ "derive-deftly 0.9.0",
 ]
 
 [[package]]
 name = "derive-deftly-tests"
 version = "0.0.1"
 dependencies = [
- "derive-deftly",
+ "derive-deftly 0.9.0",
  "easy-ext",
  "educe",
  "glob",
@@ -131,6 +158,29 @@ name = "easy-ext"
 version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ed2ddb5d6d3904e83114add6bbadf2b8307b4ae9fb4b2202afde1fe7bf3b56c0"
+
+[[package]]
+name = "edrv-new-b"
+version = "0.0.1"
+dependencies = [
+ "bizarre-derive-deftly",
+ "edrv-old-a",
+]
+
+[[package]]
+name = "edrv-old-a"
+version = "0.0.1"
+dependencies = [
+ "derive-deftly 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "edrv-old-b"
+version = "0.0.1"
+dependencies = [
+ "derive-deftly 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "pub-a",
+]
 
 [[package]]
 name = "educe"
@@ -246,10 +296,33 @@ dependencies = [
 ]
 
 [[package]]
+name = "new-b"
+version = "0.0.1"
+dependencies = [
+ "bizarre-derive-deftly",
+ "old-a",
+]
+
+[[package]]
 name = "num-traits"
 version = "0.1.32"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "51eab148f171aefad295f8cece636fc488b9b392ef544da31ea4b8ef6b9e9c39"
+
+[[package]]
+name = "old-a"
+version = "0.0.1"
+dependencies = [
+ "derive-deftly 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "old-b"
+version = "0.0.1"
+dependencies = [
+ "derive-deftly 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "pub-a",
+]
 
 [[package]]
 name = "proc-macro-crate"
@@ -274,7 +347,7 @@ dependencies = [
 name = "pub-a"
 version = "0.0.1"
 dependencies = [
- "derive-deftly",
+ "derive-deftly 0.9.0",
 ]
 
 [[package]]
