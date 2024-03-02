@@ -24,3 +24,8 @@ pub(super) mod macros;
     feature = "case",
 ))]
 mod check_examples;
+
+#[cfg(all(
+    feature = "recent", // we want toml parser etc.
+))]
+mod check_semver_check;
