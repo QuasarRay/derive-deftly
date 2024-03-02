@@ -128,7 +128,7 @@ pub fn derive_deftly_adhoc(
     input: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
     let input = TokenStream::from(input);
-    let output = invocation::derive_adhoc_func_macro(input)
+    let output = invocation::derive_deftly_adhoc(input)
         .unwrap_or_else(|e| e.into_compile_error());
     output.into()
 }

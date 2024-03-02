@@ -61,7 +61,7 @@ to use the `$` passed in at the invocation site.
 
 ### 2. `derive_deftly_adhoc!` function-like proc macro for applying to a template
 
-Implemented in `invocation.rs::derive_adhoc_func_macro`.
+Implemented in `invocation.rs::derive_deftly_adhoc`.
 
 When applied like this
 ```rust,ignore

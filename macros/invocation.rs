@@ -37,7 +37,7 @@ impl Parse for TemplateInvocation {
 ///    derive_deftly_driver_StructName
 /// ```
 /// as per NOTES.txt.
-pub fn derive_adhoc_func_macro(
+pub fn derive_deftly_adhoc(
     input: TokenStream,
 ) -> Result<TokenStream, syn::Error> {
     let TemplateInvocation {
