@@ -2,7 +2,7 @@ error: wrong input to derive-adhoc driver inner macro derive_adhoc_driver_Driver
   --> ui/badinternals.rs:9:10
    |
 9  | #[derive(Deftly)]
-   |          ^^^^^
+   |          ^^^^^^
 ...
 17 | derive_adhoc_driver_Driver! { GARBAGE -> DRIVER }
    | ------------------------------------------------- in this macro invocation

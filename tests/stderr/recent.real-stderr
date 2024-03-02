@@ -165,9 +165,9 @@ value, field field:
         $fattrs      =>  
 ---------- derive-adhoc expansions dump for Struct (end) ----------
 ---------- derive-adhoc expansion of ReferenceVersion for Tuple (start) ----------
-#[derive(Deftly)] #[derive_truly_adhoc] struct TupleReference < 'reference, F =
-(), > (& 'reference F,) ; impl < 'reference, F, > From < & 'reference Tuple ::
-< F > > for TupleReference < 'reference, F, >
+#[derive(Deftly)] #[derive_truly_adhoc] struct TupleReference < 'reference, F
+= (), > (& 'reference F,) ; impl < 'reference, F, > From < & 'reference Tuple
+:: < F > > for TupleReference < 'reference, F, >
 {
     fn from(ref_to_owned : & 'reference Tuple :: < F >) -> Self
     {

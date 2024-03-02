@@ -2,7 +2,7 @@ error: this file contains an unclosed delimiter
   --> ui/badmeta.rs:3:10
    |
 3  |   #[derive(Deftly)]
-   |            ^^^^^ unclosed delimiter
+   |            ^^^^^^ unclosed delimiter
 ...
 12 | / derive_adhoc! {
 13 | |     DataType:
@@ -17,7 +17,7 @@ error: cannot parse string into token stream
   --> ui/badmeta.rs:3:10
    |
 3  |   #[derive(Deftly)]
-   |            ^^^^^
+   |            ^^^^^^
 ...
 12 | / derive_adhoc! {
 13 | |     DataType:
@@ -306,7 +306,7 @@ error: expected path segment after `::`
    |                                                 ^
 ...
 87 | #[derive(Deftly)]
-   |          ----- in this derive macro expansion
+   |          ------ in this derive macro expansion
    |
    = note: this error originates in the macro `derive_adhoc_template_TestFunkyPath` which comes from the expansion of the derive macro `Deftly` (in Nightly builds, run with -Z macro-backtrace for more info)
 
@@ -330,6 +330,6 @@ error: expected path segment after `::`
    |                                                 ^
 ...
 97 | #[derive(Deftly)]
-   |          ----- in this derive macro expansion
+   |          ------ in this derive macro expansion
    |
    = note: this error originates in the macro `derive_adhoc_template_TestFunkyPath` which comes from the expansion of the derive macro `Deftly` (in Nightly builds, run with -Z macro-backtrace for more info)

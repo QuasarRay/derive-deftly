@@ -37,7 +37,7 @@ error: unexpected arguments to expansion keyword
    |                          ^
 ...
 34 | #[derive(Deftly)]
-   |          ----- in this derive macro expansion
+   |          ------ in this derive macro expansion
    |
    = note: this error originates in the macro `derive_adhoc_template_Broken` which comes from the expansion of the derive macro `Deftly` (in Nightly builds, run with -Z macro-backtrace for more info)
 
