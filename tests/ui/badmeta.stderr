@@ -11,7 +11,7 @@ error: this file contains an unclosed delimiter
 16 | | }
    | |_- in this macro invocation
    |
-   = note: this error originates in the macro `::derive_adhoc::derive_deftly_engine` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+   = note: this error originates in the macro `::derive_adhoc::derive_deftly_engine` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: cannot parse string into token stream
   --> ui/badmeta.rs:3:10
@@ -26,7 +26,7 @@ error: cannot parse string into token stream
 16 | | }
    | |_- in this macro invocation
    |
-   = note: this error originates in the macro `::derive_adhoc::derive_deftly_engine` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+   = note: this error originates in the macro `::derive_adhoc::derive_deftly_engine` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: constructed identifier "Bad." is invalid
   --> ui/badmeta.rs:26:14
@@ -49,7 +49,7 @@ error: probably-invalid input to identifier pasting
 32 | | }
    | |_- in this macro invocation
    |
-   = note: this error originates in the macro `derive_deftly_driver_DataType` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+   = note: this error originates in the macro `derive_deftly_driver_DataType` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: expected a list with sub-attributes, found a simple value
   --> ui/badmeta.rs:6:9
@@ -66,7 +66,7 @@ error: expected a list with sub-attributes, found a simple value
 32 | | }
    | |_- in this macro invocation
    |
-   = note: this error originates in the macro `derive_deftly_driver_DataType` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+   = note: this error originates in the macro `derive_deftly_driver_DataType` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: attribute value expanded, but no suitable value in data structure definition (in this data structure)
   --> ui/badmeta.rs:4:1
@@ -89,7 +89,7 @@ error: attribute value expanded, but no suitable value in data structure definit
 32 | | }
    | |_- in this macro invocation
    |
-   = note: this error originates in the macro `derive_deftly_driver_DataType` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+   = note: this error originates in the macro `derive_deftly_driver_DataType` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: attribute value expanded, but no suitable value in data structure definition (expansion)
   --> ui/badmeta.rs:28:32
@@ -112,7 +112,7 @@ error: tried to expand just attribute value, but it was specified multiple times
 32 | | }
    | |_- in this macro invocation
    |
-   = note: this error originates in the macro `derive_deftly_driver_DataType` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+   = note: this error originates in the macro `derive_deftly_driver_DataType` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: tried to expand just attribute value, but it was specified multiple times (second occurrence)
   --> ui/badmeta.rs:8:9
@@ -129,7 +129,7 @@ error: tried to expand just attribute value, but it was specified multiple times
 32 | | }
    | |_- in this macro invocation
    |
-   = note: this error originates in the macro `derive_deftly_driver_DataType` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+   = note: this error originates in the macro `derive_deftly_driver_DataType` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: tried to expand just attribute value, but it was specified multiple times (expansion)
   --> ui/badmeta.rs:30:32
@@ -152,7 +152,7 @@ error: tried to expand just attribute value, but it was specified multiple times
 32 | | }
    | |_- in this macro invocation
    |
-   = note: this error originates in the macro `derive_deftly_driver_DataType` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+   = note: this error originates in the macro `derive_deftly_driver_DataType` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: tried to expand just attribute value, but it was specified multiple times (second occurrence)
   --> ui/badmeta.rs:9:42
@@ -169,7 +169,7 @@ error: tried to expand just attribute value, but it was specified multiple times
 32 | | }
    | |_- in this macro invocation
    |
-   = note: this error originates in the macro `derive_deftly_driver_DataType` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+   = note: this error originates in the macro `derive_deftly_driver_DataType` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: tried to expand just attribute value, but it was specified multiple times (expansion)
   --> ui/badmeta.rs:31:32
@@ -197,7 +197,7 @@ error: attribute value expanded, but no value in data structure definition (in t
 41 | | }
    | |_- in this macro invocation
    |
-   = note: this error originates in the macro `derive_deftly_driver_DataType` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+   = note: this error originates in the macro `derive_deftly_driver_DataType` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: attribute value expanded, but no value in data structure definition (expansion)
   --> ui/badmeta.rs:40:32
@@ -219,7 +219,7 @@ error: expected a leaf node, found a list with sub-attributes
 48 | | }
    | |_- in this macro invocation
    |
-   = note: this error originates in the macro `derive_deftly_driver_DataType` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+   = note: this error originates in the macro `derive_deftly_driver_DataType` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: attribute value expanded, but no suitable value in data structure definition (in this data structure)
   --> ui/badmeta.rs:4:1
@@ -241,7 +241,7 @@ error: attribute value expanded, but no suitable value in data structure definit
 48 | | }
    | |_- in this macro invocation
    |
-   = note: this error originates in the macro `derive_deftly_driver_DataType` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+   = note: this error originates in the macro `derive_deftly_driver_DataType` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: attribute value expanded, but no suitable value in data structure definition (expansion)
   --> ui/badmeta.rs:47:32
@@ -258,7 +258,7 @@ error: expected identifier
 54 | derive_deftly_adhoc! { TopLevelMetaLitForbidden: }
    | ------------------------------------------- in this macro invocation
    |
-   = note: this error originates in the macro `derive_deftly_driver_TopLevelMetaLitForbidden` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+   = note: this error originates in the macro `derive_deftly_driver_TopLevelMetaLitForbidden` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: expected literal
   --> ui/badmeta.rs:58:17
@@ -269,7 +269,7 @@ error: expected literal
 60 | derive_deftly_adhoc! { MetaValueMustBeLit: }
    | ------------------------------------- in this macro invocation
    |
-   = note: this error originates in the macro `derive_deftly_driver_MetaValueMustBeLit` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+   = note: this error originates in the macro `derive_deftly_driver_MetaValueMustBeLit` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: expected identifier
   --> ui/badmeta.rs:64:17
@@ -283,7 +283,7 @@ error: expected identifier
 75 | | }
    | |_- in this macro invocation
    |
-   = note: this error originates in the macro `derive_deftly_driver_WithBareLit` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+   = note: this error originates in the macro `derive_deftly_driver_WithBareLit` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: expected identifier
   --> ui/badmeta.rs:69:15
@@ -297,7 +297,7 @@ error: expected identifier
 80 | | }
    | |_- in this macro invocation
    |
-   = note: this error originates in the macro `derive_deftly_driver_WithBareLitMulti` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+   = note: this error originates in the macro `derive_deftly_driver_WithBareLitMulti` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: expected path segment after `::`
   --> ui/badmeta.rs:84:49
@@ -321,7 +321,7 @@ error: expected path segment after `::`
 95 | | }
    | |_- in this macro invocation
    |
-   = note: this error originates in the macro `derive_deftly_driver_WithFunkyPath` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+   = note: this error originates in the macro `derive_deftly_driver_WithFunkyPath` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: expected path segment after `::`
   --> ui/badmeta.rs:84:49
