@@ -14,7 +14,7 @@ use OptionDetails as OD;
 pub enum OpContext {
     /// Just before the template
     ///
-    /// `derivae_deftly_adhoc!{ Driver OPTIONS: ...`
+    /// `derive_deftly_adhoc!{ Driver OPTIONS: ...`
     ///
     /// `define_derivae_deftly!{ Template OPTIONS = ...`
     Template,
