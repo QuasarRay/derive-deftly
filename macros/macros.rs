@@ -193,7 +193,7 @@ pub fn derive_deftly_adhoc(
 ///
 /// ```ignore
 /// #[doc(hidden)]
-/// pub use derive_adhoc;
+/// pub use derive_deftly;
 /// ```
 /// This is used to find the template expansion engine,
 /// and will arrange that your template is expanded

@@ -9,7 +9,7 @@
 // Any crate exposing a derive_adhoc template must re-export derive_adhoc
 // itself at the top level.  This will be used during template invocation
 // to find the right version of the template expansion machinery.
-pub use derive_adhoc;
+pub use derive_deftly;
 
 pub use a_driver::ADriver;
 

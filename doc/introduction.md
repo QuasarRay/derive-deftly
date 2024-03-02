@@ -128,7 +128,7 @@ from our crate, so that users get the correct version:
 
 ```rust,ignore
 // you might want to apply #[doc(hidden)] to this.
-pub use derive_adhoc;
+pub use derive_deftly;
 ```
 
 Now, when somebody wants to use our template,
@@ -191,7 +191,7 @@ and how to use them to create much more interesting code.
 
 
 The rest of this document will focus
-on how to use derive_adhoc's template features
+on how to use derive_deftly's template features
 to your fullest advantage.
 If you're the kind of person who wants to skip
 straight to the reference manual,
