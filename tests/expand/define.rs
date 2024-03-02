@@ -1,7 +1,7 @@
 //! Test `${define }` and `${defcond }`
 #![allow(dead_code)]
 
-use derive_adhoc::{derive_adhoc, Deftly};
+use derive_adhoc::{derive_deftly_adhoc, Deftly};
 
 #[derive(Deftly)]
 #[derive_deftly_adhoc]

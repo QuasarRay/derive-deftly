@@ -5,7 +5,7 @@
 //! Read "clone.rs" and "hash.rs" first for simpler examples.
 use std::fmt::{self, Debug, Formatter};
 use derive_adhoc::define_derive_deftly;
-use derive_adhoc::{derive_adhoc, Deftly};
+use derive_adhoc::{derive_deftly_adhoc, Deftly};
 use derive_adhoc_tests::*;
 mod custom {
     use super::*;
