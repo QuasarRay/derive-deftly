@@ -236,7 +236,7 @@ pub fn derive_deftly(
                 .leading_colon
                 .as_ref()
                 .expect("path with no tokens!")
-                .error("cannot derive_adhoc the empty path!"));
+                .error("cannot derive_deftly the empty path!"));
         }
         let last = templ_path.segments.last_mut().expect("became empty!");
         last.ident = format_ident!("derive_deftly_template_{}", last.ident);

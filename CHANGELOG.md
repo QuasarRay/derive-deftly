@@ -49,7 +49,7 @@ We expect to increase it cautiously and only with good reason.
 **We recommend you do *not* treat these changes as semver-breaking
 for template-defining crates.**
 
- * Reject misplaced `#[derive_adhoc]` attributes.
+ * Reject misplaced `#[derive_deftly]` attributes.
  * Reject malformed attributes like `#[deftly("42")]`
    and `#[deftly(std::cell::<String>)]`.
 

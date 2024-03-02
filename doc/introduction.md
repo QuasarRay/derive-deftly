@@ -8,7 +8,7 @@ This is the friendly introduction.
 Of course there is a [reference manual](reference) too.
 
 <!--##toc##-->
-   * [Getting started with `derive_adhoc`.](#getting-started-with-derive_adhoc)
+   * [Getting started with `derive_deftly`.](#getting-started-with-derive_deftly)
       * [Exporting templates](#exporting-templates)
       * [If you're only deriving once...](#if-youre-only-deriving-once)
    * [A brief tutorial: How to write your own Clone](#a-brief-tutorial-how-to-write-your-own-clone)
@@ -27,9 +27,9 @@ Of course there is a [reference manual](reference) too.
       * [More complicated conditionals](#more-complicated-conditionals)
    * [Other features](#other-features)
 
-## Getting started with `derive_adhoc`.
+## Getting started with `derive_deftly`.
 
-There are two parts to using `derive_adhoc`:
+There are two parts to using `derive_deftly`:
 specifying _templates_ that you can use to derive new features for your
 structs and enums
 and then _applying_ those templates to your types.
@@ -123,7 +123,7 @@ We've also added a
 which will appear in the public API documentation for our crate.
 
 Additionally,
-[we need to re-export `derive_adhoc`](define_derive_deftly#you-must-re-export-derive_adhoc-usually-no-semver-implications)
+[we need to re-export `derive_deftly`](define_derive_deftly#you-must-re-export-derive_deftly-usually-no-semver-implications)
 from our crate, so that users get the correct version:
 
 ```rust,ignore
@@ -155,7 +155,7 @@ struct TheirStructure {
 ### If you're only deriving once...
 
 If you want, you can
-[apply a template to an existing type](derive_adhoc)
+[apply a template to an existing type](derive_deftly)
 without having to name that template.
 You might want to do this if you have a template
 that you only want to apply to a single struct,
@@ -200,7 +200,7 @@ you can find it [over here][reference].
 ## A brief tutorial: How to write your own Clone
 
 For the next few sections, for a toy example,
-we'll be using `derive_adhoc` to define
+we'll be using `derive_deftly` to define
 our own version of `derive(Clone)`.
 At first, it will be very simple;
 later on, we'll add a few features
@@ -209,7 +209,7 @@ that Rust's `derive(Clone)` doesn't have.
 > Aside:
 >
 > We've picked a simple trait to derive on purpose,
-> so that we can focus on the features of `derive_adhoc`
+> so that we can focus on the features of `derive_deftly`
 > without the additional complexity
 > of introducing an unfamiliar trait as well.
 >
@@ -276,7 +276,7 @@ impl Clone for ⟪Your struct⟫ {
 ```
 
 And here's how that pseudocode translates into
-a `derive_adhoc` template:
+a `derive_deftly` template:
 
 ```
 use derive_deftly::define_derive_deftly;
@@ -302,7 +302,7 @@ and
 [`$fname`](crate::doc_reference#fname-vname-tname--names).
 
 
-In `derive_adhoc` templates, `$( ... )`  denotes repetition:
+In `derive_deftly` templates, `$( ... )`  denotes repetition:
 it repeats what is inside it
 an "appropriate" number of times.
 (We'll give a definition of "appropriate" later on.)
@@ -324,7 +324,7 @@ there's
 
 > ### On naming
 >
-> Many `derive_adhoc` expansions'
+> Many `derive_deftly` expansions'
 > [names start with](crate::doc_reference#keyword-initial-letters)
 > `t` for **top-level**
 > (whatever you are applying the template to),
@@ -338,9 +338,9 @@ there's
 >
 > (We say "top-level" instead of "struct":
 > later on, we'll be showing you how to apply
-> derive_adhoc to `enums`.)
+> derive_deftly to `enums`.)
 >
-> Many `derive_adhoc` expansions end with
+> Many `derive_deftly` expansions end with
 > a short identifier for what they contain.
 > For example, `$tname` is the name of a top-level type,
 > `$vname` is the name of a variant,
@@ -365,7 +365,7 @@ you might expect it to fail.
 
 Surprisingly, it will still work fine!
 This isn't because of any clever trickery
-from `derive_adhoc`:
+from `derive_deftly`:
 it's just how Rust works.
 When you use it on tuple or unit structs,
 the `MyClone` template we wrote above will expand
@@ -499,7 +499,7 @@ impl<T: Clone> Clone for Indirect<T> { ... }
 But that `T: Clone` constraint isn't necessary: `Arc<T>` always
 implements `Clone`, so your struct could be clone unconditionally.
 
-But using `derive_adhoc`,
+But using `derive_deftly`,
 you can define a template
 that derives `Clone` only for the cases
 where the _actual_ required constraints are met:
@@ -546,7 +546,7 @@ where
 
 
 > This time,
-> `derive_adhoc` has exactly _one_ piece cleverness at work.
+> `derive_deftly` has exactly _one_ piece cleverness at work.
 > It makes sure that either `$twheres` is empty,
 > or that it ends with a comma.
 > That way, your template won't expand to something like
@@ -714,7 +714,7 @@ Note that when we define our additional `where` clauses,
 we don't have to specify separate of repetition
 for variants and fields:
 if we just have `$ftype` in a top-level repetition,
-`derive_adhoc` will iterate over all fields in all variants.
+`derive_deftly` will iterate over all fields in all variants.
 
 Sometimes, if you do something subtle,
 derive-deftly may not be able to figure
@@ -742,7 +742,7 @@ it makes your macro code clearer.
 ## Some more advanced topics
 
 Now that we've our first basic example under our belt,
-let's look at some other things that `derive_adhoc` can do.
+let's look at some other things that `derive_deftly` can do.
 
 ### Transforming names and strings
 
@@ -751,7 +751,7 @@ based on existing ones,
 or to convert identifiers into strings.
 
 You _could_ use the existing [`paste`] crate for this,
-or you can use a native facility provided by `derive_adhoc`.
+or you can use a native facility provided by `derive_deftly`.
 
 For example, suppose that you want
 to define a template that makes a "discriminant" type
@@ -838,7 +838,7 @@ In this last section,
 you've seen a new syntax for the first time.
 Both `${paste ident ident..}` and `${snake_case ident}`
 are special cases of the following meta-syntax,
-which `derive_adhoc` uses everywhere:
+which `derive_deftly` uses everywhere:
 
 [`${KEYWORD ARGS.. }`](crate::doc_reference#named-and-positional-template-arguments-to-expansions-and-conditions)
 
@@ -869,7 +869,7 @@ you can write [`$$`](crate::doc_reference#dollar-dollar).
 
 In this section,
 we'll be using another example to demonstrate
-more of what `derive_adhoc` can do.
+more of what `derive_deftly` can do.
 
 We'll be building a `Constructor` template
 to define a `new()` function for a struct,
@@ -943,7 +943,7 @@ that apply to enums as well as structs.
 But let's say that in this case,
 we want our template to be struct-only.
 
-We can tell `derive_adhoc` about this restriction,
+We can tell `derive_deftly` about this restriction,
 to help it generate more useful error messages:
 
 ```

@@ -52,7 +52,7 @@ Syntax and semantics TBD.  Some notes:
 It would be nice to be able to eventually support deriving from
 items (traits, fns, ...).  This would have to be an attribute proc macro.  Attribute proc macros get to modify their applicand, but we would not do that.
 
-Ideally that attribute macro would be `#[derive_adhoc]`.  However:
+Ideally that attribute macro would be `#[derive_deftly]`.  However:
 
  * We are already using that as an inert helper attribute for `#[derive(Deftly)]`.  Possibly we could experiment to see how that would interact with a non-inert attribute macro, except that:
 

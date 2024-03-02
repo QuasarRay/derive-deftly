@@ -185,10 +185,10 @@ pub fn derive_deftly_adhoc(
 /// not in a sub-module,
 /// even if it is *defined* in a sub-module.
 ///
-/// ### You must re-export `derive_adhoc`; (usually no) semver implications
+/// ### You must re-export `derive_deftly`; (usually no) semver implications
 ///
 /// When exporting a template to other crates, you must also
-/// re-export `derive_adhoc`,
+/// re-export `derive_deftly`,
 /// at the top level of your crate:
 ///
 /// ```ignore
@@ -260,7 +260,7 @@ pub fn define_derive_deftly(
 ///  2. If `#[derive_deftly_adhoc]` is specified,
 ///     captures the data structure definition,
 ///     so that it can be used with calls to
-///     [`derive_deftly_adhoc!`](macro@crate::derive_adhoc).
+///     [`derive_deftly_adhoc!`](macro@crate::derive_deftly).
 ///
 /// ## `#[deftly]` attribute
 ///

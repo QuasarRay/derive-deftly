@@ -175,7 +175,7 @@ pub fn define_derive_deftly_func_macro(
         let addendum = format!(
             r#"
 
-This is a `derive_adhoc` template.  Do not invoke it directly.
+This is a `derive_deftly` template.  Do not invoke it directly.
 To use it, write: `#[derive(Deftly)] #[derive_deftly({})]`."#,
             templ_name
         );

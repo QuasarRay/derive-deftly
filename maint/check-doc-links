@@ -24,7 +24,7 @@ xargs -0r -- perl -i~ -pe '
 	s{\bhref="#"}{}g;
 '
 
-linklint -out linklint.errors -error -root $chk_dir /derive_adhoc/@
+linklint -out linklint.errors -error -root $chk_dir /derive_deftly/@
 
 cat linklint.errors
 

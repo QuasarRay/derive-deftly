@@ -7,20 +7,20 @@ version of derive-deftly prior at the  most recent flag day.
 
 I. Forward compatibility (higher layer crate is more up to date)
 
-  new-b -> new derive_adhoc (bizarre version)
+  new-b -> new derive_deftly (bizarre version)
     |
     V
-  old-a -> old derive_adhoc
+  old-a -> old derive_deftly
 
 This reuses pub-b.rs (which expects bizarre derive-deftly)
 and pub-a.rs.
 
 2. Backward compatibility (lower layer crate is more up to date)
 
-  old-b -> old derive_adhoc
+  old-b -> old derive_deftly
     |
     V
-  pub-a -> current derive_adhoc
+  pub-a -> current derive_deftly
 
 This reuses pub-a.rs (which expects vanilla derive-deftly)
 and a filtered version of pub-b.rs called old-b.rs.

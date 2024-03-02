@@ -1,3 +1,3 @@
-Macros for `derive_adhoc`
+Macros for `derive_deftly`
 
-**Import `derive_adhoc` instead.**
+**Import `derive_deftly` instead.**

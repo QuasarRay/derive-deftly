@@ -1,12 +1,12 @@
 //! Test / demo of cross-crate and compatibility
 //!
 //! Our test has two crates.  This is the lower-layer one, which
-//! provides a trait derivable with derive_adhoc (ie, a trait
+//! provides a trait derivable with derive_deftly (ie, a trait
 //! and corresponding reuseable template).
 //!
 //! It also provides a struct exported as a derive-deftly driver.
 
-// Any crate exposing a derive_adhoc template must re-export derive_adhoc
+// Any crate exposing a derive_deftly template must re-export derive_deftly
 // itself at the top level.  This will be used during template invocation
 // to find the right version of the template expansion machinery.
 pub use derive_deftly;

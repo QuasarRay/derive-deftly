@@ -426,7 +426,7 @@ Expands to attributes, including non-`#[deftly()]` ones.
 The attributes can be filtered:
 
   * **`$Xattrs`**: All the attributes
-    except `#[deftly]` and `#[derive_adhoc]`
+    except `#[deftly]` and `#[derive_deftly]`
   * **`${Xattrs A1, A2, ...}`**, or
     **`${Xattrs = A, A2, ...}`**:
     Attributes `#[A1...]` and `#[A2...]` only.
@@ -955,7 +955,7 @@ and otherwise produces syntactically invalid output
 leading to confusing compiler errors.
 
 This option is only allowed in a template,
-not in a driver's `#[derive_adhoc]` attribute.
+not in a driver's `#[derive_deftly]` attribute.
 
 ### `dbg` -- Print the expansion to stderr, for debugging
 

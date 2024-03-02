@@ -6,7 +6,7 @@ readme = "../README.md"
 authors=["Ian Jackson <ijackson@chiark.greenend.org.uk>",
          "and the contributors to Rust derive-deftly"]
 license = "MIT"
-description="Macros that implement the derive_adhoc crate"
+description="Macros that implement the derive_deftly crate"
 homepage = "https://gitlab.torproject.org/Diziet/rust-derive-deftly"
 repository = "https://gitlab.torproject.org/Diziet/rust-derive-deftly"
 
