@@ -256,7 +256,7 @@ error: expected identifier
    |         ^^^^^^^^^^^
 53 | struct TopLevelMetaLitForbidden;
 54 | derive_deftly_adhoc! { TopLevelMetaLitForbidden: }
-   | ------------------------------------------- in this macro invocation
+   | -------------------------------------------------- in this macro invocation
    |
    = note: this error originates in the macro `derive_deftly_driver_TopLevelMetaLitForbidden` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
@@ -267,7 +267,7 @@ error: expected literal
    |                 ^^^^^
 59 | struct MetaValueMustBeLit;
 60 | derive_deftly_adhoc! { MetaValueMustBeLit: }
-   | ------------------------------------- in this macro invocation
+   | -------------------------------------------- in this macro invocation
    |
    = note: this error originates in the macro `derive_deftly_driver_MetaValueMustBeLit` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
