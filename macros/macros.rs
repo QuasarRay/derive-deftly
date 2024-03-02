@@ -375,7 +375,10 @@ pub fn define_derive_adhoc(
 // is right.
 #[cfg_attr(
     proc_macro,
-    proc_macro_derive(Adhoc, attributes(adhoc, derive_adhoc, derive_truly_adhoc))
+    proc_macro_derive(
+        Adhoc,
+        attributes(adhoc, derive_adhoc, derive_truly_adhoc)
+    )
 )]
 pub fn derive_adhoc_derive_macro(
     input: proc_macro::TokenStream,
