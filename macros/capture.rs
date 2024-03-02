@@ -203,31 +203,31 @@ pub fn derive_adhoc_derive_macro(
             })
             .transpose()?;
 
-      output.extend(quote! {
-        #[allow(unused_macros)]
-        #macro_export
-        macro_rules! #driver_mac_name {
-            {
-                { $($template:tt)* }
-                { ($orig_dollar:tt) $(future:tt)* }
-                $($tpassthrough:tt)*
-            } => {
-                #expand_macro!{
-                    { #driver_escaped }
-                    { }
-                    { $($template)* }
-                    { $($tpassthrough)* }
-                }
-            };
-            { $($wrong:tt)* } => {
-                compile_error!{concat!(
-                    "wrong input to derive-adhoc driver inner macro ",
-                    stringify!(#driver_mac_name),
-                    "; might be due to incompatible derive-adhoc versions(s)",
-                )}
-            };
-        }
-      });
+        output.extend(quote! {
+            #[allow(unused_macros)]
+            #macro_export
+            macro_rules! #driver_mac_name {
+                {
+                    { $($template:tt)* }
+                    { ($orig_dollar:tt) $(future:tt)* }
+                    $($tpassthrough:tt)*
+                } => {
+                    #expand_macro!{
+                        { #driver_escaped }
+                        { }
+                        { $($template)* }
+                        { $($tpassthrough)* }
+                    }
+                };
+                { $($wrong:tt)* } => {
+                    compile_error!{concat!(
+                        "wrong input to derive-adhoc driver inner macro ",
+                        stringify!(#driver_mac_name),
+                     "; might be due to incompatible derive-adhoc versions(s)",
+                    )}
+                };
+            }
+        });
     }
 
     for (mut templ_path, aoptions) in precanned_paths {
