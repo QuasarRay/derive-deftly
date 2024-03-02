@@ -3,7 +3,7 @@
 //! Also demonstrates use of field type trait bounds.
 
 use derive_adhoc::define_derive_deftly;
-use derive_adhoc::{derive_adhoc, Adhoc};
+use derive_adhoc::{derive_adhoc, Deftly};
 
 use std::fmt::Debug;
 use std::hash::{Hash, Hasher};
@@ -26,7 +26,7 @@ define_derive_deftly! {
     }
 }
 
-#[derive(Adhoc)]
+#[derive(Deftly)]
 #[derive_adhoc(MyHash)]
 struct DataType {
     foo: u8,
@@ -34,7 +34,7 @@ struct DataType {
     bar: Vec<String>,
 }
 
-#[derive(Adhoc)]
+#[derive(Deftly)]
 #[derive_adhoc(MyHash)]
 struct Pair<S, T: Debug>
 where
@@ -44,7 +44,7 @@ where
     second: T,
 }
 
-#[derive(Adhoc)]
+#[derive(Deftly)]
 #[derive_adhoc(MyHash)]
 struct IntPair(usize, usize);
 

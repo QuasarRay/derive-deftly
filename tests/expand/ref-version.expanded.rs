@@ -7,7 +7,7 @@
 //! using `$vdefvariants`, and `$vdefbody` and `$fdefine}`,
 //! and handling of visibility attributes.
 #![allow(dead_code)]
-use derive_adhoc::{define_derive_deftly, Adhoc};
+use derive_adhoc::{define_derive_deftly, Deftly};
 #[derive_adhoc(ReferenceVersion)]
 struct Tuple<F = ()>(F);
 #[derive_truly_adhoc]

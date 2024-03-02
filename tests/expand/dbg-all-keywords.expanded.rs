@@ -1,4 +1,4 @@
-use derive_adhoc::{define_derive_deftly, Adhoc};
+use derive_adhoc::{define_derive_deftly, Deftly};
 #[allow(dead_code)]
 #[derive_adhoc(Dbg)]
 enum Enum {

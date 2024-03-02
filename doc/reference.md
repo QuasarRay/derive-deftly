@@ -441,7 +441,7 @@ With `${Xattrs}`, unlike `${Xmeta}`,
      and `#[derive_truly_adhoc(...)]`
      are *excluded* by default,
      because typically they would be rejected by the compiler:
-     the expanded output is (perhaps) no longer within `#[derive(Adhoc)]`,
+     the expanded output is (perhaps) no longer within `#[derive(Deftly)]`,
      so those attributes might be unrecognised there.
    * The attributes can be filtered by toplevel attribute name,
      but not deeply manipulated.
@@ -451,7 +451,7 @@ Note that derive macros,
 only see attributes
 that come *after* the `#[derive(...)]` that invoked them.
 So derive-adhoc templates only see attributes
-that come *after* the `#[derive(..., Adhoc, ...)]`.
+that come *after* the `#[derive(..., Deftly, ...)]`.
 
 #### Examples
 
@@ -661,8 +661,8 @@ See also the [`dbg` expansion option](#dbg--print-the-expansion-to-stderr-for-de
 #### Example
 
 ```rust
-# use derive_adhoc::{Adhoc, derive_adhoc};
-#[derive(Adhoc)]
+# use derive_adhoc::{Deftly, derive_adhoc};
+#[derive(Deftly)]
 #[derive_truly_adhoc]
 enum Enum {
     Unit,
@@ -912,7 +912,7 @@ derive_adhoc! { DataStructureType OPTIONS,... : TEMPLATE }
 define_derive_deftly! { Template OPTIONS,... = TEMPLATE }
 
 // Expand Template for DataStructureType, with OPTIONS
-#[derive(Adhoc)]
+#[derive(Deftly)]
 #[derive_adhoc(Template[OPTIONS,...])]
 struct DataStructureType {
 # }
@@ -970,10 +970,10 @@ See also the [`$dbg_all_keywords` expansion](#dbg_all_keywords--dump-expansions-
 ### Expansion options example
 
 ```
-# use derive_adhoc::{define_derive_deftly, Adhoc};
+# use derive_adhoc::{define_derive_deftly, Deftly};
 define_derive_deftly! { Nothing for struct, expect items = }
 
-#[derive(Adhoc)]
+#[derive(Deftly)]
 #[derive_adhoc(Nothing[expect items, dbg])]
 struct Unit;
 ```
@@ -999,13 +999,13 @@ are those generated for the following driver types:
 # use std::fmt::Display;
 # use std::convert::TryInto;
 #
-#[derive(Adhoc)]
+#[derive(Deftly)]
 #[derive(Clone)]
 #[adhoc(simple="String", gentype="Vec<i32>")]
 #[adhoc(value="unit-toplevel")]
 pub struct Unit<const C: usize = 1>;
 
-#[derive(Adhoc, Clone)]
+#[derive(Deftly, Clone)]
 /// Title for `Tuple`
 #[adhoc(unused)]
 #[repr(C)]
@@ -1014,7 +1014,7 @@ struct Tuple<'a, 'l: 'a, T: Display = usize, const C: usize = 1>(
     &'a &'l T,
 );
 
-#[derive(Adhoc)]
+#[derive(Deftly)]
 struct Struct<'a, 'l: 'a, T: Display = usize, const C: usize = 1>
 where T: 'l, T: TryInto<u8>
 {
@@ -1023,7 +1023,7 @@ where T: 'l, T: TryInto<u8>
     pub(crate) field_b: String,
 }
 
-#[derive(Adhoc)]
+#[derive(Deftly)]
 pub enum Enum<'a, 'l: 'a, T: Display = usize, const C: usize = 1>
 where T: 'l, T: TryInto<u8>
 {

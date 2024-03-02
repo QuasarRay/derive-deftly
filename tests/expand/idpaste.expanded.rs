@@ -2,7 +2,7 @@
 //!
 //! Refer to `idpaste.expanded.rs` to see what this generates.
 #![allow(dead_code, unused_variables)]
-use derive_adhoc::{derive_adhoc, Adhoc};
+use derive_adhoc::{derive_adhoc, Deftly};
 type FieldType = ();
 #[derive_truly_adhoc]
 struct TypeNames {

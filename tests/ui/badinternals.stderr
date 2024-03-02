@@ -1,7 +1,7 @@
 error: wrong input to derive-adhoc driver inner macro derive_adhoc_driver_Driver; might be due to incompatible derive-adhoc versions(s)
   --> ui/badinternals.rs:9:10
    |
-9  | #[derive(Adhoc)]
+9  | #[derive(Deftly)]
    |          ^^^^^
 ...
 17 | derive_adhoc_driver_Driver! { GARBAGE -> DRIVER }

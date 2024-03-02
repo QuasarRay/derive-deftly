@@ -1,6 +1,6 @@
 //! Very simple example for deriving Clone.
 
-use derive_adhoc::{define_derive_deftly, Adhoc};
+use derive_adhoc::{define_derive_deftly, Deftly};
 use std::sync::Arc;
 
 // Very simple `Clone`
@@ -28,7 +28,7 @@ define_derive_deftly! {
 
 // If we were to `#[derive(Clone)]`, DecoratedError<io::Error> wouldn't
 // be Clone, because io::Error isn't, even though the Arc means we can clone.
-#[derive(Adhoc)]
+#[derive(Deftly)]
 #[derive_adhoc(MyClone)]
 struct DecoratedError<E> {
     context: String,

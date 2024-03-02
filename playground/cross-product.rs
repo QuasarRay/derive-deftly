@@ -24,7 +24,7 @@ define_derive_deftly!{
     }
 }
 
-#[derive(Adhoc)]
+#[derive(Deftly)]
 #[derive_adhoc(Squared)]
 enum Greek { 
     Alpha,

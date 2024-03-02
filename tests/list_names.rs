@@ -1,6 +1,6 @@
 //! Test name macros and several scopes of iteration.
 
-use derive_adhoc::{define_derive_deftly, Adhoc};
+use derive_adhoc::{define_derive_deftly, Deftly};
 
 define_derive_deftly! {
     ListFields =
@@ -43,11 +43,11 @@ define_derive_deftly! {
     }
 }
 
-#[derive(Adhoc)]
+#[derive(Deftly)]
 #[derive_adhoc(ListFields)]
 struct UnitStruct;
 
-#[derive(Adhoc)]
+#[derive(Deftly)]
 #[derive_adhoc(ListFields)]
 #[allow(dead_code)]
 struct SimpleStruct {
@@ -56,11 +56,11 @@ struct SimpleStruct {
     large: String,
 }
 
-#[derive(Adhoc)]
+#[derive(Deftly)]
 #[derive_adhoc(ListFields)]
 struct TupleStruct(u8, u16, String);
 
-#[derive(Adhoc)]
+#[derive(Deftly)]
 #[derive_adhoc(ListFields)]
 #[derive_adhoc(ListVariants)]
 #[allow(dead_code)]

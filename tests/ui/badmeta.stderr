@@ -1,7 +1,7 @@
 error: this file contains an unclosed delimiter
   --> ui/badmeta.rs:3:10
    |
-3  |   #[derive(Adhoc)]
+3  |   #[derive(Deftly)]
    |            ^^^^^ unclosed delimiter
 ...
 12 | / derive_adhoc! {
@@ -16,7 +16,7 @@ error: this file contains an unclosed delimiter
 error: cannot parse string into token stream
   --> ui/badmeta.rs:3:10
    |
-3  |   #[derive(Adhoc)]
+3  |   #[derive(Deftly)]
    |            ^^^^^
 ...
 12 | / derive_adhoc! {
@@ -305,10 +305,10 @@ error: expected path segment after `::`
 84 |     struct ${paste Bad ${tmeta(std::cell::Cell::<String>::ne)w as str}};
    |                                                 ^
 ...
-87 | #[derive(Adhoc)]
+87 | #[derive(Deftly)]
    |          ----- in this derive macro expansion
    |
-   = note: this error originates in the macro `derive_adhoc_template_TestFunkyPath` which comes from the expansion of the derive macro `Adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+   = note: this error originates in the macro `derive_adhoc_template_TestFunkyPath` which comes from the expansion of the derive macro `Deftly` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: expected path segment after `::`
   --> ui/badmeta.rs:90:26
@@ -329,7 +329,7 @@ error: expected path segment after `::`
 84 |     struct ${paste Bad ${tmeta(std::cell::Cell::<String>::ne)w as str}};
    |                                                 ^
 ...
-97 | #[derive(Adhoc)]
+97 | #[derive(Deftly)]
    |          ----- in this derive macro expansion
    |
-   = note: this error originates in the macro `derive_adhoc_template_TestFunkyPath` which comes from the expansion of the derive macro `Adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+   = note: this error originates in the macro `derive_adhoc_template_TestFunkyPath` which comes from the expansion of the derive macro `Deftly` (in Nightly builds, run with -Z macro-backtrace for more info)

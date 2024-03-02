@@ -2,7 +2,7 @@
 //!
 //! This gives a basic demonstration of how to handle an enum.
 
-use derive_adhoc::{define_derive_deftly, Adhoc};
+use derive_adhoc::{define_derive_deftly, Deftly};
 
 define_derive_deftly! {
     PreciseClone =
@@ -22,21 +22,21 @@ define_derive_deftly! {
     }
 }
 
-#[derive(Adhoc)]
+#[derive(Deftly)]
 #[derive_adhoc(PreciseClone)]
 struct Unit;
 
-#[derive(Adhoc)]
+#[derive(Deftly)]
 #[derive_adhoc(PreciseClone)]
 struct Tuple<F>(F);
 
-#[derive(Adhoc)]
+#[derive(Deftly)]
 #[derive_adhoc(PreciseClone)]
 struct Struct<F> {
     field: F,
 }
 
-#[derive(Adhoc)]
+#[derive(Deftly)]
 #[derive_adhoc(PreciseClone)]
 enum Enum<F> {
     Unit,
@@ -44,7 +44,7 @@ enum Enum<F> {
     Struct { field: F },
 }
 
-#[derive(Adhoc)]
+#[derive(Deftly)]
 #[derive_adhoc(PreciseClone)]
 enum AllTypes {
     NoData,

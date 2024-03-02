@@ -1,6 +1,6 @@
 #![allow(dead_code)]
 
-use derive_adhoc::{define_derive_deftly, derive_adhoc, Adhoc};
+use derive_adhoc::{define_derive_deftly, derive_adhoc, Deftly};
 
 define_derive_deftly! {
     ReuseableTemplate =
@@ -8,7 +8,7 @@ define_derive_deftly! {
     $tattrs struct ${paste ReusedWith $tname};
 }
 
-#[derive(Adhoc)]
+#[derive(Deftly)]
 #[derive_adhoc(ReuseableTemplate)]
 #[derive_truly_adhoc]
 #[doc=stringify!(one $ dollar $template end)]
@@ -20,7 +20,7 @@ derive_adhoc! {
     $tattrs struct AdhocOneDollar;
 }
 
-#[derive(Adhoc)]
+#[derive(Deftly)]
 #[derive_truly_adhoc]
 #[derive_adhoc(ReuseableTemplate)]
 #[doc=stringify!(two $$ dollars)]

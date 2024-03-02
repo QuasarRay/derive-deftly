@@ -14,13 +14,13 @@
 //   - consider how to invoke a precanned template on multiple drivers
 //   - figure out how even any of this will work underneath
 
-#[derive(Adhoc)]
+#[derive(Deftly)]
 enum Greek { 
     Alpha,
     Beta,
 }
 
-#[derive(Adhoc)]
+#[derive(Deftly)]
 enum Colour {
     Red,
     Blue,

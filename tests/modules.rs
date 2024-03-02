@@ -80,7 +80,7 @@ mod has_template {
 /// definition.
 #[macro_use]
 pub mod has_driver {
-    use derive_adhoc::Adhoc;
+    use derive_adhoc::Deftly;
 
     // Additionally, for a driver to be useable outside its module, the
     // driver type name and types of its fields etc., need to be visible,
@@ -92,7 +92,7 @@ pub mod has_driver {
     // scope the things that the template expects.
     use super::{EnumMarker, IsEnum};
 
-    #[derive(Adhoc)]
+    #[derive(Deftly)]
     #[derive_adhoc(IsEnum)]
     #[derive_truly_adhoc]
     pub enum Driver<T: Default> {

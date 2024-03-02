@@ -5,11 +5,11 @@
 //#![feature(trace_macros)]
 //trace_macros!(true);
 
-use derive_adhoc::{derive_adhoc, Adhoc};
+use derive_adhoc::{derive_adhoc, Deftly};
 
 use std::fmt::Debug;
 
-#[derive(Adhoc, Default, Debug)]
+#[derive(Deftly, Default, Debug)]
 #[derive_truly_adhoc]
 struct Both {
     #[adhoc(left)]

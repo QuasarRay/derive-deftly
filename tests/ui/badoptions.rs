@@ -1,13 +1,13 @@
 // Tests involving driver and template options
 
-use derive_adhoc::{define_derive_deftly, derive_adhoc, Adhoc};
+use derive_adhoc::{define_derive_deftly, derive_adhoc, Deftly};
 
 define_derive_deftly! {
     BadOptionsTemplate =
     broken template;
 }
 
-#[derive(Adhoc)]
+#[derive(Deftly)]
 #[derive_adhoc(BadOptionsTemplate[dbg])]
 #[derive_truly_adhoc]
 struct BadOptionsDriver;

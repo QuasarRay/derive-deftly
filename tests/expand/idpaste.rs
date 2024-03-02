@@ -4,11 +4,11 @@
 
 #![allow(dead_code, unused_variables)]
 
-use derive_adhoc::{derive_adhoc, Adhoc};
+use derive_adhoc::{derive_adhoc, Deftly};
 
 type FieldType = ();
 
-#[derive(Adhoc)]
+#[derive(Deftly)]
 #[derive_truly_adhoc]
 struct TypeNames {
     /// We use std::slice::Chunks here because that way we can test
@@ -27,7 +27,7 @@ derive_adhoc! {
     }
 }
 
-#[derive(Adhoc)]
+#[derive(Deftly)]
 #[derive_truly_adhoc]
 struct TopName<F> {
     top_name_field: F,
@@ -44,7 +44,7 @@ derive_adhoc! {
     impl<$tgens> std::panic::RefUnwindSafe for ${paste Pre $ttype Post} {}
 }
 
-#[derive(Adhoc)]
+#[derive(Deftly)]
 #[derive_truly_adhoc]
 struct ExpandName {
     #[adhoc(prefix = "attr", suffix = "24")]
@@ -70,7 +70,7 @@ derive_adhoc! {
                            ${if true { _bat } else { _noise }}}};
 }
 
-#[derive(Adhoc)]
+#[derive(Deftly)]
 #[derive_truly_adhoc]
 enum EdgeCases {
     Tuple(u32),

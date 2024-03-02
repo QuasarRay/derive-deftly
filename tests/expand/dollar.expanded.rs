@@ -1,5 +1,5 @@
 #![allow(dead_code)]
-use derive_adhoc::{define_derive_deftly, derive_adhoc, Adhoc};
+use derive_adhoc::{define_derive_deftly, derive_adhoc, Deftly};
 #[derive_adhoc(ReuseableTemplate)]
 #[derive_truly_adhoc]
 ///one $dollar $template end

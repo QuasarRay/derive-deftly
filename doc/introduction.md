@@ -61,7 +61,7 @@ on which you're applying your template.)
 
 Later on, you can apply `NamePrinter` to your own type,
 with
-[`#[derive(Adhoc)]`](crate::Adhoc),
+[`#[derive(Deftly)]`](crate::Deftly),
 as in:
 
 ```
@@ -75,9 +75,9 @@ as in:
 #        }
 #    }
 # }
-use derive_adhoc::Adhoc;
+use derive_adhoc::Deftly;
 
-#[derive(Clone, Debug, Adhoc)]
+#[derive(Clone, Debug, Deftly)]
 #[derive_adhoc(NamePrinter)]
 pub struct MyStruct;
 
@@ -143,9 +143,9 @@ use name_printer::{
     // (We might come up with a better syntax for this later).
     derive_adhoc_template_NamePrinter.
 };
-use derive_adhoc::Adhoc;
+use derive_adhoc::Deftly;
 
-#[derive(Adhoc)]
+#[derive(Deftly)]
 #[derive_adhoc(NamePrinter)]
 struct TheirStructure {
     // ...
@@ -166,9 +166,9 @@ and `MyStruct` alone,
 you could have said:
 
 ```
-use derive_adhoc::{Adhoc, derive_adhoc};
+use derive_adhoc::{Deftly, derive_adhoc};
 
-#[derive(Clone, Debug, Adhoc)]
+#[derive(Clone, Debug, Deftly)]
 #[derive_truly_adhoc]
 pub struct MyStruct;
 
@@ -682,7 +682,7 @@ Now let's see how it works when we try to handle generics again.
 (It's surprisingly straightforward!)
 
 ```
-# use derive_adhoc::{Adhoc, define_derive_deftly};
+# use derive_adhoc::{Deftly, define_derive_deftly};
 define_derive_deftly! {
     MyClone =
 
@@ -703,7 +703,7 @@ define_derive_deftly! {
         }
     }
 }
-# #[derive(Adhoc)]
+# #[derive(Deftly)]
 # #[derive_adhoc(MyClone)]
 # enum TestCase<A> { Variant(A) }
 ```
@@ -724,8 +724,8 @@ You can use
 to specifiy explicitly:
 so, above, instead, we could have written
 ```
-# use derive_adhoc::{Adhoc, derive_adhoc};
-# #[derive(Adhoc)]
+# use derive_adhoc::{Deftly, derive_adhoc};
+# #[derive(Deftly)]
 # #[derive_truly_adhoc]
 # enum TestCase<A> { Variant(A) }
 # derive_adhoc! { TestCase:
@@ -907,8 +907,8 @@ When you apply the above template to a type like this:
 #       }
 #   }
 # }
-use derive_adhoc::Adhoc;
-#[derive(Adhoc)]
+use derive_adhoc::Deftly;
+#[derive(Deftly)]
 #[derive_adhoc(Constructor)]
 struct Ex<A> {
   a: f64,
@@ -985,7 +985,7 @@ You can
 [tell derive-adhoc what your macro is supposed to produce](crate::doc_reference#expect-items-expect-expr--syntax-check-the-expansion):
 
 ```
-# use derive_adhoc::{Adhoc, define_derive_deftly};
+# use derive_adhoc::{Deftly, define_derive_deftly};
 define_derive_deftly! {
    Constructor for struct, expect items =
 
@@ -993,7 +993,7 @@ define_derive_deftly! {
       // ...
    }
 }
-# #[derive(Adhoc)]
+# #[derive(Deftly)]
 # #[derive_adhoc(Constructor)]
 # struct Test;
 ```
@@ -1009,12 +1009,12 @@ you can write `expect expr` instead of `expect items`.
 
 Alternatively,
 you can request this syntax check
-[when you invoke the macro](Adhoc#expansion-options):
+[when you invoke the macro](Deftly#expansion-options):
 
 ```
-# use derive_adhoc::{Adhoc, define_derive_deftly};
+# use derive_adhoc::{Deftly, define_derive_deftly};
 # define_derive_deftly! { Constructor = }
-#[derive(Adhoc)]
+#[derive(Deftly)]
 #[derive_adhoc(Constructor[expect items])]
 struct MyStruct { /* ... */ }
 ```
@@ -1028,9 +1028,9 @@ You can ask derive-adhoc to simply
 [print a copy of the expansion](crate::doc_reference#dbg--print-the-expansion-to-stderr-for-debugging).
 
 ```
-# use derive_adhoc::{Adhoc, define_derive_deftly};
+# use derive_adhoc::{Deftly, define_derive_deftly};
 # define_derive_deftly! { Constructor = }
-#[derive(Adhoc)]
+#[derive(Deftly)]
 #[derive_adhoc(Constructor[dbg])]
 struct MyStruct { /* ... */ }
 ```
@@ -1109,8 +1109,8 @@ define_derive_deftly! {
    }
 }
 
-use derive_adhoc::Adhoc;
-#[derive(Adhoc)]
+use derive_adhoc::Deftly;
+#[derive(Deftly)]
 #[derive_adhoc(Constructor)]
 #[adhoc(newfn="construct_example")]
 struct Example {
@@ -1123,7 +1123,7 @@ Here, instead of specifying "new"
 for the method name in our template,
 we give the name as `${tmeta(newfn)}`.
 This tells the template to look for an
-[`#[adhoc(newfn="...")]`](Adhoc#adhoc-attribute)
+[`#[adhoc(newfn="...")]`](Deftly#adhoc-attribute)
 attribute on the type,
 and to use the value of that attribute
 in place of the keyword.
@@ -1232,8 +1232,8 @@ define_derive_deftly! {
    }
 }
 
-use derive_adhoc::Adhoc;
-#[derive(Adhoc)]
+use derive_adhoc::Deftly;
+#[derive(Deftly)]
 #[derive_adhoc(Constructor)]
 struct Foo {
     #[adhoc(Constructor(default))]

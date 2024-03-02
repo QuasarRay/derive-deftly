@@ -1,6 +1,6 @@
-use derive_adhoc::{derive_adhoc, Adhoc};
+use derive_adhoc::{derive_adhoc, Deftly};
 
-#[derive(Adhoc)]
+#[derive(Deftly)]
 #[derive_truly_adhoc]
 #[adhoc(something = "Box<char>")]
 struct DataType {

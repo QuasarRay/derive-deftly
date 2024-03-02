@@ -4,10 +4,10 @@ error: expected one of `!` or `::`, found `template`
 7  |     broken template;
    |            ^^^^^^^^ expected one of `!` or `::`
 ...
-10 | #[derive(Adhoc)]
+10 | #[derive(Deftly)]
    |          ----- in this derive macro expansion
    |
-   = note: this error originates in the macro `derive_adhoc_template_BadOptionsTemplate` which comes from the expansion of the derive macro `Adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+   = note: this error originates in the macro `derive_adhoc_template_BadOptionsTemplate` which comes from the expansion of the derive macro `Deftly` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: unknown derive-adhoc option
   --> ui/badoptions.rs:16:22

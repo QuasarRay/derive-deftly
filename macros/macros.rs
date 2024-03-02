@@ -99,11 +99,11 @@ pub fn derive_deftly_engine(
     output.into()
 }
 
-/// Expand an ad-hoc template, on a data structure decorated `#[derive(Adhoc)]`
+/// Expand an ad-hoc template, on a data structure decorated `#[derive(Deftly)]`
 ///
 /// ```ignore
-/// # use derive_adhoc_macros::{Adhoc, derive_adhoc, derive_deftly_engine};
-/// # #[derive(Adhoc)] struct DataStructureType;
+/// # use derive_adhoc_macros::{Deftly, derive_adhoc, derive_deftly_engine};
+/// # #[derive(Deftly)] struct DataStructureType;
 /// # fn main() {
 /// # const TEMPLATE: () = ();
 /// derive_adhoc! {
@@ -120,7 +120,7 @@ pub fn derive_deftly_engine(
 /// [expansion options](doc_reference/index.html#expansion-options).
 ///
 /// The definition of `DataStructureType` must have been decorated
-/// with [`#[derive(Adhoc)]`](crate::Adhoc),
+/// with [`#[derive(Deftly)]`](crate::Deftly),
 /// and the resulting `derive_adhoc_driver_TYPE` macro must be
 /// available in scope.
 #[cfg_attr(proc_macro, proc_macro)]
@@ -144,7 +144,7 @@ pub fn derive_adhoc(
 /// ```
 ///
 /// Then, `MyMacro` can be used with
-/// [`#[derive(Adhoc)]`](crate::Adhoc)
+/// [`#[derive(Deftly)]`](crate::Deftly)
 /// `#[derive_adhoc(MyMacro)]`.
 ///
 /// <span id="options-in-define">`OPTIONS,..`</span>
@@ -167,9 +167,9 @@ pub fn derive_adhoc(
 /// The template definition macro
 /// from `define_derive_deftly!`
 /// must be in scope at the point where you try to use it
-/// (with `#[derive(Adhoc)] #[derive_adhoc(MyMacro)]`).
+/// (with `#[derive(Deftly)] #[derive_adhoc(MyMacro)]`).
 /// See the
-/// [documentation for `#[derive(Adhoc)]`](derive.Adhoc.html#scoping-and-ordering-within-the-same-crate).
+/// [documentation for `#[derive(Deftly)]`](derive.Deftly.html#scoping-and-ordering-within-the-same-crate).
 ///
 /// ## Exporting a template for use by other crates
 ///
@@ -278,22 +278,22 @@ pub fn define_derive_deftly(
 /// The data structure is captured by defining
 /// a `macro_rules` macro called `derive_adhoc_driver_TYPE`,
 /// where `TYPE` is the name of the type
-/// that `#[derive(Adhoc)]` is applied to.
+/// that `#[derive(Deftly)]` is applied to.
 ///
 /// ## Scoping and ordering within the same crate
 ///
 /// **Summary of required ordering**
 ///
 ///  1. `define_derive_deftly! { MyMacro = ... }`
-///  2. `#[derive(Adhoc)] #[derive_adhoc(MyMacro)] struct MyStruct { ... }`
+///  2. `#[derive(Deftly)] #[derive_adhoc(MyMacro)] struct MyStruct { ... }`
 ///  3. `derive_adhoc! { MyStruct: ... }`
 ///
 /// Any reusable templates defined with
 /// `define_derive_deftly!` must lexically their precede
-/// uses with `#[derive(Adhoc) #[derive_adhoc(...)]`.
+/// uses with `#[derive(Deftly) #[derive_adhoc(...)]`.
 ///
 /// And, for one-off templates (`derive_adhoc!`),
-/// the data structure with its `#[derive(Adhoc)]`
+/// the data structure with its `#[derive(Deftly)]`
 /// must lexically precede
 /// the references in `derive_adhoc!`,
 /// so that the data structure definition macro
@@ -321,7 +321,7 @@ pub fn define_derive_deftly(
 /// the actual pattern macro name `derive_adhoc_template_MyMacro`:
 /// ```ignore
 /// use other_crate::derive_adhoc_template_TheirMacro;
-/// #[derive(Adhoc)]
+/// #[derive(Deftly)]
 /// #[derive_Adhoc(TheirMacro)]
 /// struct MyStruct { // ...
 /// # }
@@ -360,7 +360,7 @@ pub fn define_derive_deftly(
 /// as you may need to treat *minor* version updates in derive-adhoc
 /// as semver breaks for your crate.
 //
-// This is the implementation of #[derive(Adhoc)]
+// This is the implementation of #[derive(Deftly)]
 //
 // It should parse the struct name out of its input.
 //
@@ -370,14 +370,14 @@ pub fn define_derive_deftly(
 //
 // For the MVP it does not need to have any attributes, but
 // later it will want to be
-//   #[proc_macro_derive(Adhoc, attributes(adhoc))]
+//   #[proc_macro_derive(Deftly, attributes(adhoc))]
 // and then it will perhaps want to do *something* with the attributes?
 // Although maybe just ignoring them and letting them get to the expander
 // is right.
 #[cfg_attr(
     proc_macro,
     proc_macro_derive(
-        Adhoc,
+        Deftly,
         attributes(adhoc, derive_adhoc, derive_truly_adhoc)
     )
 )]

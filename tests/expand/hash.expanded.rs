@@ -2,7 +2,7 @@
 //!
 //! Also demonstrates use of field type trait bounds.
 use derive_adhoc::define_derive_deftly;
-use derive_adhoc::{derive_adhoc, Adhoc};
+use derive_adhoc::{derive_adhoc, Deftly};
 use std::fmt::Debug;
 use std::hash::{Hash, Hasher};
 #[derive_adhoc(MyHash)]

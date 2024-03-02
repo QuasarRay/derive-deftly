@@ -9,7 +9,7 @@
 
 #![allow(dead_code)]
 
-use derive_adhoc::{define_derive_deftly, Adhoc};
+use derive_adhoc::{define_derive_deftly, Deftly};
 
 define_derive_deftly! {
     // The output from this `dbg` is tested via tests/stderr/stderr-lib.rs
@@ -19,7 +19,7 @@ define_derive_deftly! {
     ${define IMPL { impl<'reference, $tgens> }}
     ${define REF_TYPE { $REFERENCE<'reference, $tgnames> }}
 
-    #[derive(Adhoc)]
+    #[derive(Deftly)]
     #[derive_truly_adhoc]
     $tvis $tdefkwd $REFERENCE<'reference, $tdefgens>
     ${tdefvariants $(
@@ -51,21 +51,21 @@ define_derive_deftly! {
 
 //   We can't do this for a Unit because it would end up with
 //   an unused lifetime.
-// #[derive(Adhoc)]
+// #[derive(Deftly)]
 // #[derive_adhoc(ReferenceVersion)]
 // struct Unit;
 
-#[derive(Adhoc)]
+#[derive(Deftly)]
 #[derive_adhoc(ReferenceVersion)]
 struct Tuple<F = ()>(F);
 
-#[derive(Adhoc)]
+#[derive(Deftly)]
 #[derive_adhoc(ReferenceVersion)]
 struct Struct<F = ()> {
     field: F,
 }
 
-#[derive(Adhoc)]
+#[derive(Deftly)]
 #[derive_adhoc(ReferenceVersion)]
 enum Enum<F = ()> {
     Unit,

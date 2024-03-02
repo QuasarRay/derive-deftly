@@ -1,6 +1,6 @@
-use derive_adhoc::{define_derive_deftly, derive_adhoc, Adhoc};
+use derive_adhoc::{define_derive_deftly, derive_adhoc, Deftly};
 
-#[derive(Adhoc)]
+#[derive(Deftly)]
 #[derive_truly_adhoc]
 struct DataType {
     foo: u8,
@@ -31,7 +31,7 @@ define_derive_deftly! {
     type Alias = ${ttype $junk};
 }
 
-#[derive(Adhoc)]
+#[derive(Deftly)]
 #[derive_adhoc(Broken)]
 #[derive_truly_adhoc]
 struct ForBroken;

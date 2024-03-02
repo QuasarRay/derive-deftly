@@ -30,7 +30,7 @@ to what is conceptually the first macro's output.
 
 ## Implementation approach - truly ad-hoc macros
 
-### 1. `#[derive(Adhoc)]` proc macro for saving struct definitions
+### 1. `#[derive(Deftly)]` proc macro for saving struct definitions
 
 Implemented in `capture.rs::derive_adhoc_derive_macro`.
 
@@ -145,14 +145,14 @@ The template expansion engine treats `$orig_dollar` as just a single `$`.
 (Again, the extra `{ }` parts after the driver and template
 include space for future expansion.)
 
-## 2. `#[derive_adhoc(Template)]`, implemented in `#[derive(Adhoc)]`
+## 2. `#[derive_adhoc(Template)]`, implemented in `#[derive(Deftly)]`
 
 Template reuse is also implemented in `capture.rs::derive_adhoc_derive_macro`.
 
 This
 
 ```rust,ignore
-    #[derive(Adhoc)]
+    #[derive(Deftly)]
     #[derive_adhoc(Template[AOPTIONS,...])]
     pub struct StructName { ... }
 ```

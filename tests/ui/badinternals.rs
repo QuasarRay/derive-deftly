@@ -4,9 +4,9 @@
 // test is not particularly realistic.  But it does exercise the error
 // generation code paths.
 
-use derive_adhoc::{define_derive_deftly, Adhoc};
+use derive_adhoc::{define_derive_deftly, Deftly};
 
-#[derive(Adhoc)]
+#[derive(Deftly)]
 #[derive_truly_adhoc]
 struct Driver;
 

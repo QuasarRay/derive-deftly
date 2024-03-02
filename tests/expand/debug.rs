@@ -7,7 +7,7 @@
 use std::fmt::{self, Debug, Formatter};
 
 use derive_adhoc::define_derive_deftly;
-use derive_adhoc::{derive_adhoc, Adhoc};
+use derive_adhoc::{derive_adhoc, Deftly};
 
 use derive_adhoc_tests::*;
 
@@ -71,7 +71,7 @@ impl<T: Clone> From<&Vec<T>> for PrettyVec<T> {
 
 struct Opaque;
 
-#[derive(Adhoc)]
+#[derive(Deftly)]
 #[derive_adhoc(MyDebug)]
 #[allow(dead_code)]
 struct DataType {

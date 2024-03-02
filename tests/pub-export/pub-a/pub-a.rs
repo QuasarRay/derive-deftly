@@ -51,18 +51,18 @@ pub mod a_trait {
 }
 
 mod local_use {
-    use derive_adhoc::Adhoc;
+    use derive_adhoc::Deftly;
 
     // When we refer to a local template, we do so without a path,
     // even though it was an exported template.
-    #[derive(Adhoc)]
+    #[derive(Deftly)]
     #[derive_adhoc(IsEnum)]
     #[derive_truly_adhoc]
     pub(crate) struct Local;
 }
 
 pub mod a_driver {
-    use derive_adhoc::Adhoc;
+    use derive_adhoc::Deftly;
 
     /// A struct which is exported as a derive-adhoc driver (iw with
     /// `#[derive_adhoc(pub)]` must be *visilbe* outside the crate.
@@ -94,7 +94,7 @@ pub mod a_driver {
     /// use it, and what would and wouldn't count as a semver major change.
     /// Anyone who *uses* an exported driver should refer to those docs,
     /// on pain of risking breakages due to `cargo update`.
-    #[derive(Adhoc)]
+    #[derive(Deftly)]
     #[derive_truly_adhoc(pub)]
     pub struct ADriver<T: Default> {
         pub field: AField<T>,

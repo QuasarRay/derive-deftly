@@ -1,6 +1,6 @@
-use derive_adhoc::{define_derive_deftly, derive_adhoc, Adhoc};
+use derive_adhoc::{define_derive_deftly, derive_adhoc, Deftly};
 
-#[derive(Adhoc)]
+#[derive(Deftly)]
 #[derive_truly_adhoc]
 #[adhoc(wrong = "{")]
 #[adhoc(dot = ".")]
@@ -47,24 +47,24 @@ derive_adhoc! {
     struct ${paste Bad ${tmeta(several_inner) as str}};
 }
 
-#[derive(Adhoc)]
+#[derive(Deftly)]
 #[derive_truly_adhoc]
 #[adhoc("forbidden")]
 struct TopLevelMetaLitForbidden;
 derive_adhoc! { TopLevelMetaLitForbidden: }
 
-#[derive(Adhoc)]
+#[derive(Deftly)]
 #[derive_truly_adhoc]
 #[adhoc(value = wrong)]
 struct MetaValueMustBeLit;
 derive_adhoc! { MetaValueMustBeLit: }
 
-#[derive(Adhoc)]
+#[derive(Deftly)]
 #[derive_truly_adhoc]
 #[adhoc(barelit("42"))]
 struct WithBareLit;
 
-#[derive(Adhoc)]
+#[derive(Deftly)]
 #[derive_truly_adhoc]
 #[adhoc(multi("1", "2"))]
 struct WithBareLitMulti;
@@ -84,7 +84,7 @@ define_derive_deftly! {
     struct ${paste Bad ${tmeta(std::cell::Cell::<String>::ne)w as str}};
 }
 
-#[derive(Adhoc)]
+#[derive(Deftly)]
 #[derive_truly_adhoc]
 #[derive_adhoc(TestFunkyPath)]
 #[adhoc(std::cell::Cell::<String>::new)]
@@ -94,7 +94,7 @@ derive_adhoc! {
     WithFunkyPath:
 }
 
-#[derive(Adhoc)]
+#[derive(Deftly)]
 #[derive_adhoc(TestFunkyPath)]
 struct WithoutfunkyPath;
 

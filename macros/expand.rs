@@ -1152,7 +1152,7 @@ impl ToTokens for Fname<'_> {
 /// `derive_deftly_engine!` -- implements the actual template engine
 ///
 /// In my design, the input contains, firstly, literally the definition
-/// that #[derive(Adhoc)] was applied to (see NOTES.txt).
+/// that #[derive(Deftly)] was applied to (see NOTES.txt).
 /// Using the literal input, rather than some pre-parsed version, is
 /// slower, but means that we aren't inventing a nontrivial data format which
 /// potentially crosses crate boundaries with semver implications.

@@ -1,8 +1,8 @@
 // Tests of syntax we may wish to use for things in the future
 
-use derive_adhoc::{define_derive_deftly, derive_adhoc, Adhoc};
+use derive_adhoc::{define_derive_deftly, derive_adhoc, Deftly};
 
-#[derive(Adhoc)]
+#[derive(Deftly)]
 #[derive_truly_adhoc]
 struct ReserveDriver;
 

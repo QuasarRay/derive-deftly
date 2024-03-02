@@ -2,7 +2,7 @@
 //!
 //! This gives a basic demonstration of how to handle an enum.
 
-use derive_adhoc::{define_derive_deftly, derive_adhoc, Adhoc};
+use derive_adhoc::{define_derive_deftly, derive_adhoc, Deftly};
 
 trait Trait {
     fn shape_top(&self) -> &'static str;
@@ -77,24 +77,24 @@ define_derive_deftly! {
     }
 }
 
-#[derive(Adhoc)]
+#[derive(Deftly)]
 #[derive_adhoc(Trait, GetUsize)]
 #[derive_truly_adhoc]
 struct Unit;
 
-#[derive(Adhoc)]
+#[derive(Deftly)]
 #[derive_adhoc(Trait, GetUsize)]
 #[adhoc(hi(ferris))]
 struct Tuple(usize);
 
-#[derive(Adhoc)]
+#[derive(Deftly)]
 #[derive_adhoc(Trait, GetUsize)]
 #[adhoc(hello(there = 42))]
 struct Struct {
     field: usize,
 }
 
-#[derive(Adhoc)]
+#[derive(Deftly)]
 #[derive_adhoc(Trait, GetUsize)]
 enum Enum {
     #[adhoc(hello(there))]
@@ -106,7 +106,7 @@ enum Enum {
     },
 }
 
-#[derive(Adhoc)]
+#[derive(Deftly)]
 #[derive_adhoc(Trait)]
 union Union {
     field: usize,

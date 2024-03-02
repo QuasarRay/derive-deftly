@@ -1,24 +1,24 @@
-use derive_adhoc::Adhoc;
+use derive_adhoc::Deftly;
 
-#[derive(Adhoc)]
+#[derive(Deftly)]
 struct Struct {
     #[derive_adhoc(Lemons)]
     field: usize,
 }
 
-#[derive(Adhoc)]
+#[derive(Deftly)]
 struct Tuple(
     #[derive_adhoc(Limes)] //
     usize,
 );
 
-#[derive(Adhoc)]
+#[derive(Deftly)]
 union Union {
     #[derive_adhoc(Oranges)]
     variant: usize,
 }
 
-#[derive(Adhoc)]
+#[derive(Deftly)]
 enum Apples {
     #[derive_adhoc(Apples)]
     Apples {
@@ -27,7 +27,7 @@ enum Apples {
     },
 }
 
-#[derive(Adhoc)]
+#[derive(Deftly)]
 enum Pears {
     Pears {
         #[derive_adhoc(Pears)]
@@ -35,7 +35,7 @@ enum Pears {
     },
 }
 
-#[derive(Adhoc)]
+#[derive(Deftly)]
 enum Quince {
     Quince(
         #[derive_adhoc(Quince)] //
@@ -45,7 +45,7 @@ enum Quince {
 
 struct Const<const X: i32>;
 
-#[derive(Adhoc)]
+#[derive(Deftly)]
 struct Ludicrous {
     field: Const<
         {

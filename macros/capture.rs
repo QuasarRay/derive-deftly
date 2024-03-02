@@ -1,4 +1,4 @@
-//! Macro impl for capturing the driver `#[derive(Adhoc)]`
+//! Macro impl for capturing the driver `#[derive(Deftly)]`
 
 use super::prelude::*;
 
@@ -90,7 +90,7 @@ fn check_for_misplaced_atrs(data: &syn::Data) -> syn::Result<()> {
     }
 }
 
-/// This is #[derive(Adhoc)]
+/// This is #[derive(Deftly)]
 pub fn derive_adhoc_derive_macro(
     driver_stream: TokenStream,
 ) -> Result<TokenStream, syn::Error> {
@@ -99,9 +99,9 @@ pub fn derive_adhoc_derive_macro(
     // a bit like syn::DeriveInput.
     let driver: syn::DeriveInput = syn::parse2(driver_stream.clone())?;
 
-    // eprintln!("---------- #[derive(Adhoc)] got start ----------");
+    // eprintln!("---------- #[derive(Deftly)] got start ----------");
     // eprintln!("{}", &driver_stream);
-    // eprintln!("---------- #[derive(Adhoc)] got end ----------");
+    // eprintln!("---------- #[derive(Deftly)] got end ----------");
 
     let driver_mac_name =
         format_ident!("derive_adhoc_driver_{}", &driver.ident);
@@ -289,9 +289,9 @@ pub fn derive_adhoc_derive_macro(
     }
 
     // let ident = &driver.ident;
-    // eprintln!("---------- derive(Adhoc) start on {} ----------", ident);
+    // eprintln!("---------- derive(Deftly) start on {} ----------", ident);
     // eprintln!("{}", &output);
-    // eprintln!("---------- derive(Adhoc) end on {} ----------", ident);
+    // eprintln!("---------- derive(Deftly) end on {} ----------", ident);
 
     Ok(output)
 }

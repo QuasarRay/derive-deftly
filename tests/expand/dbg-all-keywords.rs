@@ -1,9 +1,9 @@
-use derive_adhoc::{define_derive_deftly, Adhoc};
+use derive_adhoc::{define_derive_deftly, Deftly};
 
 define_derive_deftly! { Dbg = $dbg_all_keywords }
 
 #[allow(dead_code)]
-#[derive(Adhoc)]
+#[derive(Deftly)]
 #[derive_adhoc(Dbg)]
 enum Enum {
     Unit,
@@ -12,17 +12,17 @@ enum Enum {
 }
 
 #[allow(dead_code)]
-#[derive(Adhoc)]
+#[derive(Deftly)]
 #[derive_adhoc(Dbg)]
 struct Unit;
 
 #[allow(dead_code)]
-#[derive(Adhoc)]
+#[derive(Deftly)]
 #[derive_adhoc(Dbg)]
 struct Tuple(usize);
 
 #[allow(dead_code)]
-#[derive(Adhoc)]
+#[derive(Deftly)]
 #[derive_adhoc(Dbg)]
 struct Struct {
     field: String,

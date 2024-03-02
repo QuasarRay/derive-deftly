@@ -148,7 +148,7 @@ pub use tutils::*;
 // These mostly serve to avoid rustdoc warnings from directly::macros,
 // which is macros.rs re-built outside the proc macro system.
 #[allow(unused_imports)]
-use derive_adhoc::{define_derive_deftly, derive_adhoc, Adhoc};
+use derive_adhoc::{define_derive_deftly, derive_adhoc, Deftly};
 
 //---------- modules containing straightforwrad `#[test]` tests ----------
 

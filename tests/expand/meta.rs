@@ -2,9 +2,9 @@
 
 #![allow(dead_code, unused_variables)]
 
-use derive_adhoc::{derive_adhoc, Adhoc};
+use derive_adhoc::{derive_adhoc, Deftly};
 
-#[derive(Adhoc)]
+#[derive(Deftly)]
 #[derive_truly_adhoc]
 struct IgnoredThings {
     #[adhoc(prefix = "pfx")]
@@ -38,7 +38,7 @@ derive_adhoc! {
 // Arguably it is wrong that this is accepted.  However, rejecting it
 // would have complex semver implications.  Maybe the template is
 // from a newer derive-adhoc which handles this case, for example.
-#[derive(Adhoc)]
+#[derive(Deftly)]
 #[adhoc("forbidden")]
 #[adhoc(value = wrong)]
 struct MetasNotCheckedIfNoTemplatesExpanded;

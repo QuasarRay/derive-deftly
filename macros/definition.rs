@@ -176,7 +176,7 @@ pub fn define_derive_deftly_func_macro(
             r#"
 
 This is a `derive_adhoc` template.  Do not invoke it directly.
-To use it, write: `#[derive(Adhoc)] #[derive_adhoc({})]`."#,
+To use it, write: `#[derive(Deftly)] #[derive_adhoc({})]`."#,
             templ_name
         );
         quote!( #[doc = #addendum] )

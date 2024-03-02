@@ -7,7 +7,7 @@
 //! `recent` in the filename arranges for it not to be run by the MSRV
 //! compiler.
 #![allow(dead_code)]
-use derive_adhoc::{derive_adhoc, Adhoc};
+use derive_adhoc::{derive_adhoc, Deftly};
 #[derive_truly_adhoc]
 enum Enum<T = (), const N: usize = 1> {
     Unit,
