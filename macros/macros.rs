@@ -99,11 +99,14 @@ pub fn derive_deftly_engine(
     output.into()
 }
 
-/// Expand an ad-hoc template, on a data structure decorated `#[derive(Deftly)]`
+/// Expand an ad-hoc template, on a data structure decorated `#[derive_deftly_adhoc]`
 ///
 /// ```ignore
 /// # use derive_deftly_macros::{Deftly, derive_deftly_adhoc, derive_deftly_engine};
-/// # #[derive(Deftly)] struct DataStructureType;
+/// #[derive(Deftly)]
+/// #[derive_deftly_adhoc]
+/// struct DataStructureType { }
+///
 /// # fn main() {
 /// # const TEMPLATE: () = ();
 /// derive_deftly_adhoc! {

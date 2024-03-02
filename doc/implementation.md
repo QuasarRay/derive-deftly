@@ -28,80 +28,6 @@ So we must sometimes define macros that apply other macros
 (whose name is supplied as an argument)
 to what is conceptually the first macro's output.
 
-## Implementation approach - truly ad-hoc macros
-
-### 1. `#[derive(Deftly)]` proc macro for saving struct definitions
-
-Implemented in `capture.rs::derive_deftly`.
-
-When applied to (e.g.) `pub struct StructName`,
-with `#[derive_deftly_adhoc]` specified
-generates this
-
-```rust,ignore
-    macro_rules! derive_deftly_driver_StructName { {
-        { $($template:tt)* }
-        { ($orig_dollar:tt) $(future:tt)* }
-        $($tpassthrough:tt)* 
-     } => {
-        derive_deftly_engine!{
-            { pub struct StructName { /* original struct definition */ } }
-            { }
-            { $($template)* }
-            { $($tpassthrough)* }
-        }
-    } }
-```
-
-(The extra `{ }` parts after the driver and template
-include space for future expansion.)
-
-In the `pub struct` part every `$` is replaced with `$orig_dollar`,
-to use the `$` passed in at the invocation site.
-
-### 2. `derive_deftly_adhoc!` function-like proc macro for applying to a template
-
-Implemented in `invocation.rs::derive_deftly_adhoc`.
-
-When applied like this
-```rust,ignore
-    derive_deftly_adhoc!{
-       StructName TOPTIONS...:
-       TEMPLATE...
-    }
-```
-
-Expands to
-```rust,ignore
-    derive_deftly_driver_StructName! {
-       { TEMPLATE... }
-       { ($) }
-       crate; [TOPTIONS...]
-    }
-```
-
-### 3. Function-like proc macro to do the actual expansion
-
-Implemented in `expand.rs::derive_deftly_engine_func_macro`.
-
-The result of expanding the above is this:
-
-```rust,ignore
-    derive_deftly_engine!{
-        { pub struct StructName { /* original struct definition */ } }
-        { }
-        { TEMPLATE... }
-        { crate; [TOPTIONS...] /*no template name*/; }
-    }
-```
-
-`derive_deftly_engine` parses `pub struct StructName`,
-and implements a bespoke template expander,
-whose template syntax resembles the expansion syntax from `macro_rules`.
-
-`crate` is just used as the expansion for `${crate}`.
-(For an ad-hoc template, the local crate is correct.)
-
 ## Implementation approach - reusable template macros
 
 ## 1. `define_derive_deftly!` macro for defining a reuseable template
@@ -185,3 +111,77 @@ resulting in a call to `derive_deftly_engine`:
         { $crate; [TOPTIONS...] Template; }
     }
 ```
+
+## Implementation approach - ad-hoc macro applications
+
+### 1. `#[derive(Deftly)]` proc macro for saving struct definitions
+
+Implemented in `capture.rs::derive_deftly`.
+
+When applied to (e.g.) `pub struct StructName`,
+with `#[derive_deftly_adhoc]` specified
+generates this
+
+```rust,ignore
+    macro_rules! derive_deftly_driver_StructName { {
+        { $($template:tt)* }
+        { ($orig_dollar:tt) $(future:tt)* }
+        $($tpassthrough:tt)* 
+     } => {
+        derive_deftly_engine!{
+            { pub struct StructName { /* original struct definition */ } }
+            { }
+            { $($template)* }
+            { $($tpassthrough)* }
+        }
+    } }
+```
+
+(The extra `{ }` parts after the driver and template
+include space for future expansion.)
+
+In the `pub struct` part every `$` is replaced with `$orig_dollar`,
+to use the `$` passed in at the invocation site.
+
+### 2. `derive_deftly_adhoc!` function-like proc macro for applying to a template
+
+Implemented in `invocation.rs::derive_deftly_adhoc`.
+
+When applied like this
+```rust,ignore
+    derive_deftly_adhoc!{
+       StructName TOPTIONS...:
+       TEMPLATE...
+    }
+```
+
+Expands to
+```rust,ignore
+    derive_deftly_driver_StructName! {
+       { TEMPLATE... }
+       { ($) }
+       crate; [TOPTIONS...]
+    }
+```
+
+### 3. Function-like proc macro to do the actual expansion
+
+Implemented in `expand.rs::derive_deftly_engine_func_macro`.
+
+The result of expanding the above is this:
+
+```rust,ignore
+    derive_deftly_engine!{
+        { pub struct StructName { /* original struct definition */ } }
+        { }
+        { TEMPLATE... }
+        { crate; [TOPTIONS...] /*no template name*/; }
+    }
+```
+
+`derive_deftly_engine` parses `pub struct StructName`,
+and implements a bespoke template expander,
+whose template syntax resembles the expansion syntax from `macro_rules`.
+
+`crate` is just used as the expansion for `${crate}`.
+(For an ad-hoc template, the local crate is correct.)
