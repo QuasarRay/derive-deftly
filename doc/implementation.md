@@ -59,13 +59,13 @@ include space for future expansion.)
 In the `pub struct` part every `$` is replaced with `$orig_dollar`,
 to use the `$` passed in at the invocation site.
 
-### 2. `derive_adhoc!` function-like proc macro for applying to a template
+### 2. `derive_deftly_adhoc!` function-like proc macro for applying to a template
 
 Implemented in `invocation.rs::derive_adhoc_func_macro`.
 
 When applied like this
 ```rust,ignore
-    derive_adhoc!{
+    derive_deftly_adhoc!{
        StructName TOPTIONS...:
        TEMPLATE...
     }

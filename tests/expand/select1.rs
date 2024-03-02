@@ -17,7 +17,7 @@ struct Both {
     c: usize,
 }
 
-derive_adhoc! {
+derive_deftly_adhoc! {
     Both:
 
     #[derive(Default, Debug)]

@@ -16,7 +16,7 @@ pub struct ChannelsParams {
     padding_parameters: usize,
 }
 
-derive_adhoc! {
+derive_deftly_adhoc! {
     ChannelsParams:
 
     #[derive(Debug, Default, Clone, Eq, PartialEq)]
@@ -33,7 +33,7 @@ derive_adhoc! {
     }
 }
 
-derive_adhoc! {
+derive_deftly_adhoc! {
     ChannelsParams:
 
     #[allow(dead_code)]
@@ -46,7 +46,7 @@ derive_adhoc! {
     }
 }
 
-derive_adhoc! {
+derive_deftly_adhoc! {
     ChannelsParams:
     type Wombat = $ tname;
 }
@@ -56,7 +56,7 @@ type K = Wombat;
 fn main() {
     let _: K = ChannelsParams::default();
 
-    derive_adhoc! {
+    derive_deftly_adhoc! {
         ChannelsParams:
         $(
             println!("field name {:?}", stringify!($fname));

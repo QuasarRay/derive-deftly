@@ -9,18 +9,18 @@ use derive_adhoc::{define_derive_deftly, derive_adhoc, Deftly};
 #[adhoc(several_inner(several = "first", several = "second"))]
 struct DataType {}
 
-derive_adhoc! {
+derive_deftly_adhoc! {
     DataType:
 
     const K: () = ${tmeta(wrong)}
 }
-// Invoke derive_adhoc! a second time, because (empirically) the
+// Invoke derive_deftly_adhoc! a second time, because (empirically) the
 // attempt to parse "{" causes some kind of nonlocal exit:
 // syn::LitStr::parse is called but doesn't return.  And then, something
 // arranges to report only the *last* such error.  But we want to see
 // all the errors, so invoke the macro separately.
 
-derive_adhoc! {
+derive_deftly_adhoc! {
     DataType:
 
     struct ${paste Bad ${tmeta(dot) as str}};
@@ -33,14 +33,14 @@ derive_adhoc! {
 
 // Something somewhere deduplicates errors, so if we want to see them
 // all we need to re-invoke derive-adhoc:
-derive_adhoc! {
+derive_deftly_adhoc! {
     DataType:
 
     // fails because `barelit("42")` is not helpful
     struct ${paste Bad ${tmeta(barelit(is_value)) as str}};
 }
 
-derive_adhoc! {
+derive_deftly_adhoc! {
     DataType:
 
     // fails because `several_inner(...)` is not helpful
@@ -51,13 +51,13 @@ derive_adhoc! {
 #[derive_deftly_adhoc]
 #[adhoc("forbidden")]
 struct TopLevelMetaLitForbidden;
-derive_adhoc! { TopLevelMetaLitForbidden: }
+derive_deftly_adhoc! { TopLevelMetaLitForbidden: }
 
 #[derive(Deftly)]
 #[derive_deftly_adhoc]
 #[adhoc(value = wrong)]
 struct MetaValueMustBeLit;
-derive_adhoc! { MetaValueMustBeLit: }
+derive_deftly_adhoc! { MetaValueMustBeLit: }
 
 #[derive(Deftly)]
 #[derive_deftly_adhoc]
@@ -69,12 +69,12 @@ struct WithBareLit;
 #[adhoc(multi("1", "2"))]
 struct WithBareLitMulti;
 
-derive_adhoc! {
+derive_deftly_adhoc! {
     WithBareLit:
     struct ${paste Bad ${tmeta(barelit) as str}};
 }
 
-derive_adhoc! {
+derive_deftly_adhoc! {
     WithBareLitMulti:
     struct ${paste Bad ${tmeta(multi) as str}};
 }
@@ -90,7 +90,7 @@ define_derive_deftly! {
 #[adhoc(std::cell::Cell::<String>::new)]
 struct WithFunkyPath;
 
-derive_adhoc! {
+derive_deftly_adhoc! {
     WithFunkyPath:
 }
 

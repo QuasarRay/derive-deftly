@@ -44,9 +44,9 @@ pub mod adhoc_template {
     /// unqualified struct name and field names are useable here.
     use pub_a::a_driver::*;
 
-    derive_adhoc! {
+    derive_deftly_adhoc! {
         // When expanding a template for a foreign struct, pass
-        // the crate name and struct name to `derive_adhoc!`.
+        // the crate name and struct name to `derive_deftly_adhoc!`.
         //
         // (Macro scoping rules mean that the driver is visible
         // only at the top-level, not in the module it was defined in.)

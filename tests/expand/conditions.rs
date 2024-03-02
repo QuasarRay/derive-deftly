@@ -112,7 +112,7 @@ union Union {
     field: usize,
 }
 
-derive_adhoc! {
+derive_deftly_adhoc! {
     Unit:
 
     fn static_test() {

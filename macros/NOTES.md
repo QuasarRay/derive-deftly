@@ -58,7 +58,7 @@ Ideally that attribute macro would be `#[derive_adhoc]`.  However:
 
  * It is not possible to have an attribute macro and a function-like macro with the same name; even though the invocation syntaxes (and implementing macro function signatures) are different.
 
-We are using `derive_adhoc!` for the main truly adhoc from-struct derivation.  I don't think we want to change that.  So we need a different name for the attribute macro.
+We are using `derive_deftly_adhoc!` for the main truly adhoc from-struct derivation.  I don't think we want to change that.  So we need a different name for the attribute macro.
 
 ## Proposed taxonomy of macros and attributes
 
@@ -68,12 +68,12 @@ won't get in the way.
 
  * **`#[derive(Deftly)]`**: invokes the from-struct derivation machinery; enables:
     1. use of `#[derive_deftly(ReuseableMacro)]` on this very struct
-    2. later use of `derive_adhoc!` of the same struct
+    2. later use of `derive_deftly_adhoc!` of the same struct
     3. `#[adhoc(...)]` attributes on bits of the data structure
 
  * **`define_derive_deftly!{ [pub] MACNAME = TEMPLATE }`**: define a reusable template, which may be invoked as `#[derive_deftly(MACNAME)]` (within a struct annotated with `#[derive(Deftly)]` or `#[item_derive_deftly(MACNAME)]`.
 
- * **`derive_adhoc!{ DRIVERNAME: TEMPLATE }`**: truly-adhoc derivation from something previously annotated with `#[derive(Ahoc)]` or `#[item_derive_adhoc]`.  `DRIVERNAME` is an item path; we conflate the type and value namespaces.
+ * **`derive_deftly_adhoc!{ DRIVERNAME: TEMPLATE }`**: truly-adhoc derivation from something previously annotated with `#[derive(Ahoc)]` or `#[item_derive_adhoc]`.  `DRIVERNAME` is an item path; we conflate the type and value namespaces.
 
  * **`#[item_derive_adhoc]`**: attribute macro to be applied to items.  The item is reproduced unchanged, except that `#[adhoc]` attributes *in places where we would look for them* are filtered out. `#[item_derive_deftly(MACNAME)]` can be used to apply a reuseable template.
 

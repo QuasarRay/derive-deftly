@@ -11,7 +11,7 @@ pub mod adhoc_template {
 
     use pub_a::a_driver::*;
 
-    derive_adhoc! {
+    derive_deftly_adhoc! {
         pub_a::ADriver:
 
         impl<$tgens> NumFields for $ttype {

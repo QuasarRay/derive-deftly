@@ -1,4 +1,4 @@
-//! Macro impl for invoking a predefined template `derive_adhoc!`
+//! Macro impl for invoking a predefined template `derive_deftly_adhoc!`
 
 use super::prelude::*;
 
@@ -25,7 +25,7 @@ impl Parse for TemplateInvocation {
     }
 }
 
-/// This is `derive_adhoc!`
+/// This is `derive_deftly_adhoc!`
 ///
 /// It parses
 /// ```rust,ignore
@@ -70,9 +70,9 @@ pub fn derive_adhoc_func_macro(
         }
     };
 
-    // eprintln!("---------- derive_adhoc! output start ----------");
+    // eprintln!("---------- derive_deftly_adhoc! output start ----------");
     // eprintln!("{}", &output);
-    // eprintln!("---------- derive_adhoc! output end ----------");
+    // eprintln!("---------- derive_deftly_adhoc! output end ----------");
 
     Ok(output)
 }

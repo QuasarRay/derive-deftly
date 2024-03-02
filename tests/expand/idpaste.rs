@@ -17,7 +17,7 @@ struct TypeNames {
     error: std::slice::Chunks<'static, ()>,
 }
 
-derive_adhoc! {
+derive_deftly_adhoc! {
     TypeNames:
 
     struct ${paste Pre $tdeftype Post} {
@@ -33,7 +33,7 @@ struct TopName<F> {
     top_name_field: F,
 }
 
-derive_adhoc! {
+derive_deftly_adhoc! {
     TopName:
 
     #[allow(non_snake_case)]
@@ -53,7 +53,7 @@ struct ExpandName {
     k: String,
 }
 
-derive_adhoc! {
+derive_deftly_adhoc! {
     ExpandName:
 
     struct ${paste "Pre" $tdeftype "Post"} {
@@ -77,7 +77,7 @@ enum EdgeCases {
     Struct { r#for: u32, r#unneeded: u32 },
 }
 
-derive_adhoc! {
+derive_deftly_adhoc! {
     EdgeCases:
 
     impl $ttype {

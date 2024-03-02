@@ -27,7 +27,7 @@ We expect to increase it cautiously and only with good reason.
 
 ### Breaking
 
- * `#[derive_deftly_adhoc]` is now required for `derive_adhoc!`
+ * `#[derive_deftly_adhoc]` is now required for `derive_deftly_adhoc!`
    (ie, non-precanned templates).
 
 ### 0.8.1

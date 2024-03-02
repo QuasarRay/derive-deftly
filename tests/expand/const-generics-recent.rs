@@ -18,7 +18,7 @@ enum Enum<T = (), const N: usize = 1> {
     Tuple([T; N]),
 }
 
-derive_adhoc! {
+derive_deftly_adhoc! {
     Enum:
 
     $tvis $tdefkwd ${paste $tdeftype Copy}

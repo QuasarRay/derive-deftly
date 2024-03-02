@@ -18,7 +18,7 @@ define_derive_deftly! {
 #[derive_deftly_adhoc]
 struct S(usize);
 
-derive_adhoc! {
+derive_deftly_adhoc! {
     S:
 
     impl $ttype {

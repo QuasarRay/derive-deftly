@@ -285,7 +285,7 @@ within `<...>` but without an introducing `::`.
 The toplevel type expansions, `$ttype` and `$tdeftype`,
 don't contain a path prefix, even if
 the driver type argument to
-`derive_adhoc!`
+`derive_deftly_adhoc!`
 had a path prefix.
 
 `$vtype` (and `$ttype` and `$tdeftype`) are not suitable for matching.
@@ -669,7 +669,7 @@ enum Enum {
     Tuple(usize),
     Struct { field: String },
 }
-derive_adhoc! {
+derive_deftly_adhoc! {
     Enum:
     $dbg_all_keywords
     // ... rest of the template you're developing ...
@@ -906,7 +906,7 @@ which will be applied to each relevant template expansion:
 
 ```rust,ignore
 // Expand TEMPLATE for DataStructureType, with OPTIONS
-derive_adhoc! { DataStructureType OPTIONS,... : TEMPLATE }
+derive_deftly_adhoc! { DataStructureType OPTIONS,... : TEMPLATE }
 
 // Define a template Template which always expands with OPTIONS
 define_derive_deftly! { Template OPTIONS,... = TEMPLATE }

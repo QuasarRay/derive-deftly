@@ -76,7 +76,7 @@ mod has_template {
 /// When definining a driver that is to be used as a derive input
 /// outside its defining module, but inside the same crate,
 /// `#[macro_use]` is needed, on the containing module(s).  The driver
-/// is then available for `derive_adhoc!` *textually after* its
+/// is then available for `derive_deftly_adhoc!` *textually after* its
 /// definition.
 #[macro_use]
 pub mod has_driver {
@@ -109,9 +109,9 @@ mod adhoc_template {
     // manually.
     use super::has_driver::{Driver, Field};
 
-    derive_adhoc! {
+    derive_deftly_adhoc! {
         // When expanding a template for a crate-local struct, pass
-        // just the name of the struct to `derive_adhoc!`.
+        // just the name of the struct to `derive_deftly_adhoc!`.
         //
         // (Exporting of the driver so that other crates can derive from it
         // is supported via `#[derive_deftly(pub)]` but it brings

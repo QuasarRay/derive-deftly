@@ -10,7 +10,7 @@ struct S {
     b: i32,
 }
 
-derive_adhoc! {
+derive_deftly_adhoc! {
     S expect items:
 
     ${define X 0}
@@ -51,7 +51,7 @@ enum T<'g> {
     G(&'g [i32]),
 }
 
-derive_adhoc! {
+derive_deftly_adhoc! {
     S expect items:
 
     ${define CASE {
@@ -83,7 +83,7 @@ derive_adhoc! {
     ];
 }
 
-derive_adhoc! {
+derive_deftly_adhoc! {
     T expect items:
 
     fn t_compare() {

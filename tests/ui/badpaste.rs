@@ -8,7 +8,7 @@ struct DataType {
     bar: Vec<String>,
 }
 
-derive_adhoc! {
+derive_deftly_adhoc! {
     DataType:
 
     ${for fields {
@@ -16,19 +16,19 @@ derive_adhoc! {
     }}
 }
 
-derive_adhoc! {
+derive_deftly_adhoc! {
     DataType:
 
     struct ${paste $tname _ 42};
 }
 
-derive_adhoc! {
+derive_deftly_adhoc! {
     DataType:
 
     struct ${paste $ttype ${tmeta(something) as ty}};
 }
 
-derive_adhoc! {
+derive_deftly_adhoc! {
     DataType:
 
     // This expands to "r#struct Broken { }"

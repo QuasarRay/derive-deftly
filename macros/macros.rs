@@ -106,7 +106,7 @@ pub fn derive_deftly_engine(
 /// # #[derive(Deftly)] struct DataStructureType;
 /// # fn main() {
 /// # const TEMPLATE: () = ();
-/// derive_adhoc! {
+/// derive_deftly_adhoc! {
 ///     DataStructureType OPTIONS,..:
 ///     TEMPLATE
 /// }
@@ -260,7 +260,7 @@ pub fn define_derive_deftly(
 ///  2. If `#[derive_deftly_adhoc]` is specified,
 ///     captures the data structure definition,
 ///     so that it can be used with calls to
-///     [`derive_adhoc!`](macro@crate::derive_adhoc).
+///     [`derive_deftly_adhoc!`](macro@crate::derive_adhoc).
 ///
 /// ## `#[adhoc]` attribute
 ///
@@ -286,16 +286,16 @@ pub fn define_derive_deftly(
 ///
 ///  1. `define_derive_deftly! { MyMacro = ... }`
 ///  2. `#[derive(Deftly)] #[derive_deftly(MyMacro)] struct MyStruct { ... }`
-///  3. `derive_adhoc! { MyStruct: ... }`
+///  3. `derive_deftly_adhoc! { MyStruct: ... }`
 ///
 /// Any reusable templates defined with
 /// `define_derive_deftly!` must lexically their precede
 /// uses with `#[derive(Deftly) #[derive_deftly(...)]`.
 ///
-/// And, for one-off templates (`derive_adhoc!`),
+/// And, for one-off templates (`derive_deftly_adhoc!`),
 /// the data structure with its `#[derive(Deftly)]`
 /// must lexically precede
-/// the references in `derive_adhoc!`,
+/// the references in `derive_deftly_adhoc!`,
 /// so that the data structure definition macro
 /// is in scope.
 ///
@@ -342,7 +342,7 @@ pub fn define_derive_deftly(
 /// write:
 /// `#[derive_deftly_adhoc(pub)]`.
 /// The driver can then be derived from in other crates,
-/// with `derive_adhoc! { exporting_crate::DriverStruct: ... }`.
+/// with `derive_deftly_adhoc! { exporting_crate::DriverStruct: ... }`.
 ///
 /// This is a tricky feature,
 /// which should only be used by experts

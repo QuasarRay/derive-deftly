@@ -35,7 +35,7 @@ error: template defined for union, but applied to struct (actual kind)
 13 | | struct BadOptionsDriver;
    | |________________________^
 ...
-23 | / derive_adhoc! {
+23 | / derive_deftly_adhoc! {
 24 | |     BadOptionsDriver for union:
 25 | | }
    | |_- in this macro invocation

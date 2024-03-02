@@ -4,7 +4,7 @@ error: this file contains an unclosed delimiter
 3  |   #[derive(Deftly)]
    |            ^^^^^^ unclosed delimiter
 ...
-12 | / derive_adhoc! {
+12 | / derive_deftly_adhoc! {
 13 | |     DataType:
 14 | |
 15 | |     const K: () = ${tmeta(wrong)}
@@ -19,7 +19,7 @@ error: cannot parse string into token stream
 3  |   #[derive(Deftly)]
    |            ^^^^^^
 ...
-12 | / derive_adhoc! {
+12 | / derive_deftly_adhoc! {
 13 | |     DataType:
 14 | |
 15 | |     const K: () = ${tmeta(wrong)}
@@ -40,7 +40,7 @@ error: probably-invalid input to identifier pasting
 6  |   #[adhoc(dot = ".")]
    |                 ^^^
 ...
-23 | / derive_adhoc! {
+23 | / derive_deftly_adhoc! {
 24 | |     DataType:
 25 | |
 26 | |     struct ${paste Bad ${tmeta(dot) as str}};
@@ -57,7 +57,7 @@ error: expected a list with sub-attributes, found a simple value
 6  |   #[adhoc(dot = ".")]
    |           ^^^
 ...
-23 | / derive_adhoc! {
+23 | / derive_deftly_adhoc! {
 24 | |     DataType:
 25 | |
 26 | |     struct ${paste Bad ${tmeta(dot) as str}};
@@ -80,7 +80,7 @@ error: attribute value expanded, but no suitable value in data structure definit
 10 | | struct DataType {}
    | |_________________^
 ...
-23 | / derive_adhoc! {
+23 | / derive_deftly_adhoc! {
 24 | |     DataType:
 25 | |
 26 | |     struct ${paste Bad ${tmeta(dot) as str}};
@@ -103,7 +103,7 @@ error: tried to expand just attribute value, but it was specified multiple times
 7  |   #[adhoc(several = "first")]
    |           ^^^^^^^
 ...
-23 | / derive_adhoc! {
+23 | / derive_deftly_adhoc! {
 24 | |     DataType:
 25 | |
 26 | |     struct ${paste Bad ${tmeta(dot) as str}};
@@ -120,7 +120,7 @@ error: tried to expand just attribute value, but it was specified multiple times
 8  |   #[adhoc(several = "second")]
    |           ^^^^^^^
 ...
-23 | / derive_adhoc! {
+23 | / derive_deftly_adhoc! {
 24 | |     DataType:
 25 | |
 26 | |     struct ${paste Bad ${tmeta(dot) as str}};
@@ -143,7 +143,7 @@ error: tried to expand just attribute value, but it was specified multiple times
 9  |   #[adhoc(several_inner(several = "first", several = "second"))]
    |                         ^^^^^^^
 ...
-23 | / derive_adhoc! {
+23 | / derive_deftly_adhoc! {
 24 | |     DataType:
 25 | |
 26 | |     struct ${paste Bad ${tmeta(dot) as str}};
@@ -160,7 +160,7 @@ error: tried to expand just attribute value, but it was specified multiple times
 9  |   #[adhoc(several_inner(several = "first", several = "second"))]
    |                                            ^^^^^^^
 ...
-23 | / derive_adhoc! {
+23 | / derive_deftly_adhoc! {
 24 | |     DataType:
 25 | |
 26 | |     struct ${paste Bad ${tmeta(dot) as str}};
@@ -189,7 +189,7 @@ error: attribute value expanded, but no value in data structure definition (in t
 10 | | struct DataType {}
    | |_________________^
 ...
-36 | / derive_adhoc! {
+36 | / derive_deftly_adhoc! {
 37 | |     DataType:
 38 | |
 39 | |     // fails because `barelit("42")` is not helpful
@@ -211,7 +211,7 @@ error: expected a leaf node, found a list with sub-attributes
 9  |   #[adhoc(several_inner(several = "first", several = "second"))]
    |           ^^^^^^^^^^^^^
 ...
-43 | / derive_adhoc! {
+43 | / derive_deftly_adhoc! {
 44 | |     DataType:
 45 | |
 46 | |     // fails because `several_inner(...)` is not helpful
@@ -233,7 +233,7 @@ error: attribute value expanded, but no suitable value in data structure definit
 10 | | struct DataType {}
    | |_________________^
 ...
-43 | / derive_adhoc! {
+43 | / derive_deftly_adhoc! {
 44 | |     DataType:
 45 | |
 46 | |     // fails because `several_inner(...)` is not helpful
@@ -255,7 +255,7 @@ error: expected identifier
 52 | #[adhoc("forbidden")]
    |         ^^^^^^^^^^^
 53 | struct TopLevelMetaLitForbidden;
-54 | derive_adhoc! { TopLevelMetaLitForbidden: }
+54 | derive_deftly_adhoc! { TopLevelMetaLitForbidden: }
    | ------------------------------------------- in this macro invocation
    |
    = note: this error originates in the macro `derive_deftly_driver_TopLevelMetaLitForbidden` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
@@ -266,7 +266,7 @@ error: expected literal
 58 | #[adhoc(value = wrong)]
    |                 ^^^^^
 59 | struct MetaValueMustBeLit;
-60 | derive_adhoc! { MetaValueMustBeLit: }
+60 | derive_deftly_adhoc! { MetaValueMustBeLit: }
    | ------------------------------------- in this macro invocation
    |
    = note: this error originates in the macro `derive_deftly_driver_MetaValueMustBeLit` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
@@ -277,7 +277,7 @@ error: expected identifier
 64 |   #[adhoc(barelit("42"))]
    |                   ^^^^
 ...
-72 | / derive_adhoc! {
+72 | / derive_deftly_adhoc! {
 73 | |     WithBareLit:
 74 | |     struct ${paste Bad ${tmeta(barelit) as str}};
 75 | | }
@@ -291,7 +291,7 @@ error: expected identifier
 69 |   #[adhoc(multi("1", "2"))]
    |                 ^^^
 ...
-77 | / derive_adhoc! {
+77 | / derive_deftly_adhoc! {
 78 | |     WithBareLitMulti:
 79 | |     struct ${paste Bad ${tmeta(multi) as str}};
 80 | | }
@@ -316,7 +316,7 @@ error: expected path segment after `::`
 90 |   #[adhoc(std::cell::Cell::<String>::new)]
    |                            ^
 ...
-93 | / derive_adhoc! {
+93 | / derive_deftly_adhoc! {
 94 | |     WithFunkyPath:
 95 | | }
    | |_- in this macro invocation

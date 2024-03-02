@@ -6,23 +6,23 @@ use derive_adhoc::{define_derive_deftly, derive_adhoc, Deftly};
 #[derive_deftly_adhoc]
 struct ReserveDriver;
 
-derive_adhoc! {
+derive_deftly_adhoc! {
     ReserveDriver:
     $[ future ]
 }
 
-derive_adhoc! {
+derive_deftly_adhoc! {
     ReserveDriver:
     $<ident:upper>
     ${paste ident:upper}
 }
 
-derive_adhoc! {
+derive_deftly_adhoc! {
     ReserveDriver:
     $r#"template content?"#
 }
 
-derive_adhoc! {
+derive_deftly_adhoc! {
     ReserveDriver:
 
     mod prevent {
@@ -30,7 +30,7 @@ derive_adhoc! {
     }
 }
 
-derive_adhoc! {
+derive_deftly_adhoc! {
     ReserveDriver:
 
     $/// template doc comment?
@@ -38,7 +38,7 @@ derive_adhoc! {
     }
 }
 
-derive_adhoc! {
+derive_deftly_adhoc! {
     ReserveDriver:
 
     ${define 0 { mod x {} }}

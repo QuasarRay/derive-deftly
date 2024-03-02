@@ -8,7 +8,7 @@ struct DataType {
     bar: Vec<String>,
 }
 
-derive_adhoc! {
+derive_deftly_adhoc! {
     DataType:
 
     fn $unknown() { }
@@ -36,7 +36,7 @@ define_derive_deftly! {
 #[derive_deftly_adhoc]
 struct ForBroken;
 
-derive_adhoc! {
+derive_deftly_adhoc! {
     DataType:
 
     ${if approx_equal(1,2,3) {}}

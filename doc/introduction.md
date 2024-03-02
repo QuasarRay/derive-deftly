@@ -172,7 +172,7 @@ use derive_adhoc::{Deftly, derive_adhoc};
 #[derive_deftly_adhoc]
 pub struct MyStruct;
 
-derive_adhoc!{
+derive_deftly_adhoc!{
     MyStruct:
 
     impl $ttype {
@@ -728,7 +728,7 @@ so, above, instead, we could have written
 # #[derive(Deftly)]
 # #[derive_deftly_adhoc]
 # enum TestCase<A> { Variant(A) }
-# derive_adhoc! { TestCase:
+# derive_deftly_adhoc! { TestCase:
 #     fn testcase<$tgens>() where
 ${for fields { $ftype: Clone, }}
 #     {}

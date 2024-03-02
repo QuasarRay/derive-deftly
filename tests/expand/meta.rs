@@ -13,7 +13,7 @@ struct IgnoredThings {
     f: String,
 }
 
-derive_adhoc! {
+derive_deftly_adhoc! {
     IgnoredThings:
 
   $(

@@ -14,7 +14,7 @@ define_derive_deftly! {
 #[doc=stringify!(one $ dollar $template end)]
 struct OneDollar;
 
-derive_adhoc! {
+derive_deftly_adhoc! {
     OneDollar:
 
     $tattrs struct AdhocOneDollar;
@@ -26,7 +26,7 @@ derive_adhoc! {
 #[doc=stringify!(two $$ dollars)]
 struct TwoDollars;
 
-derive_adhoc! {
+derive_deftly_adhoc! {
     TwoDollars:
 
     $tattrs struct AdhocTwoDollars;

@@ -26,7 +26,7 @@ enum Colour {
     Blue,
 }
 
-derive_adhoc!{
+derive_deftly_adhoc!{
     Greek, Colour:
 
     enum $[ ${for_inputs $tname} ] {

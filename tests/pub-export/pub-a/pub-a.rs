@@ -85,7 +85,7 @@ pub mod a_driver {
     /// Additionally, of course, this exposes all of the field names and
     /// types of the struct.  So it is probably not a good idea with a
     /// driver that isn't completely pub and exhaustive.  (This could be
-    /// checked by derive_adhoc!, but then we would want a way to override
+    /// checked by derive_deftly_adhoc!, but then we would want a way to override
     /// the error, too.  All this additional complexity seems unwarranted
     /// for a feature which is so difficult to use for other reasons too.)
     ///

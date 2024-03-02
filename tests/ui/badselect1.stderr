@@ -6,7 +6,7 @@ error: multiple conditions matched (in this field)
 21 | |     c: usize,
    | |____________^
 ...
-24 | / derive_adhoc! {
+24 | / derive_deftly_adhoc! {
 25 | |     Both:
 26 | |
 27 | |     #[derive(Default, Debug)]
@@ -36,7 +36,7 @@ error: no conditions matched, and no else clause (in this field)
 16 | |     a: usize,
    | |____________^
 ...
-24 | / derive_adhoc! {
+24 | / derive_deftly_adhoc! {
 25 | |     Both:
 26 | |
 27 | |     #[derive(Default, Debug)]

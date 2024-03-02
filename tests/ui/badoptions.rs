@@ -12,28 +12,28 @@ define_derive_deftly! {
 #[derive_deftly_adhoc]
 struct BadOptionsDriver;
 
-derive_adhoc! {
+derive_deftly_adhoc! {
     BadOptionsDriver with unknown option:
 }
 
-derive_adhoc! {
+derive_deftly_adhoc! {
     BadOptionsDriver for wombat:
 }
 
-derive_adhoc! {
+derive_deftly_adhoc! {
     BadOptionsDriver for union:
 }
 
-derive_adhoc! {
+derive_deftly_adhoc! {
     BadOptionsDriver for struct:
 }
 
-derive_adhoc! {
+derive_deftly_adhoc! {
     BadOptionsDriver dbg, expect items:
     syntax error;
 }
 
-derive_adhoc! {
+derive_deftly_adhoc! {
     BadOptionsDriver dbg, for struct, for union:
 }
 
@@ -42,7 +42,7 @@ define_derive_deftly! {
     BadAttributeTemplate:
 }
 
-derive_adhoc! {
+derive_deftly_adhoc! {
     BadOptionsDriver:
 
     ${define DEF {}}
@@ -54,7 +54,7 @@ derive_adhoc! {
     ${if DEF {}}
 }
 
-derive_adhoc! {
+derive_deftly_adhoc! {
     BadOptionsDriver:
 
     ${define DEF $DEF}
