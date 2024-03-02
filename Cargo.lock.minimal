@@ -23,7 +23,6 @@ dependencies = [
 name = "bizarre-derive-deftly-macros"
 version = "0.0.666"
 dependencies = [
- "derive-deftly-macros 0.2.0",
  "heck",
  "itertools",
  "proc-macro-crate",
@@ -57,24 +56,8 @@ dependencies = [
 name = "derive-deftly"
 version = "0.9.0"
 dependencies = [
- "derive-deftly-macros 0.9.0",
+ "derive-deftly-macros",
  "heck",
-]
-
-[[package]]
-name = "derive-deftly-macros"
-version = "0.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2d67b789c5749d46cca038603b02222a4d47ca2aab4433c50f953359808583e7"
-dependencies = [
- "heck",
- "itertools",
- "proc-macro-crate",
- "proc-macro2",
- "quote",
- "strum",
- "syn 1.0.61",
- "void",
 ]
 
 [[package]]
