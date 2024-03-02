@@ -124,7 +124,7 @@ pub fn derive_deftly_engine(
 /// and the resulting `derive_adhoc_driver_TYPE` macro must be
 /// available in scope.
 #[cfg_attr(proc_macro, proc_macro)]
-pub fn derive_deftly(
+pub fn derive_adhoc(
     input: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
     let input = TokenStream::from(input);
