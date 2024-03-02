@@ -184,8 +184,8 @@ value, field field:
 }
 ---------- derive-adhoc expansion of ReferenceVersion for Tuple (end) ----------
 ---------- derive-adhoc expansion of ReferenceVersion for Struct (start) ----------
-#[derive(Deftly)] #[derive_deftly_adhoc] struct StructReference < 'reference, F
-= (), > { field : & 'reference F, } impl < 'reference, F, > From < &
+#[derive(Deftly)] #[derive_deftly_adhoc] struct StructReference < 'reference,
+F = (), > { field : & 'reference F, } impl < 'reference, F, > From < &
 'reference Struct :: < F > > for StructReference < 'reference, F, >
 {
     fn from(ref_to_owned : & 'reference Struct :: < F >) -> Self
