@@ -17,6 +17,7 @@
 pub use derive_deftly_macros::derive_deftly_engine;
 pub use derive_deftly_macros::{
     define_derive_deftly, derive_deftly_adhoc, Deftly,
+    pub_template_semver_check,
 };
 
 // We (ab)use the module system as places to hang our documentation.

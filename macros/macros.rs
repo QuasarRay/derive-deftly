@@ -26,6 +26,7 @@ pub(crate) mod expand;
 pub(crate) mod options;
 pub(crate) mod paste;
 pub(crate) mod repeat;
+pub(crate) mod semver;
 pub(crate) mod syntax;
 
 pub(crate) mod compat_syn_2;
@@ -395,6 +396,17 @@ pub fn derive_deftly(
 ) -> proc_macro::TokenStream {
     let input = TokenStream::from(input);
     let output = capture::derive_deftly(input)
+        .unwrap_or_else(|e| e.into_compile_error());
+    output.into()
+}
+
+/// Check semver compatibility, for a crate which exports macros
+#[cfg_attr(proc_macro, proc_macro)]
+pub fn pub_template_semver_check(
+    input: proc_macro::TokenStream,
+) -> proc_macro::TokenStream {
+    let input = TokenStream::from(input);
+    let output = semver::pub_template_semver_check_func_macro(input)
         .unwrap_or_else(|e| e.into_compile_error());
     output.into()
 }
