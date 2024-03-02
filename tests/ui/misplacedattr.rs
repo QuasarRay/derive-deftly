@@ -1,57 +1,57 @@
-use derive_adhoc::Adhoc;
+use derive_deftly::Deftly;
 
-#[derive(Adhoc)]
+#[derive(Deftly)]
 struct Struct {
-    #[derive_adhoc(Lemons)]
+    #[derive_deftly(Lemons)]
     field: usize,
 }
 
-#[derive(Adhoc)]
+#[derive(Deftly)]
 struct Tuple(
-    #[derive_adhoc(Limes)] //
+    #[derive_deftly(Limes)] //
     usize,
 );
 
-#[derive(Adhoc)]
+#[derive(Deftly)]
 union Union {
-    #[derive_adhoc(Oranges)]
+    #[derive_deftly(Oranges)]
     variant: usize,
 }
 
-#[derive(Adhoc)]
+#[derive(Deftly)]
 enum Apples {
-    #[derive_adhoc(Apples)]
+    #[derive_deftly(Apples)]
     Apples {
-        #[derive_adhoc(OnlyThePreviousMisplacedAttributeIsReported)]
+        #[derive_deftly(OnlyThePreviousMisplacedAttributeIsReported)]
         apples: String,
     },
 }
 
-#[derive(Adhoc)]
+#[derive(Deftly)]
 enum Pears {
     Pears {
-        #[derive_adhoc(Pears)]
+        #[derive_deftly(Pears)]
         pears: String,
     },
 }
 
-#[derive(Adhoc)]
+#[derive(Deftly)]
 enum Quince {
     Quince(
-        #[derive_adhoc(Quince)] //
+        #[derive_deftly(Quince)] //
         String,
     ),
 }
 
 struct Const<const X: i32>;
 
-#[derive(Adhoc)]
+#[derive(Deftly)]
 struct Ludicrous {
     field: Const<
         {
             // accepted due to https://github.com/rust-lang/rust/issues/119116
-            #[derive_adhoc(Silly)]
-            #[adhoc(foolish)]
+            #[derive_deftly(Silly)]
+            #[deftly(foolish)]
             mod inner {}
 
             42

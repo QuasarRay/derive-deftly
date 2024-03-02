@@ -3,7 +3,7 @@
 
 #[cfg(not(feature = "skip_imported_driver"))]
 pub mod adhoc_template {
-    use derive_adhoc::derive_adhoc;
+    use derive_deftly::derive_deftly_adhoc;
 
     pub trait NumFields {
         fn num_fields() -> usize;
@@ -11,7 +11,7 @@ pub mod adhoc_template {
 
     use pub_a::a_driver::*;
 
-    derive_adhoc! {
+    derive_deftly_adhoc! {
         pub_a::ADriver:
 
         impl<$tgens> NumFields for $ttype {
@@ -26,20 +26,20 @@ pub mod adhoc_template {
 }
 
 pub mod b_driver {
-    use derive_adhoc::Adhoc;
+    use derive_deftly::Deftly;
 
     pub struct BField<T: Default>(T);
 
-    #[derive(Adhoc)]
-    #[derive_adhoc(pub_a::IsEnum)]
+    #[derive(Deftly)]
+    #[derive_deftly(pub_a::IsEnum)]
     pub enum BDriver<T: Default> {
         Variant(BField<T>),
     }
 
-    use pub_a::derive_adhoc_template_IsEnum as derive_adhoc_template_ImportedIsEnum;
+    use pub_a::derive_deftly_template_IsEnum as derive_deftly_template_ImportedIsEnum;
 
-    #[derive(Adhoc)]
-    #[derive_adhoc(ImportedIsEnum)]
+    #[derive(Deftly)]
+    #[derive_deftly(ImportedIsEnum)]
     pub struct BDriver2;
 }
 

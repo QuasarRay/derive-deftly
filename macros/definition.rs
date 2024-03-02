@@ -1,4 +1,4 @@
-//! Macro impl for defining a template `define_derive_adhoc!`
+//! Macro impl for defining a template `define_derive_deftly!`
 
 use super::prelude::*;
 
@@ -14,7 +14,7 @@ struct TemplateDefinition {
 impl Parse for TemplateDefinition {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         // This rejects Rust keywords, which is good because
-        // for example `#[derive_adhoc(pub)]` ought not to mean to apply
+        // for example `#[derive_deftly(pub)]` ought not to mean to apply
         // a template called `pub`.  See ticket #1.
         let doc_attrs = input.call(syn::Attribute::parse_outer)?;
         for attr in &doc_attrs {
@@ -146,8 +146,8 @@ pub fn escape_dollars(input: TokenStream) -> TokenStream {
     handle_ts(input, St::Other)
 }
 
-/// This is `define_derive_adhoc!`
-pub fn define_derive_adhoc_func_macro(
+/// This is `define_derive_deftly!`
+pub fn define_derive_deftly_func_macro(
     input: TokenStream,
 ) -> Result<TokenStream, syn::Error> {
     // eprintln!(
@@ -169,14 +169,14 @@ pub fn define_derive_adhoc_func_macro(
     let template = escape_dollars(template);
 
     let templ_mac_name =
-        format_ident!("derive_adhoc_template_{}", &templ_name);
+        format_ident!("derive_deftly_template_{}", &templ_name);
 
     let doc_addendum = (!doc_attrs.is_empty()).then(|| {
         let addendum = format!(
             r#"
 
-This is a `derive_adhoc` template.  Do not invoke it directly.
-To use it, write: `#[derive(Adhoc)] #[derive_adhoc({})]`."#,
+This is a `derive_deftly` template.  Do not invoke it directly.
+To use it, write: `#[derive(Deftly)] #[derive_deftly({})]`."#,
             templ_name
         );
         quote!( #[doc = #addendum] )
@@ -192,7 +192,7 @@ To use it, write: `#[derive(Adhoc)] #[derive_adhoc({})]`."#,
         Some(pub_token) => {
             let span = pub_token.span();
             vis_export = quote_spanned!(span=> #[macro_export]);
-            expand_macro = quote_spanned!(span=> $crate::derive_adhoc::derive_adhoc_expand);
+            expand_macro = quote_spanned!(span=> $crate::derive_deftly::derive_deftly_engine);
         }
     }
 
@@ -219,9 +219,9 @@ To use it, write: `#[derive(Adhoc)] #[derive_adhoc({})]`."#,
             };
             { $($wrong:tt)* } => {
                 compile_error!{concat!(
-                    "wrong input to derive-adhoc template inner macro ",
+                    "wrong input to derive-deftly template inner macro ",
                     stringify!(#templ_mac_name),
-                    "; might be due to incompatible derive-adhoc versions(s)",
+                    "; might be due to incompatible derive-deftly versions(s)",
                 )}
             };
         }

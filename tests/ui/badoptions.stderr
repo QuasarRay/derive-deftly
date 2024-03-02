@@ -4,12 +4,12 @@ error: expected one of `!` or `::`, found `template`
 7  |     broken template;
    |            ^^^^^^^^ expected one of `!` or `::`
 ...
-10 | #[derive(Adhoc)]
-   |          ----- in this derive macro expansion
+10 | #[derive(Deftly)]
+   |          ------ in this derive macro expansion
    |
-   = note: this error originates in the macro `derive_adhoc_template_BadOptionsTemplate` which comes from the expansion of the derive macro `Adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+   = note: this error originates in the macro `derive_deftly_template_BadOptionsTemplate` which comes from the expansion of the derive macro `Deftly` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error: unknown derive-adhoc option
+error: unknown derive-deftly option
   --> ui/badoptions.rs:16:22
    |
 16 |     BadOptionsDriver with unknown option:
@@ -30,17 +30,17 @@ error: template defined for union, but applied to struct (expected kind)
 error: template defined for union, but applied to struct (actual kind)
   --> ui/badoptions.rs:11:1
    |
-11 | / #[derive_adhoc(BadOptionsTemplate[dbg])]
-12 | | #[derive_truly_adhoc]
+11 | / #[derive_deftly(BadOptionsTemplate[dbg])]
+12 | | #[derive_deftly_adhoc]
 13 | | struct BadOptionsDriver;
    | |________________________^
 ...
-23 | / derive_adhoc! {
+23 | / derive_deftly_adhoc! {
 24 | |     BadOptionsDriver for union:
 25 | | }
    | |_- in this macro invocation
    |
-   = note: this error originates in the macro `derive_adhoc_driver_BadOptionsDriver` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+   = note: this error originates in the macro `derive_deftly_driver_BadOptionsDriver` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: expected `!`
   --> ui/badoptions.rs:33:12
@@ -49,7 +49,7 @@ error: expected `!`
    |            ^^^^^
 
 error: expected one of `!` or `::`, found `error`
- --> $OUT_DIR[derive-adhoc-macros]/derive-adhoc~expansions~/d-a-3d116ce28698f5b3e5000583.rs
+ --> $OUT_DIR[derive-deftly-macros]/derive-deftly~expansions~/d-a-cddab81806d14ed578d5674b.rs
   |
   | syntax error ;
   |        ^^^^^ expected one of `!` or `::`

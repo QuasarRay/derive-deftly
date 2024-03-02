@@ -8,7 +8,7 @@ use super::*;
 
 pub struct PossibilitiesExample {
     loc: DocLoc,
-    /// A derive-adhoc template fragment
+    /// A derive-deftly template fragment
     input: TokenStream,
     /// Limit on which contexts to consider
     limit: Limit,

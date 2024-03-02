@@ -169,7 +169,7 @@ impl DissimilarTokenStreams {
 /// it can even inherit *some but not all* of the input spacing,
 /// and, empirically, it can depend on whether the tokens went through `syn`
 /// (and presumably which `syn` type(s)).
-/// For example, output from `derive-adhoc`
+/// For example, output from `derive-deftly`
 /// that came via an expansion that used `syn::Type`
 /// can have different spacing to
 /// a string with the same meaning, converted to `TokenStream` and back.

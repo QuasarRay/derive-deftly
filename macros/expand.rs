@@ -1,14 +1,14 @@
-//! Expansion of a template into output tokens, plus `derive_adhoc_expand!()`
+//! Expansion of a template into output tokens, plus `derive_deftly_engine!()`
 //!
 //! Contains the implementations of `fn expand()`
 //! for the various template types in [`super::syntax`].
 //!
 //! Also contains the top-level "do the work" macro function -
-//! the implementation of `derive_adhoc_expand!()`.
+//! the implementation of `derive_deftly_engine!()`.
 
 use super::framework::*;
 
-/// Input to `derive_adhoc_expand!`
+/// Input to `derive_deftly_engine!`
 #[derive(Debug)]
 pub struct DeriveAdhocExpandInput {
     pub driver_brace: token::Brace,
@@ -20,7 +20,7 @@ pub struct DeriveAdhocExpandInput {
     pub template: Template<TokenAccumulator>,
 }
 
-/// Node in tree structure found in driver `#[adhoc(some(thing))]`
+/// Node in tree structure found in driver `#[deftly(some(thing))]`
 #[derive(Debug)]
 pub enum FoundMetaNode<'l> {
     Unit(Span),
@@ -34,18 +34,18 @@ pub enum FoundMetaNode<'l> {
 #[derive(Debug)]
 pub struct FoundNearbyMetaNode {
     pub kind: FoundNearbyMetaNodeKind,
-    /// Span of the identifier in the actual `#[adhoc]` driver attribute
+    /// Span of the identifier in the actual `#[deftly]` driver attribute
     pub path_span: Span,
 }
 
 /// How the nearby node relates to the one we were looking for
 #[derive(Debug)]
 pub enum FoundNearbyMetaNodeKind {
-    /// We were looking to go deeper, but found a unit in `#[adhoc]`
+    /// We were looking to go deeper, but found a unit in `#[deftly]`
     Unit,
-    /// We were looking to go deeper, but found a `name = value` in `#[adhoc]`
+    /// We were looking to go deeper, but found a `name = value` in `#[deftly]`
     Lit,
-    /// We were looking for a leaf, but we found nested list in `#[adhoc]`
+    /// We were looking for a leaf, but we found nested list in `#[deftly]`
     List,
 }
 
@@ -1022,7 +1022,7 @@ impl RawAttr {
         for attr in attrs {
             match self {
                 RawAttr::Default => {
-                    if ["adhoc", "derive_adhoc", "derive_truly_adhoc"]
+                    if ["deftly", "derive_deftly", "derive_deftly_adhoc"]
                         .iter()
                         .all(|exclude| !attr.path().is_ident(exclude))
                     {
@@ -1149,19 +1149,19 @@ impl ToTokens for Fname<'_> {
     }
 }
 
-/// `derive_adhoc_expand!` -- implements the actual template engine
+/// `derive_deftly_engine!` -- implements the actual template engine
 ///
 /// In my design, the input contains, firstly, literally the definition
-/// that #[derive(Adhoc)] was applied to (see NOTES.txt).
+/// that #[derive(Deftly)] was applied to (see NOTES.txt).
 /// Using the literal input, rather than some pre-parsed version, is
 /// slower, but means that we aren't inventing a nontrivial data format which
 /// potentially crosses crate boundaries with semver implications.
-pub fn derive_adhoc_expand_func_macro(
+pub fn derive_deftly_engine_func_macro(
     input: TokenStream,
 ) -> syn::Result<TokenStream> {
-    // eprintln!("derive_adhoc_expand! {}", &input);
+    // eprintln!("derive_deftly_engine! {}", &input);
     let input: DeriveAdhocExpandInput = syn::parse2(input)?;
-    // eprintln!("derive_adhoc_expand! crate = {:?}", &input.template_crate);
+    // eprintln!("derive_deftly_engine! crate = {:?}", &input.template_crate);
 
     let DaOptions {
         dbg,

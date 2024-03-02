@@ -1,7 +1,7 @@
 //! Test cases for conditions
 //!
 //! This gives a basic demonstration of how to handle an enum.
-use derive_adhoc::{define_derive_adhoc, derive_adhoc, Adhoc};
+use derive_deftly::{define_derive_deftly, derive_deftly_adhoc, Deftly};
 trait Trait {
     fn shape_top(&self) -> &'static str;
     fn shape_fields(&self) -> &'static str;
@@ -11,8 +11,8 @@ trait Trait {
 trait GetUsize {
     fn get_usize(&self) -> Option<usize>;
 }
-#[derive_adhoc(Trait, GetUsize)]
-#[derive_truly_adhoc]
+#[derive_deftly(Trait, GetUsize)]
+#[derive_deftly_adhoc]
 struct Unit;
 impl Trait for Unit {
     fn shape_top(&self) -> &'static str {
@@ -49,8 +49,8 @@ impl GetUsize for Unit {
         #[allow(unreachable_code)] None
     }
 }
-#[derive_adhoc(Trait, GetUsize)]
-#[adhoc(hi(ferris))]
+#[derive_deftly(Trait, GetUsize)]
+#[deftly(hi(ferris))]
 struct Tuple(usize);
 impl Trait for Tuple {
     fn shape_top(&self) -> &'static str {
@@ -89,8 +89,8 @@ impl GetUsize for Tuple {
         #[allow(unreachable_code)] None
     }
 }
-#[derive_adhoc(Trait, GetUsize)]
-#[adhoc(hello(there = 42))]
+#[derive_deftly(Trait, GetUsize)]
+#[deftly(hello(there = 42))]
 struct Struct {
     field: usize,
 }
@@ -131,11 +131,11 @@ impl GetUsize for Struct {
         #[allow(unreachable_code)] None
     }
 }
-#[derive_adhoc(Trait, GetUsize)]
+#[derive_deftly(Trait, GetUsize)]
 enum Enum {
-    #[adhoc(hello(there))]
+    #[deftly(hello(there))]
     Unit,
-    #[adhoc(hello(there(inner)))]
+    #[deftly(hello(there(inner)))]
     Tuple(usize),
     Named { field: u32 },
 }
@@ -188,7 +188,7 @@ impl GetUsize for Enum {
         #[allow(unreachable_code)] None
     }
 }
-#[derive_adhoc(Trait)]
+#[derive_deftly(Trait)]
 union Union {
     field: usize,
 }

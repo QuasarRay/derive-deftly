@@ -1,26 +1,26 @@
-use derive_adhoc::{define_derive_adhoc, derive_adhoc, Adhoc};
+use derive_deftly::{define_derive_deftly, derive_deftly_adhoc, Deftly};
 
-#[derive(Adhoc)]
-#[derive_truly_adhoc]
-#[adhoc(wrong = "{")]
-#[adhoc(dot = ".")]
-#[adhoc(several = "first")]
-#[adhoc(several = "second")]
-#[adhoc(several_inner(several = "first", several = "second"))]
+#[derive(Deftly)]
+#[derive_deftly_adhoc]
+#[deftly(wrong = "{")]
+#[deftly(dot = ".")]
+#[deftly(several = "first")]
+#[deftly(several = "second")]
+#[deftly(several_inner(several = "first", several = "second"))]
 struct DataType {}
 
-derive_adhoc! {
+derive_deftly_adhoc! {
     DataType:
 
     const K: () = ${tmeta(wrong)}
 }
-// Invoke derive_adhoc! a second time, because (empirically) the
+// Invoke derive_deftly_adhoc! a second time, because (empirically) the
 // attempt to parse "{" causes some kind of nonlocal exit:
 // syn::LitStr::parse is called but doesn't return.  And then, something
 // arranges to report only the *last* such error.  But we want to see
 // all the errors, so invoke the macro separately.
 
-derive_adhoc! {
+derive_deftly_adhoc! {
     DataType:
 
     struct ${paste Bad ${tmeta(dot) as str}};
@@ -32,70 +32,70 @@ derive_adhoc! {
 }
 
 // Something somewhere deduplicates errors, so if we want to see them
-// all we need to re-invoke derive-adhoc:
-derive_adhoc! {
+// all we need to re-invoke derive-deftly:
+derive_deftly_adhoc! {
     DataType:
 
     // fails because `barelit("42")` is not helpful
     struct ${paste Bad ${tmeta(barelit(is_value)) as str}};
 }
 
-derive_adhoc! {
+derive_deftly_adhoc! {
     DataType:
 
     // fails because `several_inner(...)` is not helpful
     struct ${paste Bad ${tmeta(several_inner) as str}};
 }
 
-#[derive(Adhoc)]
-#[derive_truly_adhoc]
-#[adhoc("forbidden")]
+#[derive(Deftly)]
+#[derive_deftly_adhoc]
+#[deftly("forbidden")]
 struct TopLevelMetaLitForbidden;
-derive_adhoc! { TopLevelMetaLitForbidden: }
+derive_deftly_adhoc! { TopLevelMetaLitForbidden: }
 
-#[derive(Adhoc)]
-#[derive_truly_adhoc]
-#[adhoc(value = wrong)]
+#[derive(Deftly)]
+#[derive_deftly_adhoc]
+#[deftly(value = wrong)]
 struct MetaValueMustBeLit;
-derive_adhoc! { MetaValueMustBeLit: }
+derive_deftly_adhoc! { MetaValueMustBeLit: }
 
-#[derive(Adhoc)]
-#[derive_truly_adhoc]
-#[adhoc(barelit("42"))]
+#[derive(Deftly)]
+#[derive_deftly_adhoc]
+#[deftly(barelit("42"))]
 struct WithBareLit;
 
-#[derive(Adhoc)]
-#[derive_truly_adhoc]
-#[adhoc(multi("1", "2"))]
+#[derive(Deftly)]
+#[derive_deftly_adhoc]
+#[deftly(multi("1", "2"))]
 struct WithBareLitMulti;
 
-derive_adhoc! {
+derive_deftly_adhoc! {
     WithBareLit:
     struct ${paste Bad ${tmeta(barelit) as str}};
 }
 
-derive_adhoc! {
+derive_deftly_adhoc! {
     WithBareLitMulti:
     struct ${paste Bad ${tmeta(multi) as str}};
 }
 
-define_derive_adhoc! {
+define_derive_deftly! {
     TestFunkyPath =
     struct ${paste Bad ${tmeta(std::cell::Cell::<String>::ne)w as str}};
 }
 
-#[derive(Adhoc)]
-#[derive_truly_adhoc]
-#[derive_adhoc(TestFunkyPath)]
-#[adhoc(std::cell::Cell::<String>::new)]
+#[derive(Deftly)]
+#[derive_deftly_adhoc]
+#[derive_deftly(TestFunkyPath)]
+#[deftly(std::cell::Cell::<String>::new)]
 struct WithFunkyPath;
 
-derive_adhoc! {
+derive_deftly_adhoc! {
     WithFunkyPath:
 }
 
-#[derive(Adhoc)]
-#[derive_adhoc(TestFunkyPath)]
+#[derive(Deftly)]
+#[derive_deftly(TestFunkyPath)]
 struct WithoutfunkyPath;
 
 fn main() {}

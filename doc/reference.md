@@ -12,7 +12,7 @@
       * [`$vpat`, `$fpatname` -- pattern matching and value deconstruction](#vpat-fpatname--pattern-matching-and-value-deconstruction)
       * [`$ftype`, `$vtype`, `$ttype`, `$tdeftype` -- types](#ftype-vtype-ttype-tdeftype--types)
       * [`$tgens`, `$tgnames`, `$twheres`, `$tdefgens` -- generics](#tgens-tgnames-twheres-tdefgens--generics)
-      * [`${tmeta(...)}` `${vmeta(...)}` `${fmeta(...)}` -- `#[adhoc]` attributes](#tmeta-vmeta-fmeta--adhoc-attributes)
+      * [`${tmeta(...)}` `${vmeta(...)}` `${fmeta(...)}` -- `#[deftly]` attributes](#tmeta-vmeta-fmeta--deftly-attributes)
       * [`${fattrs ...}` `${vattrs ...}` `${tattrs ...}` -- other attributes](#fattrs--vattrs--tattrs---other-attributes)
       * [`$<...>`, `${paste ...}` -- identifier pasting](#-paste---identifier-pasting)
       * [`${CASE_CHANGE ...}` -- case changing](#case_change---case-changing)
@@ -27,7 +27,7 @@
       * [`${define ...}`, `${defcond ...}` -- user-defined expansions and conditions](#define--defcond---user-defined-expansions-and-conditions)
    * [Conditions](#conditions)
       * [`fvis`, `tvis`, `fdefvis` -- test for public visibility](#fvis-tvis-fdefvis--test-for-public-visibility)
-      * [`fmeta(NAME)`, `vmeta(NAME)`, `tmeta(NAME)` -- `#[adhoc]` attributes](#fmetaname-vmetaname-tmetaname--adhoc-attributes)
+      * [`fmeta(NAME)`, `vmeta(NAME)`, `tmeta(NAME)` -- `#[deftly]` attributes](#fmetaname-vmetaname-tmetaname--deftly-attributes)
       * [`is_struct`, `is_enum`, `is_union`](#is_struct-is_enum-is_union)
       * [`v_is_unit`, `v_is_tuple`, `v_is_named`](#v_is_unit-v_is_tuple-v_is_named)
       * [`approx_equal(ARG1, ARG2)` -- equality comparison (token comparison)](#approx_equalarg1-arg2--equality-comparison-token-comparison)
@@ -41,7 +41,7 @@
    * [Structs used in examples](#structs-used-in-examples)
 
 **Reference documentation for the actual proc macros** is in
-the [crate-level docs for derive-adhoc](../index.html#macros).
+the [crate-level docs for derive-deftly](../index.html#macros).
 
 ## Template syntax overview
 
@@ -143,7 +143,7 @@ it will iterate over all of the fields in each of the variants
 in turn.
 
 structs and unions do not have variants, but
-derive-adhoc treats them as having a single (unnamed) variant.
+derive-deftly treats them as having a single (unnamed) variant.
 
 #### Examples
 
@@ -251,7 +251,7 @@ where `FNAME` is the actual field name (or tuple field number).
    When using this, use pasting (`$<FPREFIX $fname>`)
    rather than `$fpatname`.
 
-These use derive-adhoc's usual
+These use derive-deftly's usual
 [syntax for named arguments](#named-and-positional-template-arguments-to-expansions-and-conditions).
 
 #### Examples
@@ -285,7 +285,7 @@ within `<...>` but without an introducing `::`.
 The toplevel type expansions, `$ttype` and `$tdeftype`,
 don't contain a path prefix, even if
 the driver type argument to
-`derive_adhoc!`
+`derive_deftly_adhoc!`
 had a path prefix.
 
 `$vtype` (and `$ttype` and `$tdeftype`) are not suitable for matching.
@@ -301,7 +301,7 @@ Use `$vpat` for that.
 These can be used with pasting
 to name related (derived) types and variants.
 
-They use derive-adhoc's usual
+They use derive-deftly's usual
 [syntax for named arguments](#named-and-positional-template-arguments-to-expansions-and-conditions).
 
 #### Examples
@@ -349,22 +349,22 @@ so for full support of generic types the template must expand both.
  * `$twheres`: `T: 'l, T: TryInto<u8>,`
  * `$tdefgens`: `'a, 'l: 'a, T: Display = usize, const C: usize = 1,`
 
-### `${tmeta(...)}` `${vmeta(...)}` `${fmeta(...)}` -- `#[adhoc]` attributes
+### `${tmeta(...)}` `${vmeta(...)}` `${fmeta(...)}` -- `#[deftly]` attributes
 
-Accesses macro parameters passed via `#[adhoc(...)]` attributes.
+Accesses macro parameters passed via `#[deftly(...)]` attributes.
 
  * **`${Xmeta(NAME)}`**:
-   Looks for `#[adhoc(NAME="VALUE")]`, and expands to `VALUE`.
+   Looks for `#[deftly(NAME="VALUE")]`, and expands to `VALUE`.
    `"VALUE"` must be be a string literal,
    which is parsed as an arbitrary series of tokens.
    `${Xmeta...}` expands to those tokens.
 
  * **`${Xmeta(SUB(NAME))}`**:
-   Looks for `#[adhoc(SUB(NAME="VALUE"))]`.
-   The `#[adhoc()]` is parsed as
+   Looks for `#[deftly(SUB(NAME="VALUE"))]`.
+   The `#[deftly()]` is parsed as
    a set of nested, comma-separated, lists.
    So this would find `NAME` 
-   in `#[adhoc(SUB1,SUB(N1,NAME="VALUE",N2),SUB2)]`.
+   in `#[deftly(SUB1,SUB(N1,NAME="VALUE",N2),SUB2)]`.
    The path can be arbitrarily deep, e.g.: `${Xmeta(L1(L2(L3(ATTR))))}`.
 
  * **`${Xmeta(...) as SYNTYPE}`**:
@@ -422,11 +422,11 @@ which should affect how a set of fields should be processed.
 
 ### `${fattrs ...}` `${vattrs ...}` `${tattrs ...}` -- other attributes
 
-Expands to attributes, including non-`#[adhoc()]` ones.
+Expands to attributes, including non-`#[deftly()]` ones.
 The attributes can be filtered:
 
   * **`$Xattrs`**: All the attributes
-    except `#[adhoc]` and `#[derive_adhoc]`
+    except `#[deftly]` and `#[derive_deftly]`
   * **`${Xattrs A1, A2, ...}`**, or
     **`${Xattrs = A, A2, ...}`**:
     Attributes `#[A1...]` and `#[A2...]` only.
@@ -437,11 +437,11 @@ With `${Xattrs}`, unlike `${Xmeta}`,
 
    * The expansion is the whole of each attribute, including the `#[...]`;
    * All attributes are included.
-   * But `#[adhoc(...)]` `#[derive_adhoc(...)]`
-     and `#[derive_truly_adhoc(...)]`
+   * But `#[deftly(...)]` `#[derive_deftly(...)]`
+     and `#[derive_deftly_adhoc(...)]`
      are *excluded* by default,
      because typically they would be rejected by the compiler:
-     the expanded output is (perhaps) no longer within `#[derive(Adhoc)]`,
+     the expanded output is (perhaps) no longer within `#[derive(Deftly)]`,
      so those attributes might be unrecognised there.
    * The attributes can be filtered by toplevel attribute name,
      but not deeply manipulated.
@@ -450,8 +450,8 @@ With `${Xattrs}`, unlike `${Xmeta}`,
 Note that derive macros,
 only see attributes
 that come *after* the `#[derive(...)]` that invoked them.
-So derive-adhoc templates only see attributes
-that come *after* the `#[derive(..., Adhoc, ...)]`.
+So derive-deftly templates only see attributes
+that come *after* the `#[derive(..., Deftly, ...)]`.
 
 #### Examples
 
@@ -460,10 +460,10 @@ that come *after* the `#[derive(..., Adhoc, ...)]`.
 <!--##examples-for `Unit`##-->
 
  * `${tattrs}`: ``#[derive(Clone)]``
- * `${tattrs ! adhoc}`: ``#[derive(Clone)]``
+ * `${tattrs ! deftly}`: ``#[derive(Clone)]``
  * `${tattrs missing}`: nothing
  * `${tattrs derive}`: ``#[derive(Clone)]``
- * `${vattrs adhoc}`: nothing
+ * `${vattrs deftly}`: nothing
 
 ##### For `Tuple`
 
@@ -471,12 +471,12 @@ that come *after* the `#[derive(..., Adhoc, ...)]`.
 
  * `${tattrs}`: ``#[doc=" Title for `Tuple`"] #[repr(C)]``
  * `${tattrs repr}`: ``#[repr(C)]``
- * `${tattrs repr, adhoc}`: ``#[adhoc(unused)] #[repr(C)]``
- * `${tattrs ! derive, doc}`: ``#[adhoc(unused)] #[repr(C)] #[derive_adhoc(SomeOtherTemplate)]``
+ * `${tattrs repr, deftly}`: ``#[deftly(unused)] #[repr(C)]``
+ * `${tattrs ! derive, doc}`: ``#[deftly(unused)] #[repr(C)] #[derive_deftly(SomeOtherTemplate)]``
 
 ##### For `Enum`
 
- * `${vattrs adhoc}` for `UnitVariant`: `#[adhoc(value="enum-variant")]`
+ * `${vattrs deftly}` for `UnitVariant`: `#[deftly(value="enum-variant")]`
 
 ### `$<...>`, `${paste ...}` -- identifier pasting
 
@@ -661,15 +661,15 @@ See also the [`dbg` expansion option](#dbg--print-the-expansion-to-stderr-for-de
 #### Example
 
 ```rust
-# use derive_adhoc::{Adhoc, derive_adhoc};
-#[derive(Adhoc)]
-#[derive_truly_adhoc]
+# use derive_deftly::{Deftly, derive_deftly_adhoc};
+#[derive(Deftly)]
+#[derive_deftly_adhoc]
 enum Enum {
     Unit,
     Tuple(usize),
     Struct { field: String },
 }
-derive_adhoc! {
+derive_deftly_adhoc! {
     Enum:
     $dbg_all_keywords
     // ... rest of the template you're developing ...
@@ -688,7 +688,7 @@ evaluating `CONDITION`.
 `NAME` is an identifier.
 It may not start with a lowercase letter or underscore:
 those expansion names are reserved for
-derive-adhoc's built-in functionality.
+derive-deftly's built-in functionality.
 
 `BODY` is in the
 [standard syntax for positional arguments](#named-and-positional-template-arguments-to-expansions-and-conditions).
@@ -699,7 +699,7 @@ derive-adhoc's built-in functionality.
 including in inner templates and groups.
 Definitions may be re-defined by inner scopes.
 Scope is dynamic,
-both for derive-adhoc built-ins and user definitions:
+both for derive-deftly built-ins and user definitions:
 `BODY` and `CONDITION` are captured
 without expansion/evaluation at the site of `$define`/`$defcond`,
 and the contents expanded/evaluated
@@ -780,9 +780,9 @@ for the purposes of `fvis` and `tvis`
 And in each case, false for all others.
 (Refer to the [example structs](#structs-used-in-examples), below.)
 
-### `fmeta(NAME)`, `vmeta(NAME)`, `tmeta(NAME)` -- `#[adhoc]` attributes
+### `fmeta(NAME)`, `vmeta(NAME)`, `tmeta(NAME)` -- `#[deftly]` attributes
 
-Looks for `#[adhoc(NAME)]`.
+Looks for `#[deftly(NAME)]`.
 
 True iff there was such an attribute.
 `Xmeta(SUB(NAME))` works, just as with the `${Xmeta ...}` expansion.
@@ -792,8 +792,8 @@ and (unlike `${Xmeta}`)
 the corresponding driver attribute does not need to be a `=LIT`.
 
 So `Xmeta(SUB(NAME))` is true if the driver has
-`#[adhoc(SUB(NAME(INNER=...)))]` or `#[adhoc(SUB(NAME))]` or
-`#[adhoc(SUB(NAME=LIT))]` or even `#[adhoc(SUB(NAME()))]`.
+`#[deftly(SUB(NAME(INNER=...)))]` or `#[deftly(SUB(NAME))]` or
+`#[deftly(SUB(NAME=LIT))]` or even `#[deftly(SUB(NAME()))]`.
 
 #### Examples
 
@@ -857,7 +857,7 @@ are treated as different:
 for example, `Vec<u8>` is not equal to `Vec<u8, Global>`
 and `std::os::raw::c_char` is not equal to `std::ffi::c_char`.)
 
-The `ARG`s are in derive-adhoc's usual
+The `ARG`s are in derive-deftly's usual
 [syntax for positional arguments](#named-and-positional-template-arguments-to-expansions-and-conditions).
 
 ### `false`, `true`, `not(CONDITION)`, `any(COND1,COND2,...)`, `all(COND1,COND2,...)` -- boolean logic
@@ -906,14 +906,14 @@ which will be applied to each relevant template expansion:
 
 ```rust,ignore
 // Expand TEMPLATE for DataStructureType, with OPTIONS
-derive_adhoc! { DataStructureType OPTIONS,... : TEMPLATE }
+derive_deftly_adhoc! { DataStructureType OPTIONS,... : TEMPLATE }
 
 // Define a template Template which always expands with OPTIONS
-define_derive_adhoc! { Template OPTIONS,... = TEMPLATE }
+define_derive_deftly! { Template OPTIONS,... = TEMPLATE }
 
 // Expand Template for DataStructureType, with OPTIONS
-#[derive(Adhoc)]
-#[derive_adhoc(Template[OPTIONS,...])]
+#[derive(Deftly)]
+#[derive_deftly(Template[OPTIONS,...])]
 struct DataStructureType {
 # }
 ```
@@ -947,7 +947,7 @@ against the `for` option value.
 If it doesn't match, it is an error.
 
 This is useful to produce good error messages:
-Normally, derive-adhoc does not explicitly check the driver kind,
+Normally, derive-deftly does not explicitly check the driver kind,
 and simply makes it available to the template via expansion variables.
 But, often,
 a template is written only with a particular driver kind in mind,
@@ -955,7 +955,7 @@ and otherwise produces syntactically invalid output
 leading to confusing compiler errors.
 
 This option is only allowed in a template,
-not in a driver's `#[derive_adhoc]` attribute.
+not in a driver's `#[derive_deftly]` attribute.
 
 ### `dbg` -- Print the expansion to stderr, for debugging
 
@@ -970,11 +970,11 @@ See also the [`$dbg_all_keywords` expansion](#dbg_all_keywords--dump-expansions-
 ### Expansion options example
 
 ```
-# use derive_adhoc::{define_derive_adhoc, Adhoc};
-define_derive_adhoc! { Nothing for struct, expect items = }
+# use derive_deftly::{define_derive_deftly, Deftly};
+define_derive_deftly! { Nothing for struct, expect items = }
 
-#[derive(Adhoc)]
-#[derive_adhoc(Nothing[expect items, dbg])]
+#[derive(Deftly)]
+#[derive_deftly(Nothing[expect items, dbg])]
 struct Unit;
 ```
 
@@ -999,35 +999,35 @@ are those generated for the following driver types:
 # use std::fmt::Display;
 # use std::convert::TryInto;
 #
-#[derive(Adhoc)]
+#[derive(Deftly)]
 #[derive(Clone)]
-#[adhoc(simple="String", gentype="Vec<i32>")]
-#[adhoc(value="unit-toplevel")]
+#[deftly(simple="String", gentype="Vec<i32>")]
+#[deftly(value="unit-toplevel")]
 pub struct Unit<const C: usize = 1>;
 
-#[derive(Adhoc, Clone)]
+#[derive(Deftly, Clone)]
 /// Title for `Tuple`
-#[adhoc(unused)]
+#[deftly(unused)]
 #[repr(C)]
-#[derive_adhoc(SomeOtherTemplate)]
+#[derive_deftly(SomeOtherTemplate)]
 struct Tuple<'a, 'l: 'a, T: Display = usize, const C: usize = 1>(
     &'a &'l T,
 );
 
-#[derive(Adhoc)]
+#[derive(Deftly)]
 struct Struct<'a, 'l: 'a, T: Display = usize, const C: usize = 1>
 where T: 'l, T: TryInto<u8>
 {
-    #[adhoc(nested(inner = "42"))]
+    #[deftly(nested(inner = "42"))]
     pub field: &'l &'a T,
     pub(crate) field_b: String,
 }
 
-#[derive(Adhoc)]
+#[derive(Deftly)]
 pub enum Enum<'a, 'l: 'a, T: Display = usize, const C: usize = 1>
 where T: 'l, T: TryInto<u8>
 {
-    #[adhoc(value="enum-variant")]
+    #[deftly(value="enum-variant")]
     UnitVariant,
     TupleVariant(std::iter::Once::<T>),
     NamedVariant { 

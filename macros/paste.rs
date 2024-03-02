@@ -197,7 +197,7 @@ macro_rules! define_cases { {
             }
             // Minimal build, so no need to bother with a proper error.
             panic!(
- "case changing not supported, enable `case` feature of `derive-adhoc`"
+ "case changing not supported, enable `case` feature of `derive-deftly`"
             );
         }
     }
@@ -784,7 +784,7 @@ impl ExpansionOutput for Items {
                         .pop()
                         .ok_or_else(|| {
                             te_span.error(
-                                "derive-adhoc token pasting applied to path with no components",
+                                "derive-deftly token pasting applied to path with no components",
                             )
                         })?
                         .into_tuple();
@@ -805,7 +805,7 @@ impl ExpansionOutput for Items {
                 }
                 x => {
                     return Err(x.error(
-                        "derive-adhoc macro wanted to do identifier pasting, but complex type provided",
+                        "derive-deftly macro wanted to do identifier pasting, but complex type provided",
                     ))
                 }
             }

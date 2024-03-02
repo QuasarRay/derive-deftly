@@ -7,7 +7,7 @@
 //
 // This demonstrates use of the outer context facility.
 
-define_derive_adhoc!{
+define_derive_deftly!{
     Squared =
 
     // New expansions:
@@ -24,8 +24,8 @@ define_derive_adhoc!{
     }
 }
 
-#[derive(Adhoc)]
-#[derive_adhoc(Squared)]
+#[derive(Deftly)]
+#[derive_deftly(Squared)]
 enum Greek { 
     Alpha,
     Beta,

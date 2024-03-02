@@ -1,35 +1,35 @@
 error: attribute is only meaningful at the data structure toplevel
  --> ui/misplacedattr.rs:5:5
   |
-5 |     #[derive_adhoc(Lemons)]
-  |     ^^^^^^^^^^^^^^^^^^^^^^^
+5 |     #[derive_deftly(Lemons)]
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^
 
 error: attribute is only meaningful at the data structure toplevel
   --> ui/misplacedattr.rs:11:5
    |
-11 |     #[derive_adhoc(Limes)] //
-   |     ^^^^^^^^^^^^^^^^^^^^^^
+11 |     #[derive_deftly(Limes)] //
+   |     ^^^^^^^^^^^^^^^^^^^^^^^
 
 error: attribute is only meaningful at the data structure toplevel
   --> ui/misplacedattr.rs:17:5
    |
-17 |     #[derive_adhoc(Oranges)]
-   |     ^^^^^^^^^^^^^^^^^^^^^^^^
+17 |     #[derive_deftly(Oranges)]
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^
 
 error: attribute is only meaningful at the data structure toplevel
   --> ui/misplacedattr.rs:23:5
    |
-23 |     #[derive_adhoc(Apples)]
-   |     ^^^^^^^^^^^^^^^^^^^^^^^
+23 |     #[derive_deftly(Apples)]
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^
 
 error: attribute is only meaningful at the data structure toplevel
   --> ui/misplacedattr.rs:33:9
    |
-33 |         #[derive_adhoc(Pears)]
-   |         ^^^^^^^^^^^^^^^^^^^^^^
+33 |         #[derive_deftly(Pears)]
+   |         ^^^^^^^^^^^^^^^^^^^^^^^
 
 error: attribute is only meaningful at the data structure toplevel
   --> ui/misplacedattr.rs:41:9
    |
-41 |         #[derive_adhoc(Quince)] //
-   |         ^^^^^^^^^^^^^^^^^^^^^^^
+41 |         #[derive_deftly(Quince)] //
+   |         ^^^^^^^^^^^^^^^^^^^^^^^^

@@ -1,8 +1,8 @@
 #!/usr/bin/perl -w
 #
 # Checks that the dependencies used by the direct tests in
-# derive-adhoc-tests, are the same ones as specified in the
-# derive-adhoc-macros Cargo.toml.
+# derive-deftly-tests, are the same ones as specified in the
+# derive-deftly-macros Cargo.toml.
 
 use strict;
 

@@ -1,8 +1,8 @@
 //! Define and use macro_rules macros in a template!
 
-use derive_adhoc::{define_derive_adhoc, derive_adhoc, Adhoc};
+use derive_deftly::{define_derive_deftly, derive_deftly_adhoc, Deftly};
 
-define_derive_adhoc! {
+define_derive_deftly! {
     DefineAndUseMacroRulesMacro =
 
     impl $ttype {
@@ -13,12 +13,12 @@ define_derive_adhoc! {
     }
 }
 
-#[derive(Adhoc)]
-#[derive_adhoc(DefineAndUseMacroRulesMacro[dbg])]
-#[derive_truly_adhoc]
+#[derive(Deftly)]
+#[derive_deftly(DefineAndUseMacroRulesMacro[dbg])]
+#[derive_deftly_adhoc]
 struct S(usize);
 
-derive_adhoc! {
+derive_deftly_adhoc! {
     S:
 
     impl $ttype {

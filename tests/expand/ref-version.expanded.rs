@@ -7,10 +7,10 @@
 //! using `$vdefvariants`, and `$vdefbody` and `$fdefine}`,
 //! and handling of visibility attributes.
 #![allow(dead_code)]
-use derive_adhoc::{define_derive_adhoc, Adhoc};
-#[derive_adhoc(ReferenceVersion)]
+use derive_deftly::{define_derive_deftly, Deftly};
+#[derive_deftly(ReferenceVersion)]
 struct Tuple<F = ()>(F);
-#[derive_truly_adhoc]
+#[derive_deftly_adhoc]
 struct TupleReference<'reference, F = ()>(&'reference F);
 impl<'reference, F> From<&'reference Tuple<F>> for TupleReference<'reference, F> {
     fn from(ref_to_owned: &'reference Tuple<F>) -> Self {
@@ -29,11 +29,11 @@ where
         }
     }
 }
-#[derive_adhoc(ReferenceVersion)]
+#[derive_deftly(ReferenceVersion)]
 struct Struct<F = ()> {
     field: F,
 }
-#[derive_truly_adhoc]
+#[derive_deftly_adhoc]
 struct StructReference<'reference, F = ()> {
     field: &'reference F,
 }
@@ -62,13 +62,13 @@ where
         }
     }
 }
-#[derive_adhoc(ReferenceVersion)]
+#[derive_deftly(ReferenceVersion)]
 enum Enum<F = ()> {
     Unit,
     Tuple(F),
     Struct { field: F },
 }
-#[derive_truly_adhoc]
+#[derive_deftly_adhoc]
 enum EnumReference<'reference, F = ()> {
     Unit,
     Tuple(&'reference F),

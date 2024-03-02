@@ -1,48 +1,48 @@
 // Tests involving driver and template options
 
-use derive_adhoc::{define_derive_adhoc, derive_adhoc, Adhoc};
+use derive_deftly::{define_derive_deftly, derive_deftly_adhoc, Deftly};
 
-define_derive_adhoc! {
+define_derive_deftly! {
     BadOptionsTemplate =
     broken template;
 }
 
-#[derive(Adhoc)]
-#[derive_adhoc(BadOptionsTemplate[dbg])]
-#[derive_truly_adhoc]
+#[derive(Deftly)]
+#[derive_deftly(BadOptionsTemplate[dbg])]
+#[derive_deftly_adhoc]
 struct BadOptionsDriver;
 
-derive_adhoc! {
+derive_deftly_adhoc! {
     BadOptionsDriver with unknown option:
 }
 
-derive_adhoc! {
+derive_deftly_adhoc! {
     BadOptionsDriver for wombat:
 }
 
-derive_adhoc! {
+derive_deftly_adhoc! {
     BadOptionsDriver for union:
 }
 
-derive_adhoc! {
+derive_deftly_adhoc! {
     BadOptionsDriver for struct:
 }
 
-derive_adhoc! {
+derive_deftly_adhoc! {
     BadOptionsDriver dbg, expect items:
     syntax error;
 }
 
-derive_adhoc! {
+derive_deftly_adhoc! {
     BadOptionsDriver dbg, for struct, for union:
 }
 
-define_derive_adhoc! {
+define_derive_deftly! {
     #[allow(dead_code)]
     BadAttributeTemplate:
 }
 
-derive_adhoc! {
+derive_deftly_adhoc! {
     BadOptionsDriver:
 
     ${define DEF {}}
@@ -54,7 +54,7 @@ derive_adhoc! {
     ${if DEF {}}
 }
 
-derive_adhoc! {
+derive_deftly_adhoc! {
     BadOptionsDriver:
 
     ${define DEF $DEF}

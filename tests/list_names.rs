@@ -1,8 +1,8 @@
 //! Test name macros and several scopes of iteration.
 
-use derive_adhoc::{define_derive_adhoc, Adhoc};
+use derive_deftly::{define_derive_deftly, Deftly};
 
-define_derive_adhoc! {
+define_derive_deftly! {
     ListFields =
 
     impl $ttype {
@@ -16,7 +16,7 @@ define_derive_adhoc! {
     }
 }
 
-define_derive_adhoc! {
+define_derive_deftly! {
     ListVariants =
 
     impl $ttype {
@@ -43,12 +43,12 @@ define_derive_adhoc! {
     }
 }
 
-#[derive(Adhoc)]
-#[derive_adhoc(ListFields)]
+#[derive(Deftly)]
+#[derive_deftly(ListFields)]
 struct UnitStruct;
 
-#[derive(Adhoc)]
-#[derive_adhoc(ListFields)]
+#[derive(Deftly)]
+#[derive_deftly(ListFields)]
 #[allow(dead_code)]
 struct SimpleStruct {
     small: u8,
@@ -56,13 +56,13 @@ struct SimpleStruct {
     large: String,
 }
 
-#[derive(Adhoc)]
-#[derive_adhoc(ListFields)]
+#[derive(Deftly)]
+#[derive_deftly(ListFields)]
 struct TupleStruct(u8, u16, String);
 
-#[derive(Adhoc)]
-#[derive_adhoc(ListFields)]
-#[derive_adhoc(ListVariants)]
+#[derive(Deftly)]
+#[derive_deftly(ListFields)]
+#[derive_deftly(ListVariants)]
 #[allow(dead_code)]
 enum Enum {
     UnitVariant,

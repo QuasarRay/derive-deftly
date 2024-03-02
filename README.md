@@ -1,13 +1,13 @@
-# derive-adhoc: An ergonomic replacement for (some) proc macros
+# derive-deftly: An ergonomic replacement for (some) proc macros
 
-`derive-adhoc` allows you to write macros which are driven
+`derive-deftly` allows you to write macros which are driven
 by Rust data structures, just like proc macro derive macros,
 but without having to wrestle with the proc macro system.
 
 **Stability warning**
 
 This is going to replace
-[`derive-adhoc`](https://lib.rs/crates/derive-adhoc).
+[`derive-deftly`](https://lib.rs/crates/derive-deftly).
 But, please continue to use that for now.
 
 We intend to make several further breaking changes,
@@ -29,7 +29,7 @@ make writing proc macros so complicated.
 The template language resembles the "expander" part
 of a `macro_rules` macro,
 but you don't have to write the "matcher" part:
-derive-adhoc parses the input data structure for you,
+derive-deftly parses the input data structure for you,
 and makes the pieces available via predefined expansion variables.
 
 Further documentation is available in the `doc_` module(s)
@@ -38,9 +38,9 @@ and the docs for the individual proc macros.
 ## Simple example - providing `Vec` containing enum variant names
 
 ```
-use derive_adhoc::{define_derive_adhoc, Adhoc};
+use derive_deftly::{define_derive_deftly, Deftly};
 
-define_derive_adhoc! {
+define_derive_deftly! {
     ListVariants =
 
     impl $ttype {
@@ -50,8 +50,8 @@ define_derive_adhoc! {
     }
 }
 
-#[derive(Adhoc)]
-#[derive_adhoc(ListVariants)]
+#[derive(Deftly)]
+#[derive_deftly(ListVariants)]
 enum Enum {
     UnitVariant,
     StructVariant { a: u8, b: u16 },
@@ -68,5 +68,5 @@ assert_eq!(
 
 Why not have a look at our [friendly introduction](doc_introduction)?
 
-It will walk you through derive-adhoc's most important features,
+It will walk you through derive-deftly's most important features,
 with a number of worked examples,

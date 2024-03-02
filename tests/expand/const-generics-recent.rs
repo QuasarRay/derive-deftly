@@ -9,16 +9,16 @@
 
 #![allow(dead_code)]
 
-use derive_adhoc::{derive_adhoc, Adhoc};
+use derive_deftly::{derive_deftly_adhoc, Deftly};
 
-#[derive(Adhoc)]
-#[derive_truly_adhoc]
+#[derive(Deftly)]
+#[derive_deftly_adhoc]
 enum Enum<T = (), const N: usize = 1> {
     Unit,
     Tuple([T; N]),
 }
 
-derive_adhoc! {
+derive_deftly_adhoc! {
     Enum:
 
     $tvis $tdefkwd ${paste $tdeftype Copy}

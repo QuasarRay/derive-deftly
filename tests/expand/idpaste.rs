@@ -4,12 +4,12 @@
 
 #![allow(dead_code, unused_variables)]
 
-use derive_adhoc::{derive_adhoc, Adhoc};
+use derive_deftly::{derive_deftly_adhoc, Deftly};
 
 type FieldType = ();
 
-#[derive(Adhoc)]
-#[derive_truly_adhoc]
+#[derive(Deftly)]
+#[derive_deftly_adhoc]
 struct TypeNames {
     /// We use std::slice::Chunks here because that way we can test
     /// identifier pasting with a whole path.  The macro `TypeNames`
@@ -17,7 +17,7 @@ struct TypeNames {
     error: std::slice::Chunks<'static, ()>,
 }
 
-derive_adhoc! {
+derive_deftly_adhoc! {
     TypeNames:
 
     struct ${paste Pre $tdeftype Post} {
@@ -27,13 +27,13 @@ derive_adhoc! {
     }
 }
 
-#[derive(Adhoc)]
-#[derive_truly_adhoc]
+#[derive(Deftly)]
+#[derive_deftly_adhoc]
 struct TopName<F> {
     top_name_field: F,
 }
 
-derive_adhoc! {
+derive_deftly_adhoc! {
     TopName:
 
     #[allow(non_snake_case)]
@@ -44,16 +44,16 @@ derive_adhoc! {
     impl<$tgens> std::panic::RefUnwindSafe for ${paste Pre $ttype Post} {}
 }
 
-#[derive(Adhoc)]
-#[derive_truly_adhoc]
+#[derive(Deftly)]
+#[derive_deftly_adhoc]
 struct ExpandName {
-    #[adhoc(prefix = "attr", suffix = "24")]
+    #[deftly(prefix = "attr", suffix = "24")]
     f: FieldType,
 
     k: String,
 }
 
-derive_adhoc! {
+derive_deftly_adhoc! {
     ExpandName:
 
     struct ${paste "Pre" $tdeftype "Post"} {
@@ -70,14 +70,14 @@ derive_adhoc! {
                            ${if true { _bat } else { _noise }}}};
 }
 
-#[derive(Adhoc)]
-#[derive_truly_adhoc]
+#[derive(Deftly)]
+#[derive_deftly_adhoc]
 enum EdgeCases {
     Tuple(u32),
     Struct { r#for: u32, r#unneeded: u32 },
 }
 
-derive_adhoc! {
+derive_deftly_adhoc! {
     EdgeCases:
 
     impl $ttype {

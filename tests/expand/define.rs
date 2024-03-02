@@ -1,16 +1,16 @@
 //! Test `${define }` and `${defcond }`
 #![allow(dead_code)]
 
-use derive_adhoc::{derive_adhoc, Adhoc};
+use derive_deftly::{derive_deftly_adhoc, Deftly};
 
-#[derive(Adhoc)]
-#[derive_truly_adhoc]
+#[derive(Deftly)]
+#[derive_deftly_adhoc]
 struct S {
     a: i32,
     b: i32,
 }
 
-derive_adhoc! {
+derive_deftly_adhoc! {
     S expect items:
 
     ${define X 0}
@@ -42,8 +42,8 @@ derive_adhoc! {
     ];
 }
 
-#[derive(Adhoc)]
-#[derive_truly_adhoc]
+#[derive(Deftly)]
+#[derive_deftly_adhoc]
 enum T<'g> {
     /// Expected value
     E(i32),
@@ -51,7 +51,7 @@ enum T<'g> {
     G(&'g [i32]),
 }
 
-derive_adhoc! {
+derive_deftly_adhoc! {
     S expect items:
 
     ${define CASE {
@@ -83,7 +83,7 @@ derive_adhoc! {
     ];
 }
 
-derive_adhoc! {
+derive_deftly_adhoc! {
     T expect items:
 
     fn t_compare() {

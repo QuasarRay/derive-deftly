@@ -468,7 +468,7 @@ impl<O: SubstParseContext> Parse for TemplateElement<O> {
                 if let Ok(attr) = syn::Attribute::parse_inner(&backtracked) {
                     if let Some(attr) = attr.first() {
                         return Err(attr.error(
-    "inner attributes are reserved syntax, anywhere in derive-adhoc templates"
+    "inner attributes are reserved syntax, anywhere in derive-deftly templates"
                         ));
                     }
                 }
@@ -560,7 +560,7 @@ impl<O: SubstParseContext> SubstMetaAs<O> {
         keyword! { tokens(nb, not_in_paste()?) }
         keyword! { ty(nb) }
 
-        Err(kw.error("unknown derive-adhoc 'as' syntax type keyword"))
+        Err(kw.error("unknown derive-deftly 'as' syntax type keyword"))
     }
 }
 
@@ -592,7 +592,7 @@ impl Parse for SubstMetaPath {
         if path.segments.is_empty() {
             return Err(paren
                 .span
-                .error("adhoc attribute must have nonempty path"));
+                .error("`deftly` attribute must have nonempty path"));
         }
 
         let deeper = if input.is_empty() {
@@ -979,7 +979,7 @@ impl<O: SubstParseContext> Parse for Subst<O> {
             return from_sd(SD::UserDefined(user_defined));
         }
 
-        Err(kw.error("unknown derive-adhoc keyword"))
+        Err(kw.error("unknown derive-deftly keyword"))
     }
 }
 
@@ -1202,7 +1202,7 @@ pub fn preprocess_attrs(
                 return None;
             }
             let segment = attr.path().segments.iter().exactly_one().ok()?;
-            if segment.ident != "adhoc" {
+            if segment.ident != "deftly" {
                 return None;
             }
             Some(attr)

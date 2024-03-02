@@ -1,4 +1,4 @@
-//! Macro impl for invoking a predefined template `derive_adhoc!`
+//! Macro impl for invoking a predefined template `derive_deftly_adhoc!`
 
 use super::prelude::*;
 
@@ -25,7 +25,7 @@ impl Parse for TemplateInvocation {
     }
 }
 
-/// This is `derive_adhoc!`
+/// This is `derive_deftly_adhoc!`
 ///
 /// It parses
 /// ```rust,ignore
@@ -34,10 +34,10 @@ impl Parse for TemplateInvocation {
 /// ```
 /// and expand it to an invocation of
 /// ```rust,ignore
-///    derive_adhoc_driver_StructName
+///    derive_deftly_driver_StructName
 /// ```
 /// as per NOTES.txt.
-pub fn derive_adhoc_func_macro(
+pub fn derive_deftly_adhoc(
     input: TokenStream,
 ) -> Result<TokenStream, syn::Error> {
     let TemplateInvocation {
@@ -47,9 +47,9 @@ pub fn derive_adhoc_func_macro(
         template,
     } = syn::parse2(input)?;
 
-    // eprintln!("---------- derive_adhoc got start ----------");
+    // eprintln!("---------- derive_deftly got start ----------");
     // eprintln!("{}\n{}", &driver.to_token_stream(), &template);
-    // eprintln!("---------- derive_adhoc got end ----------");
+    // eprintln!("---------- derive_deftly got end ----------");
 
     let driver_mac_name = {
         let mut name = driver;
@@ -58,7 +58,7 @@ pub fn derive_adhoc_func_macro(
                 "expected non-empty path for driver struct name, found colon",
             )
         })?;
-        last.ident = format_ident!("derive_adhoc_driver_{}", &last.ident);
+        last.ident = format_ident!("derive_deftly_driver_{}", &last.ident);
         name
     };
 
@@ -70,9 +70,9 @@ pub fn derive_adhoc_func_macro(
         }
     };
 
-    // eprintln!("---------- derive_adhoc! output start ----------");
+    // eprintln!("---------- derive_deftly_adhoc! output start ----------");
     // eprintln!("{}", &output);
-    // eprintln!("---------- derive_adhoc! output end ----------");
+    // eprintln!("---------- derive_deftly_adhoc! output end ----------");
 
     Ok(output)
 }

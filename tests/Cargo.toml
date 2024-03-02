@@ -1,27 +1,27 @@
 [package]
-name = "derive-adhoc-tests"
+name = "derive-deftly-tests"
 version = "0.0.1"
 edition = "2018"
 license="MIT"
 authors=["Ian Jackson <ijackson@chiark.greenend.org.uk>",
-         "and the contributors to Rust derive-adhoc"]
+         "and the contributors to Rust derive-deftly"]
 description="An ergonomic way to write derive() macros"
-homepage = "https://gitlab.torproject.org/Diziet/rust-derive-adhoc"
-repository = "https://gitlab.torproject.org/Diziet/rust-derive-adhoc"
+homepage = "https://gitlab.torproject.org/Diziet/rust-derive-deftly"
+repository = "https://gitlab.torproject.org/Diziet/rust-derive-deftly"
 publish = false
 
 [features]
 ui = []
 recent = [] # We're not running with the MWRV compiler
 default = []
-full = ["derive-adhoc/full"]
+full = ["derive-deftly/full"]
 # We can't make macrotest, ui, recent and full default features because
 # in 1.54 (which is why we want this) --no-default-features doesn't work.
 
 case = []
 
 [dependencies]
-derive-adhoc = { path = "..", version = "0.9.0", default_features = false, features = ["minimal-1"] }
+derive-deftly = { path = "..", version = "0.9.0", default_features = false, features = ["minimal-1"] }
 easy-ext = "1"
 # educe 0.5.0 to 0.5.10 inclusive are broken but cargo cannot express this
 #  https://github.com/magiclen/educe/issues/14

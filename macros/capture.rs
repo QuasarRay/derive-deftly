@@ -1,8 +1,8 @@
-//! Macro impl for capturing the driver `#[derive(Adhoc)]`
+//! Macro impl for capturing the driver `#[derive(Deftly)]`
 
 use super::prelude::*;
 
-/// Contents of an entry in a `#[derive_adhoc(..)]` attribute
+/// Contents of an entry in a `#[derive_deftly(..)]` attribute
 enum InvocationEntry {
     Precanned(syn::Path, UnprocessedOptions),
 }
@@ -12,7 +12,7 @@ struct InvocationAttr {
     entries: Punctuated<InvocationEntry, token::Comma>,
 }
 
-/// Contents of an entry in a `#[derive_truly_adhoc(..)]` attribute
+/// Contents of an entry in a `#[derive_deftly_adhoc(..)]` attribute
 #[derive(Default)]
 struct TrulyAdhocAttr {
     pub_: Option<syn::token::Pub>,
@@ -21,7 +21,7 @@ struct TrulyAdhocAttr {
 impl Parse for InvocationEntry {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let entry = if input.lookahead1().peek(Token![pub]) {
-            return Err(input.error("`pub` must be in #[derive_truly_adhoc]"));
+            return Err(input.error("`pub` must be in #[derive_deftly_adhoc]"));
         } else {
             let path = syn::Path::parse_mod_style(input)?;
             let options = if input.peek(syn::token::Bracket) {
@@ -50,7 +50,7 @@ impl Parse for InvocationAttr {
 fn check_for_misplaced_atrs(data: &syn::Data) -> syn::Result<()> {
     let attrs = |attrs: &[syn::Attribute]| {
         for attr in attrs {
-            if let Some(_) = ["derive_adhoc", "derive_truly_adhoc"]
+            if let Some(_) = ["derive_deftly", "derive_deftly_adhoc"]
                 .iter()
                 .find(|forbidden| attr.path().is_ident(forbidden))
             {
@@ -90,8 +90,8 @@ fn check_for_misplaced_atrs(data: &syn::Data) -> syn::Result<()> {
     }
 }
 
-/// This is #[derive(Adhoc)]
-pub fn derive_adhoc_derive_macro(
+/// This is #[derive(Deftly)]
+pub fn derive_deftly(
     driver_stream: TokenStream,
 ) -> Result<TokenStream, syn::Error> {
     // TODO optimisation: parse this in a way that doesn't actually
@@ -99,18 +99,18 @@ pub fn derive_adhoc_derive_macro(
     // a bit like syn::DeriveInput.
     let driver: syn::DeriveInput = syn::parse2(driver_stream.clone())?;
 
-    // eprintln!("---------- #[derive(Adhoc)] got start ----------");
+    // eprintln!("---------- #[derive(Deftly)] got start ----------");
     // eprintln!("{}", &driver_stream);
-    // eprintln!("---------- #[derive(Adhoc)] got end ----------");
+    // eprintln!("---------- #[derive(Deftly)] got end ----------");
 
     let driver_mac_name =
-        format_ident!("derive_adhoc_driver_{}", &driver.ident);
+        format_ident!("derive_deftly_driver_{}", &driver.ident);
 
     let precanned_paths: Vec<(syn::Path, UnprocessedOptions)> = driver
         .attrs
         .iter()
         .map(|attr| {
-            if !attr.path().is_ident("derive_adhoc") {
+            if !attr.path().is_ident("derive_deftly") {
                 return Ok(None);
             }
             let InvocationAttr { entries } = attr.parse_in_parens()?;
@@ -129,7 +129,7 @@ pub fn derive_adhoc_derive_macro(
     let truly_adhoc: Option<TrulyAdhocAttr> = driver
         .attrs
         .iter()
-        .filter(|attr| attr.path().is_ident("derive_truly_adhoc"))
+        .filter(|attr| attr.path().is_ident("derive_deftly_adhoc"))
         .inspect(|_: &&syn::Attribute| ())
         .map(|attr| {
             let truly_adhoc = match &attr.meta {
@@ -221,9 +221,9 @@ pub fn derive_adhoc_derive_macro(
                 };
                 { $($wrong:tt)* } => {
                     compile_error!{concat!(
-                        "wrong input to derive-adhoc driver inner macro ",
+                        "wrong input to derive-deftly driver inner macro ",
                         stringify!(#driver_mac_name),
-                     "; might be due to incompatible derive-adhoc versions(s)",
+                     "; might be due to incompatible derive-deftly versions(s)",
                     )}
                 };
             }
@@ -236,10 +236,10 @@ pub fn derive_adhoc_derive_macro(
                 .leading_colon
                 .as_ref()
                 .expect("path with no tokens!")
-                .error("cannot derive_adhoc the empty path!"));
+                .error("cannot derive_deftly the empty path!"));
         }
         let last = templ_path.segments.last_mut().expect("became empty!");
-        last.ident = format_ident!("derive_adhoc_template_{}", last.ident);
+        last.ident = format_ident!("derive_deftly_template_{}", last.ident);
 
         // We must output the driver-specified application options.
         //
@@ -289,9 +289,9 @@ pub fn derive_adhoc_derive_macro(
     }
 
     // let ident = &driver.ident;
-    // eprintln!("---------- derive(Adhoc) start on {} ----------", ident);
+    // eprintln!("---------- derive(Deftly) start on {} ----------", ident);
     // eprintln!("{}", &output);
-    // eprintln!("---------- derive(Adhoc) end on {} ----------", ident);
+    // eprintln!("---------- derive(Deftly) end on {} ----------", ident);
 
     Ok(output)
 }

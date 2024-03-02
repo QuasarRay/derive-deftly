@@ -2,9 +2,9 @@
 //!
 //! This gives a basic demonstration of how to handle an enum.
 
-use derive_adhoc::{define_derive_adhoc, Adhoc};
+use derive_deftly::{define_derive_deftly, Deftly};
 
-define_derive_adhoc! {
+define_derive_deftly! {
     PreciseClone =
 
     impl<$tgens> Clone for $ttype
@@ -22,30 +22,30 @@ define_derive_adhoc! {
     }
 }
 
-#[derive(Adhoc)]
-#[derive_adhoc(PreciseClone)]
+#[derive(Deftly)]
+#[derive_deftly(PreciseClone)]
 struct Unit;
 
-#[derive(Adhoc)]
-#[derive_adhoc(PreciseClone)]
+#[derive(Deftly)]
+#[derive_deftly(PreciseClone)]
 struct Tuple<F>(F);
 
-#[derive(Adhoc)]
-#[derive_adhoc(PreciseClone)]
+#[derive(Deftly)]
+#[derive_deftly(PreciseClone)]
 struct Struct<F> {
     field: F,
 }
 
-#[derive(Adhoc)]
-#[derive_adhoc(PreciseClone)]
+#[derive(Deftly)]
+#[derive_deftly(PreciseClone)]
 enum Enum<F> {
     Unit,
     Tuple(F),
     Struct { field: F },
 }
 
-#[derive(Adhoc)]
-#[derive_adhoc(PreciseClone)]
+#[derive(Deftly)]
+#[derive_deftly(PreciseClone)]
 enum AllTypes {
     NoData,
     Tuple(u16, u32),

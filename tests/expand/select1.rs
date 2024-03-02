@@ -2,22 +2,22 @@
 
 use std::fmt::Debug;
 
-use derive_adhoc::{derive_adhoc, Adhoc};
+use derive_deftly::{derive_deftly_adhoc, Deftly};
 
-use derive_adhoc_tests::*;
+use derive_deftly_tests::*;
 
-#[derive(Adhoc, Default, Debug)]
-#[derive_truly_adhoc]
+#[derive(Deftly, Default, Debug)]
+#[derive_deftly_adhoc]
 struct Both {
-    #[adhoc(left)]
+    #[deftly(left)]
     a: usize,
-    #[adhoc(right)]
+    #[deftly(right)]
     b: usize,
-    #[adhoc(right)]
+    #[deftly(right)]
     c: usize,
 }
 
-derive_adhoc! {
+derive_deftly_adhoc! {
     Both:
 
     #[derive(Default, Debug)]

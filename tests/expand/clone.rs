@@ -1,6 +1,6 @@
 //! Very simple example for deriving Clone.
 
-use derive_adhoc::{define_derive_adhoc, Adhoc};
+use derive_deftly::{define_derive_deftly, Deftly};
 use std::sync::Arc;
 
 // Very simple `Clone`
@@ -12,7 +12,7 @@ use std::sync::Arc;
 // Only works on `struct { }` structs.
 //
 // (This does a small subset of what the educe crate's `Clone` does.)
-define_derive_adhoc! {
+define_derive_deftly! {
     MyClone =
 
     impl<$tgens> Clone for $ttype {
@@ -28,8 +28,8 @@ define_derive_adhoc! {
 
 // If we were to `#[derive(Clone)]`, DecoratedError<io::Error> wouldn't
 // be Clone, because io::Error isn't, even though the Arc means we can clone.
-#[derive(Adhoc)]
-#[derive_adhoc(MyClone)]
+#[derive(Deftly)]
+#[derive_deftly(MyClone)]
 struct DecoratedError<E> {
     context: String,
     error: Arc<E>,

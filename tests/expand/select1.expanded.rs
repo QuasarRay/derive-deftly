@@ -1,14 +1,14 @@
 //! Test case / example for `${select }`
 use std::fmt::Debug;
-use derive_adhoc::{derive_adhoc, Adhoc};
-use derive_adhoc_tests::*;
-#[derive_truly_adhoc]
+use derive_deftly::{derive_deftly_adhoc, Deftly};
+use derive_deftly_tests::*;
+#[derive_deftly_adhoc]
 struct Both {
-    #[adhoc(left)]
+    #[deftly(left)]
     a: usize,
-    #[adhoc(right)]
+    #[deftly(right)]
     b: usize,
-    #[adhoc(right)]
+    #[deftly(right)]
     c: usize,
 }
 #[automatically_derived]

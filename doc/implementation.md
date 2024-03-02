@@ -1,6 +1,6 @@
 # Implementation approach - how does this work?
 
-**You do not need to understand this in order to use derive-adhoc.**
+**You do not need to understand this in order to use derive-deftly.**
 
 Also, you should not rely on the details here.
 They don't form part of the public interface.
@@ -30,21 +30,21 @@ to what is conceptually the first macro's output.
 
 ## Implementation approach - truly ad-hoc macros
 
-### 1. `#[derive(Adhoc)]` proc macro for saving struct definitions
+### 1. `#[derive(Deftly)]` proc macro for saving struct definitions
 
-Implemented in `capture.rs::derive_adhoc_derive_macro`.
+Implemented in `capture.rs::derive_deftly`.
 
 When applied to (e.g.) `pub struct StructName`,
-with `#[derive_truly_adhoc]` specified
+with `#[derive_deftly_adhoc]` specified
 generates this
 
 ```rust,ignore
-    macro_rules! derive_adhoc_driver_StructName { {
+    macro_rules! derive_deftly_driver_StructName { {
         { $($template:tt)* }
         { ($orig_dollar:tt) $(future:tt)* }
         $($tpassthrough:tt)* 
      } => {
-        derive_adhoc_expand!{
+        derive_deftly_engine!{
             { pub struct StructName { /* original struct definition */ } }
             { }
             { $($template)* }
@@ -59,13 +59,13 @@ include space for future expansion.)
 In the `pub struct` part every `$` is replaced with `$orig_dollar`,
 to use the `$` passed in at the invocation site.
 
-### 2. `derive_adhoc!` function-like proc macro for applying to a template
+### 2. `derive_deftly_adhoc!` function-like proc macro for applying to a template
 
-Implemented in `invocation.rs::derive_adhoc_func_macro`.
+Implemented in `invocation.rs::derive_deftly_adhoc`.
 
 When applied like this
 ```rust,ignore
-    derive_adhoc!{
+    derive_deftly_adhoc!{
        StructName TOPTIONS...:
        TEMPLATE...
     }
@@ -73,7 +73,7 @@ When applied like this
 
 Expands to
 ```rust,ignore
-    derive_adhoc_driver_StructName! {
+    derive_deftly_driver_StructName! {
        { TEMPLATE... }
        { ($) }
        crate; [TOPTIONS...]
@@ -82,12 +82,12 @@ Expands to
 
 ### 3. Function-like proc macro to do the actual expansion
 
-Implemented in `expand.rs::derive_adhoc_expand_func_macro`.
+Implemented in `expand.rs::derive_deftly_engine_func_macro`.
 
 The result of expanding the above is this:
 
 ```rust,ignore
-    derive_adhoc_expand!{
+    derive_deftly_engine!{
         { pub struct StructName { /* original struct definition */ } }
         { }
         { TEMPLATE... }
@@ -95,7 +95,7 @@ The result of expanding the above is this:
     }
 ```
 
-`derive_adhoc_expand` parses `pub struct StructName`,
+`derive_deftly_engine` parses `pub struct StructName`,
 and implements a bespoke template expander,
 whose template syntax resembles the expansion syntax from `macro_rules`.
 
@@ -104,26 +104,26 @@ whose template syntax resembles the expansion syntax from `macro_rules`.
 
 ## Implementation approach - reusable template macros
 
-## 1. `define_derive_adhoc!` macro for defining a reuseable template
+## 1. `define_derive_deftly!` macro for defining a reuseable template
 
-Implemented in `definition.rs::define_derive_adhoc_func_macro`.
+Implemented in `definition.rs::define_derive_deftly_func_macro`.
 
 When used like this
 ```rust,ignore
-    define_derive_adhoc! {
+    define_derive_deftly! {
         MyMacro TOPTIONS... =
         TEMPLATE...
     }
 ```
 Expands to
 ```rust,ignore
-    macro_rules! derive_adhoc_template_Template { {
+    macro_rules! derive_deftly_template_Template { {
         { $($driver:tt)* }
      $( [ $($aoptions:tt)* ] )?
         { $($future:tt)* }
         $($dpassthrough:tt)*
     } => {
-        derive_adhoc_expand! {
+        derive_deftly_engine! {
             { $($driver)* }
          $( [ $(aoptions)* ] )?
             { $($dpassthrough)* }
@@ -145,23 +145,23 @@ The template expansion engine treats `$orig_dollar` as just a single `$`.
 (Again, the extra `{ }` parts after the driver and template
 include space for future expansion.)
 
-## 2. `#[derive_adhoc(Template)]`, implemented in `#[derive(Adhoc)]`
+## 2. `#[derive_deftly(Template)]`, implemented in `#[derive(Deftly)]`
 
-Template reuse is also implemented in `capture.rs::derive_adhoc_derive_macro`.
+Template reuse is also implemented in `capture.rs::derive_deftly`.
 
 This
 
 ```rust,ignore
-    #[derive(Adhoc)]
-    #[derive_adhoc(Template[AOPTIONS,...])]
+    #[derive(Deftly)]
+    #[derive_deftly(Template[AOPTIONS,...])]
     pub struct StructName { ... }
 ```
 
-Generates (in addition to the `derive_adhoc_driver_StructName` definition)
+Generates (in addition to the `derive_deftly_driver_StructName` definition)
 
 ```rust,ignore
-    derive_adhoc_template_Template! {
-        { #[derive_adhoc(Template)] struct StructName { ... } }
+    derive_deftly_template_Template! {
+        { #[derive_deftly(Template)] struct StructName { ... } }
         [1 0 AOPTIONS]    // but only if AOPTIONS is nonempty
         { }
     }
@@ -172,12 +172,12 @@ see above.
 
 ## 3. Actual expansion
 
-The call to `derive_adhoc_template_Template!`
+The call to `derive_deftly_template_Template!`
 is expanded according to the `macro_rules!` definition,
-resulting in a call to `derive_adhoc_expand`:
+resulting in a call to `derive_deftly_engine`:
 
 ```rust,ignore
-    derive_adhoc_expand!{
+    derive_deftly_engine!{
         { pub struct StructName { /* original struct definition */ } }
         [1 0 AOPTIONS]    // but only if AOPTIONS is nonempty
         { }

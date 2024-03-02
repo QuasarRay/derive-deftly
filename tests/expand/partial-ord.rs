@@ -7,9 +7,9 @@
 
 use std::cmp::Ordering::{self, *};
 
-use derive_adhoc::{define_derive_adhoc, Adhoc};
+use derive_deftly::{define_derive_deftly, Deftly};
 
-define_derive_adhoc! {
+define_derive_deftly! {
     VeryPartialOrd =
 
     impl<$tgens> PartialOrd for $ttype
@@ -35,8 +35,8 @@ define_derive_adhoc! {
     }
 }
 
-#[derive(Adhoc, PartialEq)]
-#[derive_adhoc(VeryPartialOrd)]
+#[derive(Deftly, PartialEq)]
+#[derive_deftly(VeryPartialOrd)]
 enum Enum<F: PartialEq = (), G = ()>
 where
     G: PartialEq,

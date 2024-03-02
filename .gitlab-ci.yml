@@ -15,7 +15,7 @@ image: "rust:bookworm"
 
 # Running tests without --workspace is useful because that way cargo
 # won't add features to our dependencies that we didn't actually enable
-# *in the derive-adhoc or derive-adhoc-macros crates*.
+# *in the derive-deftly or derive-deftly-macros crates*.
 cargo-check-deps:
   stage: test
   script:
@@ -97,7 +97,7 @@ check-doc-examples:
   image: rustlang/rust@sha256:ee4511e23bbd1d06ed24bed884e9df6ac4dc858d2e188b49c199bf56a7ece3f3
   allow_failure: true
   script:
-    - cargo test --locked -p derive-adhoc-tests --verbose --all-features -- --nocapture directly::check_examples
+    - cargo test --locked -p derive-deftly-tests --verbose --all-features -- --nocapture directly::check_examples
 
 # Test every commit
 #
@@ -119,23 +119,23 @@ cargo-test-minfeatures:
   stage: comprehensive
   image: rustlang/rust@sha256:ee4511e23bbd1d06ed24bed884e9df6ac4dc858d2e188b49c199bf56a7ece3f3
   script:
-    - cargo test --locked  -p derive-adhoc-tests --no-default-features --features=derive-adhoc-tests/recent -- --skip directly::check_examples
+    - cargo test --locked  -p derive-deftly-tests --no-default-features --features=derive-deftly-tests/recent -- --skip directly::check_examples
 
 # Test on Stable Rust
 #
-# We don't enable the ui and macrotest fatures in derive-adhoc-tests, since
+# We don't enable the ui and macrotest fatures in derive-deftly-tests, since
 # we think their output might reasonably vary (in detail) when the with
 # compiler changes.  But we do enable the "recent" feature to test even new
 # features.
 stable:
   stage: comprehensive
   script:
-    - cargo test --locked --workspace --verbose --features=derive-adhoc-tests/recent,derive-adhoc-tests/full
+    - cargo test --locked --workspace --verbose --features=derive-deftly-tests/recent,derive-deftly-tests/full
 
 stable-minfeatures:
   stage: comprehensive
   script:
-    - cargo test --locked  -p derive-adhoc-tests --no-default-features --features=derive-adhoc-tests/recent
+    - cargo test --locked  -p derive-deftly-tests --no-default-features --features=derive-deftly-tests/recent
 
 # Test that users who like clippy don't get spurious warnings.
 # (eg, that the #27 lint avoidance technique hasn't regressed).
@@ -173,17 +173,17 @@ check-doc-links:
 
 # Test our MSRV and Cargo.toml minimal versions
 #
-# We don't enable any of the optional fatures in derive-adhoc-tests.
+# We don't enable any of the optional fatures in derive-deftly-tests.
 minimal-versions:
   stage: comprehensive
   image: "rust:1.56.0"
   script:
     - mv Cargo.lock.minimal Cargo.lock
-    - cargo +1.56.0 test --locked --workspace --no-default-features --features=derive-adhoc-tests/full
+    - cargo +1.56.0 test --locked --workspace --no-default-features --features=derive-deftly-tests/full
 
 minimal-versions-minfeatures:
   stage: comprehensive
   image: "rust:1.56.0"
   script:
     - mv Cargo.lock.minimal Cargo.lock
-    - cargo +1.56.0 test --locked  -p derive-adhoc-tests --no-default-features
+    - cargo +1.56.0 test --locked  -p derive-deftly-tests --no-default-features

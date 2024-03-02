@@ -1,7 +1,7 @@
 //! Define and use macro_rules macros in a template!
-use derive_adhoc::{define_derive_adhoc, derive_adhoc, Adhoc};
-#[derive_adhoc(DefineAndUseMacroRulesMacro[dbg])]
-#[derive_truly_adhoc]
+use derive_deftly::{define_derive_deftly, derive_deftly_adhoc, Deftly};
+#[derive_deftly(DefineAndUseMacroRulesMacro[dbg])]
+#[derive_deftly_adhoc]
 struct S(usize);
 impl S {
     fn forget(self) {

@@ -1,6 +1,6 @@
-# Introduction to derive-adhoc
+# Introduction to derive-deftly
 
-`derive-adhoc` allows you to write `#[derive]` macros
+`derive-deftly` allows you to write `#[derive]` macros
 -- macros driven by Rust data structures -
 by writing templates in a fairly straightforward template language.
 
@@ -8,7 +8,7 @@ This is the friendly introduction.
 Of course there is a [reference manual](reference) too.
 
 <!--##toc##-->
-   * [Getting started with `derive_adhoc`.](#getting-started-with-derive_adhoc)
+   * [Getting started with `derive_deftly`.](#getting-started-with-derive_deftly)
       * [Exporting templates](#exporting-templates)
       * [If you're only deriving once...](#if-youre-only-deriving-once)
    * [A brief tutorial: How to write your own Clone](#a-brief-tutorial-how-to-write-your-own-clone)
@@ -27,20 +27,20 @@ Of course there is a [reference manual](reference) too.
       * [More complicated conditionals](#more-complicated-conditionals)
    * [Other features](#other-features)
 
-## Getting started with `derive_adhoc`.
+## Getting started with `derive_deftly`.
 
-There are two parts to using `derive_adhoc`:
+There are two parts to using `derive_deftly`:
 specifying _templates_ that you can use to derive new features for your
 structs and enums
 and then _applying_ those templates to your types.
 
 To define a template, you use
-[`define_derive_adhoc!`](crate::define_derive_adhoc), as in
+[`define_derive_deftly!`](crate::define_derive_deftly), as in
 
 ```
-use derive_adhoc::define_derive_adhoc;
+use derive_deftly::define_derive_deftly;
 
-define_derive_adhoc! {
+define_derive_deftly! {
     NamePrinter =
 
     impl $ttype {
@@ -61,12 +61,12 @@ on which you're applying your template.)
 
 Later on, you can apply `NamePrinter` to your own type,
 with
-[`#[derive(Adhoc)]`](crate::Adhoc),
+[`#[derive(Deftly)]`](crate::Deftly),
 as in:
 
 ```
-# use derive_adhoc::define_derive_adhoc;
-# define_derive_adhoc! {
+# use derive_deftly::define_derive_deftly;
+# define_derive_deftly! {
 #    NamePrinter =
 #
 #    impl $ttype {
@@ -75,10 +75,10 @@ as in:
 #        }
 #    }
 # }
-use derive_adhoc::Adhoc;
+use derive_deftly::Deftly;
 
-#[derive(Clone, Debug, Adhoc)]
-#[derive_adhoc(NamePrinter)]
+#[derive(Clone, Debug, Deftly)]
+#[derive_deftly(NamePrinter)]
 pub struct MyStruct;
 
 MyStruct::print_name();
@@ -90,13 +90,13 @@ But now suppose that you want to expose your template,
 so that people can use it from any crate.
 
 To do this, you use
-[`pub` before the name of your macro](define_derive_adhoc#exporting-a-template-for-use-by-other-crates).
+[`pub` before the name of your macro](define_derive_deftly#exporting-a-template-for-use-by-other-crates).
 ```
 pub trait NamePrinter {
     fn print_name();
 }
 
-derive_adhoc::define_derive_adhoc! {
+derive_deftly::define_derive_deftly! {
     /// Derives `NamePrinter`, providing `print_name`
     pub NamePrinter =
     impl $crate::NamePrinter for $ttype {
@@ -119,16 +119,16 @@ so that when later we expand this template,
 it can find the right template.
 
 We've also added a
-[doc comment](define_derive_adhoc#docs-in-define),
+[doc comment](define_derive_deftly#docs-in-define),
 which will appear in the public API documentation for our crate.
 
 Additionally,
-[we need to re-export `derive_adhoc`](define_derive_adhoc#you-must-re-export-derive_adhoc-usually-no-semver-implications)
+[we need to re-export `derive_deftly`](define_derive_deftly#you-must-re-export-derive_deftly-usually-no-semver-implications)
 from our crate, so that users get the correct version:
 
 ```rust,ignore
 // you might want to apply #[doc(hidden)] to this.
-pub use derive_adhoc;
+pub use derive_deftly;
 ```
 
 Now, when somebody wants to use our template,
@@ -141,12 +141,12 @@ use name_printer::{
     NamePrinter,
     // This is the macro that makes our template work.
     // (We might come up with a better syntax for this later).
-    derive_adhoc_template_NamePrinter.
+    derive_deftly_template_NamePrinter.
 };
-use derive_adhoc::Adhoc;
+use derive_deftly::Deftly;
 
-#[derive(Adhoc)]
-#[derive_adhoc(NamePrinter)]
+#[derive(Deftly)]
+#[derive_deftly(NamePrinter)]
 struct TheirStructure {
     // ...
 }
@@ -155,7 +155,7 @@ struct TheirStructure {
 ### If you're only deriving once...
 
 If you want, you can
-[apply a template to an existing type](derive_adhoc)
+[apply a template to an existing type](derive_deftly_adhoc)
 without having to name that template.
 You might want to do this if you have a template
 that you only want to apply to a single struct,
@@ -166,13 +166,13 @@ and `MyStruct` alone,
 you could have said:
 
 ```
-use derive_adhoc::{Adhoc, derive_adhoc};
+use derive_deftly::{Deftly, derive_deftly_adhoc};
 
-#[derive(Clone, Debug, Adhoc)]
-#[derive_truly_adhoc]
+#[derive(Clone, Debug, Deftly)]
+#[derive_deftly_adhoc]
 pub struct MyStruct;
 
-derive_adhoc!{
+derive_deftly_adhoc!{
     MyStruct:
 
     impl $ttype {
@@ -191,7 +191,7 @@ and how to use them to create much more interesting code.
 
 
 The rest of this document will focus
-on how to use derive_adhoc's template features
+on how to use derive_deftly's template features
 to your fullest advantage.
 If you're the kind of person who wants to skip
 straight to the reference manual,
@@ -200,7 +200,7 @@ you can find it [over here][reference].
 ## A brief tutorial: How to write your own Clone
 
 For the next few sections, for a toy example,
-we'll be using `derive_adhoc` to define
+we'll be using `derive_deftly` to define
 our own version of `derive(Clone)`.
 At first, it will be very simple;
 later on, we'll add a few features
@@ -209,7 +209,7 @@ that Rust's `derive(Clone)` doesn't have.
 > Aside:
 >
 > We've picked a simple trait to derive on purpose,
-> so that we can focus on the features of `derive_adhoc`
+> so that we can focus on the features of `derive_deftly`
 > without the additional complexity
 > of introducing an unfamiliar trait as well.
 >
@@ -276,12 +276,12 @@ impl Clone for ⟪Your struct⟫ {
 ```
 
 And here's how that pseudocode translates into
-a `derive_adhoc` template:
+a `derive_deftly` template:
 
 ```
-use derive_adhoc::define_derive_adhoc;
+use derive_deftly::define_derive_deftly;
 
-define_derive_adhoc! {
+define_derive_deftly! {
     MyClone =
 
     impl Clone for $ttype {
@@ -302,7 +302,7 @@ and
 [`$fname`](crate::doc_reference#fname-vname-tname--names).
 
 
-In `derive_adhoc` templates, `$( ... )`  denotes repetition:
+In `derive_deftly` templates, `$( ... )`  denotes repetition:
 it repeats what is inside it
 an "appropriate" number of times.
 (We'll give a definition of "appropriate" later on.)
@@ -324,7 +324,7 @@ there's
 
 > ### On naming
 >
-> Many `derive_adhoc` expansions'
+> Many `derive_deftly` expansions'
 > [names start with](crate::doc_reference#keyword-initial-letters)
 > `t` for **top-level**
 > (whatever you are applying the template to),
@@ -338,9 +338,9 @@ there's
 >
 > (We say "top-level" instead of "struct":
 > later on, we'll be showing you how to apply
-> derive_adhoc to `enums`.)
+> derive_deftly to `enums`.)
 >
-> Many `derive_adhoc` expansions end with
+> Many `derive_deftly` expansions end with
 > a short identifier for what they contain.
 > For example, `$tname` is the name of a top-level type,
 > `$vname` is the name of a variant,
@@ -365,7 +365,7 @@ you might expect it to fail.
 
 Surprisingly, it will still work fine!
 This isn't because of any clever trickery
-from `derive_adhoc`:
+from `derive_deftly`:
 it's just how Rust works.
 When you use it on tuple or unit structs,
 the `MyClone` template we wrote above will expand
@@ -427,8 +427,8 @@ impl<T:Clone, U> Clone for MyItems<T,U>
 We can expand our `MyClone` definition to look that way:
 
 ```
-# use derive_adhoc::define_derive_adhoc;
-define_derive_adhoc! {
+# use derive_deftly::define_derive_deftly;
+define_derive_deftly! {
     MyClone =
 
     impl<$tgens> Clone for $ttype
@@ -499,14 +499,14 @@ impl<T: Clone> Clone for Indirect<T> { ... }
 But that `T: Clone` constraint isn't necessary: `Arc<T>` always
 implements `Clone`, so your struct could be clone unconditionally.
 
-But using `derive_adhoc`,
+But using `derive_deftly`,
 you can define a template
 that derives `Clone` only for the cases
 where the _actual_ required constraints are met:
 
 ```
-# use derive_adhoc::define_derive_adhoc;
-define_derive_adhoc! {
+# use derive_deftly::define_derive_deftly;
+define_derive_deftly! {
     MyClone =
 
     impl<$tgens> Clone for $ttype
@@ -546,7 +546,7 @@ where
 
 
 > This time,
-> `derive_adhoc` has exactly _one_ piece cleverness at work.
+> `derive_deftly` has exactly _one_ piece cleverness at work.
 > It makes sure that either `$twheres` is empty,
 > or that it ends with a comma.
 > That way, your template won't expand to something like
@@ -579,8 +579,8 @@ each of the three variants.
 We can do that as follow
 (For simplicity, we're going to ignore generics for now.)
 ```
-# use derive_adhoc::define_derive_adhoc;
-define_derive_adhoc! {
+# use derive_deftly::define_derive_deftly;
+define_derive_deftly! {
     MyClone =
 
     impl Clone for $ttype
@@ -682,8 +682,8 @@ Now let's see how it works when we try to handle generics again.
 (It's surprisingly straightforward!)
 
 ```
-# use derive_adhoc::{Adhoc, define_derive_adhoc};
-define_derive_adhoc! {
+# use derive_deftly::{Deftly, define_derive_deftly};
+define_derive_deftly! {
     MyClone =
 
     impl<$tgens> Clone for $ttype
@@ -703,8 +703,8 @@ define_derive_adhoc! {
         }
     }
 }
-# #[derive(Adhoc)]
-# #[derive_adhoc(MyClone)]
+# #[derive(Deftly)]
+# #[derive_deftly(MyClone)]
 # enum TestCase<A> { Variant(A) }
 ```
 
@@ -714,21 +714,21 @@ Note that when we define our additional `where` clauses,
 we don't have to specify separate of repetition
 for variants and fields:
 if we just have `$ftype` in a top-level repetition,
-`derive_adhoc` will iterate over all fields in all variants.
+`derive_deftly` will iterate over all fields in all variants.
 
 Sometimes, if you do something subtle,
-derive-adhoc may not be able to figure
+derive-deftly may not be able to figure
 out what you're trying to repeat over.
 You can use 
 [`${for ...}`](crate::doc_reference#repetition-and-nesting)
 to specifiy explicitly:
 so, above, instead, we could have written
 ```
-# use derive_adhoc::{Adhoc, derive_adhoc};
-# #[derive(Adhoc)]
-# #[derive_truly_adhoc]
+# use derive_deftly::{Deftly, derive_deftly_adhoc};
+# #[derive(Deftly)]
+# #[derive_deftly_adhoc]
 # enum TestCase<A> { Variant(A) }
-# derive_adhoc! { TestCase:
+# derive_deftly_adhoc! { TestCase:
 #     fn testcase<$tgens>() where
 ${for fields { $ftype: Clone, }}
 #     {}
@@ -742,7 +742,7 @@ it makes your macro code clearer.
 ## Some more advanced topics
 
 Now that we've our first basic example under our belt,
-let's look at some other things that `derive_adhoc` can do.
+let's look at some other things that `derive_deftly` can do.
 
 ### Transforming names and strings
 
@@ -751,7 +751,7 @@ based on existing ones,
 or to convert identifiers into strings.
 
 You _could_ use the existing [`paste`] crate for this,
-or you can use a native facility provided by `derive_adhoc`.
+or you can use a native facility provided by `derive_deftly`.
 
 For example, suppose that you want
 to define a template that makes a "discriminant" type
@@ -763,8 +763,8 @@ to detect each variant.
 
 You can do that like this:
 ```
-# use derive_adhoc::define_derive_adhoc;
-define_derive_adhoc! {
+# use derive_deftly::define_derive_deftly;
+define_derive_deftly! {
     Discriminant =
 
     #[derive(Copy,Clone,Eq,PartialEq,Debug)]
@@ -838,7 +838,7 @@ In this last section,
 you've seen a new syntax for the first time.
 Both `${paste ident ident..}` and `${snake_case ident}`
 are special cases of the following meta-syntax,
-which `derive_adhoc` uses everywhere:
+which `derive_deftly` uses everywhere:
 
 [`${KEYWORD ARGS.. }`](crate::doc_reference#named-and-positional-template-arguments-to-expansions-and-conditions)
 
@@ -861,7 +861,7 @@ The syntax for this is:
 
 If you ever need to write a literal `$`
 (say, if you want to confuse yourself
-by making derive-adhoc-generated pattern macros)
+by making derive-deftly-generated pattern macros)
 you can write [`$$`](crate::doc_reference#dollar-dollar).
 
 
@@ -869,7 +869,7 @@ you can write [`$$`](crate::doc_reference#dollar-dollar).
 
 In this section,
 we'll be using another example to demonstrate
-more of what `derive_adhoc` can do.
+more of what `derive_deftly` can do.
 
 We'll be building a `Constructor` template
 to define a `new()` function for a struct,
@@ -878,8 +878,8 @@ without having to write out all of its arguments.
 Let's start with the following (struct-only) template:
 
 ```
-# use derive_adhoc::define_derive_adhoc;
-define_derive_adhoc! {
+# use derive_deftly::define_derive_deftly;
+define_derive_deftly! {
    Constructor =
 
    impl<$tgens> $ttype where $twheres {
@@ -895,8 +895,8 @@ define_derive_adhoc! {
 When you apply the above template to a type like this:
 
 ```
-# use derive_adhoc::define_derive_adhoc;
-# define_derive_adhoc! {
+# use derive_deftly::define_derive_deftly;
+# define_derive_deftly! {
 #   Constructor =
 #
 #   impl<$tgens> $ttype where $twheres {
@@ -907,9 +907,9 @@ When you apply the above template to a type like this:
 #       }
 #   }
 # }
-use derive_adhoc::Adhoc;
-#[derive(Adhoc)]
-#[derive_adhoc(Constructor)]
+use derive_deftly::Deftly;
+#[derive(Deftly)]
+#[derive_deftly(Constructor)]
 struct Ex<A> {
   a: f64,
   b: A,
@@ -943,12 +943,12 @@ that apply to enums as well as structs.
 But let's say that in this case,
 we want our template to be struct-only.
 
-We can tell `derive_adhoc` about this restriction,
+We can tell `derive_deftly` about this restriction,
 to help it generate more useful error messages:
 
 ```
-# use derive_adhoc::define_derive_adhoc;
-define_derive_adhoc! {
+# use derive_deftly::define_derive_deftly;
+define_derive_deftly! {
    Constructor for struct = // (1)
 
    impl<$tgens> $ttype where $twheres {
@@ -977,24 +977,24 @@ error: template defined for struct, but applied to enum
 
 When writing complex templates,
 it can sometimes be hard to figure out compiler errors.
-derive-adhoc has some features which can help:
+derive-deftly has some features which can help:
 
 #### Syntax checking the expansion
 
 You can
-[tell derive-adhoc what your macro is supposed to produce](crate::doc_reference#expect-items-expect-expr--syntax-check-the-expansion):
+[tell derive-deftly what your macro is supposed to produce](crate::doc_reference#expect-items-expect-expr--syntax-check-the-expansion):
 
 ```
-# use derive_adhoc::{Adhoc, define_derive_adhoc};
-define_derive_adhoc! {
+# use derive_deftly::{Deftly, define_derive_deftly};
+define_derive_deftly! {
    Constructor for struct, expect items =
 
    impl<$tgens> $ttype where $twheres {
       // ...
    }
 }
-# #[derive(Adhoc)]
-# #[derive_adhoc(Constructor)]
+# #[derive(Deftly)]
+# #[derive_deftly(Constructor)]
 # struct Test;
 ```
 
@@ -1009,13 +1009,13 @@ you can write `expect expr` instead of `expect items`.
 
 Alternatively,
 you can request this syntax check
-[when you invoke the macro](Adhoc#expansion-options):
+[when you invoke the macro](Deftly#expansion-options):
 
 ```
-# use derive_adhoc::{Adhoc, define_derive_adhoc};
-# define_derive_adhoc! { Constructor = }
-#[derive(Adhoc)]
-#[derive_adhoc(Constructor[expect items])]
+# use derive_deftly::{Deftly, define_derive_deftly};
+# define_derive_deftly! { Constructor = }
+#[derive(Deftly)]
+#[derive_deftly(Constructor[expect items])]
 struct MyStruct { /* ... */ }
 ```
 
@@ -1024,25 +1024,25 @@ struct MyStruct { /* ... */ }
 Sometimes, the expansion syntax checks,
 but is wrong in some other way.
 
-You can ask derive-adhoc to simply
+You can ask derive-deftly to simply
 [print a copy of the expansion](crate::doc_reference#dbg--print-the-expansion-to-stderr-for-debugging).
 
 ```
-# use derive_adhoc::{Adhoc, define_derive_adhoc};
-# define_derive_adhoc! { Constructor = }
-#[derive(Adhoc)]
-#[derive_adhoc(Constructor[dbg])]
+# use derive_deftly::{Deftly, define_derive_deftly};
+# define_derive_deftly! { Constructor = }
+#[derive(Deftly)]
+#[derive_deftly(Constructor[dbg])]
 struct MyStruct { /* ... */ }
 ```
 
 You'll see the compiler print something like this:
 
 ```ignore
----------- derive-adhoc expansion of Constructor for MyStruct (start) ----------
+---------- derive-deftly expansion of Constructor for MyStruct (start) ----------
 impl<> MyStruct where {
     pub fn new(...) { ... }
 }
----------- derive-adhoc expansion of Constructor for MyStruct (end) ----------
+---------- derive-deftly expansion of Constructor for MyStruct (end) ----------
 ```
 
 Like the `dbg!` macro, you don't want to
@@ -1059,8 +1059,8 @@ Let's fix this, and have it give our constructor
 the same visibility as the type itself:
 
 ```
-# use derive_adhoc::define_derive_adhoc;
-define_derive_adhoc! {
+# use derive_deftly::define_derive_deftly;
+define_derive_deftly! {
    Constructor for struct =
 
    impl<$tgens> $ttype where $twheres {
@@ -1095,8 +1095,8 @@ we'd like to be able to give the `new` function a different name.
 We could do this as follows:
 
 ```
-# use derive_adhoc::define_derive_adhoc;
-define_derive_adhoc! {
+# use derive_deftly::define_derive_deftly;
+define_derive_deftly! {
    Constructor for struct =
 
    impl<$tgens> $ttype where $twheres {
@@ -1109,10 +1109,10 @@ define_derive_adhoc! {
    }
 }
 
-use derive_adhoc::Adhoc;
-#[derive(Adhoc)]
-#[derive_adhoc(Constructor)]
-#[adhoc(newfn="construct_example")]
+use derive_deftly::Deftly;
+#[derive(Deftly)]
+#[derive_deftly(Constructor)]
+#[deftly(newfn="construct_example")]
 struct Example {
     a: f64,
     b: String
@@ -1123,7 +1123,7 @@ Here, instead of specifying "new"
 for the method name in our template,
 we give the name as `${tmeta(newfn)}`.
 This tells the template to look for an
-[`#[adhoc(newfn="...")]`](Adhoc#adhoc-attribute)
+[`#[deftly(newfn="...")]`](Deftly#deftly-attribute)
 attribute on the type,
 and to use the value of that attribute
 in place of the keyword.
@@ -1132,21 +1132,21 @@ If we want our attribute to be more namespaced,
 we can instead say something like
 `${tmeta(Constructor(newfn = "..."))}`.
 If we do, the template will look for an attribute like
-`#[adhoc(Constructor(newfn = "..."))]`.
+`#[deftly(Constructor(newfn = "..."))]`.
 
 
 The
-[`$tmeta`](crate::doc_reference#tmeta-vmeta-fmeta--adhoc-attributes)
+[`$tmeta`](crate::doc_reference#tmeta-vmeta-fmeta--deftly-attributes)
 keyword that we used here
 tells the template
-to look at the `#[adhoc]` attributes for the _type_.
+to look at the `#[deftly]` attributes for the _type_.
 We can, instead, use
-[`$vmeta`](crate::doc_reference#tmeta-vmeta-fmeta--adhoc-attributes)
-to look for `#[adhoc]` attributes for the current _variant_,
+[`$vmeta`](crate::doc_reference#tmeta-vmeta-fmeta--deftly-attributes)
+to look for `#[deftly]` attributes for the current _variant_,
 or
-[`$fmeta`](crate::doc_reference#tmeta-vmeta-fmeta--adhoc-attributes)
+[`$fmeta`](crate::doc_reference#tmeta-vmeta-fmeta--deftly-attributes)
 to
-to look for `#[adhoc]` attributes for the current _field_.
+to look for `#[deftly]` attributes for the current _field_.
 
  <!--
 > TODO: Is this the right way to talk about "as lit" and "as ty"?
@@ -1160,13 +1160,13 @@ we made it possible to rename the "new" function
 generated by our template.
 But our approach is flawed:
 if the user _doesn't_ provide
-the `#[adhoc(newfn)]` adhoc attribute,
+the `#[deftly(newfn)]` attribute,
 the template won't make a function name at all!
 
 Let's show how to fix that:
 ```
-# use derive_adhoc::define_derive_adhoc;
-define_derive_adhoc! {
+# use derive_deftly::define_derive_deftly;
+define_derive_deftly! {
    Constructor for struct =
 
    impl<$tgens> $ttype where $twheres {
@@ -1194,12 +1194,12 @@ Otherwise, it expands to an "else" argument (if any).
 > and so on!
 
 Here, the condition is
-[`tmeta(newfn)`](crate::doc_reference#fmetaname-vmetaname-tmetaname--adhoc-attributes).
+[`tmeta(newfn)`](crate::doc_reference#fmetaname-vmetaname-tmetaname--deftly-attributes).
 That condition is true if the current type
-has an `#[adhoc(newfn)]` attribute,
+has an `#[deftly(newfn)]` attribute,
 and false otherwise.
 There are also `vmeta` and `fmeta` attributes
-to detect `#[adhoc(..)]` attributes
+to detect `#[deftly(..)]` attributes
 on variants and fields respectively.
 
 ### More complicated conditionals
@@ -1212,8 +1212,8 @@ and not take them as arguments.
 
 We could do this with an explicit conditional for each field:
 ```
-# use derive_adhoc::define_derive_adhoc;
-define_derive_adhoc! {
+# use derive_deftly::define_derive_deftly;
+define_derive_deftly! {
    Constructor =
 
    impl<$tgens> $ttype where $twheres {
@@ -1232,11 +1232,11 @@ define_derive_adhoc! {
    }
 }
 
-use derive_adhoc::Adhoc;
-#[derive(Adhoc)]
-#[derive_adhoc(Constructor)]
+use derive_deftly::Deftly;
+#[derive(Deftly)]
+#[derive_deftly(Constructor)]
 struct Foo {
-    #[adhoc(Constructor(default))]
+    #[deftly(Constructor(default))]
     s: Vec<String>,
     n: u32,
 }
@@ -1253,7 +1253,7 @@ You've seen `fmeta` before;
 [`not`](crate::doc_reference#false-true-notcondition-anycond1cond2-allcond1cond2--boolean-logic)
 is just how we express negation.
 All together, this `$when` keyword causes each field
-that has `#[adhoc(Constructor(default))]` applied to it
+that has `#[deftly(Constructor(default))]` applied to it
 to be omitted from the list of arguments
 to the `new()` function.
 
@@ -1270,7 +1270,7 @@ when _all_ of its arguments are true.
 
 ## Other features
 
-derive-adhoc has many more features,
+derive-deftly has many more features,
 that aren't yet explained in this tutorial.
 For example:
 

@@ -57,7 +57,7 @@ mod check {
     impl FromStr for Target {
         type Err = Void;
         fn from_str(_: &str) -> Result<Self, Void> {
-            panic!("output syntax checking not supported, enable `expect` feature of `derive-adhoc`")
+            panic!("output syntax checking not supported, enable `expect` feature of `derive-deftly`")
         }
     }
 
@@ -80,7 +80,7 @@ impl DaOptValDescribable for check::Target {
 ///
 /// Normally you do not need to mention this macro.
 ///
-/// derive-adhoc does its work by
+/// derive-deftly does its work by
 /// (defining and then) invoking various interrelated macros
 /// including `macro_rules` macros and proc macros.
 /// These ultimately end up calling this macro,
@@ -90,23 +90,23 @@ impl DaOptValDescribable for check::Target {
 /// This macro's behvaiour is not currently stable or documented.
 /// If you invoke it yourself, you get to keep all the pieces.
 #[cfg_attr(proc_macro, proc_macro)]
-pub fn derive_adhoc_expand(
+pub fn derive_deftly_engine(
     input: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
     let input: proc_macro2::TokenStream = input.into();
-    let output = expand::derive_adhoc_expand_func_macro(input)
+    let output = expand::derive_deftly_engine_func_macro(input)
         .unwrap_or_else(|e| e.into_compile_error());
     output.into()
 }
 
-/// Expand an ad-hoc template, on a data structure decorated `#[derive(Adhoc)]`
+/// Expand an ad-hoc template, on a data structure decorated `#[derive(Deftly)]`
 ///
 /// ```ignore
-/// # use derive_adhoc_macros::{Adhoc, derive_adhoc, derive_adhoc_expand};
-/// # #[derive(Adhoc)] struct DataStructureType;
+/// # use derive_deftly_macros::{Deftly, derive_deftly_adhoc, derive_deftly_engine};
+/// # #[derive(Deftly)] struct DataStructureType;
 /// # fn main() {
 /// # const TEMPLATE: () = ();
-/// derive_adhoc! {
+/// derive_deftly_adhoc! {
 ///     DataStructureType OPTIONS,..:
 ///     TEMPLATE
 /// }
@@ -120,15 +120,15 @@ pub fn derive_adhoc_expand(
 /// [expansion options](doc_reference/index.html#expansion-options).
 ///
 /// The definition of `DataStructureType` must have been decorated
-/// with [`#[derive(Adhoc)]`](crate::Adhoc),
-/// and the resulting `derive_adhoc_driver_TYPE` macro must be
+/// with [`#[derive(Deftly)]`](crate::Deftly),
+/// and the resulting `derive_deftly_driver_TYPE` macro must be
 /// available in scope.
 #[cfg_attr(proc_macro, proc_macro)]
-pub fn derive_adhoc(
+pub fn derive_deftly_adhoc(
     input: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
     let input = TokenStream::from(input);
-    let output = invocation::derive_adhoc_func_macro(input)
+    let output = invocation::derive_deftly_adhoc(input)
         .unwrap_or_else(|e| e.into_compile_error());
     output.into()
 }
@@ -136,7 +136,7 @@ pub fn derive_adhoc(
 /// Define a reuseable template
 ///
 /// ```text
-/// define_derive_adhoc! {
+/// define_derive_deftly! {
 ///     [/// DOCS]
 ///     [pub] MyMacro OPTIONS,.. =
 ///     TEMPLATE
@@ -144,8 +144,8 @@ pub fn derive_adhoc(
 /// ```
 ///
 /// Then, `MyMacro` can be used with
-/// [`#[derive(Adhoc)]`](crate::Adhoc)
-/// `#[derive_adhoc(MyMacro)]`.
+/// [`#[derive(Deftly)]`](crate::Deftly)
+/// `#[derive_deftly(MyMacro)]`.
 ///
 /// <span id="options-in-define">`OPTIONS,..`</span>
 /// is an optional comma-separated list of
@@ -154,66 +154,66 @@ pub fn derive_adhoc(
 ///
 /// <span id="docs-in-define">`DOCS`</span>,
 /// if supplied, are used as the rustdocs
-/// for the captured template macro `derive_adhoc_template_MyMacro`.
-/// derive-adhoc will then also append a note about
+/// for the captured template macro `derive_deftly_template_MyMacro`.
+/// derive-deftly will then also append a note about
 /// how to invoke the template.
 ///
-/// ## Template definition macro `derive_adhoc_template_MyMacro`
+/// ## Template definition macro `derive_deftly_template_MyMacro`
 ///
 /// The template is made into a `macro_rules` macro
-/// named `derive_adhoc_template_MyMacro`,
+/// named `derive_deftly_template_MyMacro`,
 /// which is referenced when the template is applied.
 ///
 /// The template definition macro
-/// from `define_derive_adhoc!`
+/// from `define_derive_deftly!`
 /// must be in scope at the point where you try to use it
-/// (with `#[derive(Adhoc)] #[derive_adhoc(MyMacro)]`).
+/// (with `#[derive(Deftly)] #[derive_deftly(MyMacro)]`).
 /// See the
-/// [documentation for `#[derive(Adhoc)]`](derive.Adhoc.html#scoping-and-ordering-within-the-same-crate).
+/// [documentation for `#[derive(Deftly)]`](derive.Deftly.html#scoping-and-ordering-within-the-same-crate).
 ///
 /// ## Exporting a template for use by other crates
 ///
-/// With `pub MyMacro`, `define_derive_adhoc!` exports the template
+/// With `pub MyMacro`, `define_derive_deftly!` exports the template
 /// for use by other crates.
 /// Then, it is referred to in other crates
 /// with `#[derive_ahdoc(this_crate::MyMacro)]`.
 ///
-/// I.e., `pub MyMacro` causes the `derive_adhoc_template_MyMacro`
+/// I.e., `pub MyMacro` causes the `derive_deftly_template_MyMacro`
 /// pattern macro to be exported with `#[macro_export]`.
 ///
 /// Note that a template is always exported at the crate top level,
 /// not in a sub-module,
 /// even if it is *defined* in a sub-module.
 ///
-/// ### You must re-export `derive_adhoc`; (usually no) semver implications
+/// ### You must re-export `derive_deftly`; (usually no) semver implications
 ///
 /// When exporting a template to other crates, you must also
-/// re-export `derive_adhoc`,
+/// re-export `derive_deftly`,
 /// at the top level of your crate:
 ///
 /// ```ignore
 /// #[doc(hidden)]
-/// pub use derive_adhoc;
+/// pub use derive_deftly;
 /// ```
 /// This is used to find the template expansion engine,
 /// and will arrange that your template is expanded
-/// by the right version of derive-adhoc.
-/// The template syntax is that for *your* version of `derive-adhoc`,
-/// even if the depending crate uses a different version of derive-adhoc.
+/// by the right version of derive-deftly.
+/// The template syntax is that for *your* version of `derive-deftly`,
+/// even if the depending crate uses a different version of derive-deftly.
 ///
 /// You should *not* treat a breaking change
-/// to derive-adhoc's template syntax
-/// (which is a major change to derive-adhoc),
+/// to derive-deftly's template syntax
+/// (which is a major change to derive-deftly),
 /// nor a requirement to use a newer template feature,
 /// as a breaking changes in the API of your crate.
 /// (You *should* use `#[doc(hidden)]`, or other approaches,
 /// to discourage downstream crates from using
-/// the derive-adhoc version you re-export.
+/// the derive-deftly version you re-export.
 /// Such use would be outside the semver guarantees.)
 ///
 /// Changes that would require a semver bump
 /// for all libraries that export templates,
-/// will be rare, and specially marked in the derive-adhoc
+/// will be rare, and specially marked in the derive-deftly
 /// changelog.
 ///
 /// ## Namespacing within a template
@@ -231,11 +231,11 @@ pub fn derive_adhoc(
 /// Overall, the situation is similar to defining
 /// an exported `macro_rules` macro.
 #[cfg_attr(proc_macro, proc_macro)]
-pub fn define_derive_adhoc(
+pub fn define_derive_deftly(
     input: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
     let input = TokenStream::from(input);
-    let output = definition::define_derive_adhoc_func_macro(input)
+    let output = definition::define_derive_deftly_func_macro(input)
         .unwrap_or_else(|e| e.into_compile_error());
     output.into()
 }
@@ -244,58 +244,58 @@ pub fn define_derive_adhoc(
 ///
 /// This macro does two things:
 ///
-///  1. If `#[derive_adhoc(MyMacro)]` attributes are also specified,
+///  1. If `#[derive_deftly(MyMacro)]` attributes are also specified,
 ///     they are taken to refer to reuseable templates
 ///     defined with
-///     [`define_derive_adhoc!`](macro@crate::define_derive_adhoc).
+///     [`define_derive_deftly!`](macro@crate::define_derive_deftly).
 ///     Each such `MyMacro` is applied to the data structure.
 ///
 ///     <span id="expansion-options">You can specify
 ///     [expansion options](doc_reference/index.html#expansion-options)
 ///     for each such template application, by writing
-///     `#[derive_adhoc(MyMacro[OPTIONS,..])]`, where
+///     `#[derive_deftly(MyMacro[OPTIONS,..])]`, where
 ///     `[OPTIONS,..]` is a comma-separated list of expansion options
 ///     contained within `[ ]`.</span>
 ///
-///  2. If `#[derive_truly_adhoc]` is specified,
+///  2. If `#[derive_deftly_adhoc]` is specified,
 ///     captures the data structure definition,
 ///     so that it can be used with calls to
-///     [`derive_adhoc!`](macro@crate::derive_adhoc).
+///     [`derive_deftly_adhoc!`](macro@crate::derive_deftly_adhoc).
 ///
-/// ## `#[adhoc]` attribute
+/// ## `#[deftly]` attribute
 ///
-/// The contents of `#[adhoc]` attributes are made available
+/// The contents of `#[deftly]` attributes are made available
 /// to templates via the
-/// [`${Xmeta}`](doc_reference/index.html#tmeta-vmeta-fmeta--adhoc-attributes)
+/// [`${Xmeta}`](doc_reference/index.html#tmeta-vmeta-fmeta--deftly-attributes)
 /// expansions.
 ///
 /// If the template(s) don't use them, they are ignored.
-/// `derive-adhoc` does not impose any namespacing within `#[adhoc]`:
+/// `derive-deftly` does not impose any namespacing within `#[deftly]`:
 /// all templates see the same adhoc meta attributes.
 ///
-/// ## Captured data structure definition `derive_adhoc_driver_TYPE`
+/// ## Captured data structure definition `derive_deftly_driver_TYPE`
 ///
 /// The data structure is captured by defining
-/// a `macro_rules` macro called `derive_adhoc_driver_TYPE`,
+/// a `macro_rules` macro called `derive_deftly_driver_TYPE`,
 /// where `TYPE` is the name of the type
-/// that `#[derive(Adhoc)]` is applied to.
+/// that `#[derive(Deftly)]` is applied to.
 ///
 /// ## Scoping and ordering within the same crate
 ///
 /// **Summary of required ordering**
 ///
-///  1. `define_derive_adhoc! { MyMacro = ... }`
-///  2. `#[derive(Adhoc)] #[derive_adhoc(MyMacro)] struct MyStruct { ... }`
-///  3. `derive_adhoc! { MyStruct: ... }`
+///  1. `define_derive_deftly! { MyMacro = ... }`
+///  2. `#[derive(Deftly)] #[derive_deftly(MyMacro)] struct MyStruct { ... }`
+///  3. `derive_deftly_adhoc! { MyStruct: ... }`
 ///
 /// Any reusable templates defined with
-/// `define_derive_adhoc!` must lexically their precede
-/// uses with `#[derive(Adhoc) #[derive_adhoc(...)]`.
+/// `define_derive_deftly!` must lexically their precede
+/// uses with `#[derive(Deftly) #[derive_deftly(...)]`.
 ///
-/// And, for one-off templates (`derive_adhoc!`),
-/// the data structure with its `#[derive(Adhoc)]`
+/// And, for one-off templates (`derive_deftly_adhoc!`),
+/// the data structure with its `#[derive(Deftly)]`
 /// must lexically precede
-/// the references in `derive_adhoc!`,
+/// the references in `derive_deftly_adhoc!`,
 /// so that the data structure definition macro
 /// is in scope.
 ///
@@ -308,9 +308,9 @@ pub fn define_derive_adhoc(
 /// the `mod` statement will need `#[macro_use]`.
 /// So the placement and order of `mod` statements can matter.
 ///
-/// ## Applying a template (derive-adhoc macro) from another crate
+/// ## Applying a template (derive-deftly macro) from another crate
 ///
-/// `#[derive_adhoc(some_crate::MyMacro)]`
+/// `#[derive_deftly(some_crate::MyMacro)]`
 /// applies an exported (`pub`) template
 /// defined and exported by `some_crate`.
 ///
@@ -318,10 +318,10 @@ pub fn define_derive_adhoc(
 /// so you can apply it with an unqualified name,
 /// with `use`,
 /// but the `use` must refer to
-/// the actual pattern macro name `derive_adhoc_template_MyMacro`:
+/// the actual pattern macro name `derive_deftly_template_MyMacro`:
 /// ```ignore
-/// use other_crate::derive_adhoc_template_TheirMacro;
-/// #[derive(Adhoc)]
+/// use other_crate::derive_deftly_template_TheirMacro;
+/// #[derive(Deftly)]
 /// #[derive_Adhoc(TheirMacro)]
 /// struct MyStruct { // ...
 /// # }
@@ -340,9 +340,9 @@ pub fn define_derive_adhoc(
 //
 /// To cause the macro embodying the driver struct to be exported,
 /// write:
-/// `#[derive_truly_adhoc(pub)]`.
+/// `#[derive_deftly_adhoc(pub)]`.
 /// The driver can then be derived from in other crates,
-/// with `derive_adhoc! { exporting_crate::DriverStruct: ... }`.
+/// with `derive_deftly_adhoc! { exporting_crate::DriverStruct: ... }`.
 ///
 /// This is a tricky feature,
 /// which should only be used by experts
@@ -356,36 +356,36 @@ pub fn define_derive_adhoc(
 /// for a fuller discussion of the implications,
 /// and some advice.
 ///
-/// If you do this, you must **pin your derive-adhoc** to a minor version,
-/// as you may need to treat *minor* version updates in derive-adhoc
+/// If you do this, you must **pin your derive-deftly** to a minor version,
+/// as you may need to treat *minor* version updates in derive-deftly
 /// as semver breaks for your crate.
 //
-// This is the implementation of #[derive(Adhoc)]
+// This is the implementation of #[derive(Deftly)]
 //
 // It should parse the struct name out of its input.
 //
 // The expansion should be
-//   macro_rules! derive_adhoc_driver_ChannelsParams ...
+//   macro_rules! derive_deftly_driver_ChannelsParams ...
 // as per NOTES.txt
 //
 // For the MVP it does not need to have any attributes, but
 // later it will want to be
-//   #[proc_macro_derive(Adhoc, attributes(adhoc))]
+//   #[proc_macro_derive(Deftly, attributes(adhoc))]
 // and then it will perhaps want to do *something* with the attributes?
 // Although maybe just ignoring them and letting them get to the expander
 // is right.
 #[cfg_attr(
     proc_macro,
     proc_macro_derive(
-        Adhoc,
-        attributes(adhoc, derive_adhoc, derive_truly_adhoc)
+        Deftly,
+        attributes(deftly, derive_deftly, derive_deftly_adhoc)
     )
 )]
-pub fn derive_adhoc_derive_macro(
+pub fn derive_deftly(
     input: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
     let input = TokenStream::from(input);
-    let output = capture::derive_adhoc_derive_macro(input)
+    let output = capture::derive_deftly(input)
         .unwrap_or_else(|e| e.into_compile_error());
     output.into()
 }

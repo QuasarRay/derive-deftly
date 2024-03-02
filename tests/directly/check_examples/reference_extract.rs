@@ -243,7 +243,7 @@ fn extract_structs(input: &Preprocessed) -> Vec<syn::DeriveInput> {
                         .call_in_parens(PreprocessedMetaList::parse_inner)
                         .ok()?;
                     derives.content.iter().find_map(|pm| {
-                        pm.path.is_ident("Adhoc").then_some(())
+                        pm.path.is_ident("Deftly").then_some(())
                     })?;
 
                     seen_d_a = true;

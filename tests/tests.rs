@@ -1,9 +1,9 @@
-//! Tests for derive-adhoc
+//! Tests for derive-deftly
 //!
 //! **Internal, unpublished crate.**
 //!
 //! Separating these tests into their own crate arranges that they
-//! can go through the "front door" of `use derive_adhoc::...`,
+//! can go through the "front door" of `use derive_deftly::...`,
 //! and in particular makes the cross-crate tests uniform with the others.
 //!
 //! ## Invoking the tests
@@ -54,10 +54,10 @@
 //! This appears in `tests/stderr/recent.real-stderr`, for example.
 //!
 //! See
-//! [#13](https://gitlab.torproject.org/Diziet/rust-derive-adhoc/-/issues/13)
+//! [#13](https://gitlab.torproject.org/Diziet/rust-derive-deftly/-/issues/13)
 //! for some more discussion.
 //!
-//! ## Classes of test in the derive-adhoc workspace
+//! ## Classes of test in the derive-deftly workspace
 //!
 //! Testing proc macros is not entirely straightforward,
 //! so there are multiple classes of test with different approaches.
@@ -72,7 +72,7 @@
 //! and [`list_expand_test_paths_for_macrotest`].
 //!
 //! Tests with `recent` somewhere in their name are only run
-//! if the `recent` cargo feature is enabled for `derive-adhoc-tests`.
+//! if the `recent` cargo feature is enabled for `derive-deftly-tests`.
 //! This is enabled in CI for the newer compilers, but not for the MSRV.
 //!
 //! ### `tests/ui/*.rs`
@@ -92,7 +92,7 @@
 //!  - Output compared with `tests/stderr/combined.real-stderr`
 //!
 //! Invoked from `tests/stderr.rs`,
-//! which builds the crate `derive-adhoc-stderr-tests`.
+//! which builds the crate `derive-deftly-stderr-tests`.
 //! See the doc comment there for details and rationale.
 //!
 //! ### `tests/pub-a/`, `tests/pub-b/`
@@ -100,13 +100,13 @@
 //! Tests of cross-crate exports of macros and templates.
 //! `pub-a` exports things, and `pub-b` imports and uses them.
 //!
-//! `pub-a` uses a special `bizarre` version of derive-adhoc,
+//! `pub-a` uses a special `bizarre` version of derive-deftly,
 //! to test that the right template expander is used in each case.
 //! See the [`pub-b` doc comment](../pub_b/index.html) for details.
 //!
 //! ### `tests/compat/`
 //!
-//! Tests compatibility with old, published, versions of derive-adhoc.
+//! Tests compatibility with old, published, versions of derive-deftly.
 //! See `tests/compat/README.md`.
 //!
 //! ### The normal-ish `#[cfg(test)]` modules listed in here `tests/tests.rs`
@@ -116,7 +116,7 @@
 //! ### `tests/directly/`
 //!
 //! Tests that go through the "back door",
-//! to use the innards of derive-adhoc.
+//! to use the innards of derive-deftly.
 //!
 //! Currently this is the tests in `directly::check_examples`
 //! which extract examples from `doc/reference.md`
@@ -148,7 +148,7 @@ pub use tutils::*;
 // These mostly serve to avoid rustdoc warnings from directly::macros,
 // which is macros.rs re-built outside the proc macro system.
 #[allow(unused_imports)]
-use derive_adhoc::{define_derive_adhoc, derive_adhoc, Adhoc};
+use derive_deftly::{define_derive_deftly, derive_deftly_adhoc, Deftly};
 
 //---------- modules containing straightforwrad `#[test]` tests ----------
 

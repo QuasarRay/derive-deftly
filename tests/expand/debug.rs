@@ -6,12 +6,12 @@
 
 use std::fmt::{self, Debug, Formatter};
 
-use derive_adhoc::define_derive_adhoc;
-use derive_adhoc::{derive_adhoc, Adhoc};
+use derive_deftly::define_derive_deftly;
+use derive_deftly::{derive_deftly_adhoc, Deftly};
 
-use derive_adhoc_tests::*;
+use derive_deftly_tests::*;
 
-define_derive_adhoc! {
+define_derive_deftly! {
     MyDebug =
 
     impl Debug for $ttype
@@ -71,16 +71,16 @@ impl<T: Clone> From<&Vec<T>> for PrettyVec<T> {
 
 struct Opaque;
 
-#[derive(Adhoc)]
-#[derive_adhoc(MyDebug)]
+#[derive(Deftly)]
+#[derive_deftly(MyDebug)]
 #[allow(dead_code)]
 struct DataType {
     foo: u8,
-    #[adhoc(debug(into = "PrettyVec<String>"))]
+    #[deftly(debug(into = "PrettyVec<String>"))]
     bar: Vec<String>,
-    #[adhoc(debug(skip))]
+    #[deftly(debug(skip))]
     opaque: Opaque,
-    #[adhoc(debug(call = "custom::fmt"))]
+    #[deftly(debug(call = "custom::fmt"))]
     custom: char,
 }
 

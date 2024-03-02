@@ -33,18 +33,18 @@ trait NumFields {
 /// (Exporting of a template to other crates is demonstrated in
 /// `tests/pub-export/pub-b/pub-a.rs` and `pub-b.rs`.)
 ///
-/// The remaining principles about use of names in a derive-adhoc template
+/// The remaining principles about use of names in a derive-deftly template
 /// are basically the same as those for a `macro_rules!` macro.
 #[macro_use]
 mod has_template {
-    use derive_adhoc::define_derive_adhoc;
+    use derive_deftly::define_derive_deftly;
 
     /// Demonstrates use of a local name in a template.
     /// We must make it visible everywhere the template will be expanded.
     pub(super) const ENUM_MARKER: Option<super::EnumMarker> =
         Some(super::EnumMarker);
 
-    define_derive_adhoc! {
+    define_derive_deftly! {
         IsEnum =
 
         // When the template wants to refer to things, it is usually most
@@ -60,7 +60,7 @@ mod has_template {
                 // We do that here with `ENUM_MARKER`.
                 //
                 // (`super::` isn't adviseable in a macro, including in a
-                // derive-adhoc template, because its meaning at the
+                // derive-deftly template, because its meaning at the
                 // expansion site would depend on the scope context there
                 // (eg, module depth.)
                 ${if is_enum {
@@ -76,11 +76,11 @@ mod has_template {
 /// When definining a driver that is to be used as a derive input
 /// outside its defining module, but inside the same crate,
 /// `#[macro_use]` is needed, on the containing module(s).  The driver
-/// is then available for `derive_adhoc!` *textually after* its
+/// is then available for `derive_deftly_adhoc!` *textually after* its
 /// definition.
 #[macro_use]
 pub mod has_driver {
-    use derive_adhoc::Adhoc;
+    use derive_deftly::Deftly;
 
     // Additionally, for a driver to be useable outside its module, the
     // driver type name and types of its fields etc., need to be visible,
@@ -92,16 +92,16 @@ pub mod has_driver {
     // scope the things that the template expects.
     use super::{EnumMarker, IsEnum};
 
-    #[derive(Adhoc)]
-    #[derive_adhoc(IsEnum)]
-    #[derive_truly_adhoc]
+    #[derive(Deftly)]
+    #[derive_deftly(IsEnum)]
+    #[derive_deftly_adhoc]
     pub enum Driver<T: Default> {
         Variant(Field<T>),
     }
 }
 
 mod adhoc_template {
-    use derive_adhoc::derive_adhoc;
+    use derive_deftly::derive_deftly_adhoc;
 
     // When applying a template to a driver struct defined in another
     // module, the driver's own type name, and the names used for field
@@ -109,16 +109,16 @@ mod adhoc_template {
     // manually.
     use super::has_driver::{Driver, Field};
 
-    derive_adhoc! {
+    derive_deftly_adhoc! {
         // When expanding a template for a crate-local struct, pass
-        // just the name of the struct to `derive_adhoc!`.
+        // just the name of the struct to `derive_deftly_adhoc!`.
         //
         // (Exporting of the driver so that other crates can derive from it
-        // is supported via `#[derive_adhoc(pub)]` but it brings
+        // is supported via `#[derive_deftly(pub)]` but it brings
         // namespacing awkwardness and should be used only with crate.)
         //
         // (Passing a path doesn't work for a struct with an unexported
-        // derive-adhoc driver, because the name here is turned into
+        // derive-deftly driver, because the name here is turned into
         // the name of a `macro_rules!` macro, and a crate-local one
         // of those those doesn't have any path scope.)
         Driver:

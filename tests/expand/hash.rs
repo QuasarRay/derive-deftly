@@ -1,14 +1,14 @@
-//! Simple example, including use of an #[adhoc(...)] attribute
+//! Simple example, including use of an #[deftly(...)] attribute
 //!
 //! Also demonstrates use of field type trait bounds.
 
-use derive_adhoc::define_derive_adhoc;
-use derive_adhoc::{derive_adhoc, Adhoc};
+use derive_deftly::define_derive_deftly;
+use derive_deftly::{derive_deftly_adhoc, Deftly};
 
 use std::fmt::Debug;
 use std::hash::{Hash, Hasher};
 
-define_derive_adhoc! {
+define_derive_deftly! {
     /// Derives `Hash`
     MyHash =
 
@@ -26,16 +26,16 @@ define_derive_adhoc! {
     }
 }
 
-#[derive(Adhoc)]
-#[derive_adhoc(MyHash)]
+#[derive(Deftly)]
+#[derive_deftly(MyHash)]
 struct DataType {
     foo: u8,
-    #[adhoc(hash(skip))]
+    #[deftly(hash(skip))]
     bar: Vec<String>,
 }
 
-#[derive(Adhoc)]
-#[derive_adhoc(MyHash)]
+#[derive(Deftly)]
+#[derive_deftly(MyHash)]
 struct Pair<S, T: Debug>
 where
     S: Debug,
@@ -44,8 +44,8 @@ where
     second: T,
 }
 
-#[derive(Adhoc)]
-#[derive_adhoc(MyHash)]
+#[derive(Deftly)]
+#[derive_deftly(MyHash)]
 struct IntPair(usize, usize);
 
 fn main() {

@@ -21,7 +21,7 @@ mod ref_version;
 
 #[cfg(feature = "enable-recent")]
 mod dbg_recent {
-    derive_adhoc::derive_adhoc! {
+    derive_deftly::derive_deftly_adhoc! {
         EnumReference:
 
         $dbg_all_keywords

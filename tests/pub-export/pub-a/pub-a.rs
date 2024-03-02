@@ -1,15 +1,15 @@
 //! Test / demo of cross-crate and compatibility
 //!
 //! Our test has two crates.  This is the lower-layer one, which
-//! provides a trait derivable with derive_adhoc (ie, a trait
+//! provides a trait derivable with derive_deftly (ie, a trait
 //! and corresponding reuseable template).
 //!
-//! It also provides a struct exported as a derive-adhoc driver.
+//! It also provides a struct exported as a derive-deftly driver.
 
-// Any crate exposing a derive_adhoc template must re-export derive_adhoc
+// Any crate exposing a derive_deftly template must re-export derive_deftly
 // itself at the top level.  This will be used during template invocation
 // to find the right version of the template expansion machinery.
-pub use derive_adhoc;
+pub use derive_deftly;
 
 pub use a_driver::ADriver;
 
@@ -20,7 +20,7 @@ pub use a_driver::ADriver;
 //    cannot be referred to by absolute paths
 #[macro_use]
 pub mod a_trait {
-    use derive_adhoc::define_derive_adhoc;
+    use derive_deftly::define_derive_deftly;
 
     /// Demonstrates use of a local name in a template.
     /// We must make it visible everywhere the template will be expanded.
@@ -28,7 +28,7 @@ pub mod a_trait {
         fn is_enum() -> Option<()>;
     }
 
-    define_derive_adhoc! {
+    define_derive_deftly! {
         pub IsEnum =
 
         // When the template wants to refer to things in its own
@@ -51,21 +51,21 @@ pub mod a_trait {
 }
 
 mod local_use {
-    use derive_adhoc::Adhoc;
+    use derive_deftly::Deftly;
 
     // When we refer to a local template, we do so without a path,
     // even though it was an exported template.
-    #[derive(Adhoc)]
-    #[derive_adhoc(IsEnum)]
-    #[derive_truly_adhoc]
+    #[derive(Deftly)]
+    #[derive_deftly(IsEnum)]
+    #[derive_deftly_adhoc]
     pub(crate) struct Local;
 }
 
 pub mod a_driver {
-    use derive_adhoc::Adhoc;
+    use derive_deftly::Deftly;
 
-    /// A struct which is exported as a derive-adhoc driver (iw with
-    /// `#[derive_adhoc(pub)]` must be *visilbe* outside the crate.
+    /// A struct which is exported as a derive-deftly driver (iw with
+    /// `#[derive_deftly(pub)]` must be *visilbe* outside the crate.
     ///
     /// Doing this effectively turns the body of the struct into a macro,
     /// with very limited support for namespacing and hygiene!
@@ -85,7 +85,7 @@ pub mod a_driver {
     /// Additionally, of course, this exposes all of the field names and
     /// types of the struct.  So it is probably not a good idea with a
     /// driver that isn't completely pub and exhaustive.  (This could be
-    /// checked by derive_adhoc!, but then we would want a way to override
+    /// checked by derive_deftly_adhoc!, but then we would want a way to override
     /// the error, too.  All this additional complexity seems unwarranted
     /// for a feature which is so difficult to use for other reasons too.)
     ///
@@ -94,8 +94,8 @@ pub mod a_driver {
     /// use it, and what would and wouldn't count as a semver major change.
     /// Anyone who *uses* an exported driver should refer to those docs,
     /// on pain of risking breakages due to `cargo update`.
-    #[derive(Adhoc)]
-    #[derive_truly_adhoc(pub)]
+    #[derive(Deftly)]
+    #[derive_deftly_adhoc(pub)]
     pub struct ADriver<T: Default> {
         pub field: AField<T>,
     }

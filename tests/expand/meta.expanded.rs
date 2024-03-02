@@ -1,11 +1,11 @@
 //! Tests for Xmeta etc. edge cases
 #![allow(dead_code, unused_variables)]
-use derive_adhoc::{derive_adhoc, Adhoc};
-#[derive_truly_adhoc]
+use derive_deftly::{derive_deftly_adhoc, Deftly};
+#[derive_deftly_adhoc]
 struct IgnoredThings {
-    #[adhoc(prefix = "pfx")]
-    #[adhoc(multi(hi, there(wombat), path::suffix = "sfx"))]
-    #[adhoc(mixed(inner = "yes"), mixed = "no")]
+    #[deftly(prefix = "pfx")]
+    #[deftly(multi(hi, there(wombat), path::suffix = "sfx"))]
+    #[deftly(mixed(inner = "yes"), mixed = "no")]
     f: String,
 }
 fn just_pfx_prefix() {}
@@ -13,7 +13,7 @@ fn multi_hi_pfx() {}
 fn just_suffix_sfx() {}
 fn mixed_no() {}
 fn mixed_yes() {}
-#[adhoc("forbidden")]
-#[adhoc(value = wrong)]
+#[deftly("forbidden")]
+#[deftly(value = wrong)]
 struct MetasNotCheckedIfNoTemplatesExpanded;
 fn main() {}

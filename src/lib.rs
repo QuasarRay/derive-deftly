@@ -14,8 +14,10 @@
 // Also this crate is where the docs live, right here as crate-level
 // docs.
 
-pub use derive_adhoc_macros::derive_adhoc_expand;
-pub use derive_adhoc_macros::{define_derive_adhoc, derive_adhoc, Adhoc};
+pub use derive_deftly_macros::derive_deftly_engine;
+pub use derive_deftly_macros::{
+    define_derive_deftly, derive_deftly_adhoc, Deftly,
+};
 
 // We (ab)use the module system as places to hang our documentation.
 
@@ -32,4 +34,4 @@ pub mod doc_implementation {}
 pub mod doc_changelog {}
 
 #[cfg(not(feature = "minimal-1"))]
-compile_error! { "You must enable at least one derive-adhoc crate feature!" }
+compile_error! { "You must enable at least one derive-deftly crate feature!" }

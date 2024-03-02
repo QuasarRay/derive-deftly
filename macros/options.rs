@@ -20,7 +20,7 @@ pub enum OpContext {
     Template,
     /// In the driver's application
     ///
-    /// `#[derive_adhoc(Template[OPTIONS])]`
+    /// `#[derive_deftly(Template[OPTIONS])]`
     DriverApplicationCapture,
     /// Driver's application options as they appear in the ultimate expansion
     ///
@@ -140,7 +140,7 @@ impl OpContext {
             OC::Template => Ok(()),
             OC::DriverApplicationCapture | OC::DriverApplicationPassed => {
                 Err(option.kw_span.error(
-                    "this derive-adhoc option is only supported in templates",
+                    "this derive-deftly option is only supported in templates",
                 ))
             }
         }
@@ -283,7 +283,7 @@ impl Parse for DaOption {
         keyword! { "for": For(input.parse()?) }
         keyword! { expect(input.parse()?) }
 
-        Err(kw.error("unknown derive-adhoc option"))
+        Err(kw.error("unknown derive-deftly option"))
     }
 }
 

@@ -1,32 +1,32 @@
 error: this file contains an unclosed delimiter
   --> ui/badmeta.rs:3:10
    |
-3  |   #[derive(Adhoc)]
-   |            ^^^^^ unclosed delimiter
+3  |   #[derive(Deftly)]
+   |            ^^^^^^ unclosed delimiter
 ...
-12 | / derive_adhoc! {
+12 | / derive_deftly_adhoc! {
 13 | |     DataType:
 14 | |
 15 | |     const K: () = ${tmeta(wrong)}
 16 | | }
    | |_- in this macro invocation
    |
-   = note: this error originates in the macro `::derive_adhoc::derive_adhoc_expand` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+   = note: this error originates in the macro `::derive_deftly::derive_deftly_engine` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: cannot parse string into token stream
   --> ui/badmeta.rs:3:10
    |
-3  |   #[derive(Adhoc)]
-   |            ^^^^^
+3  |   #[derive(Deftly)]
+   |            ^^^^^^
 ...
-12 | / derive_adhoc! {
+12 | / derive_deftly_adhoc! {
 13 | |     DataType:
 14 | |
 15 | |     const K: () = ${tmeta(wrong)}
 16 | | }
    | |_- in this macro invocation
    |
-   = note: this error originates in the macro `::derive_adhoc::derive_adhoc_expand` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+   = note: this error originates in the macro `::derive_deftly::derive_deftly_engine` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: constructed identifier "Bad." is invalid
   --> ui/badmeta.rs:26:14
@@ -35,12 +35,12 @@ error: constructed identifier "Bad." is invalid
    |              ^^^^^
 
 error: probably-invalid input to identifier pasting
-  --> ui/badmeta.rs:6:15
+  --> ui/badmeta.rs:6:16
    |
-6  |   #[adhoc(dot = ".")]
-   |                 ^^^
+6  |   #[deftly(dot = ".")]
+   |                  ^^^
 ...
-23 | / derive_adhoc! {
+23 | / derive_deftly_adhoc! {
 24 | |     DataType:
 25 | |
 26 | |     struct ${paste Bad ${tmeta(dot) as str}};
@@ -49,15 +49,15 @@ error: probably-invalid input to identifier pasting
 32 | | }
    | |_- in this macro invocation
    |
-   = note: this error originates in the macro `derive_adhoc_driver_DataType` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+   = note: this error originates in the macro `derive_deftly_driver_DataType` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: expected a list with sub-attributes, found a simple value
-  --> ui/badmeta.rs:6:9
+  --> ui/badmeta.rs:6:10
    |
-6  |   #[adhoc(dot = ".")]
-   |           ^^^
+6  |   #[deftly(dot = ".")]
+   |            ^^^
 ...
-23 | / derive_adhoc! {
+23 | / derive_deftly_adhoc! {
 24 | |     DataType:
 25 | |
 26 | |     struct ${paste Bad ${tmeta(dot) as str}};
@@ -66,21 +66,21 @@ error: expected a list with sub-attributes, found a simple value
 32 | | }
    | |_- in this macro invocation
    |
-   = note: this error originates in the macro `derive_adhoc_driver_DataType` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+   = note: this error originates in the macro `derive_deftly_driver_DataType` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: attribute value expanded, but no suitable value in data structure definition (in this data structure)
   --> ui/badmeta.rs:4:1
    |
-4  | / #[derive_truly_adhoc]
-5  | | #[adhoc(wrong = "{")]
-6  | | #[adhoc(dot = ".")]
-7  | | #[adhoc(several = "first")]
-8  | | #[adhoc(several = "second")]
-9  | | #[adhoc(several_inner(several = "first", several = "second"))]
+4  | / #[derive_deftly_adhoc]
+5  | | #[deftly(wrong = "{")]
+6  | | #[deftly(dot = ".")]
+7  | | #[deftly(several = "first")]
+8  | | #[deftly(several = "second")]
+9  | | #[deftly(several_inner(several = "first", several = "second"))]
 10 | | struct DataType {}
    | |_________________^
 ...
-23 | / derive_adhoc! {
+23 | / derive_deftly_adhoc! {
 24 | |     DataType:
 25 | |
 26 | |     struct ${paste Bad ${tmeta(dot) as str}};
@@ -89,7 +89,7 @@ error: attribute value expanded, but no suitable value in data structure definit
 32 | | }
    | |_- in this macro invocation
    |
-   = note: this error originates in the macro `derive_adhoc_driver_DataType` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+   = note: this error originates in the macro `derive_deftly_driver_DataType` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: attribute value expanded, but no suitable value in data structure definition (expansion)
   --> ui/badmeta.rs:28:32
@@ -98,12 +98,12 @@ error: attribute value expanded, but no suitable value in data structure definit
    |                                ^^^
 
 error: tried to expand just attribute value, but it was specified multiple times (first occurrence)
-  --> ui/badmeta.rs:7:9
+  --> ui/badmeta.rs:7:10
    |
-7  |   #[adhoc(several = "first")]
-   |           ^^^^^^^
+7  |   #[deftly(several = "first")]
+   |            ^^^^^^^
 ...
-23 | / derive_adhoc! {
+23 | / derive_deftly_adhoc! {
 24 | |     DataType:
 25 | |
 26 | |     struct ${paste Bad ${tmeta(dot) as str}};
@@ -112,15 +112,15 @@ error: tried to expand just attribute value, but it was specified multiple times
 32 | | }
    | |_- in this macro invocation
    |
-   = note: this error originates in the macro `derive_adhoc_driver_DataType` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+   = note: this error originates in the macro `derive_deftly_driver_DataType` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: tried to expand just attribute value, but it was specified multiple times (second occurrence)
-  --> ui/badmeta.rs:8:9
+  --> ui/badmeta.rs:8:10
    |
-8  |   #[adhoc(several = "second")]
-   |           ^^^^^^^
+8  |   #[deftly(several = "second")]
+   |            ^^^^^^^
 ...
-23 | / derive_adhoc! {
+23 | / derive_deftly_adhoc! {
 24 | |     DataType:
 25 | |
 26 | |     struct ${paste Bad ${tmeta(dot) as str}};
@@ -129,7 +129,7 @@ error: tried to expand just attribute value, but it was specified multiple times
 32 | | }
    | |_- in this macro invocation
    |
-   = note: this error originates in the macro `derive_adhoc_driver_DataType` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+   = note: this error originates in the macro `derive_deftly_driver_DataType` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: tried to expand just attribute value, but it was specified multiple times (expansion)
   --> ui/badmeta.rs:30:32
@@ -138,12 +138,12 @@ error: tried to expand just attribute value, but it was specified multiple times
    |                                ^^^^^^^
 
 error: tried to expand just attribute value, but it was specified multiple times (first occurrence)
-  --> ui/badmeta.rs:9:23
+  --> ui/badmeta.rs:9:24
    |
-9  |   #[adhoc(several_inner(several = "first", several = "second"))]
-   |                         ^^^^^^^
+9  |   #[deftly(several_inner(several = "first", several = "second"))]
+   |                          ^^^^^^^
 ...
-23 | / derive_adhoc! {
+23 | / derive_deftly_adhoc! {
 24 | |     DataType:
 25 | |
 26 | |     struct ${paste Bad ${tmeta(dot) as str}};
@@ -152,15 +152,15 @@ error: tried to expand just attribute value, but it was specified multiple times
 32 | | }
    | |_- in this macro invocation
    |
-   = note: this error originates in the macro `derive_adhoc_driver_DataType` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+   = note: this error originates in the macro `derive_deftly_driver_DataType` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: tried to expand just attribute value, but it was specified multiple times (second occurrence)
-  --> ui/badmeta.rs:9:42
+  --> ui/badmeta.rs:9:43
    |
-9  |   #[adhoc(several_inner(several = "first", several = "second"))]
-   |                                            ^^^^^^^
+9  |   #[deftly(several_inner(several = "first", several = "second"))]
+   |                                             ^^^^^^^
 ...
-23 | / derive_adhoc! {
+23 | / derive_deftly_adhoc! {
 24 | |     DataType:
 25 | |
 26 | |     struct ${paste Bad ${tmeta(dot) as str}};
@@ -169,7 +169,7 @@ error: tried to expand just attribute value, but it was specified multiple times
 32 | | }
    | |_- in this macro invocation
    |
-   = note: this error originates in the macro `derive_adhoc_driver_DataType` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+   = note: this error originates in the macro `derive_deftly_driver_DataType` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: tried to expand just attribute value, but it was specified multiple times (expansion)
   --> ui/badmeta.rs:31:32
@@ -180,16 +180,16 @@ error: tried to expand just attribute value, but it was specified multiple times
 error: attribute value expanded, but no value in data structure definition (in this data structure)
   --> ui/badmeta.rs:4:1
    |
-4  | / #[derive_truly_adhoc]
-5  | | #[adhoc(wrong = "{")]
-6  | | #[adhoc(dot = ".")]
-7  | | #[adhoc(several = "first")]
-8  | | #[adhoc(several = "second")]
-9  | | #[adhoc(several_inner(several = "first", several = "second"))]
+4  | / #[derive_deftly_adhoc]
+5  | | #[deftly(wrong = "{")]
+6  | | #[deftly(dot = ".")]
+7  | | #[deftly(several = "first")]
+8  | | #[deftly(several = "second")]
+9  | | #[deftly(several_inner(several = "first", several = "second"))]
 10 | | struct DataType {}
    | |_________________^
 ...
-36 | / derive_adhoc! {
+36 | / derive_deftly_adhoc! {
 37 | |     DataType:
 38 | |
 39 | |     // fails because `barelit("42")` is not helpful
@@ -197,7 +197,7 @@ error: attribute value expanded, but no value in data structure definition (in t
 41 | | }
    | |_- in this macro invocation
    |
-   = note: this error originates in the macro `derive_adhoc_driver_DataType` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+   = note: this error originates in the macro `derive_deftly_driver_DataType` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: attribute value expanded, but no value in data structure definition (expansion)
   --> ui/badmeta.rs:40:32
@@ -206,12 +206,12 @@ error: attribute value expanded, but no value in data structure definition (expa
    |                                ^^^^^^^
 
 error: expected a leaf node, found a list with sub-attributes
-  --> ui/badmeta.rs:9:9
+  --> ui/badmeta.rs:9:10
    |
-9  |   #[adhoc(several_inner(several = "first", several = "second"))]
-   |           ^^^^^^^^^^^^^
+9  |   #[deftly(several_inner(several = "first", several = "second"))]
+   |            ^^^^^^^^^^^^^
 ...
-43 | / derive_adhoc! {
+43 | / derive_deftly_adhoc! {
 44 | |     DataType:
 45 | |
 46 | |     // fails because `several_inner(...)` is not helpful
@@ -219,21 +219,21 @@ error: expected a leaf node, found a list with sub-attributes
 48 | | }
    | |_- in this macro invocation
    |
-   = note: this error originates in the macro `derive_adhoc_driver_DataType` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+   = note: this error originates in the macro `derive_deftly_driver_DataType` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: attribute value expanded, but no suitable value in data structure definition (in this data structure)
   --> ui/badmeta.rs:4:1
    |
-4  | / #[derive_truly_adhoc]
-5  | | #[adhoc(wrong = "{")]
-6  | | #[adhoc(dot = ".")]
-7  | | #[adhoc(several = "first")]
-8  | | #[adhoc(several = "second")]
-9  | | #[adhoc(several_inner(several = "first", several = "second"))]
+4  | / #[derive_deftly_adhoc]
+5  | | #[deftly(wrong = "{")]
+6  | | #[deftly(dot = ".")]
+7  | | #[deftly(several = "first")]
+8  | | #[deftly(several = "second")]
+9  | | #[deftly(several_inner(several = "first", several = "second"))]
 10 | | struct DataType {}
    | |_________________^
 ...
-43 | / derive_adhoc! {
+43 | / derive_deftly_adhoc! {
 44 | |     DataType:
 45 | |
 46 | |     // fails because `several_inner(...)` is not helpful
@@ -241,7 +241,7 @@ error: attribute value expanded, but no suitable value in data structure definit
 48 | | }
    | |_- in this macro invocation
    |
-   = note: this error originates in the macro `derive_adhoc_driver_DataType` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+   = note: this error originates in the macro `derive_deftly_driver_DataType` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: attribute value expanded, but no suitable value in data structure definition (expansion)
   --> ui/badmeta.rs:47:32
@@ -250,54 +250,54 @@ error: attribute value expanded, but no suitable value in data structure definit
    |                                ^^^^^^^^^^^^^
 
 error: expected identifier
-  --> ui/badmeta.rs:52:9
+  --> ui/badmeta.rs:52:10
    |
-52 | #[adhoc("forbidden")]
-   |         ^^^^^^^^^^^
+52 | #[deftly("forbidden")]
+   |          ^^^^^^^^^^^
 53 | struct TopLevelMetaLitForbidden;
-54 | derive_adhoc! { TopLevelMetaLitForbidden: }
-   | ------------------------------------------- in this macro invocation
+54 | derive_deftly_adhoc! { TopLevelMetaLitForbidden: }
+   | -------------------------------------------------- in this macro invocation
    |
-   = note: this error originates in the macro `derive_adhoc_driver_TopLevelMetaLitForbidden` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+   = note: this error originates in the macro `derive_deftly_driver_TopLevelMetaLitForbidden` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: expected literal
-  --> ui/badmeta.rs:58:17
+  --> ui/badmeta.rs:58:18
    |
-58 | #[adhoc(value = wrong)]
-   |                 ^^^^^
+58 | #[deftly(value = wrong)]
+   |                  ^^^^^
 59 | struct MetaValueMustBeLit;
-60 | derive_adhoc! { MetaValueMustBeLit: }
-   | ------------------------------------- in this macro invocation
+60 | derive_deftly_adhoc! { MetaValueMustBeLit: }
+   | -------------------------------------------- in this macro invocation
    |
-   = note: this error originates in the macro `derive_adhoc_driver_MetaValueMustBeLit` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+   = note: this error originates in the macro `derive_deftly_driver_MetaValueMustBeLit` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: expected identifier
-  --> ui/badmeta.rs:64:17
+  --> ui/badmeta.rs:64:18
    |
-64 |   #[adhoc(barelit("42"))]
-   |                   ^^^^
+64 |   #[deftly(barelit("42"))]
+   |                    ^^^^
 ...
-72 | / derive_adhoc! {
+72 | / derive_deftly_adhoc! {
 73 | |     WithBareLit:
 74 | |     struct ${paste Bad ${tmeta(barelit) as str}};
 75 | | }
    | |_- in this macro invocation
    |
-   = note: this error originates in the macro `derive_adhoc_driver_WithBareLit` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+   = note: this error originates in the macro `derive_deftly_driver_WithBareLit` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: expected identifier
-  --> ui/badmeta.rs:69:15
+  --> ui/badmeta.rs:69:16
    |
-69 |   #[adhoc(multi("1", "2"))]
-   |                 ^^^
+69 |   #[deftly(multi("1", "2"))]
+   |                  ^^^
 ...
-77 | / derive_adhoc! {
+77 | / derive_deftly_adhoc! {
 78 | |     WithBareLitMulti:
 79 | |     struct ${paste Bad ${tmeta(multi) as str}};
 80 | | }
    | |_- in this macro invocation
    |
-   = note: this error originates in the macro `derive_adhoc_driver_WithBareLitMulti` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+   = note: this error originates in the macro `derive_deftly_driver_WithBareLitMulti` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: expected path segment after `::`
   --> ui/badmeta.rs:84:49
@@ -305,23 +305,23 @@ error: expected path segment after `::`
 84 |     struct ${paste Bad ${tmeta(std::cell::Cell::<String>::ne)w as str}};
    |                                                 ^
 ...
-87 | #[derive(Adhoc)]
-   |          ----- in this derive macro expansion
+87 | #[derive(Deftly)]
+   |          ------ in this derive macro expansion
    |
-   = note: this error originates in the macro `derive_adhoc_template_TestFunkyPath` which comes from the expansion of the derive macro `Adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+   = note: this error originates in the macro `derive_deftly_template_TestFunkyPath` which comes from the expansion of the derive macro `Deftly` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: expected path segment after `::`
-  --> ui/badmeta.rs:90:26
+  --> ui/badmeta.rs:90:27
    |
-90 |   #[adhoc(std::cell::Cell::<String>::new)]
-   |                            ^
+90 |   #[deftly(std::cell::Cell::<String>::new)]
+   |                             ^
 ...
-93 | / derive_adhoc! {
+93 | / derive_deftly_adhoc! {
 94 | |     WithFunkyPath:
 95 | | }
    | |_- in this macro invocation
    |
-   = note: this error originates in the macro `derive_adhoc_driver_WithFunkyPath` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+   = note: this error originates in the macro `derive_deftly_driver_WithFunkyPath` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: expected path segment after `::`
   --> ui/badmeta.rs:84:49
@@ -329,7 +329,7 @@ error: expected path segment after `::`
 84 |     struct ${paste Bad ${tmeta(std::cell::Cell::<String>::ne)w as str}};
    |                                                 ^
 ...
-97 | #[derive(Adhoc)]
-   |          ----- in this derive macro expansion
+97 | #[derive(Deftly)]
+   |          ------ in this derive macro expansion
    |
-   = note: this error originates in the macro `derive_adhoc_template_TestFunkyPath` which comes from the expansion of the derive macro `Adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+   = note: this error originates in the macro `derive_deftly_template_TestFunkyPath` which comes from the expansion of the derive macro `Deftly` (in Nightly builds, run with -Z macro-backtrace for more info)

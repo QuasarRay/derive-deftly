@@ -1,4 +1,4 @@
-# **Hacking on derive-adhoc (`HACKING.md`)**
+# **Hacking on derive-deftly (`HACKING.md`)**
 
 Rust procedural macros are a somewhat awkward environment,
 and, especially, testing them can be complex.
@@ -26,7 +26,7 @@ and, especially, testing them can be complex.
 
 ## Required reading
 
-derive-adhoc uses types and traits from [`syn`] and [`mod@quote`],
+derive-deftly uses types and traits from [`syn`] and [`mod@quote`],
 extensively.
 
 It will be very helpful to run
@@ -35,7 +35,7 @@ cargo doc --document-private-items --workspace
 ```
 to get the rustdocs for the internal APIs.
 That will also get a **rendering of this file with working links**,
-as `target/doc/derive_adhoc_macros/_doc_hacking/index.html`.
+as `target/doc/derive_deftly_macros/_doc_hacking/index.html`.
 
 [`NOTES.md`](_doc_notes) has some ideas for the future,
 which we may or may not implement.
@@ -48,7 +48,7 @@ maintained by scripts in `maint/`.
 
 ### `tests/pub-export/bizarre-facade/*` etc., updated by `maint/update-bizarre`
 
-"Bizarre" version of `derive-adhoc`,
+"Bizarre" version of `derive-deftly`,
 used for [cross-crate compatibility testing](../../pub_b/index.html).
 
 CI will check that these outputs are
@@ -84,13 +84,13 @@ Checked by CI, but it's only a warning if it's not up to date.
 
 ## Testing - see `tests/tests.rs`
 
-derive-adhoc has comprehensive tests.
+derive-deftly has comprehensive tests.
 
 But, they are complicated
 (mostly because testing proc macros is complicated).
 
 You have to use **a particular version of Nightly Rust**.
-**See [`tests/tests.rs`](../../derive_adhoc_tests/index.html)**
+**See [`tests/tests.rs`](../../derive_deftly_tests/index.html)**
 for information on how to run and update the tests.
 
 ## Reporting errors during template parsing and expansion

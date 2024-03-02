@@ -5,23 +5,23 @@
 //#![feature(trace_macros)]
 //trace_macros!(true);
 
-use derive_adhoc::{derive_adhoc, Adhoc};
+use derive_deftly::{derive_deftly_adhoc, Deftly};
 
 use std::fmt::Debug;
 
-#[derive(Adhoc, Default, Debug)]
-#[derive_truly_adhoc]
+#[derive(Deftly, Default, Debug)]
+#[derive_deftly_adhoc]
 struct Both {
-    #[adhoc(left)]
+    #[deftly(left)]
     a: usize,
-    #[adhoc(right)]
+    #[deftly(right)]
     b: usize,
-    #[adhoc(right)]
-    #[adhoc(left)]
+    #[deftly(right)]
+    #[deftly(left)]
     c: usize,
 }
 
-derive_adhoc! {
+derive_deftly_adhoc! {
     Both:
 
     #[derive(Default, Debug)]

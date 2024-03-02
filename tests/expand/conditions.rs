@@ -2,7 +2,7 @@
 //!
 //! This gives a basic demonstration of how to handle an enum.
 
-use derive_adhoc::{define_derive_adhoc, derive_adhoc, Adhoc};
+use derive_deftly::{define_derive_deftly, derive_deftly_adhoc, Deftly};
 
 trait Trait {
     fn shape_top(&self) -> &'static str;
@@ -11,7 +11,7 @@ trait Trait {
     fn has_vmeta(&self) -> bool;
 }
 
-define_derive_adhoc! {
+define_derive_deftly! {
     Trait =
 
     impl Trait for $ttype {
@@ -59,7 +59,7 @@ trait GetUsize {
     fn get_usize(&self) -> Option<usize>;
 }
 
-define_derive_adhoc! {
+define_derive_deftly! {
     GetUsize =
 
     impl GetUsize for $ttype {
@@ -77,42 +77,42 @@ define_derive_adhoc! {
     }
 }
 
-#[derive(Adhoc)]
-#[derive_adhoc(Trait, GetUsize)]
-#[derive_truly_adhoc]
+#[derive(Deftly)]
+#[derive_deftly(Trait, GetUsize)]
+#[derive_deftly_adhoc]
 struct Unit;
 
-#[derive(Adhoc)]
-#[derive_adhoc(Trait, GetUsize)]
-#[adhoc(hi(ferris))]
+#[derive(Deftly)]
+#[derive_deftly(Trait, GetUsize)]
+#[deftly(hi(ferris))]
 struct Tuple(usize);
 
-#[derive(Adhoc)]
-#[derive_adhoc(Trait, GetUsize)]
-#[adhoc(hello(there = 42))]
+#[derive(Deftly)]
+#[derive_deftly(Trait, GetUsize)]
+#[deftly(hello(there = 42))]
 struct Struct {
     field: usize,
 }
 
-#[derive(Adhoc)]
-#[derive_adhoc(Trait, GetUsize)]
+#[derive(Deftly)]
+#[derive_deftly(Trait, GetUsize)]
 enum Enum {
-    #[adhoc(hello(there))]
+    #[deftly(hello(there))]
     Unit,
-    #[adhoc(hello(there(inner)))]
+    #[deftly(hello(there(inner)))]
     Tuple(usize),
     Named {
         field: u32,
     },
 }
 
-#[derive(Adhoc)]
-#[derive_adhoc(Trait)]
+#[derive(Deftly)]
+#[derive_deftly(Trait)]
 union Union {
     field: usize,
 }
 
-derive_adhoc! {
+derive_deftly_adhoc! {
     Unit:
 
     fn static_test() {

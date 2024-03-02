@@ -1,15 +1,15 @@
 #![allow(dead_code)]
-use derive_adhoc::{define_derive_adhoc, derive_adhoc, Adhoc};
-#[derive_adhoc(ReuseableTemplate)]
-#[derive_truly_adhoc]
+use derive_deftly::{define_derive_deftly, derive_deftly_adhoc, Deftly};
+#[derive_deftly(ReuseableTemplate)]
+#[derive_deftly_adhoc]
 ///one $dollar $template end
 struct OneDollar;
 ///one $dollar $template end
 struct ReusedWithOneDollar;
 ///one $dollar $template end
 struct AdhocOneDollar;
-#[derive_truly_adhoc]
-#[derive_adhoc(ReuseableTemplate)]
+#[derive_deftly_adhoc]
+#[derive_deftly(ReuseableTemplate)]
 ///two $$dollars
 struct TwoDollars;
 ///two $$dollars

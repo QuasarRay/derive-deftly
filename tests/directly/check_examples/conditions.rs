@@ -8,7 +8,7 @@ use super::*;
 
 pub struct ConditionExample {
     loc: DocLoc,
-    /// A derive-adhoc condition
+    /// A derive-deftly condition
     input: String,
     /// Which contexts give true
     true_contexts: Vec<(String, Limit)>,

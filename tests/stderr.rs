@@ -52,7 +52,7 @@ fn one_collection(coll: &str, compiles: Result<(), ()>) {
     eprintln!("build cwd {}", build_cwd);
 
     let inner_cwd =
-        format!("{}/target/tests/derive-adhoc-stderr-{}", build_cwd, coll);
+        format!("{}/target/tests/derive-deftly-stderr-{}", build_cwd, coll);
     eprintln!("inner cwd {}", inner_cwd);
 
     let stderr_file =
@@ -134,7 +134,7 @@ fn one_collection(coll: &str, compiles: Result<(), ()>) {
         perl -e '
             @l = <STDIN>;
             @l = grep { !(
-                m{^error: could not compile `derive-adhoc-stderr-test} ||
+                m{^error: could not compile `derive-deftly-stderr-test} ||
                 m{^To learn more, run the command again with --verbose}
            ) } @l;
            while (@l && $l[$#l] !~ m/\S/) { pop @l; }
