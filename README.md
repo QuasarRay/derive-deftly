@@ -6,9 +6,12 @@ but without having to wrestle with the proc macro system.
 
 **Stability warning**
 
-We plan to make a `1.x` version of this library fairly soon.
-However, right now the template syntax and other details
-are still subject to change.
+This is going to replace
+[`derive-adhoc`](https://lib.rs/crates/derive-adhoc).
+But, please continue to use that for now.
+
+We intend to make several further breaking changes,
+besides the renamings.
 
 ## Overview
 
