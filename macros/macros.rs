@@ -361,19 +361,6 @@ pub fn define_derive_deftly(
 /// as semver breaks for your crate.
 //
 // This is the implementation of #[derive(Deftly)]
-//
-// It should parse the struct name out of its input.
-//
-// The expansion should be
-//   macro_rules! derive_deftly_driver_ChannelsParams ...
-// as per NOTES.txt
-//
-// For the MVP it does not need to have any attributes, but
-// later it will want to be
-//   #[proc_macro_derive(Deftly, attributes(adhoc))]
-// and then it will perhaps want to do *something* with the attributes?
-// Although maybe just ignoring them and letting them get to the expander
-// is right.
 #[cfg_attr(
     proc_macro,
     proc_macro_derive(
