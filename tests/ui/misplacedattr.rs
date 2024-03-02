@@ -1,4 +1,4 @@
-use derive_adhoc::{derive_adhoc, Adhoc};
+use derive_adhoc::Adhoc;
 
 #[derive(Adhoc)]
 struct Struct {
