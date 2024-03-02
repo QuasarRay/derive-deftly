@@ -84,12 +84,12 @@ struct Unit;
 
 #[derive(Deftly)]
 #[derive_deftly(Trait, GetUsize)]
-#[adhoc(hi(ferris))]
+#[deftly(hi(ferris))]
 struct Tuple(usize);
 
 #[derive(Deftly)]
 #[derive_deftly(Trait, GetUsize)]
-#[adhoc(hello(there = 42))]
+#[deftly(hello(there = 42))]
 struct Struct {
     field: usize,
 }
@@ -97,9 +97,9 @@ struct Struct {
 #[derive(Deftly)]
 #[derive_deftly(Trait, GetUsize)]
 enum Enum {
-    #[adhoc(hello(there))]
+    #[deftly(hello(there))]
     Unit,
-    #[adhoc(hello(there(inner)))]
+    #[deftly(hello(there(inner)))]
     Tuple(usize),
     Named {
         field: u32,

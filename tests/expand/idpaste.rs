@@ -47,7 +47,7 @@ derive_deftly_adhoc! {
 #[derive(Deftly)]
 #[derive_deftly_adhoc]
 struct ExpandName {
-    #[adhoc(prefix = "attr", suffix = "24")]
+    #[deftly(prefix = "attr", suffix = "24")]
     f: FieldType,
 
     k: String,

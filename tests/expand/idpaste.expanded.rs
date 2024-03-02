@@ -25,7 +25,7 @@ struct PreTopNamePost<F> {
 impl<F> std::panic::RefUnwindSafe for PreTopNamePost<F> {}
 #[derive_deftly_adhoc]
 struct ExpandName {
-    #[adhoc(prefix = "attr", suffix = "24")]
+    #[deftly(prefix = "attr", suffix = "24")]
     f: FieldType,
     k: String,
 }

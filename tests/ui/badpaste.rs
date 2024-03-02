@@ -2,7 +2,7 @@ use derive_adhoc::{derive_deftly_adhoc, Deftly};
 
 #[derive(Deftly)]
 #[derive_deftly_adhoc]
-#[adhoc(something = "Box<char>")]
+#[deftly(something = "Box<char>")]
 struct DataType {
     foo: u8,
     bar: Vec<String>,

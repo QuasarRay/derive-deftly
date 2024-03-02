@@ -20,7 +20,7 @@ pub struct DeriveAdhocExpandInput {
     pub template: Template<TokenAccumulator>,
 }
 
-/// Node in tree structure found in driver `#[adhoc(some(thing))]`
+/// Node in tree structure found in driver `#[deftly(some(thing))]`
 #[derive(Debug)]
 pub enum FoundMetaNode<'l> {
     Unit(Span),
@@ -34,18 +34,18 @@ pub enum FoundMetaNode<'l> {
 #[derive(Debug)]
 pub struct FoundNearbyMetaNode {
     pub kind: FoundNearbyMetaNodeKind,
-    /// Span of the identifier in the actual `#[adhoc]` driver attribute
+    /// Span of the identifier in the actual `#[deftly]` driver attribute
     pub path_span: Span,
 }
 
 /// How the nearby node relates to the one we were looking for
 #[derive(Debug)]
 pub enum FoundNearbyMetaNodeKind {
-    /// We were looking to go deeper, but found a unit in `#[adhoc]`
+    /// We were looking to go deeper, but found a unit in `#[deftly]`
     Unit,
-    /// We were looking to go deeper, but found a `name = value` in `#[adhoc]`
+    /// We were looking to go deeper, but found a `name = value` in `#[deftly]`
     Lit,
-    /// We were looking for a leaf, but we found nested list in `#[adhoc]`
+    /// We were looking for a leaf, but we found nested list in `#[deftly]`
     List,
 }
 

@@ -45,10 +45,10 @@ pub struct PreprocessedField {
     pub pmetas: PreprocessedMetas,
 }
 
-/// `#[adhoc(...)]` helper attributes
+/// `#[deftly(...)]` helper attributes
 pub type PreprocessedMetas = Vec<PreprocessedMeta>;
 
-/// An `#[adhoc()]` attribute, or a sub-tree within one
+/// An `#[deftly()]` attribute, or a sub-tree within one
 #[derive(Debug, Clone)]
 pub struct PreprocessedMeta {
     pub path: syn::Path,
@@ -58,18 +58,18 @@ pub struct PreprocessedMeta {
 ///
 /// Examples in doc comments are for
 /// `PreprocessedMeta.path` of `foo`,
-/// ie the examples are for `#[adhoc(foo ..)]`.
+/// ie the examples are for `#[deftly(foo ..)]`.
 #[derive(Debug, Clone)]
 pub enum PreprocessedMetaValue {
-    /// `#[adhoc(foo)]`
+    /// `#[deftly(foo)]`
     Unit,
-    /// `#[adhoc(foo = "lit")]`
+    /// `#[deftly(foo = "lit")]`
     Value { equals: token::Eq, value: syn::Lit },
-    /// `#[adhoc(foo(...))]`
+    /// `#[deftly(foo(...))]`
     List(PreprocessedMetaList),
 }
 
-/// `#[adhoc(foo(content))]`, also used for the toplevel `#[adhoc(content)]`
+/// `#[deftly(foo(content))]`, also used for the toplevel `#[deftly(content)]`
 ///
 /// Represents a part like `(foo,bar(baz),zonk="value")`
 #[derive(Debug, Clone)]

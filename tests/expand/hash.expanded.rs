@@ -1,4 +1,4 @@
-//! Simple example, including use of an #[adhoc(...)] attribute
+//! Simple example, including use of an #[deftly(...)] attribute
 //!
 //! Also demonstrates use of field type trait bounds.
 use derive_adhoc::define_derive_deftly;
@@ -8,7 +8,7 @@ use std::hash::{Hash, Hasher};
 #[derive_deftly(MyHash)]
 struct DataType {
     foo: u8,
-    #[adhoc(hash(skip))]
+    #[deftly(hash(skip))]
     bar: Vec<String>,
 }
 impl Hash for DataType

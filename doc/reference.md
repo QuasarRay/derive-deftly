@@ -12,7 +12,7 @@
       * [`$vpat`, `$fpatname` -- pattern matching and value deconstruction](#vpat-fpatname--pattern-matching-and-value-deconstruction)
       * [`$ftype`, `$vtype`, `$ttype`, `$tdeftype` -- types](#ftype-vtype-ttype-tdeftype--types)
       * [`$tgens`, `$tgnames`, `$twheres`, `$tdefgens` -- generics](#tgens-tgnames-twheres-tdefgens--generics)
-      * [`${tmeta(...)}` `${vmeta(...)}` `${fmeta(...)}` -- `#[adhoc]` attributes](#tmeta-vmeta-fmeta--adhoc-attributes)
+      * [`${tmeta(...)}` `${vmeta(...)}` `${fmeta(...)}` -- `#[deftly]` attributes](#tmeta-vmeta-fmeta--adhoc-attributes)
       * [`${fattrs ...}` `${vattrs ...}` `${tattrs ...}` -- other attributes](#fattrs--vattrs--tattrs---other-attributes)
       * [`$<...>`, `${paste ...}` -- identifier pasting](#-paste---identifier-pasting)
       * [`${CASE_CHANGE ...}` -- case changing](#case_change---case-changing)
@@ -27,7 +27,7 @@
       * [`${define ...}`, `${defcond ...}` -- user-defined expansions and conditions](#define--defcond---user-defined-expansions-and-conditions)
    * [Conditions](#conditions)
       * [`fvis`, `tvis`, `fdefvis` -- test for public visibility](#fvis-tvis-fdefvis--test-for-public-visibility)
-      * [`fmeta(NAME)`, `vmeta(NAME)`, `tmeta(NAME)` -- `#[adhoc]` attributes](#fmetaname-vmetaname-tmetaname--adhoc-attributes)
+      * [`fmeta(NAME)`, `vmeta(NAME)`, `tmeta(NAME)` -- `#[deftly]` attributes](#fmetaname-vmetaname-tmetaname--adhoc-attributes)
       * [`is_struct`, `is_enum`, `is_union`](#is_struct-is_enum-is_union)
       * [`v_is_unit`, `v_is_tuple`, `v_is_named`](#v_is_unit-v_is_tuple-v_is_named)
       * [`approx_equal(ARG1, ARG2)` -- equality comparison (token comparison)](#approx_equalarg1-arg2--equality-comparison-token-comparison)
@@ -349,22 +349,22 @@ so for full support of generic types the template must expand both.
  * `$twheres`: `T: 'l, T: TryInto<u8>,`
  * `$tdefgens`: `'a, 'l: 'a, T: Display = usize, const C: usize = 1,`
 
-### `${tmeta(...)}` `${vmeta(...)}` `${fmeta(...)}` -- `#[adhoc]` attributes
+### `${tmeta(...)}` `${vmeta(...)}` `${fmeta(...)}` -- `#[deftly]` attributes
 
-Accesses macro parameters passed via `#[adhoc(...)]` attributes.
+Accesses macro parameters passed via `#[deftly(...)]` attributes.
 
  * **`${Xmeta(NAME)}`**:
-   Looks for `#[adhoc(NAME="VALUE")]`, and expands to `VALUE`.
+   Looks for `#[deftly(NAME="VALUE")]`, and expands to `VALUE`.
    `"VALUE"` must be be a string literal,
    which is parsed as an arbitrary series of tokens.
    `${Xmeta...}` expands to those tokens.
 
  * **`${Xmeta(SUB(NAME))}`**:
-   Looks for `#[adhoc(SUB(NAME="VALUE"))]`.
-   The `#[adhoc()]` is parsed as
+   Looks for `#[deftly(SUB(NAME="VALUE"))]`.
+   The `#[deftly()]` is parsed as
    a set of nested, comma-separated, lists.
    So this would find `NAME` 
-   in `#[adhoc(SUB1,SUB(N1,NAME="VALUE",N2),SUB2)]`.
+   in `#[deftly(SUB1,SUB(N1,NAME="VALUE",N2),SUB2)]`.
    The path can be arbitrarily deep, e.g.: `${Xmeta(L1(L2(L3(ATTR))))}`.
 
  * **`${Xmeta(...) as SYNTYPE}`**:
@@ -422,11 +422,11 @@ which should affect how a set of fields should be processed.
 
 ### `${fattrs ...}` `${vattrs ...}` `${tattrs ...}` -- other attributes
 
-Expands to attributes, including non-`#[adhoc()]` ones.
+Expands to attributes, including non-`#[deftly()]` ones.
 The attributes can be filtered:
 
   * **`$Xattrs`**: All the attributes
-    except `#[adhoc]` and `#[derive_adhoc]`
+    except `#[deftly]` and `#[derive_adhoc]`
   * **`${Xattrs A1, A2, ...}`**, or
     **`${Xattrs = A, A2, ...}`**:
     Attributes `#[A1...]` and `#[A2...]` only.
@@ -437,7 +437,7 @@ With `${Xattrs}`, unlike `${Xmeta}`,
 
    * The expansion is the whole of each attribute, including the `#[...]`;
    * All attributes are included.
-   * But `#[adhoc(...)]` `#[derive_deftly(...)]`
+   * But `#[deftly(...)]` `#[derive_deftly(...)]`
      and `#[derive_deftly_adhoc(...)]`
      are *excluded* by default,
      because typically they would be rejected by the compiler:
@@ -471,12 +471,12 @@ that come *after* the `#[derive(..., Deftly, ...)]`.
 
  * `${tattrs}`: ``#[doc=" Title for `Tuple`"] #[repr(C)]``
  * `${tattrs repr}`: ``#[repr(C)]``
- * `${tattrs repr, adhoc}`: ``#[adhoc(unused)] #[repr(C)]``
- * `${tattrs ! derive, doc}`: ``#[adhoc(unused)] #[repr(C)] #[derive_deftly(SomeOtherTemplate)]``
+ * `${tattrs repr, adhoc}`: ``#[deftly(unused)] #[repr(C)]``
+ * `${tattrs ! derive, doc}`: ``#[deftly(unused)] #[repr(C)] #[derive_deftly(SomeOtherTemplate)]``
 
 ##### For `Enum`
 
- * `${vattrs adhoc}` for `UnitVariant`: `#[adhoc(value="enum-variant")]`
+ * `${vattrs adhoc}` for `UnitVariant`: `#[deftly(value="enum-variant")]`
 
 ### `$<...>`, `${paste ...}` -- identifier pasting
 
@@ -780,9 +780,9 @@ for the purposes of `fvis` and `tvis`
 And in each case, false for all others.
 (Refer to the [example structs](#structs-used-in-examples), below.)
 
-### `fmeta(NAME)`, `vmeta(NAME)`, `tmeta(NAME)` -- `#[adhoc]` attributes
+### `fmeta(NAME)`, `vmeta(NAME)`, `tmeta(NAME)` -- `#[deftly]` attributes
 
-Looks for `#[adhoc(NAME)]`.
+Looks for `#[deftly(NAME)]`.
 
 True iff there was such an attribute.
 `Xmeta(SUB(NAME))` works, just as with the `${Xmeta ...}` expansion.
@@ -792,8 +792,8 @@ and (unlike `${Xmeta}`)
 the corresponding driver attribute does not need to be a `=LIT`.
 
 So `Xmeta(SUB(NAME))` is true if the driver has
-`#[adhoc(SUB(NAME(INNER=...)))]` or `#[adhoc(SUB(NAME))]` or
-`#[adhoc(SUB(NAME=LIT))]` or even `#[adhoc(SUB(NAME()))]`.
+`#[deftly(SUB(NAME(INNER=...)))]` or `#[deftly(SUB(NAME))]` or
+`#[deftly(SUB(NAME=LIT))]` or even `#[deftly(SUB(NAME()))]`.
 
 #### Examples
 
@@ -1001,13 +1001,13 @@ are those generated for the following driver types:
 #
 #[derive(Deftly)]
 #[derive(Clone)]
-#[adhoc(simple="String", gentype="Vec<i32>")]
-#[adhoc(value="unit-toplevel")]
+#[deftly(simple="String", gentype="Vec<i32>")]
+#[deftly(value="unit-toplevel")]
 pub struct Unit<const C: usize = 1>;
 
 #[derive(Deftly, Clone)]
 /// Title for `Tuple`
-#[adhoc(unused)]
+#[deftly(unused)]
 #[repr(C)]
 #[derive_deftly(SomeOtherTemplate)]
 struct Tuple<'a, 'l: 'a, T: Display = usize, const C: usize = 1>(
@@ -1018,7 +1018,7 @@ struct Tuple<'a, 'l: 'a, T: Display = usize, const C: usize = 1>(
 struct Struct<'a, 'l: 'a, T: Display = usize, const C: usize = 1>
 where T: 'l, T: TryInto<u8>
 {
-    #[adhoc(nested(inner = "42"))]
+    #[deftly(nested(inner = "42"))]
     pub field: &'l &'a T,
     pub(crate) field_b: String,
 }
@@ -1027,7 +1027,7 @@ where T: 'l, T: TryInto<u8>
 pub enum Enum<'a, 'l: 'a, T: Display = usize, const C: usize = 1>
 where T: 'l, T: TryInto<u8>
 {
-    #[adhoc(value="enum-variant")]
+    #[deftly(value="enum-variant")]
     UnitVariant,
     TupleVariant(std::iter::Once::<T>),
     NamedVariant { 

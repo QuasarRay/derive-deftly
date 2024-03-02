@@ -35,11 +35,11 @@ struct Opaque;
 #[allow(dead_code)]
 struct DataType {
     foo: u8,
-    #[adhoc(debug(into = "PrettyVec<String>"))]
+    #[deftly(debug(into = "PrettyVec<String>"))]
     bar: Vec<String>,
-    #[adhoc(debug(skip))]
+    #[deftly(debug(skip))]
     opaque: Opaque,
-    #[adhoc(debug(call = "custom::fmt"))]
+    #[deftly(debug(call = "custom::fmt"))]
     custom: char,
 }
 impl Debug for DataType

@@ -37,7 +37,7 @@ error: constructed identifier "Bad." is invalid
 error: probably-invalid input to identifier pasting
   --> ui/badmeta.rs:6:15
    |
-6  |   #[adhoc(dot = ".")]
+6  |   #[deftly(dot = ".")]
    |                 ^^^
 ...
 23 | / derive_deftly_adhoc! {
@@ -54,7 +54,7 @@ error: probably-invalid input to identifier pasting
 error: expected a list with sub-attributes, found a simple value
   --> ui/badmeta.rs:6:9
    |
-6  |   #[adhoc(dot = ".")]
+6  |   #[deftly(dot = ".")]
    |           ^^^
 ...
 23 | / derive_deftly_adhoc! {
@@ -72,11 +72,11 @@ error: attribute value expanded, but no suitable value in data structure definit
   --> ui/badmeta.rs:4:1
    |
 4  | / #[derive_deftly_adhoc]
-5  | | #[adhoc(wrong = "{")]
-6  | | #[adhoc(dot = ".")]
-7  | | #[adhoc(several = "first")]
-8  | | #[adhoc(several = "second")]
-9  | | #[adhoc(several_inner(several = "first", several = "second"))]
+5  | | #[deftly(wrong = "{")]
+6  | | #[deftly(dot = ".")]
+7  | | #[deftly(several = "first")]
+8  | | #[deftly(several = "second")]
+9  | | #[deftly(several_inner(several = "first", several = "second"))]
 10 | | struct DataType {}
    | |_________________^
 ...
@@ -100,7 +100,7 @@ error: attribute value expanded, but no suitable value in data structure definit
 error: tried to expand just attribute value, but it was specified multiple times (first occurrence)
   --> ui/badmeta.rs:7:9
    |
-7  |   #[adhoc(several = "first")]
+7  |   #[deftly(several = "first")]
    |           ^^^^^^^
 ...
 23 | / derive_deftly_adhoc! {
@@ -117,7 +117,7 @@ error: tried to expand just attribute value, but it was specified multiple times
 error: tried to expand just attribute value, but it was specified multiple times (second occurrence)
   --> ui/badmeta.rs:8:9
    |
-8  |   #[adhoc(several = "second")]
+8  |   #[deftly(several = "second")]
    |           ^^^^^^^
 ...
 23 | / derive_deftly_adhoc! {
@@ -140,7 +140,7 @@ error: tried to expand just attribute value, but it was specified multiple times
 error: tried to expand just attribute value, but it was specified multiple times (first occurrence)
   --> ui/badmeta.rs:9:23
    |
-9  |   #[adhoc(several_inner(several = "first", several = "second"))]
+9  |   #[deftly(several_inner(several = "first", several = "second"))]
    |                         ^^^^^^^
 ...
 23 | / derive_deftly_adhoc! {
@@ -157,7 +157,7 @@ error: tried to expand just attribute value, but it was specified multiple times
 error: tried to expand just attribute value, but it was specified multiple times (second occurrence)
   --> ui/badmeta.rs:9:42
    |
-9  |   #[adhoc(several_inner(several = "first", several = "second"))]
+9  |   #[deftly(several_inner(several = "first", several = "second"))]
    |                                            ^^^^^^^
 ...
 23 | / derive_deftly_adhoc! {
@@ -181,11 +181,11 @@ error: attribute value expanded, but no value in data structure definition (in t
   --> ui/badmeta.rs:4:1
    |
 4  | / #[derive_deftly_adhoc]
-5  | | #[adhoc(wrong = "{")]
-6  | | #[adhoc(dot = ".")]
-7  | | #[adhoc(several = "first")]
-8  | | #[adhoc(several = "second")]
-9  | | #[adhoc(several_inner(several = "first", several = "second"))]
+5  | | #[deftly(wrong = "{")]
+6  | | #[deftly(dot = ".")]
+7  | | #[deftly(several = "first")]
+8  | | #[deftly(several = "second")]
+9  | | #[deftly(several_inner(several = "first", several = "second"))]
 10 | | struct DataType {}
    | |_________________^
 ...
@@ -208,7 +208,7 @@ error: attribute value expanded, but no value in data structure definition (expa
 error: expected a leaf node, found a list with sub-attributes
   --> ui/badmeta.rs:9:9
    |
-9  |   #[adhoc(several_inner(several = "first", several = "second"))]
+9  |   #[deftly(several_inner(several = "first", several = "second"))]
    |           ^^^^^^^^^^^^^
 ...
 43 | / derive_deftly_adhoc! {
@@ -225,11 +225,11 @@ error: attribute value expanded, but no suitable value in data structure definit
   --> ui/badmeta.rs:4:1
    |
 4  | / #[derive_deftly_adhoc]
-5  | | #[adhoc(wrong = "{")]
-6  | | #[adhoc(dot = ".")]
-7  | | #[adhoc(several = "first")]
-8  | | #[adhoc(several = "second")]
-9  | | #[adhoc(several_inner(several = "first", several = "second"))]
+5  | | #[deftly(wrong = "{")]
+6  | | #[deftly(dot = ".")]
+7  | | #[deftly(several = "first")]
+8  | | #[deftly(several = "second")]
+9  | | #[deftly(several_inner(several = "first", several = "second"))]
 10 | | struct DataType {}
    | |_________________^
 ...
@@ -252,7 +252,7 @@ error: attribute value expanded, but no suitable value in data structure definit
 error: expected identifier
   --> ui/badmeta.rs:52:9
    |
-52 | #[adhoc("forbidden")]
+52 | #[deftly("forbidden")]
    |         ^^^^^^^^^^^
 53 | struct TopLevelMetaLitForbidden;
 54 | derive_deftly_adhoc! { TopLevelMetaLitForbidden: }
@@ -263,7 +263,7 @@ error: expected identifier
 error: expected literal
   --> ui/badmeta.rs:58:17
    |
-58 | #[adhoc(value = wrong)]
+58 | #[deftly(value = wrong)]
    |                 ^^^^^
 59 | struct MetaValueMustBeLit;
 60 | derive_deftly_adhoc! { MetaValueMustBeLit: }
@@ -274,7 +274,7 @@ error: expected literal
 error: expected identifier
   --> ui/badmeta.rs:64:17
    |
-64 |   #[adhoc(barelit("42"))]
+64 |   #[deftly(barelit("42"))]
    |                   ^^^^
 ...
 72 | / derive_deftly_adhoc! {
@@ -288,7 +288,7 @@ error: expected identifier
 error: expected identifier
   --> ui/badmeta.rs:69:15
    |
-69 |   #[adhoc(multi("1", "2"))]
+69 |   #[deftly(multi("1", "2"))]
    |                 ^^^
 ...
 77 | / derive_deftly_adhoc! {
@@ -313,7 +313,7 @@ error: expected path segment after `::`
 error: expected path segment after `::`
   --> ui/badmeta.rs:90:26
    |
-90 |   #[adhoc(std::cell::Cell::<String>::new)]
+90 |   #[deftly(std::cell::Cell::<String>::new)]
    |                            ^
 ...
 93 | / derive_deftly_adhoc! {

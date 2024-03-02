@@ -4,11 +4,11 @@ use derive_adhoc::{derive_deftly_adhoc, Deftly};
 use derive_adhoc_tests::*;
 #[derive_deftly_adhoc]
 struct Both {
-    #[adhoc(left)]
+    #[deftly(left)]
     a: usize,
-    #[adhoc(right)]
+    #[deftly(right)]
     b: usize,
-    #[adhoc(right)]
+    #[deftly(right)]
     c: usize,
 }
 #[automatically_derived]

@@ -4,7 +4,7 @@ use derive_adhoc::{define_derive_deftly, derive_deftly_adhoc, Deftly};
 #[derive_deftly_adhoc]
 struct DataType {
     foo: u8,
-    #[adhoc(hash(skip))]
+    #[deftly(hash(skip))]
     bar: Vec<String>,
 }
 

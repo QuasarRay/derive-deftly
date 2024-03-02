@@ -262,15 +262,15 @@ pub fn define_derive_deftly(
 ///     so that it can be used with calls to
 ///     [`derive_deftly_adhoc!`](macro@crate::derive_adhoc).
 ///
-/// ## `#[adhoc]` attribute
+/// ## `#[deftly]` attribute
 ///
-/// The contents of `#[adhoc]` attributes are made available
+/// The contents of `#[deftly]` attributes are made available
 /// to templates via the
 /// [`${Xmeta}`](doc_reference/index.html#tmeta-vmeta-fmeta--adhoc-attributes)
 /// expansions.
 ///
 /// If the template(s) don't use them, they are ignored.
-/// `derive-adhoc` does not impose any namespacing within `#[adhoc]`:
+/// `derive-adhoc` does not impose any namespacing within `#[deftly]`:
 /// all templates see the same adhoc meta attributes.
 ///
 /// ## Captured data structure definition `derive_deftly_driver_TYPE`

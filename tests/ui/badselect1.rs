@@ -12,12 +12,12 @@ use std::fmt::Debug;
 #[derive(Deftly, Default, Debug)]
 #[derive_deftly_adhoc]
 struct Both {
-    #[adhoc(left)]
+    #[deftly(left)]
     a: usize,
-    #[adhoc(right)]
+    #[deftly(right)]
     b: usize,
-    #[adhoc(right)]
-    #[adhoc(left)]
+    #[deftly(right)]
+    #[deftly(left)]
     c: usize,
 }
 

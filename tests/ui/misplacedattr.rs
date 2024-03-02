@@ -51,7 +51,7 @@ struct Ludicrous {
         {
             // accepted due to https://github.com/rust-lang/rust/issues/119116
             #[derive_deftly(Silly)]
-            #[adhoc(foolish)]
+            #[deftly(foolish)]
             mod inner {}
 
             42

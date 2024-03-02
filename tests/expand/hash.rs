@@ -1,4 +1,4 @@
-//! Simple example, including use of an #[adhoc(...)] attribute
+//! Simple example, including use of an #[deftly(...)] attribute
 //!
 //! Also demonstrates use of field type trait bounds.
 
@@ -30,7 +30,7 @@ define_derive_deftly! {
 #[derive_deftly(MyHash)]
 struct DataType {
     foo: u8,
-    #[adhoc(hash(skip))]
+    #[deftly(hash(skip))]
     bar: Vec<String>,
 }
 

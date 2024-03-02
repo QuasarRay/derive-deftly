@@ -7,9 +7,9 @@ use derive_adhoc::{derive_deftly_adhoc, Deftly};
 #[derive(Deftly)]
 #[derive_deftly_adhoc]
 struct IgnoredThings {
-    #[adhoc(prefix = "pfx")]
-    #[adhoc(multi(hi, there(wombat), path::suffix = "sfx"))]
-    #[adhoc(mixed(inner = "yes"), mixed = "no")]
+    #[deftly(prefix = "pfx")]
+    #[deftly(multi(hi, there(wombat), path::suffix = "sfx"))]
+    #[deftly(mixed(inner = "yes"), mixed = "no")]
     f: String,
 }
 
@@ -39,8 +39,8 @@ derive_deftly_adhoc! {
 // would have complex semver implications.  Maybe the template is
 // from a newer derive-adhoc which handles this case, for example.
 #[derive(Deftly)]
-#[adhoc("forbidden")]
-#[adhoc(value = wrong)]
+#[deftly("forbidden")]
+#[deftly(value = wrong)]
 struct MetasNotCheckedIfNoTemplatesExpanded;
 
 fn main() {}

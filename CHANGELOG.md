@@ -50,8 +50,8 @@ We expect to increase it cautiously and only with good reason.
 for template-defining crates.**
 
  * Reject misplaced `#[derive_adhoc]` attributes.
- * Reject malformed attributes like `#[adhoc("42")]`
-   and `#[adhoc(std::cell::<String>)]`.
+ * Reject malformed attributes like `#[deftly("42")]`
+   and `#[deftly(std::cell::<String>)]`.
 
 Technically these are breaking changes, since users of exported
 templates might have provided these wrong attributes, which were
@@ -69,7 +69,7 @@ However, the likelihood of this breaking a working build seems low.
 #### Fixed
 
  * Fixed a spurious clippy lint `crate_in_macro_def` (#27).
- * More reasonable handling of `#[adhoc(..)]` attributes whose meta
+ * More reasonable handling of `#[deftly(..)]` attributes whose meta
    information has paths some of which are nested sub-paths of others.
  * Work around a strange bug with literals and spans which can cause
    a `compiler/fallback mismatch` panic during error reporting
@@ -195,7 +195,7 @@ However, the likelihood of this breaking a working build seems low.
  * `${Xmeta... as lit}` is abolished, in favour of `... as str`
    (which has more consistent semantics).
  * `${Xmeta}` without `as` is no longer allowed in `${paste ...}`.
- * In `#[adhoc(attr="VALUE")]`, now only *string* literals are allowed.
+ * In `#[deftly(attr="VALUE")]`, now only *string* literals are allowed.
 
 #### Added
 

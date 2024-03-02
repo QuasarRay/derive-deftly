@@ -69,15 +69,15 @@ won't get in the way.
  * **`#[derive(Deftly)]`**: invokes the from-struct derivation machinery; enables:
     1. use of `#[derive_deftly(ReuseableMacro)]` on this very struct
     2. later use of `derive_deftly_adhoc!` of the same struct
-    3. `#[adhoc(...)]` attributes on bits of the data structure
+    3. `#[deftly(...)]` attributes on bits of the data structure
 
  * **`define_derive_deftly!{ [pub] MACNAME = TEMPLATE }`**: define a reusable template, which may be invoked as `#[derive_deftly(MACNAME)]` (within a struct annotated with `#[derive(Deftly)]` or `#[item_derive_deftly(MACNAME)]`.
 
  * **`derive_deftly_adhoc!{ DRIVERNAME: TEMPLATE }`**: truly-adhoc derivation from something previously annotated with `#[derive(Ahoc)]` or `#[item_derive_adhoc]`.  `DRIVERNAME` is an item path; we conflate the type and value namespaces.
 
- * **`#[item_derive_adhoc]`**: attribute macro to be applied to items.  The item is reproduced unchanged, except that `#[adhoc]` attributes *in places where we would look for them* are filtered out. `#[item_derive_deftly(MACNAME)]` can be used to apply a reuseable template.
+ * **`#[item_derive_adhoc]`**: attribute macro to be applied to items.  The item is reproduced unchanged, except that `#[deftly]` attributes *in places where we would look for them* are filtered out. `#[item_derive_deftly(MACNAME)]` can be used to apply a reuseable template.
 
- * **`#[adhoc]`**: Inert helper attribute for `#[derive(Deftly)]`.  Filtered-out attribute for `#[item_derive_adhoc]`.  Contents available via `$Xmeta`.
+ * **`#[deftly]`**: Inert helper attribute for `#[derive(Deftly)]`.  Filtered-out attribute for `#[item_derive_adhoc]`.  Contents available via `$Xmeta`.
 
  * **`#[only_derive_adhoc]`**: attribute macro to be applied to items; like `#[item_derive_adhoc]` but *consumes and does not emit* the item.
    (We don't really need to be sure about this name; this will be an unusual case and we can give it whatever name seems good, later.)

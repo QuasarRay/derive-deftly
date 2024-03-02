@@ -50,7 +50,7 @@ impl GetUsize for Unit {
     }
 }
 #[derive_deftly(Trait, GetUsize)]
-#[adhoc(hi(ferris))]
+#[deftly(hi(ferris))]
 struct Tuple(usize);
 impl Trait for Tuple {
     fn shape_top(&self) -> &'static str {
@@ -90,7 +90,7 @@ impl GetUsize for Tuple {
     }
 }
 #[derive_deftly(Trait, GetUsize)]
-#[adhoc(hello(there = 42))]
+#[deftly(hello(there = 42))]
 struct Struct {
     field: usize,
 }
@@ -133,9 +133,9 @@ impl GetUsize for Struct {
 }
 #[derive_deftly(Trait, GetUsize)]
 enum Enum {
-    #[adhoc(hello(there))]
+    #[deftly(hello(there))]
     Unit,
-    #[adhoc(hello(there(inner)))]
+    #[deftly(hello(there(inner)))]
     Tuple(usize),
     Named { field: u32 },
 }

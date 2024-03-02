@@ -2,11 +2,11 @@ use derive_adhoc::{define_derive_deftly, derive_deftly_adhoc, Deftly};
 
 #[derive(Deftly)]
 #[derive_deftly_adhoc]
-#[adhoc(wrong = "{")]
-#[adhoc(dot = ".")]
-#[adhoc(several = "first")]
-#[adhoc(several = "second")]
-#[adhoc(several_inner(several = "first", several = "second"))]
+#[deftly(wrong = "{")]
+#[deftly(dot = ".")]
+#[deftly(several = "first")]
+#[deftly(several = "second")]
+#[deftly(several_inner(several = "first", several = "second"))]
 struct DataType {}
 
 derive_deftly_adhoc! {
@@ -49,24 +49,24 @@ derive_deftly_adhoc! {
 
 #[derive(Deftly)]
 #[derive_deftly_adhoc]
-#[adhoc("forbidden")]
+#[deftly("forbidden")]
 struct TopLevelMetaLitForbidden;
 derive_deftly_adhoc! { TopLevelMetaLitForbidden: }
 
 #[derive(Deftly)]
 #[derive_deftly_adhoc]
-#[adhoc(value = wrong)]
+#[deftly(value = wrong)]
 struct MetaValueMustBeLit;
 derive_deftly_adhoc! { MetaValueMustBeLit: }
 
 #[derive(Deftly)]
 #[derive_deftly_adhoc]
-#[adhoc(barelit("42"))]
+#[deftly(barelit("42"))]
 struct WithBareLit;
 
 #[derive(Deftly)]
 #[derive_deftly_adhoc]
-#[adhoc(multi("1", "2"))]
+#[deftly(multi("1", "2"))]
 struct WithBareLitMulti;
 
 derive_deftly_adhoc! {
@@ -87,7 +87,7 @@ define_derive_deftly! {
 #[derive(Deftly)]
 #[derive_deftly_adhoc]
 #[derive_deftly(TestFunkyPath)]
-#[adhoc(std::cell::Cell::<String>::new)]
+#[deftly(std::cell::Cell::<String>::new)]
 struct WithFunkyPath;
 
 derive_deftly_adhoc! {
