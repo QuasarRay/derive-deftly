@@ -35,7 +35,7 @@ cargo doc --document-private-items --workspace
 ```
 to get the rustdocs for the internal APIs.
 That will also get a **rendering of this file with working links**,
-as `target/doc/derive_adhoc_macros/_doc_hacking/index.html`.
+as `target/doc/derive_deftly_macros/_doc_hacking/index.html`.
 
 [`NOTES.md`](_doc_notes) has some ideas for the future,
 which we may or may not implement.
