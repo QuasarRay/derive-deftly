@@ -54,7 +54,7 @@ impl Parse for TemplateDefinition {
 /// See `doc/implementation.md` for why this is needed.
 ///
 /// This has the weird result that there's a sometimes
-/// (namely, when using a truly-adhoc, rather than precanned template)
+/// (namely, when using an adhoc, rather than precanned template)
 /// an undocumented `orig_dollar` expansion keyword,
 /// with strange behaviour.
 /// No-one is likely to notice this.
@@ -151,11 +151,11 @@ pub fn define_derive_deftly_func_macro(
     input: TokenStream,
 ) -> Result<TokenStream, syn::Error> {
     // eprintln!(
-    //     "---------- derive_adhoc_define start input ----------",
+    //     "---------- derive_deftly_define start input ----------",
     // );
     // eprintln!("{}", &input);
     // eprintln!(
-    //     "---------- derive_adhoc_define end input ----------",
+    //     "---------- derive_deftly_define end input ----------",
     // );
 
     let TemplateDefinition {
@@ -228,12 +228,12 @@ To use it, write: `#[derive(Deftly)] #[derive_deftly({})]`."#,
     };
 
     // eprintln!(
-    //     "---------- derive_adhoc_define start for {} ----------",
+    //     "---------- derive_deftly_define start for {} ----------",
     //     templ_mac_name
     // );
     // eprintln!("{}", &output);
     // eprintln!(
-    //     "---------- derive_adhoc_define end for {} ----------",
+    //     "---------- derive_deftly_define end for {} ----------",
     //     templ_mac_name
     // );
 
