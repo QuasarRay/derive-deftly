@@ -365,7 +365,7 @@ Accesses macro parameters passed via `#[deftly(...)]` attributes.
    a set of nested, comma-separated, lists.
    So this would find `NAME` 
    in `#[deftly(SUB1,SUB(N1,NAME="VALUE",N2),SUB2)]`.
-   The path can be arbitrarily deep, e.g.: `${Xmeta(L1(L2(L3(ATTR))))}`.
+   The label can be arbitrarily deep, e.g.: `${Xmeta(L1(L2(L3(ATTR))))}`.
 
  * **`${Xmeta(...) as SYNTYPE}`**:
    Treats the value as a `SYNTYPE`,

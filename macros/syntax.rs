@@ -180,7 +180,7 @@ pub enum SubstVis {
 #[derive(Debug, Clone)]
 pub struct SubstMeta<O: SubstParseContext> {
     pub level: SubstMetaLevel,
-    pub path: SubstMetaPath,
+    pub label: SubstMetaLabel,
     pub as_: Option<SubstMetaAs<O>>,
 }
 
@@ -200,9 +200,10 @@ pub enum SubstMetaAs<O: SubstParseContext> {
 }
 
 #[derive(Debug, Clone)]
-pub struct SubstMetaPath {
-    pub path: syn::Path, // nonempty segments
-    pub deeper: Option<Box<SubstMetaPath>>,
+pub struct SubstMetaLabel {
+    // Nonempty list, each with nonempty segments.
+    // Outermost first.
+    pub lpaths: Vec<syn::Path>,
 }
 
 #[derive(Debug)]
@@ -336,13 +337,19 @@ impl<O: SubstParseContext> Spanned for Subst<O> {
 
 impl<O: SubstParseContext> Spanned for SubstMeta<O> {
     fn span(&self) -> Span {
-        self.path.span()
+        self.label.span()
     }
 }
 
-impl Spanned for SubstMetaPath {
+impl Spanned for SubstMetaLabel {
     fn span(&self) -> Span {
-        self.path.segments.first().expect("empty path!").span()
+        self.lpaths
+            .first()
+            .expect("empty label")
+            .segments
+            .first()
+            .expect("empty path!")
+            .span()
     }
 }
 
@@ -566,7 +573,7 @@ impl<O: SubstParseContext> SubstMetaAs<O> {
 
 impl<O: SubstParseContext> SubstMeta<O> {
     fn parse(input: ParseStream, level: SubstMetaLevel) -> syn::Result<Self> {
-        let path: SubstMetaPath = input.parse()?;
+        let label: SubstMetaLabel = input.parse()?;
 
         let as_;
 
@@ -580,29 +587,36 @@ impl<O: SubstParseContext> SubstMeta<O> {
             as_ = None;
         }
 
-        Ok(SubstMeta { path, as_, level })
+        Ok(SubstMeta { label, as_, level })
     }
 }
 
-impl Parse for SubstMetaPath {
+impl Parse for SubstMetaLabel {
     fn parse(outer: ParseStream) -> syn::Result<Self> {
-        let input;
-        let paren = parenthesized!(input in outer);
-        let path = input.call(syn::Path::parse_mod_style)?;
-        if path.segments.is_empty() {
-            return Err(paren
-                .span
-                .error("`deftly` attribute must have nonempty path"));
+        fn recurse(
+            lpaths: &mut Vec<syn::Path>,
+            outer: ParseStream,
+        ) -> syn::Result<()> {
+            let input;
+            let paren = parenthesized!(input in outer);
+            let path = input.call(syn::Path::parse_mod_style)?;
+            if path.segments.is_empty() {
+                return Err(paren
+                    .span
+                    .error("`deftly` attribute must have nonempty path"));
+            }
+
+            lpaths.push(path);
+            if !input.is_empty() {
+                recurse(lpaths, &input)?;
+            }
+            Ok(())
         }
 
-        let deeper = if input.is_empty() {
-            None
-        } else {
-            let deeper = input.parse()?;
-            Some(Box::new(deeper))
-        };
+        let mut lpaths = vec![];
+        recurse(&mut lpaths, outer)?;
 
-        Ok(SubstMetaPath { path, deeper })
+        Ok(SubstMetaLabel { lpaths })
     }
 }
 

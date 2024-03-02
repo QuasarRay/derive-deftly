@@ -55,7 +55,7 @@ impl Subst<BooleanContext> {
 
             SD::xmeta(sm) => {
                 let SubstMeta {
-                    path,
+                    label,
                     as_,
                     level: _,
                 } = sm;
@@ -67,7 +67,7 @@ impl Subst<BooleanContext> {
                         }
                     }
                 };
-                is_found(path.search_eval_bool(sm.pmetas(ctx)?))
+                is_found(label.search_eval_bool(sm.pmetas(ctx)?))
             }
 
             SD::approx_equal(_, [a, b]) => {
@@ -164,7 +164,7 @@ impl DefinitionName {
     }
 }
 
-impl SubstMetaPath {
+impl SubstMetaLabel {
     fn search_eval_bool(
         &self,
         pmetas: &PreprocessedMetas,
