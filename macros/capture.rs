@@ -14,7 +14,7 @@ struct InvocationAttr {
 
 /// Contents of an entry in a `#[derive_deftly_adhoc(..)]` attribute
 #[derive(Default)]
-struct TrulyAdhocAttr {
+struct AdhocAttr {
     pub_: Option<syn::token::Pub>,
 }
 
@@ -126,14 +126,14 @@ pub fn derive_deftly(
         })
         .collect::<syn::Result<Vec<_>>>()?;
 
-    let truly_adhoc: Option<TrulyAdhocAttr> = driver
+    let adhoc: Option<AdhocAttr> = driver
         .attrs
         .iter()
         .filter(|attr| attr.path().is_ident("derive_deftly_adhoc"))
         .inspect(|_: &&syn::Attribute| ())
         .map(|attr| {
-            let truly_adhoc = match &attr.meta {
-                syn::Meta::Path(_) => TrulyAdhocAttr { pub_: None },
+            let adhoc = match &attr.meta {
+                syn::Meta::Path(_) => AdhocAttr { pub_: None },
                 syn::Meta::NameValue(nv) => {
                     return Err(nv
                         .eq_token
@@ -151,16 +151,16 @@ pub fn derive_deftly(
                     }
                     .map_err(|span| span.error("expected parentheses"))?;
                     let pub_ = syn::parse2(tokens.clone())?;
-                    TrulyAdhocAttr { pub_ }
+                    AdhocAttr { pub_ }
                 }
             };
-            Ok::<TrulyAdhocAttr, syn::Error>(truly_adhoc)
+            Ok::<AdhocAttr, syn::Error>(adhoc)
         })
-        .inspect(|_: &Result<TrulyAdhocAttr, _>| ())
+        .inspect(|_: &Result<AdhocAttr, _>| ())
         // allow this attr to be repeated; any pub makes it pub
         .reduce(|a, b| {
             let pub_ = chain!(a?.pub_, b?.pub_).next();
-            Ok(TrulyAdhocAttr { pub_ })
+            Ok(AdhocAttr { pub_ })
         })
         .transpose()?;
 
@@ -193,8 +193,8 @@ pub fn derive_deftly(
 
     let mut output = TokenStream::new();
 
-    if let Some(truly_adhoc) = truly_adhoc {
-        let macro_export = truly_adhoc
+    if let Some(adhoc) = adhoc {
+        let macro_export = adhoc
             .pub_
             .map(|vis_pub| {
                 let macro_export =
