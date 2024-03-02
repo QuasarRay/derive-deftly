@@ -893,7 +893,7 @@ where
     Ok(thing)
 }
 
-impl SubstMetaPath {
+impl SubstMetaLabel {
     pub fn search<'a, A, F, G, E>(
         &self,
         pmetas: A,

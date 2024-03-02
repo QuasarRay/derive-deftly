@@ -180,7 +180,7 @@ pub enum SubstVis {
 #[derive(Debug, Clone)]
 pub struct SubstMeta<O: SubstParseContext> {
     pub level: SubstMetaLevel,
-    pub path: SubstMetaPath,
+    pub path: SubstMetaLabel,
     pub as_: Option<SubstMetaAs<O>>,
 }
 
@@ -200,9 +200,9 @@ pub enum SubstMetaAs<O: SubstParseContext> {
 }
 
 #[derive(Debug, Clone)]
-pub struct SubstMetaPath {
+pub struct SubstMetaLabel {
     pub path: syn::Path, // nonempty segments
-    pub deeper: Option<Box<SubstMetaPath>>,
+    pub deeper: Option<Box<SubstMetaLabel>>,
 }
 
 #[derive(Debug)]
@@ -340,7 +340,7 @@ impl<O: SubstParseContext> Spanned for SubstMeta<O> {
     }
 }
 
-impl Spanned for SubstMetaPath {
+impl Spanned for SubstMetaLabel {
     fn span(&self) -> Span {
         self.path.segments.first().expect("empty path!").span()
     }
@@ -566,7 +566,7 @@ impl<O: SubstParseContext> SubstMetaAs<O> {
 
 impl<O: SubstParseContext> SubstMeta<O> {
     fn parse(input: ParseStream, level: SubstMetaLevel) -> syn::Result<Self> {
-        let path: SubstMetaPath = input.parse()?;
+        let path: SubstMetaLabel = input.parse()?;
 
         let as_;
 
@@ -584,7 +584,7 @@ impl<O: SubstParseContext> SubstMeta<O> {
     }
 }
 
-impl Parse for SubstMetaPath {
+impl Parse for SubstMetaLabel {
     fn parse(outer: ParseStream) -> syn::Result<Self> {
         let input;
         let paren = parenthesized!(input in outer);
@@ -602,7 +602,7 @@ impl Parse for SubstMetaPath {
             Some(Box::new(deeper))
         };
 
-        Ok(SubstMetaPath { path, deeper })
+        Ok(SubstMetaLabel { path, deeper })
     }
 }
 

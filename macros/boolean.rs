@@ -164,7 +164,7 @@ impl DefinitionName {
     }
 }
 
-impl SubstMetaPath {
+impl SubstMetaLabel {
     fn search_eval_bool(
         &self,
         pmetas: &PreprocessedMetas,
