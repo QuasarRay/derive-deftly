@@ -121,7 +121,7 @@ pub fn derive_deftly_engine(
 ///
 /// The definition of `DataStructureType` must have been decorated
 /// with [`#[derive(Deftly)]`](crate::Deftly),
-/// and the resulting `derive_adhoc_driver_TYPE` macro must be
+/// and the resulting `derive_deftly_driver_TYPE` macro must be
 /// available in scope.
 #[cfg_attr(proc_macro, proc_macro)]
 pub fn derive_adhoc(
@@ -154,14 +154,14 @@ pub fn derive_adhoc(
 ///
 /// <span id="docs-in-define">`DOCS`</span>,
 /// if supplied, are used as the rustdocs
-/// for the captured template macro `derive_adhoc_template_MyMacro`.
+/// for the captured template macro `derive_deftly_template_MyMacro`.
 /// derive-adhoc will then also append a note about
 /// how to invoke the template.
 ///
-/// ## Template definition macro `derive_adhoc_template_MyMacro`
+/// ## Template definition macro `derive_deftly_template_MyMacro`
 ///
 /// The template is made into a `macro_rules` macro
-/// named `derive_adhoc_template_MyMacro`,
+/// named `derive_deftly_template_MyMacro`,
 /// which is referenced when the template is applied.
 ///
 /// The template definition macro
@@ -178,7 +178,7 @@ pub fn derive_adhoc(
 /// Then, it is referred to in other crates
 /// with `#[derive_ahdoc(this_crate::MyMacro)]`.
 ///
-/// I.e., `pub MyMacro` causes the `derive_adhoc_template_MyMacro`
+/// I.e., `pub MyMacro` causes the `derive_deftly_template_MyMacro`
 /// pattern macro to be exported with `#[macro_export]`.
 ///
 /// Note that a template is always exported at the crate top level,
@@ -273,10 +273,10 @@ pub fn define_derive_deftly(
 /// `derive-adhoc` does not impose any namespacing within `#[adhoc]`:
 /// all templates see the same adhoc meta attributes.
 ///
-/// ## Captured data structure definition `derive_adhoc_driver_TYPE`
+/// ## Captured data structure definition `derive_deftly_driver_TYPE`
 ///
 /// The data structure is captured by defining
-/// a `macro_rules` macro called `derive_adhoc_driver_TYPE`,
+/// a `macro_rules` macro called `derive_deftly_driver_TYPE`,
 /// where `TYPE` is the name of the type
 /// that `#[derive(Deftly)]` is applied to.
 ///
@@ -318,9 +318,9 @@ pub fn define_derive_deftly(
 /// so you can apply it with an unqualified name,
 /// with `use`,
 /// but the `use` must refer to
-/// the actual pattern macro name `derive_adhoc_template_MyMacro`:
+/// the actual pattern macro name `derive_deftly_template_MyMacro`:
 /// ```ignore
-/// use other_crate::derive_adhoc_template_TheirMacro;
+/// use other_crate::derive_deftly_template_TheirMacro;
 /// #[derive(Deftly)]
 /// #[derive_Adhoc(TheirMacro)]
 /// struct MyStruct { // ...
@@ -365,7 +365,7 @@ pub fn define_derive_deftly(
 // It should parse the struct name out of its input.
 //
 // The expansion should be
-//   macro_rules! derive_adhoc_driver_ChannelsParams ...
+//   macro_rules! derive_deftly_driver_ChannelsParams ...
 // as per NOTES.txt
 //
 // For the MVP it does not need to have any attributes, but

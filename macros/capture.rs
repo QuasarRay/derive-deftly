@@ -104,7 +104,7 @@ pub fn derive_adhoc_derive_macro(
     // eprintln!("---------- #[derive(Deftly)] got end ----------");
 
     let driver_mac_name =
-        format_ident!("derive_adhoc_driver_{}", &driver.ident);
+        format_ident!("derive_deftly_driver_{}", &driver.ident);
 
     let precanned_paths: Vec<(syn::Path, UnprocessedOptions)> = driver
         .attrs
@@ -239,7 +239,7 @@ pub fn derive_adhoc_derive_macro(
                 .error("cannot derive_adhoc the empty path!"));
         }
         let last = templ_path.segments.last_mut().expect("became empty!");
-        last.ident = format_ident!("derive_adhoc_template_{}", last.ident);
+        last.ident = format_ident!("derive_deftly_template_{}", last.ident);
 
         // We must output the driver-specified application options.
         //

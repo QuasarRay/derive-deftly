@@ -141,7 +141,7 @@ use name_printer::{
     NamePrinter,
     // This is the macro that makes our template work.
     // (We might come up with a better syntax for this later).
-    derive_adhoc_template_NamePrinter.
+    derive_deftly_template_NamePrinter.
 };
 use derive_adhoc::Deftly;
 

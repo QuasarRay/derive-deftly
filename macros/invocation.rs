@@ -34,7 +34,7 @@ impl Parse for TemplateInvocation {
 /// ```
 /// and expand it to an invocation of
 /// ```rust,ignore
-///    derive_adhoc_driver_StructName
+///    derive_deftly_driver_StructName
 /// ```
 /// as per NOTES.txt.
 pub fn derive_adhoc_func_macro(
@@ -58,7 +58,7 @@ pub fn derive_adhoc_func_macro(
                 "expected non-empty path for driver struct name, found colon",
             )
         })?;
-        last.ident = format_ident!("derive_adhoc_driver_{}", &last.ident);
+        last.ident = format_ident!("derive_deftly_driver_{}", &last.ident);
         name
     };
 

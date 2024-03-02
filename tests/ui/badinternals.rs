@@ -14,8 +14,8 @@ define_derive_deftly! {
     Template =
 }
 
-derive_adhoc_driver_Driver! { GARBAGE -> DRIVER }
-derive_adhoc_template_Template! { GARBAGE -> TEMPLATE }
+derive_deftly_driver_Driver! { GARBAGE -> DRIVER }
+derive_deftly_template_Template! { GARBAGE -> TEMPLATE }
 derive_adhoc::derive_deftly_engine! { GARBAGE -> INNARDS }
 
 // OpCompatVersions 1.0, ie our own, and the earliest released

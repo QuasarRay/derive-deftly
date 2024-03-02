@@ -1,15 +1,15 @@
-error: wrong input to derive-adhoc driver inner macro derive_adhoc_driver_Driver; might be due to incompatible derive-adhoc versions(s)
+error: wrong input to derive-adhoc driver inner macro derive_deftly_driver_Driver; might be due to incompatible derive-adhoc versions(s)
   --> ui/badinternals.rs:9:10
    |
 9  | #[derive(Deftly)]
    |          ^^^^^^
 ...
-17 | derive_adhoc_driver_Driver! { GARBAGE -> DRIVER }
+17 | derive_deftly_driver_Driver! { GARBAGE -> DRIVER }
    | ------------------------------------------------- in this macro invocation
    |
-   = note: this error originates in the macro `derive_adhoc_driver_Driver` (in Nightly builds, run with -Z macro-backtrace for more info)
+   = note: this error originates in the macro `derive_deftly_driver_Driver` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error: wrong input to derive-adhoc template inner macro derive_adhoc_template_Template; might be due to incompatible derive-adhoc versions(s)
+error: wrong input to derive-adhoc template inner macro derive_deftly_template_Template; might be due to incompatible derive-adhoc versions(s)
   --> ui/badinternals.rs:13:1
    |
 13 | / define_derive_deftly! {
@@ -17,10 +17,10 @@ error: wrong input to derive-adhoc template inner macro derive_adhoc_template_Te
 15 | | }
    | |_^
 ...
-18 |   derive_adhoc_template_Template! { GARBAGE -> TEMPLATE }
+18 |   derive_deftly_template_Template! { GARBAGE -> TEMPLATE }
    |   ------------------------------------------------------- in this macro invocation
    |
-   = note: this error originates in the macro `derive_adhoc_template_Template` (in Nightly builds, run with -Z macro-backtrace for more info)
+   = note: this error originates in the macro `derive_deftly_template_Template` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: bad input to derive_deftly_engine inner template expansion proc macro; might be due to incompatible derive-adhoc versions(s)
   --> ui/badinternals.rs:19:1

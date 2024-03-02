@@ -169,7 +169,7 @@ pub fn define_derive_deftly_func_macro(
     let template = escape_dollars(template);
 
     let templ_mac_name =
-        format_ident!("derive_adhoc_template_{}", &templ_name);
+        format_ident!("derive_deftly_template_{}", &templ_name);
 
     let doc_addendum = (!doc_attrs.is_empty()).then(|| {
         let addendum = format!(

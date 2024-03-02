@@ -83,7 +83,7 @@ pub mod b_driver {
         Variant(BField<T>),
     }
 
-    use pub_a::derive_adhoc_template_IsEnum as derive_adhoc_template_ImportedIsEnum;
+    use pub_a::derive_deftly_template_IsEnum as derive_deftly_template_ImportedIsEnum;
 
     #[derive(Deftly)]
     #[derive_deftly(ImportedIsEnum)]

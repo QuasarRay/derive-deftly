@@ -39,7 +39,7 @@ with `#[derive_deftly_adhoc]` specified
 generates this
 
 ```rust,ignore
-    macro_rules! derive_adhoc_driver_StructName { {
+    macro_rules! derive_deftly_driver_StructName { {
         { $($template:tt)* }
         { ($orig_dollar:tt) $(future:tt)* }
         $($tpassthrough:tt)* 
@@ -73,7 +73,7 @@ When applied like this
 
 Expands to
 ```rust,ignore
-    derive_adhoc_driver_StructName! {
+    derive_deftly_driver_StructName! {
        { TEMPLATE... }
        { ($) }
        crate; [TOPTIONS...]
@@ -117,7 +117,7 @@ When used like this
 ```
 Expands to
 ```rust,ignore
-    macro_rules! derive_adhoc_template_Template { {
+    macro_rules! derive_deftly_template_Template { {
         { $($driver:tt)* }
      $( [ $($aoptions:tt)* ] )?
         { $($future:tt)* }
@@ -157,10 +157,10 @@ This
     pub struct StructName { ... }
 ```
 
-Generates (in addition to the `derive_adhoc_driver_StructName` definition)
+Generates (in addition to the `derive_deftly_driver_StructName` definition)
 
 ```rust,ignore
-    derive_adhoc_template_Template! {
+    derive_deftly_template_Template! {
         { #[derive_deftly(Template)] struct StructName { ... } }
         [1 0 AOPTIONS]    // but only if AOPTIONS is nonempty
         { }
@@ -172,7 +172,7 @@ see above.
 
 ## 3. Actual expansion
 
-The call to `derive_adhoc_template_Template!`
+The call to `derive_deftly_template_Template!`
 is expanded according to the `macro_rules!` definition,
 resulting in a call to `derive_deftly_engine`:
 
