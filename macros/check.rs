@@ -123,7 +123,7 @@ fn expand_via_file(
         Err(e) => return Err(format!("create dir {:?}: {}", &dir, e)),
     };
 
-    let leaf = format!("d-a-{}.rs", hash);
+    let leaf = format!("dd-{}.rs", hash);
     let some_file = |leaf: &str| {
         let mut file = dir.clone();
         file.push(leaf);
