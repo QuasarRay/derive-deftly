@@ -318,7 +318,20 @@ impl Label {
     }
 }
 
-//========== template expansion ==========
+//========== scope handling ==========
+
+impl<O> Subst<O>
+where
+    O: SubstParseContext,
+{
+    pub fn repeat_over(&self) -> Option<RepeatOver> {
+        match self.scope {
+            Scope::T => None,
+            Scope::V => Some(RO::Variants),
+            Scope::F => Some(RO::Fields),
+        }
+    }
+}
 
 impl<O> Subst<O>
 where
@@ -335,6 +348,8 @@ where
         })
     }
 }
+
+//========== template expansion ==========
 
 impl<O> Subst<O>
 where

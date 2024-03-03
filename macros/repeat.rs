@@ -197,20 +197,6 @@ impl<O: SubstParseContext> Subst<O> {
     }
 }
 
-impl<O> meta::Subst<O>
-where
-    O: SubstParseContext,
-{
-    // XXXX move this to meta.rs
-    pub fn repeat_over(&self) -> Option<RepeatOver> {
-        match self.scope {
-            meta::Scope::T => None,
-            meta::Scope::V => Some(RO::Variants),
-            meta::Scope::F => Some(RO::Fields),
-        }
-    }
-}
-
 /// Implemented for [`WithinVariant`] and [`WithinField`]
 ///
 /// For combining code that applies similarly for different repeat levels.
