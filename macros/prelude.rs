@@ -46,5 +46,4 @@ pub(super) use super::{check, dbg_allkw, framework, meta};
 pub use super::compat_syn_2::*;
 pub use super::compat_syn_common::*;
 
-pub use super::expand::*;
 pub use super::options::*;
