@@ -15,7 +15,7 @@ pub(crate) mod utils;
 pub(crate) mod framework;
 
 // modules containing the actual implementations of our proc-macros
-pub(crate) mod capture;
+pub(crate) mod derive;
 pub(crate) mod definition;
 pub(crate) mod invocation;
 
@@ -404,7 +404,7 @@ pub fn derive_deftly(
     input: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
     let input = TokenStream::from(input);
-    let output = capture::derive_deftly(input)
+    let output = derive::derive_deftly(input)
         .unwrap_or_else(|e| e.into_compile_error());
     output.into()
 }
