@@ -14,7 +14,7 @@ pub enum Target {
 struct Checking<'t> {
     ctx: &'t framework::Context<'t>,
     output: &'t mut TokenStream,
-    target: DaOptVal<Target>,
+    target: DdOptVal<Target>,
 }
 
 /// Main entrypoint
@@ -30,7 +30,7 @@ struct Checking<'t> {
 pub fn check_expected_target_syntax(
     ctx: &framework::Context,
     output: &mut TokenStream,
-    target: DaOptVal<Target>,
+    target: DdOptVal<Target>,
 ) {
     check::Checking {
         ctx,

@@ -34,7 +34,7 @@ pub fn for_every_example_context<E>(
 #[educe(Debug)]
 pub enum Limit {
     True,
-    DaCond(Rc<Subst<BooleanContext>>),
+    DdCond(Rc<Subst<BooleanContext>>),
     Name(String),
     Field { f: String, n: String },
     Fields { n: String },
@@ -74,7 +74,7 @@ impl Limit {
         let fname = |n| ctx.fname_s().map(|s| &s == n) == Some(true);
         Ok(match self {
             Limit::True => true,
-            Limit::DaCond(cond) => cond.eval_bool(ctx).map_err(|_| ())?,
+            Limit::DdCond(cond) => cond.eval_bool(ctx).map_err(|_| ())?,
             Limit::Name(n) => tname(n) || vname(n) || fname(n),
             Limit::Field { f, n } => fname(f) && (tname(n) || vname(n)),
             Limit::Fields { n } => {
@@ -122,7 +122,7 @@ impl Limit {
         use Limit as L;
 
         let da_cond = |mk_sd: &dyn Fn(_) -> _| {
-            L::DaCond(Rc::new(Subst {
+            L::DdCond(Rc::new(Subst {
                 kw_span: Span::call_site(),
                 sd: mk_sd(()),
             }))

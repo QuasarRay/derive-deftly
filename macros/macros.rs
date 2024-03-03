@@ -67,12 +67,12 @@ mod check {
     pub fn check_expected_target_syntax(
         _ctx: &framework::Context,
         _output: &mut TokenStream,
-        target: DaOptVal<Target>,
+        target: DdOptVal<Target>,
     ) {
         void::unreachable(target.value.0)
     }
 }
-impl DaOptValDescribable for check::Target {
+impl DdOptValDescribable for check::Target {
     const DESCRIPTION: &'static str =
         "expected output syntax (`expect` option)";
 }
@@ -116,7 +116,7 @@ pub fn derive_deftly_engine(
 /// use derive_deftly::{Deftly, derive_deftly_adhoc};
 /// #[derive(Deftly)]
 /// #[derive_deftly_adhoc]
-/// struct DataStructureType { }
+/// struct DdtaStructureType { }
 ///
 // Smoke and mirrors so we can use metasyntactic OPTIONS and TEMPLATE.
 /// # macro_rules! derive_deftly_adhoc { {
@@ -125,17 +125,17 @@ pub fn derive_deftly_engine(
 /// #     $x expect items: fn x(){}
 /// # } } }
 /// derive_deftly_adhoc! {
-///     DataStructureType OPTIONS,..:
+///     DdtaStructureType OPTIONS,..:
 ///     TEMPLATE
 /// }
 /// ```
 ///
-/// Expands the template `TEMPLATE` for the type `DataStructureType`,
+/// Expands the template `TEMPLATE` for the type `DdtaStructureType`,
 ///
 /// `OPTIONS,..` is an optional comma-separated list of
 /// [expansion options](doc_reference/index.html#expansion-options).
 ///
-/// The definition of `DataStructureType` must have been decorated
+/// The definition of `DdtaStructureType` must have been decorated
 /// with [`#[derive(Deftly)]`](crate::Deftly),
 /// and the resulting `derive_deftly_driver_TYPE` macro must be
 /// available in scope.
