@@ -2,55 +2,59 @@
 
 use super::framework::*;
 
-//========== substitutions in a template ==========
+//========== common definitions ==========
 
-#[derive(Debug, Clone)]
-pub struct SubstMeta<O: SubstParseContext> {
-    pub level: SubstMetaLevel,
-    pub label: SubstMetaLabel,
-    pub as_: Option<SubstMetaAs<O>>,
-}
-
+/// Indicates one of `fmeta`, `vmeta` or `tmeta`
 #[derive(Debug, Clone, Copy)]
-pub enum SubstMetaLevel {
+pub enum Scope {
     T,
     V,
     F,
 }
 
-#[derive(Debug, Clone, AsRefStr, Display)]
-#[allow(non_camel_case_types)] // clearer to use the exact ident
-pub enum SubstMetaAs<O: SubstParseContext> {
-    tokens(O::NotInBool, O::NotInPaste),
-    ty(O::NotInBool),
-    str(O::NotInBool),
-}
-
+/// `(foo(bar))` in eg `fmeta(foo(bar))`
+///
+/// includes the parens
 #[derive(Debug, Clone)]
-pub struct SubstMetaLabel {
+pub struct Label {
     // Nonempty list, each with nonempty segments.
     // Outermost first.
     pub lpaths: Vec<syn::Path>,
 }
 
+//========== substitutions in a template ==========
+
+#[derive(Debug, Clone)]
+pub struct Subst<O: SubstParseContext> {
+    pub scope: Scope,
+    pub label: Label,
+    pub as_: Option<SubstAs<O>>,
+}
+
+#[derive(Debug, Clone, AsRefStr, Display)]
+#[allow(non_camel_case_types)] // clearer to use the exact ident
+pub enum SubstAs<O: SubstParseContext> {
+    tokens(O::NotInBool, O::NotInPaste),
+    ty(O::NotInBool),
+    str(O::NotInBool),
+}
+
 //========== meta attrs in a driver ==========
 
-/// `#[deftly(foo(content))]`, also used for the toplevel `#[deftly(content)]`
-///
-/// Represents a part like `(foo,bar(baz),zonk="value")`
+/// A part like `(foo,bar(baz),zonk="value")`
 #[derive(Debug, Clone)]
-pub struct PreprocessedMetaList {
-    pub content: Punctuated<PreprocessedMeta, token::Comma>,
+pub struct PreprocessedValueList {
+    pub content: Punctuated<PreprocessedTree, token::Comma>,
 }
 
 /// `#[deftly(...)]` helper attributes
-pub type PreprocessedMetas = Vec<PreprocessedMeta>;
+pub type PreprocessedMetas = Vec<PreprocessedTree>;
 
 /// An `#[deftly()]` attribute, or a sub-tree within one
 #[derive(Debug, Clone)]
-pub struct PreprocessedMeta {
+pub struct PreprocessedTree {
     pub path: syn::Path,
-    pub value: PreprocessedMetaValue,
+    pub value: PreprocessedValue,
 }
 
 /// Content of a meta attribute
@@ -59,20 +63,20 @@ pub struct PreprocessedMeta {
 /// `PreprocessedMeta.path` of `foo`,
 /// ie the examples are for `#[deftly(foo ..)]`.
 #[derive(Debug, Clone)]
-pub enum PreprocessedMetaValue {
+pub enum PreprocessedValue {
     /// `#[deftly(foo)]`
     Unit,
     /// `#[deftly(foo = "lit")]`
     Value { equals: token::Eq, value: syn::Lit },
     /// `#[deftly(foo(...))]`
-    List(PreprocessedMetaList),
+    List(PreprocessedValueList),
 }
 
 //========== search and match results ==========
 
 /// Node in tree structure found in driver `#[deftly(some(thing))]`
 #[derive(Debug)]
-pub enum FoundMetaNode<'l> {
+pub enum FoundNode<'l> {
     Unit(Span),
     Lit { path_span: Span, lit: &'l syn::Lit },
 }
@@ -82,15 +86,15 @@ pub enum FoundMetaNode<'l> {
 /// "Nearby" means that the node we found is a prefix (in tree descent)
 /// of the one we were looking for, or vice versa.
 #[derive(Debug)]
-pub struct FoundNearbyMetaNode {
-    pub kind: FoundNearbyMetaNodeKind,
+pub struct FoundNearbyNode {
+    pub kind: FoundNearbyNodeKind,
     /// Span of the identifier in the actual `#[deftly]` driver attribute
     pub path_span: Span,
 }
 
 /// How the nearby node relates to the one we were looking for
 #[derive(Debug)]
-pub enum FoundNearbyMetaNodeKind {
+pub enum FoundNearbyNodeKind {
     /// We were looking to go deeper, but found a unit in `#[deftly]`
     Unit,
     /// We were looking to go deeper, but found a `name = value` in `#[deftly]`
@@ -99,18 +103,18 @@ pub enum FoundNearbyMetaNodeKind {
     List,
 }
 
-pub use FoundMetaNode as FMN;
-pub use FoundNearbyMetaNodeKind as FNMNK;
+pub use FoundNode as FN;
+pub use FoundNearbyNodeKind as FNNK;
 
 //========== template parsing ==========
 
-impl<O: SubstParseContext> Spanned for SubstMeta<O> {
+impl<O: SubstParseContext> Spanned for Subst<O> {
     fn span(&self) -> Span {
         self.label.span()
     }
 }
 
-impl Spanned for SubstMetaLabel {
+impl Spanned for Label {
     fn span(&self) -> Span {
         self.lpaths
             .first()
@@ -122,14 +126,14 @@ impl Spanned for SubstMetaLabel {
     }
 }
 
-impl<O: SubstParseContext> SubstMetaAs<O> {
+impl<O: SubstParseContext> SubstAs<O> {
     fn parse(input: ParseStream, nb: O::NotInBool) -> syn::Result<Self> {
         let kw: IdentAny = input.parse()?;
-        let from_sma = |sma: SubstMetaAs<_>| Ok(sma);
+        let from_sma = |sma: SubstAs<_>| Ok(sma);
 
         // See keyword_general! in utils.rs
         macro_rules! keyword { { $($args:tt)* } => {
-            keyword_general! { kw from_sma SubstMetaAs; $($args)* }
+            keyword_general! { kw from_sma SubstAs; $($args)* }
         } }
 
         let not_in_paste = || O::not_in_paste(&kw);
@@ -142,9 +146,9 @@ impl<O: SubstParseContext> SubstMetaAs<O> {
     }
 }
 
-impl<O: SubstParseContext> SubstMeta<O> {
-    pub fn parse(input: ParseStream, level: SubstMetaLevel) -> syn::Result<Self> {
-        let label: SubstMetaLabel = input.parse()?;
+impl<O: SubstParseContext> Subst<O> {
+    pub fn parse(input: ParseStream, scope: Scope) -> syn::Result<Self> {
+        let label: Label = input.parse()?;
 
         let as_;
 
@@ -153,18 +157,18 @@ impl<O: SubstParseContext> SubstMeta<O> {
             let nb = O::not_in_bool(&as_token).map_err(|_| {
                 as_token.error("`Xmeta as ...` not allowed in conditions")
             })?;
-            as_ = Some(SubstMetaAs::parse(input, nb)?);
+            as_ = Some(SubstAs::parse(input, nb)?);
         } else {
             as_ = None;
         }
 
-        Ok(SubstMeta { label, as_, level })
+        Ok(Subst { label, as_, scope })
     }
 }
 
 //========== driver parsing ==========
 
-impl PreprocessedMetaList {
+impl PreprocessedValueList {
     fn parse_outer(input: ParseStream) -> syn::Result<Self> {
         let meta;
         let _paren = parenthesized!(meta in input);
@@ -172,36 +176,36 @@ impl PreprocessedMetaList {
     }
 }
 
-impl PreprocessedMetaList {
+impl PreprocessedValueList {
     pub fn parse_inner(input: ParseStream) -> syn::Result<Self> {
         let content = Punctuated::parse_terminated(input)?;
-        Ok(PreprocessedMetaList { content })
+        Ok(PreprocessedValueList { content })
     }
 }
 
-impl Parse for PreprocessedMeta {
+impl Parse for PreprocessedTree {
     fn parse(input: ParseStream) -> syn::Result<Self> {
-        use PreprocessedMetaValue as PMV;
+        use PreprocessedValue as PV;
 
         let path = input.call(syn::Path::parse_mod_style)?;
         let la = input.lookahead1();
         let value = if la.peek(Token![=]) {
             let equals = input.parse()?;
             let value = input.parse()?;
-            PMV::Value { equals, value }
+            PV::Value { equals, value }
         } else if la.peek(token::Paren) {
-            let list = input.call(PreprocessedMetaList::parse_outer)?;
-            PMV::List(list)
+            let list = input.call(PreprocessedValueList::parse_outer)?;
+            PV::List(list)
         } else if la.peek(Token![,]) || input.is_empty() {
-            PMV::Unit
+            PV::Unit
         } else {
             return Err(la.error());
         };
-        Ok(PreprocessedMeta { path, value })
+        Ok(PreprocessedTree { path, value })
     }
 }
 
-impl Parse for SubstMetaLabel {
+impl Parse for Label {
     fn parse(outer: ParseStream) -> syn::Result<Self> {
         fn recurse(
             lpaths: &mut Vec<syn::Path>,
@@ -226,13 +230,13 @@ impl Parse for SubstMetaLabel {
         let mut lpaths = vec![];
         recurse(&mut lpaths, outer)?;
 
-        Ok(SubstMetaLabel { lpaths })
+        Ok(Label { lpaths })
     }
 }
 
 //========== searching and matching ==========
 
-impl SubstMetaLabel {
+impl Label {
     pub fn search<'a, A, F, G, E>(
         &self,
         pmetas: A,
@@ -240,9 +244,9 @@ impl SubstMetaLabel {
         g: &mut G,
     ) -> Result<(), E>
     where
-        F: FnMut(FoundMetaNode<'a>) -> Result<(), E>,
-        G: FnMut(FoundNearbyMetaNode) -> Result<(), E>,
-        A: IntoIterator<Item = &'a PreprocessedMeta>,
+        F: FnMut(FoundNode<'a>) -> Result<(), E>,
+        G: FnMut(FoundNearbyNode) -> Result<(), E>,
+        A: IntoIterator<Item = &'a PreprocessedTree>,
     {
         for pmeta in pmetas {
             Self::search_1(&self.lpaths, pmeta, &mut *f, &mut *g)?;
@@ -253,23 +257,23 @@ impl SubstMetaLabel {
     fn search_1<'a, E, F, G>(
         // Nonempty
         lpaths: &[syn::Path],
-        pmeta: &'a PreprocessedMeta,
+        ptree: &'a PreprocessedTree,
         f: &mut F,
         g: &mut G,
     ) -> Result<(), E>
     where
-        F: FnMut(FoundMetaNode<'a>) -> Result<(), E>,
-        G: FnMut(FoundNearbyMetaNode) -> Result<(), E>,
+        F: FnMut(FoundNode<'a>) -> Result<(), E>,
+        G: FnMut(FoundNearbyNode) -> Result<(), E>,
     {
-        use PreprocessedMetaValue as PMV;
+        use PreprocessedValue as PV;
 
-        if pmeta.path != lpaths[0] {
+        if ptree.path != lpaths[0] {
             return Ok(());
         }
 
-        let path_span = pmeta.path.span();
+        let path_span = ptree.path.span();
 
-        let mut nearby = |kind| g(FoundNearbyMetaNode { kind, path_span });
+        let mut nearby = |kind| g(FoundNearbyNode { kind, path_span });
 
         let deeper = if lpaths.len() <= 1 {
             None
@@ -277,16 +281,16 @@ impl SubstMetaLabel {
             Some(&lpaths[1..])
         };
 
-        match (deeper, &pmeta.value) {
-            (None, PMV::Unit) => f(FMN::Unit(path_span))?,
-            (None, PMV::List(_)) => nearby(FNMNK::List)?,
-            (None, PMV::Value { value, .. }) => f(FMN::Lit {
+        match (deeper, &ptree.value) {
+            (None, PV::Unit) => f(FN::Unit(path_span))?,
+            (None, PV::List(_)) => nearby(FNNK::List)?,
+            (None, PV::Value { value, .. }) => f(FN::Lit {
                 path_span,
                 lit: value,
             })?,
-            (Some(_), PMV::Value { .. }) => nearby(FNMNK::Lit)?,
-            (Some(_), PMV::Unit) => nearby(FNMNK::Unit)?,
-            (Some(d), PMV::List(l)) => {
+            (Some(_), PV::Value { .. }) => nearby(FNNK::Lit)?,
+            (Some(_), PV::Unit) => nearby(FNNK::Unit)?,
+            (Some(d), PV::List(l)) => {
                 for m in l.content.iter() {
                     Self::search_1(d, m, &mut *f, &mut *g)?;
                 }
@@ -297,7 +301,7 @@ impl SubstMetaLabel {
     }
 }
 
-impl SubstMetaLabel {
+impl Label {
     pub fn search_eval_bool(
         &self,
         pmetas: &PreprocessedMetas,
@@ -306,9 +310,9 @@ impl SubstMetaLabel {
             pmetas,
             &mut |_av| /* got it! */ Err(Found),
             &mut |nearby| match nearby.kind {
-                FNMNK::List => Err(Found), // there's more, that'll do
-                FNMNK::Unit => Ok(()),
-                FNMNK::Lit => Ok(()),
+                FNNK::List => Err(Found), // there's more, that'll do
+                FNNK::Unit => Ok(()),
+                FNNK::Lit => Ok(()),
             },
         )
     }
@@ -316,7 +320,7 @@ impl SubstMetaLabel {
 
 //========== template expansion ==========
 
-impl<O> SubstMeta<O>
+impl<O> Subst<O>
 where
     O: SubstParseContext,
 {
@@ -324,15 +328,15 @@ where
         &self,
         ctx: &'c Context<'c>,
     ) -> syn::Result<&'c PreprocessedMetas> {
-        Ok(match self.level {
-            SubstMetaLevel::T => &ctx.tmetas,
-            SubstMetaLevel::V => &ctx.variant(self)?.pmetas,
-            SubstMetaLevel::F => &ctx.field(self)?.pfield.pmetas,
+        Ok(match self.scope {
+            Scope::T => &ctx.tmetas,
+            Scope::V => &ctx.variant(self)?.pmetas,
+            Scope::F => &ctx.field(self)?.pfield.pmetas,
         })
     }
 }
 
-impl<O> SubstMeta<O>
+impl<O> Subst<O>
 where
     O: ExpansionOutput,
 {
@@ -342,14 +346,14 @@ where
         out: &mut O,
         pmetas: &PreprocessedMetas,
     ) -> syn::Result<()> {
-        let mut found = None::<FoundMetaNode>;
-        let mut hint = None::<FoundNearbyMetaNode>;
+        let mut found = None::<FoundNode>;
+        let mut hint = None::<FoundNearbyNode>;
         let self_loc = || (self.span(), "expansion");
         let error_loc = || [ctx.error_loc(), self_loc()];
 
         self.label.search(
             pmetas,
-            &mut |av: FoundMetaNode| {
+            &mut |av: FoundNode| {
                 if let Some(first) = &found {
                     return Err([(first.path_span(), "first occurrence"),
                             (av.path_span(), "second occurrence"),
@@ -369,11 +373,11 @@ where
         let found = found.ok_or_else(|| {
             if let Some(hint) = hint {
                 let hint_msg = match hint.kind {
-                    FNMNK::Unit =>
+                    FNNK::Unit =>
  "expected a list with sub-attributes, found a unit",
-                    FNMNK::Lit =>
+                    FNNK::Lit =>
  "expected a list with sub-attributes, found a simple value",
-                    FNMNK::List =>
+                    FNNK::List =>
  "expected a leaf node, found a list with sub-attributes",
                 };
                 let mut err = hint.path_span.error(hint_msg);
@@ -459,20 +463,20 @@ where
     Ok(thing)
 }
 
-impl FoundMetaNode<'_> {
+impl FoundNode<'_> {
     fn path_span(&self) -> Span {
         match self {
-            FMN::Unit(span) => *span,
-            FMN::Lit { path_span, .. } => *path_span,
+            FN::Unit(span) => *span,
+            FN::Lit { path_span, .. } => *path_span,
         }
     }
 }
 
-impl<'l> FoundMetaNode<'l> {
+impl<'l> FoundNode<'l> {
     fn expand<O>(
         &self,
         tspan: Span,
-        as_: &Option<SubstMetaAs<O>>,
+        as_: &Option<SubstAs<O>>,
         out: &mut O,
     ) -> syn::Result<()>
     where
@@ -481,13 +485,13 @@ impl<'l> FoundMetaNode<'l> {
         let spans = |vspan| metavalue_spans(tspan, vspan);
 
         let lit = match self {
-            FMN::Unit(vspan) => return Err(spans(*vspan).error(
+            FN::Unit(vspan) => return Err(spans(*vspan).error(
  "tried to expand attribute which is just a unit, not a literal"
             )),
-            FMN::Lit { lit, .. } => lit,
+            FN::Lit { lit, .. } => lit,
         };
 
-        use SubstMetaAs as SMA;
+        use meta::SubstAs as MSA;
 
         let default_buf;
         let as_ = match as_ {
@@ -499,15 +503,15 @@ impl<'l> FoundMetaNode<'l> {
         };
 
         match as_ {
-            SMA::tokens(_, np) => {
+            MSA::tokens(_, np) => {
                 let tokens: TokenStream =
                     metavalue_lit_as(lit, tspan, &"tokens")?;
                 out.append_tokens(np, tokens)?;
             }
-            as_ @ SMA::ty(..) => {
+            as_ @ MSA::ty(..) => {
                 out.append_syn_type(tspan, &metavalue_lit_as(lit, tspan, as_)?)
             }
-            SMA::str(..) => {
+            MSA::str(..) => {
                 let s = metavalue_litstr(
                     lit,
                     tspan,

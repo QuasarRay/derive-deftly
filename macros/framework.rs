@@ -24,7 +24,7 @@ pub struct Context<'c> {
     pub top: &'c syn::DeriveInput,
     pub template_crate: &'c syn::Path,
     pub template_name: Option<&'c syn::Path>,
-    pub tmetas: &'c PreprocessedMetas,
+    pub tmetas: &'c meta::PreprocessedMetas,
     pub variant: Option<&'c WithinVariant<'c>>,
     pub field: Option<&'c WithinField<'c>>,
     pub pvariants: &'c [PreprocessedVariant<'c>],
@@ -36,20 +36,20 @@ pub struct Context<'c> {
 #[derive(Debug, Clone)]
 pub struct PreprocessedVariant<'f> {
     pub fields: &'f syn::Fields,
-    pub pmetas: PreprocessedMetas,
+    pub pmetas: meta::PreprocessedMetas,
     pub pfields: Vec<PreprocessedField>,
 }
 
 #[derive(Debug, Clone)]
 pub struct PreprocessedField {
-    pub pmetas: PreprocessedMetas,
+    pub pmetas: meta::PreprocessedMetas,
 }
 
 #[derive(Debug, Clone)]
 pub struct WithinVariant<'c> {
     pub variant: Option<&'c syn::Variant>,
     pub fields: &'c syn::Fields,
-    pub pmetas: &'c PreprocessedMetas,
+    pub pmetas: &'c meta::PreprocessedMetas,
     pub pfields: &'c [PreprocessedField],
 }
 
@@ -271,7 +271,7 @@ pub trait ExpansionOutput: SubstParseContext {
         })
     }
 
-    fn default_subst_meta_as() -> SubstMetaAs<Self>;
+    fn default_subst_meta_as() -> meta::SubstAs<Self>;
 }
 
 /// Convenience trait providing `item.expand()`
@@ -508,7 +508,7 @@ impl ExpansionOutput for TokenAccumulator {
         }
     }
 
-    fn default_subst_meta_as() -> SubstMetaAs<Self> {
-        SubstMetaAs::tokens((), ())
+    fn default_subst_meta_as() -> meta::SubstAs<Self> {
+        meta::SubstAs::tokens((), ())
     }
 }

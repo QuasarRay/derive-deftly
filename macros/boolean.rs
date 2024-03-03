@@ -54,15 +54,15 @@ impl Subst<BooleanContext> {
             SD::v_is_named(..) => matches!(v_fields()?, SF::Named(..)),
 
             SD::xmeta(sm) => {
-                let SubstMeta {
+                let meta::Subst {
                     label,
                     as_,
-                    level: _,
+                    scope: _,
                 } = sm;
-                use SubstMetaAs as SMA;
+                use meta::SubstAs as MSA;
                 if let Some(as_) = as_ {
                     match as_ {
-                        SMA::str(nb) | SMA::tokens(nb, ..) | SMA::ty(nb) => {
+                        MSA::str(nb) | MSA::tokens(nb, ..) | MSA::ty(nb) => {
                             void::unreachable(*nb)
                         }
                     }

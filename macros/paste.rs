@@ -829,8 +829,8 @@ impl ExpansionOutput for Items {
         self.errors.push(err);
     }
 
-    fn default_subst_meta_as() -> SubstMetaAs<Self> {
-        SubstMetaAs::str(())
+    fn default_subst_meta_as() -> meta::SubstAs<Self> {
+        meta::SubstAs::str(())
     }
 }
 

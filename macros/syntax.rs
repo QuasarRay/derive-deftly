@@ -77,7 +77,7 @@ pub enum SubstDetails<O: SubstParseContext> {
     tdefkwd(O::NotInBool),
 
     // attributes
-    xmeta(SubstMeta<O>),
+    xmeta(meta::Subst<O>),
     tattrs(RawAttr, O::NotInPaste, O::NotInBool),
     vattrs(RawAttr, O::NotInPaste, O::NotInBool),
     fattrs(RawAttr, O::NotInPaste, O::NotInBool),
@@ -756,10 +756,10 @@ impl<O: SubstParseContext> Parse for Subst<O> {
         keyword! { tgnames(not_in_paste()?, not_in_bool()?) }
         keyword! { twheres(not_in_paste()?, not_in_bool()?) }
 
-        use SubstMetaLevel as SML;
-        keyword! { "tmeta": xmeta(SubstMeta::parse(input, SML::T)?) }
-        keyword! { "vmeta": xmeta(SubstMeta::parse(input, SML::V)?) }
-        keyword! { "fmeta": xmeta(SubstMeta::parse(input, SML::F)?) }
+        use meta::Scope as MS;
+        keyword! { "tmeta": xmeta(meta::Subst::parse(input, MS::T)?) }
+        keyword! { "vmeta": xmeta(meta::Subst::parse(input, MS::V)?) }
+        keyword! { "fmeta": xmeta(meta::Subst::parse(input, MS::F)?) }
 
         keyword! { tattrs(input.parse()?, not_in_paste()?, not_in_bool()?) }
         keyword! { vattrs(input.parse()?, not_in_paste()?, not_in_bool()?) }
@@ -1050,7 +1050,7 @@ impl<O: SubstParseContext> RepeatedTemplate<O> {
 
 pub fn preprocess_attrs(
     attrs: &[syn::Attribute],
-) -> syn::Result<PreprocessedMetas> {
+) -> syn::Result<meta::PreprocessedMetas> {
     attrs
         .iter()
         .filter_map(|attr| {
@@ -1070,7 +1070,7 @@ pub fn preprocess_attrs(
         })
         .map(|attr| {
             let attr =
-                attr.call_in_parens(PreprocessedMetaList::parse_inner)?;
+                attr.call_in_parens(meta::PreprocessedValueList::parse_inner)?;
             Ok(attr.content)
         })
         .flatten_ok()

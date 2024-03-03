@@ -41,11 +41,10 @@ pub use super::utils::ToTokensPunctComposable;
 pub use super::utils::{braced_group, delimit_token_group};
 pub use super::utils::{Concatenated, Discard};
 pub use super::utils::{ErrorLoc, IdentAny, MakeError};
-pub(super) use super::{check, dbg_allkw, framework};
+pub(super) use super::{check, dbg_allkw, framework, meta};
 
 pub use super::compat_syn_2::*;
 pub use super::compat_syn_common::*;
 
 pub use super::expand::*;
-pub use super::meta::*;
 pub use super::options::*;
