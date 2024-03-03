@@ -24,7 +24,7 @@ pub struct Context<'c> {
     pub top: &'c syn::DeriveInput,
     pub template_crate: &'c syn::Path,
     pub template_name: Option<&'c syn::Path>,
-    pub tmetas: &'c PreprocessedMetas,
+    pub tmetas: &'c meta::PreprocessedMetas,
     pub variant: Option<&'c WithinVariant<'c>>,
     pub field: Option<&'c WithinField<'c>>,
     pub pvariants: &'c [PreprocessedVariant<'c>],
@@ -36,52 +36,20 @@ pub struct Context<'c> {
 #[derive(Debug, Clone)]
 pub struct PreprocessedVariant<'f> {
     pub fields: &'f syn::Fields,
-    pub pmetas: PreprocessedMetas,
+    pub pmetas: meta::PreprocessedMetas,
     pub pfields: Vec<PreprocessedField>,
 }
 
 #[derive(Debug, Clone)]
 pub struct PreprocessedField {
-    pub pmetas: PreprocessedMetas,
-}
-
-/// `#[deftly(...)]` helper attributes
-pub type PreprocessedMetas = Vec<PreprocessedMeta>;
-
-/// An `#[deftly()]` attribute, or a sub-tree within one
-#[derive(Debug, Clone)]
-pub struct PreprocessedMeta {
-    pub path: syn::Path,
-    pub value: PreprocessedMetaValue,
-}
-/// Content of a meta attribute
-///
-/// Examples in doc comments are for
-/// `PreprocessedMeta.path` of `foo`,
-/// ie the examples are for `#[deftly(foo ..)]`.
-#[derive(Debug, Clone)]
-pub enum PreprocessedMetaValue {
-    /// `#[deftly(foo)]`
-    Unit,
-    /// `#[deftly(foo = "lit")]`
-    Value { equals: token::Eq, value: syn::Lit },
-    /// `#[deftly(foo(...))]`
-    List(PreprocessedMetaList),
-}
-
-/// `#[deftly(foo(content))]`, also used for the toplevel `#[deftly(content)]`
-///
-/// Represents a part like `(foo,bar(baz),zonk="value")`
-#[derive(Debug, Clone)]
-pub struct PreprocessedMetaList {
-    pub content: Punctuated<PreprocessedMeta, token::Comma>,
+    pub pmetas: meta::PreprocessedMetas,
 }
 
 #[derive(Debug, Clone)]
 pub struct WithinVariant<'c> {
     pub variant: Option<&'c syn::Variant>,
     pub fields: &'c syn::Fields,
-    pub pmetas: &'c PreprocessedMetas,
+    pub pmetas: &'c meta::PreprocessedMetas,
     pub pfields: &'c [PreprocessedField],
 }
 
@@ -303,7 +271,7 @@ pub trait ExpansionOutput: SubstParseContext {
         })
     }
 
-    fn default_subst_meta_as() -> SubstMetaAs<Self>;
+    fn default_subst_meta_as() -> meta::SubstAs<Self>;
 }
 
 /// Convenience trait providing `item.expand()`
@@ -340,80 +308,6 @@ pub struct TokenAccumulator(Result<TokenStream, syn::Error>);
 impl<'c> Context<'c> {
     pub fn is_enum(&self) -> bool {
         matches!(self.top.data, syn::Data::Enum(_))
-    }
-
-    /// Calls `f` with a top-level [`Context`] for a [`syn::DeriveInput`]
-    ///
-    /// `Context` has multiple levels of references to values created
-    /// here, so we can't easily provide `Context::new()`.
-    pub fn call<T>(
-        driver: &syn::DeriveInput,
-        template_crate: &syn::Path,
-        template_name: Option<&syn::Path>,
-        f: impl FnOnce(Context) -> syn::Result<T>,
-    ) -> Result<T, syn::Error> {
-        let tmetas = preprocess_attrs(&driver.attrs)?;
-
-        let pvariants_one = |fields| {
-            let pmetas = tmetas.clone(); // TODO Cow maybe?
-            let pfields = preprocess_fields(fields)?;
-            let pvariant = PreprocessedVariant {
-                fields,
-                pmetas,
-                pfields,
-            };
-            syn::Result::Ok((Some(()), vec![pvariant]))
-        };
-
-        let union_fields;
-
-        let (variant, pvariants) = match &driver.data {
-            syn::Data::Struct(ds) => pvariants_one(&ds.fields)?,
-            syn::Data::Union(du) => {
-                union_fields = syn::Fields::Named(du.fields.clone());
-                pvariants_one(&union_fields)?
-            }
-            syn::Data::Enum(de) => (
-                None,
-                de.variants
-                    .iter()
-                    .map(|variant| {
-                        let fields = &variant.fields;
-                        let pmetas = preprocess_attrs(&variant.attrs)?;
-                        let pfields = preprocess_fields(&variant.fields)?;
-                        Ok(PreprocessedVariant {
-                            fields,
-                            pmetas,
-                            pfields,
-                        })
-                    })
-                    .collect::<Result<Vec<_>, syn::Error>>()?,
-            ),
-        };
-
-        // `variant` is None in enums; otherwise it's Some(())
-        // and here we convert it to the real WithinVariant for the fields.
-        let variant = variant.map(|()| WithinVariant {
-            variant: None, // not actually a variant
-            fields: pvariants[0].fields,
-            pmetas: &pvariants[0].pmetas,
-            pfields: &pvariants[0].pfields,
-        });
-
-        let ctx = Context {
-            top: &driver,
-            template_crate,
-            template_name,
-            tmetas: &tmetas,
-            field: None,
-            variant: variant.as_ref(),
-            pvariants: &pvariants,
-            definitions: Default::default(),
-            nesting_depth: 0,
-            nesting_parent: None,
-        };
-
-        f(ctx)
     }
 
     /// Description of the whole expansion, suitable for `dbg` option, etc.
@@ -540,7 +434,7 @@ impl ExpansionOutput for TokenAccumulator {
         }
     }
 
-    fn default_subst_meta_as() -> SubstMetaAs<Self> {
-        SubstMetaAs::tokens((), ())
+    fn default_subst_meta_as() -> meta::SubstAs<Self> {
+        meta::SubstAs::tokens((), ())
     }
 }

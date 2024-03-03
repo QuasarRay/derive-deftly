@@ -197,19 +197,6 @@ impl<O: SubstParseContext> Subst<O> {
     }
 }
 
-impl<O> SubstMeta<O>
-where
-    O: SubstParseContext,
-{
-    pub fn repeat_over(&self) -> Option<RepeatOver> {
-        match self.level {
-            SubstMetaLevel::T => None,
-            SubstMetaLevel::V => Some(RO::Variants),
-            SubstMetaLevel::F => Some(RO::Fields),
-        }
-    }
-}
-
 /// Implemented for [`WithinVariant`] and [`WithinField`]
 ///
 /// For combining code that applies similarly for different repeat levels.

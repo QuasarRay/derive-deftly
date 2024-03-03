@@ -12,7 +12,7 @@ use super::framework::*;
 #[derive(Debug)]
 pub struct BooleanContext(Void);
 
-struct Found;
+pub struct Found;
 
 fn is_found(r: Result<(), Found>) -> bool {
     r.is_err()
@@ -54,15 +54,14 @@ impl Subst<BooleanContext> {
             SD::v_is_named(..) => matches!(v_fields()?, SF::Named(..)),
 
             SD::xmeta(sm) => {
-                let SubstMeta {
-                    label,
+                let meta::Subst {
+                    desig: meta::Desig { label, scope: _ },
                     as_,
-                    level: _,
                 } = sm;
-                use SubstMetaAs as SMA;
+                use meta::SubstAs as MSA;
                 if let Some(as_) = as_ {
                     match as_ {
-                        SMA::str(nb) | SMA::tokens(nb, ..) | SMA::ty(nb) => {
+                        MSA::str(nb) | MSA::tokens(nb, ..) | MSA::ty(nb) => {
                             void::unreachable(*nb)
                         }
                     }
@@ -161,23 +160,6 @@ impl DefinitionName {
         })?;
 
         def.body.eval_bool(&ctx)
-    }
-}
-
-impl SubstMetaLabel {
-    fn search_eval_bool(
-        &self,
-        pmetas: &PreprocessedMetas,
-    ) -> Result<(), Found> {
-        self.search(
-            pmetas,
-            &mut |_av| /* got it! */ Err(Found),
-            &mut |nearby| match nearby.kind {
-                FNMNK::List => Err(Found), // there's more, that'll do
-                FNMNK::Unit => Ok(()),
-                FNMNK::Lit => Ok(()),
-            },
-        )
     }
 }
 

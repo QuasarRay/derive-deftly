@@ -1,4 +1,4 @@
-//! Macro impl for invoking a predefined template `derive_deftly_adhoc!`
+//! Macro impl for adhoc template application `derive_deftly_adhoc!`
 
 use super::prelude::*;
 

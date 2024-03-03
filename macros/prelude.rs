@@ -31,7 +31,7 @@ pub use void::{ResultVoidErrExt as _, ResultVoidExt as _, Void};
 
 pub use TokenTree as TT;
 
-pub use super::definition::escape_dollars;
+pub use super::define::escape_dollars;
 pub use super::framework::TokenAccumulator;
 pub use super::paste::TokenPastesAsIdent;
 pub use super::utils::advise_incompatibility;
@@ -41,10 +41,9 @@ pub use super::utils::ToTokensPunctComposable;
 pub use super::utils::{braced_group, delimit_token_group};
 pub use super::utils::{Concatenated, Discard};
 pub use super::utils::{ErrorLoc, IdentAny, MakeError};
-pub(super) use super::{check, dbg_allkw, framework};
+pub(super) use super::{check, dbg_allkw, framework, meta};
 
 pub use super::compat_syn_2::*;
 pub use super::compat_syn_common::*;
 
-pub use super::expand::*;
 pub use super::options::*;

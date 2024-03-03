@@ -14,20 +14,22 @@ pub(crate) use prelude::*;
 pub(crate) mod utils;
 pub(crate) mod framework;
 
-// modules containing the actual implementations of our proc-macros
-pub(crate) mod capture;
-pub(crate) mod definition;
-pub(crate) mod invocation;
-
 // Implementation - specific areas
 pub(crate) mod boolean;
 pub(crate) mod dbg_allkw;
 pub(crate) mod expand;
+pub(crate) mod meta;
 pub(crate) mod options;
 pub(crate) mod paste;
 pub(crate) mod repeat;
-pub(crate) mod semver;
 pub(crate) mod syntax;
+
+// Implementations of each proc-macros
+pub(crate) mod adhoc;
+pub(crate) mod define;
+pub(crate) mod derive;
+pub(crate) mod engine;
+pub(crate) mod semver;
 
 pub(crate) mod compat_syn_2;
 pub(crate) mod compat_syn_common;
@@ -95,7 +97,7 @@ pub fn derive_deftly_engine(
     input: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
     let input: proc_macro2::TokenStream = input.into();
-    let output = expand::derive_deftly_engine_func_macro(input)
+    let output = engine::derive_deftly_engine_func_macro(input)
         .unwrap_or_else(|e| e.into_compile_error());
     output.into()
 }
@@ -142,7 +144,7 @@ pub fn derive_deftly_adhoc(
     input: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
     let input = TokenStream::from(input);
-    let output = invocation::derive_deftly_adhoc(input)
+    let output = adhoc::derive_deftly_adhoc(input)
         .unwrap_or_else(|e| e.into_compile_error());
     output.into()
 }
@@ -256,7 +258,7 @@ pub fn define_derive_deftly(
     input: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
     let input = TokenStream::from(input);
-    let output = definition::define_derive_deftly_func_macro(input)
+    let output = define::define_derive_deftly_func_macro(input)
         .unwrap_or_else(|e| e.into_compile_error());
     output.into()
 }
@@ -402,7 +404,7 @@ pub fn derive_deftly(
     input: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
     let input = TokenStream::from(input);
-    let output = capture::derive_deftly(input)
+    let output = derive::derive_deftly(input)
         .unwrap_or_else(|e| e.into_compile_error());
     output.into()
 }

@@ -77,7 +77,7 @@ pub enum SubstDetails<O: SubstParseContext> {
     tdefkwd(O::NotInBool),
 
     // attributes
-    xmeta(SubstMeta<O>),
+    xmeta(meta::Subst<O>),
     tattrs(RawAttr, O::NotInPaste, O::NotInBool),
     vattrs(RawAttr, O::NotInPaste, O::NotInBool),
     fattrs(RawAttr, O::NotInPaste, O::NotInBool),
@@ -175,35 +175,6 @@ pub enum SubstVis {
     T,
     F,
     FD,
-}
-
-#[derive(Debug, Clone)]
-pub struct SubstMeta<O: SubstParseContext> {
-    pub level: SubstMetaLevel,
-    pub label: SubstMetaLabel,
-    pub as_: Option<SubstMetaAs<O>>,
-}
-
-#[derive(Debug, Clone, Copy)]
-pub enum SubstMetaLevel {
-    T,
-    V,
-    F,
-}
-
-#[derive(Debug, Clone, AsRefStr, Display)]
-#[allow(non_camel_case_types)] // clearer to use the exact ident
-pub enum SubstMetaAs<O: SubstParseContext> {
-    tokens(O::NotInBool, O::NotInPaste),
-    ty(O::NotInBool),
-    str(O::NotInBool),
-}
-
-#[derive(Debug, Clone)]
-pub struct SubstMetaLabel {
-    // Nonempty list, each with nonempty segments.
-    // Outermost first.
-    pub lpaths: Vec<syn::Path>,
 }
 
 #[derive(Debug)]
@@ -332,24 +303,6 @@ impl Parse for Definition<DefCondBody> {
 impl<O: SubstParseContext> Spanned for Subst<O> {
     fn span(&self) -> Span {
         self.kw_span
-    }
-}
-
-impl<O: SubstParseContext> Spanned for SubstMeta<O> {
-    fn span(&self) -> Span {
-        self.label.span()
-    }
-}
-
-impl Spanned for SubstMetaLabel {
-    fn span(&self) -> Span {
-        self.lpaths
-            .first()
-            .expect("empty label")
-            .segments
-            .first()
-            .expect("empty path!")
-            .span()
     }
 }
 
@@ -511,112 +464,6 @@ impl<O: SubstParseContext> Parse for TemplateElement<O> {
                 }
             }
         })
-    }
-}
-
-impl PreprocessedMetaList {
-    fn parse_outer(input: ParseStream) -> syn::Result<Self> {
-        let meta;
-        let _paren = parenthesized!(meta in input);
-        Self::parse_inner(&meta)
-    }
-}
-
-impl PreprocessedMetaList {
-    pub fn parse_inner(input: ParseStream) -> syn::Result<Self> {
-        let content = Punctuated::parse_terminated(input)?;
-        Ok(PreprocessedMetaList { content })
-    }
-}
-
-impl Parse for PreprocessedMeta {
-    fn parse(input: ParseStream) -> syn::Result<Self> {
-        use PreprocessedMetaValue as PMV;
-
-        let path = input.call(syn::Path::parse_mod_style)?;
-        let la = input.lookahead1();
-        let value = if la.peek(Token![=]) {
-            let equals = input.parse()?;
-            let value = input.parse()?;
-            PMV::Value { equals, value }
-        } else if la.peek(token::Paren) {
-            let list = input.call(PreprocessedMetaList::parse_outer)?;
-            PMV::List(list)
-        } else if la.peek(Token![,]) || input.is_empty() {
-            PMV::Unit
-        } else {
-            return Err(la.error());
-        };
-        Ok(PreprocessedMeta { path, value })
-    }
-}
-
-impl<O: SubstParseContext> SubstMetaAs<O> {
-    fn parse(input: ParseStream, nb: O::NotInBool) -> syn::Result<Self> {
-        let kw: IdentAny = input.parse()?;
-        let from_sma = |sma: SubstMetaAs<_>| Ok(sma);
-
-        // See keyword_general! in utils.rs
-        macro_rules! keyword { { $($args:tt)* } => {
-            keyword_general! { kw from_sma SubstMetaAs; $($args)* }
-        } }
-
-        let not_in_paste = || O::not_in_paste(&kw);
-
-        keyword! { str(nb) }
-        keyword! { tokens(nb, not_in_paste()?) }
-        keyword! { ty(nb) }
-
-        Err(kw.error("unknown derive-deftly 'as' syntax type keyword"))
-    }
-}
-
-impl<O: SubstParseContext> SubstMeta<O> {
-    fn parse(input: ParseStream, level: SubstMetaLevel) -> syn::Result<Self> {
-        let label: SubstMetaLabel = input.parse()?;
-
-        let as_;
-
-        if input.peek(Token![as]) {
-            let as_token: Token![as] = input.parse()?;
-            let nb = O::not_in_bool(&as_token).map_err(|_| {
-                as_token.error("`Xmeta as ...` not allowed in conditions")
-            })?;
-            as_ = Some(SubstMetaAs::parse(input, nb)?);
-        } else {
-            as_ = None;
-        }
-
-        Ok(SubstMeta { label, as_, level })
-    }
-}
-
-impl Parse for SubstMetaLabel {
-    fn parse(outer: ParseStream) -> syn::Result<Self> {
-        fn recurse(
-            lpaths: &mut Vec<syn::Path>,
-            outer: ParseStream,
-        ) -> syn::Result<()> {
-            let input;
-            let paren = parenthesized!(input in outer);
-            let path = input.call(syn::Path::parse_mod_style)?;
-            if path.segments.is_empty() {
-                return Err(paren
-                    .span
-                    .error("`deftly` attribute must have nonempty path"));
-            }
-
-            lpaths.push(path);
-            if !input.is_empty() {
-                recurse(lpaths, &input)?;
-            }
-            Ok(())
-        }
-
-        let mut lpaths = vec![];
-        recurse(&mut lpaths, outer)?;
-
-        Ok(SubstMetaLabel { lpaths })
     }
 }
 
@@ -909,10 +756,10 @@ impl<O: SubstParseContext> Parse for Subst<O> {
         keyword! { tgnames(not_in_paste()?, not_in_bool()?) }
         keyword! { twheres(not_in_paste()?, not_in_bool()?) }
 
-        use SubstMetaLevel as SML;
-        keyword! { "tmeta": xmeta(SubstMeta::parse(input, SML::T)?) }
-        keyword! { "vmeta": xmeta(SubstMeta::parse(input, SML::V)?) }
-        keyword! { "fmeta": xmeta(SubstMeta::parse(input, SML::F)?) }
+        use meta::Scope as MS;
+        keyword! { "tmeta": xmeta(meta::Subst::parse(input, MS::T)?) }
+        keyword! { "vmeta": xmeta(meta::Subst::parse(input, MS::V)?) }
+        keyword! { "fmeta": xmeta(meta::Subst::parse(input, MS::F)?) }
 
         keyword! { tattrs(input.parse()?, not_in_paste()?, not_in_bool()?) }
         keyword! { vattrs(input.parse()?, not_in_paste()?, not_in_bool()?) }
@@ -1203,7 +1050,7 @@ impl<O: SubstParseContext> RepeatedTemplate<O> {
 
 pub fn preprocess_attrs(
     attrs: &[syn::Attribute],
-) -> syn::Result<PreprocessedMetas> {
+) -> syn::Result<meta::PreprocessedMetas> {
     attrs
         .iter()
         .filter_map(|attr| {
@@ -1223,7 +1070,7 @@ pub fn preprocess_attrs(
         })
         .map(|attr| {
             let attr =
-                attr.call_in_parens(PreprocessedMetaList::parse_inner)?;
+                attr.call_in_parens(meta::PreprocessedValueList::parse_inner)?;
             Ok(attr.content)
         })
         .flatten_ok()
