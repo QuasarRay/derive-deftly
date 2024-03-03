@@ -32,7 +32,7 @@ pub struct Desig {
 //========== substitutions in a template ==========
 
 #[derive(Debug, Clone)]
-pub struct Subst<O: SubstParseContext> {
+pub struct SubstMeta<O: SubstParseContext> {
     pub desig: Desig,
     pub as_: Option<SubstAs<O>>,
 }
@@ -114,7 +114,7 @@ pub use FoundNode as FN;
 
 //========== template parsing ==========
 
-impl<O: SubstParseContext> Spanned for Subst<O> {
+impl<O: SubstParseContext> Spanned for SubstMeta<O> {
     fn span(&self) -> Span {
         self.desig.label.span()
     }
@@ -152,7 +152,7 @@ impl<O: SubstParseContext> SubstAs<O> {
     }
 }
 
-impl<O: SubstParseContext> Subst<O> {
+impl<O: SubstParseContext> SubstMeta<O> {
     pub fn parse(input: ParseStream, scope: Scope) -> syn::Result<Self> {
         let label: Label = input.parse()?;
 
@@ -168,7 +168,7 @@ impl<O: SubstParseContext> Subst<O> {
             as_ = None;
         }
 
-        Ok(Subst {
+        Ok(SubstMeta {
             desig: Desig { label, scope },
             as_,
         })
@@ -329,7 +329,7 @@ impl Label {
 
 //========== scope handling ==========
 
-impl<O> Subst<O>
+impl<O> SubstMeta<O>
 where
     O: SubstParseContext,
 {
@@ -342,7 +342,7 @@ where
     }
 }
 
-impl<O> Subst<O>
+impl<O> SubstMeta<O>
 where
     O: SubstParseContext,
 {
@@ -360,7 +360,7 @@ where
 
 //========== template expansion ==========
 
-impl<O> Subst<O>
+impl<O> SubstMeta<O>
 where
     O: ExpansionOutput,
 {
