@@ -437,6 +437,8 @@ pub fn derive_deftly(
 ///
 /// If a new version of derive-adhoc means *your* crate's
 /// API has semver-relevant changes, this macro will throw an error.
+/// (Of course that will only happen across semver-breaking
+/// updates of derive-deftly.)
 ///
 /// (Exporting a *driver* struct for derivation in downstream crates,
 /// `#[derive_deftly_adhoc(pub)]`, is not covered by this promise.)

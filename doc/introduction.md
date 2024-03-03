@@ -123,12 +123,20 @@ We've also added a
 which will appear in the public API documentation for our crate.
 
 Additionally,
-[we need to re-export `derive_deftly`](define_derive_deftly#you-must-re-export-derive_deftly-usually-no-semver-implications)
-from our crate, so that users get the correct version:
+[we need to re-export `derive_deftly`](define_derive_deftly#you-must-re-export-derive_deftly-semver-implications)
+from our crate, so that users get the correct version.
+And you should invoke
+[`derive_deftly::pub_template_semver_check`](pub_template_semver_check)
+once,
+somewhere in your crate:
+this will tell you specially about any implications for your crate's semver, 
+when you change your `Cargo.toml` to upgrade `derive-deftly`.
+
 
 ```rust,ignore
 // you might want to apply #[doc(hidden)] to this.
 pub use derive_deftly;
+derive_deftly::pub_template_semver_check!("0.9.0");
 ```
 
 Now, when somebody wants to use our template,
