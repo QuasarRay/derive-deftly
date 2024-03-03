@@ -12,7 +12,7 @@ use super::framework::*;
 #[derive(Debug)]
 pub struct BooleanContext(Void);
 
-struct Found;
+pub struct Found;
 
 fn is_found(r: Result<(), Found>) -> bool {
     r.is_err()
@@ -161,23 +161,6 @@ impl DefinitionName {
         })?;
 
         def.body.eval_bool(&ctx)
-    }
-}
-
-impl SubstMetaLabel {
-    fn search_eval_bool(
-        &self,
-        pmetas: &PreprocessedMetas,
-    ) -> Result<(), Found> {
-        self.search(
-            pmetas,
-            &mut |_av| /* got it! */ Err(Found),
-            &mut |nearby| match nearby.kind {
-                FNMNK::List => Err(Found), // there's more, that'll do
-                FNMNK::Unit => Ok(()),
-                FNMNK::Lit => Ok(()),
-            },
-        )
     }
 }
 

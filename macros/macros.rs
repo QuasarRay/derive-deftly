@@ -23,6 +23,7 @@ pub(crate) mod invocation;
 pub(crate) mod boolean;
 pub(crate) mod dbg_allkw;
 pub(crate) mod expand;
+pub(crate) mod meta;
 pub(crate) mod options;
 pub(crate) mod paste;
 pub(crate) mod repeat;

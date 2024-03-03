@@ -45,38 +45,6 @@ pub struct PreprocessedField {
     pub pmetas: PreprocessedMetas,
 }
 
-/// `#[deftly(...)]` helper attributes
-pub type PreprocessedMetas = Vec<PreprocessedMeta>;
-
-/// An `#[deftly()]` attribute, or a sub-tree within one
-#[derive(Debug, Clone)]
-pub struct PreprocessedMeta {
-    pub path: syn::Path,
-    pub value: PreprocessedMetaValue,
-}
-/// Content of a meta attribute
-///
-/// Examples in doc comments are for
-/// `PreprocessedMeta.path` of `foo`,
-/// ie the examples are for `#[deftly(foo ..)]`.
-#[derive(Debug, Clone)]
-pub enum PreprocessedMetaValue {
-    /// `#[deftly(foo)]`
-    Unit,
-    /// `#[deftly(foo = "lit")]`
-    Value { equals: token::Eq, value: syn::Lit },
-    /// `#[deftly(foo(...))]`
-    List(PreprocessedMetaList),
-}
-
-/// `#[deftly(foo(content))]`, also used for the toplevel `#[deftly(content)]`
-///
-/// Represents a part like `(foo,bar(baz),zonk="value")`
-#[derive(Debug, Clone)]
-pub struct PreprocessedMetaList {
-    pub content: Punctuated<PreprocessedMeta, token::Comma>,
-}
-
 #[derive(Debug, Clone)]
 pub struct WithinVariant<'c> {
     pub variant: Option<&'c syn::Variant>,
