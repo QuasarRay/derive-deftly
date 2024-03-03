@@ -6,10 +6,13 @@ use super::framework::*;
 
 /// Indicates one of `fmeta`, `vmeta` or `tmeta`
 #[derive(Debug, Clone, Copy, Eq, PartialEq, Hash)]
+#[derive(AsRefStr, EnumString)]
+#[rustfmt::skip]
 pub enum Scope {
-    T,
-    V,
-    F,
+    // NB these keywords are duplicated in SubstDetails
+    #[strum(serialize = "tmeta")] T,
+    #[strum(serialize = "vmeta")] V,
+    #[strum(serialize = "fmeta")] F,
 }
 
 /// `(foo(bar))` in eg `fmeta(foo(bar))`
