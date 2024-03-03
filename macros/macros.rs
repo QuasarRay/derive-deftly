@@ -101,20 +101,30 @@ pub fn derive_deftly_engine(
 
 /// Expand an ad-hoc template, on a data structure decorated `#[derive_deftly_adhoc]`
 ///
-/// ```ignore
-/// # use derive_deftly_macros::{Deftly, derive_deftly_adhoc, derive_deftly_engine};
+/// ```
+// We're in the macro crate, where the facade crate is not available.
+// So we must do some namespace-swizzling.
+/// # use derive_deftly_macros as derive_deftly;
+// `proc-macro-crate` says `Itself` so generates ::derive_deftly_engine,
+// which is wrong for a doctest.  Fudge that.  We must also make sure
+// we're not inside main here, so we must define a main.
+/// # use derive_deftly::derive_deftly_engine;
+/// # fn main(){}
+/// use derive_deftly::{Deftly, derive_deftly_adhoc};
 /// #[derive(Deftly)]
 /// #[derive_deftly_adhoc]
 /// struct DataStructureType { }
 ///
-/// # fn main() {
-/// # const TEMPLATE: () = ();
+// Smoke and mirrors so we can use metasyntactic OPTIONS and TEMPLATE.
+/// # macro_rules! derive_deftly_adhoc { {
+/// #     $x:ident OPTIONS,..: TEMPLATE
+/// # } => { derive_deftly_macros::derive_deftly_adhoc! {
+/// #     $x expect items: fn x(){}
+/// # } } }
 /// derive_deftly_adhoc! {
 ///     DataStructureType OPTIONS,..:
 ///     TEMPLATE
 /// }
-/// # ;
-/// # }
 /// ```
 ///
 /// Expands the template `TEMPLATE` for the type `DataStructureType`,
@@ -322,7 +332,16 @@ pub fn define_derive_deftly(
 /// with `use`,
 /// but the `use` must refer to
 /// the actual pattern macro name `derive_deftly_template_MyMacro`:
-/// ```ignore
+/// ```
+// See the doc comment for `derive_deftly_adhoc`.
+/// # use derive_deftly_macros as derive_deftly;
+/// # use derive_deftly::{derive_deftly_engine};
+/// # fn main(){}
+// We can't make another crate.  Fake up the macro definition
+/// # derive_deftly::define_derive_deftly! { TheirMacro = }
+/// use derive_deftly::{Deftly, derive_deftly_adhoc};
+// and don't really try to import it, then
+/// # #[cfg(any())]
 /// use other_crate::derive_deftly_template_TheirMacro;
 /// #[derive(Deftly)]
 /// #[derive_deftly(TheirMacro)]
