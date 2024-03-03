@@ -168,7 +168,10 @@ impl<O: SubstParseContext> Subst<O> {
             as_ = None;
         }
 
-        Ok(Subst { desig: Desig { label, scope }, as_ })
+        Ok(Subst {
+            desig: Desig { label, scope },
+            as_,
+        })
     }
 }
 
