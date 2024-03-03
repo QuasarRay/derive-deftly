@@ -77,7 +77,7 @@ pub enum SubstDetails<O: SubstParseContext> {
     tdefkwd(O::NotInBool),
 
     // attributes
-    xmeta(meta::Subst<O>),
+    xmeta(meta::SubstMeta<O>),
     tattrs(RawAttr, O::NotInPaste, O::NotInBool),
     vattrs(RawAttr, O::NotInPaste, O::NotInBool),
     fattrs(RawAttr, O::NotInPaste, O::NotInBool),
@@ -757,9 +757,9 @@ impl<O: SubstParseContext> Parse for Subst<O> {
         keyword! { twheres(not_in_paste()?, not_in_bool()?) }
 
         use meta::Scope as MS;
-        keyword! { "tmeta": xmeta(meta::Subst::parse(input, MS::T)?) }
-        keyword! { "vmeta": xmeta(meta::Subst::parse(input, MS::V)?) }
-        keyword! { "fmeta": xmeta(meta::Subst::parse(input, MS::F)?) }
+        keyword! { "tmeta": xmeta(meta::SubstMeta::parse(input, MS::T)?) }
+        keyword! { "vmeta": xmeta(meta::SubstMeta::parse(input, MS::V)?) }
+        keyword! { "fmeta": xmeta(meta::SubstMeta::parse(input, MS::F)?) }
 
         keyword! { tattrs(input.parse()?, not_in_paste()?, not_in_bool()?) }
         keyword! { vattrs(input.parse()?, not_in_paste()?, not_in_bool()?) }
