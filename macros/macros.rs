@@ -17,7 +17,7 @@ pub(crate) mod framework;
 // modules containing the actual implementations of our proc-macros
 pub(crate) mod derive;
 pub(crate) mod define;
-pub(crate) mod invocation;
+pub(crate) mod adhoc;
 
 // Implementation - specific areas
 pub(crate) mod boolean;
@@ -144,7 +144,7 @@ pub fn derive_deftly_adhoc(
     input: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
     let input = TokenStream::from(input);
-    let output = invocation::derive_deftly_adhoc(input)
+    let output = adhoc::derive_deftly_adhoc(input)
         .unwrap_or_else(|e| e.into_compile_error());
     output.into()
 }
