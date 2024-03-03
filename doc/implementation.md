@@ -56,6 +56,16 @@ Expands to
             { TEMPLATE... }
             { $crate; [TOPTIONS...] Template; }
         }
+    }; {
+        [ $chain0:path, $($chains:path,)* ]
+        [ $($accum:tt)* ]
+        $($passthrough:tt)*
+    } => {
+        $chain0 ! {
+            [ $($chains,)* ]
+            [ $($accum)* _name [Template] _meta [ fmeta(foo) ?tmeta(bar) ] ]
+            $($passthrough)*
+        }
     } }
 ```
 
@@ -71,6 +81,11 @@ The template expansion engine treats `$orig_dollar` as just a single `$`.
 (Again, the extra `{ }` parts after the driver and template
 include space for future expansion.)
 
+The second arm of the macro is used for meta attribute checking.
+The template is parsed and distilled into the list of
+meta attributes that it recognises,
+and baked into the macro definition.
+
 ## 2. `#[derive_deftly(Template)]`, implemented in `#[derive(Deftly)]`
 
 Template reuse is also implemented in `capture.rs::derive_deftly`.
@@ -79,7 +94,7 @@ This
 
 ```rust,ignore
     #[derive(Deftly)]
-    #[derive_deftly(Template[AOPTIONS,...])]
+    #[derive_deftly(Template[AOPTIONS,...], Template2)]
     pub struct StructName { ... }
 ```
 
@@ -91,6 +106,13 @@ Generates (in addition to the `derive_deftly_driver_StructName` definition)
         [1 0 AOPTIONS]
         { }
     }
+    derive_deftly_template_Template2! { ... }
+    derive_deftly_template_Template! { // first template in derive()
+        [ derive_deftly_template_Template2, derive_deftly_expand, ]
+        [ ]
+        /* no AOPTIONS; we don't try to accumulate them */
+        { #[derive_adhoc(Template, Template2)] struct StructName { ... } }
+    }
 ```
 
 The literal `$` is there to work around a limitation in `macro_rules!`,
@@ -98,7 +120,7 @@ see above.
 
 ## 3. Actual expansion
 
-The call to `derive_deftly_template_Template!`
+The first call to `derive_deftly_template_Template!`
 is expanded according to the `macro_rules!` definition,
 resulting in a call to `derive_deftly_engine`:
 
@@ -111,6 +133,21 @@ resulting in a call to `derive_deftly_engine`:
         { $crate; [TOPTIONS...] Template; }
     }
 ```
+
+The second call matches the 2nd arm in the template macro.
+Each template's arm takes the next macro from `$chain0`,
+adds its recognised meta attributes to the list in `$accum`,
+and then chains to `$chain0!`
+passing the subsequent template(s) in `$chains`.
+Eventually, the result is passed to the engine
+which also receives, in the `$passthrough`,
+the `AOPTIONS` and the driver.
+
+(Doing this with two macro calls means that
+if a template is misreferenced, the user gets two errors.
+But the alternative is threading *all* the expansions
+through this chaining, which is confusing,
+and means that the first missing template would stop all processing.)
 
 ## Implementation approach - ad-hoc macro applications
 
