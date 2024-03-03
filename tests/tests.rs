@@ -159,4 +159,5 @@ mod list_names;
 mod modules;
 
 // This is special, and contains tests that use a clone of the d-a-m crate
+#[cfg(not(doc))]
 mod directly;
