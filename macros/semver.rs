@@ -68,7 +68,8 @@ pub fn pub_template_semver_check_func_macro(
     let too_old = || {
         mk_err(&format_args!(
             r#"derive-deftly has been updated!
-Please check the changelog for breaking changes since {}"#,
+Please check the changelog for breaking changes since {}
+Search for section titles containing "pub template semver"."#,
             version,
         ))
     };

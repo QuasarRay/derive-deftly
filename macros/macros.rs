@@ -234,8 +234,8 @@ pub fn derive_deftly_adhoc(
 ///
 /// Changes that would require a semver bump
 /// for all libraries that export templates,
-/// will be rare, and specially marked in the derive-deftly
-/// changelog.
+/// will be rare, and specially marked in the derive-deftly changelog.
+/// Search for sections with titles containing "pub template semver".
 ///
 /// ## Namespacing within a template
 ///
@@ -421,7 +421,7 @@ pub fn derive_deftly(
 ///
 /// If you export templates, with `define_derive_deftly! { pub ...`,
 /// call this macro too, once in your crate.
-/// 
+///
 /// Pass it the version of `derive-deftly` that was current,
 /// when you last read the `derive-deftly` changelog
 /// and considered breaking changes.
