@@ -123,7 +123,7 @@ We've also added a
 which will appear in the public API documentation for our crate.
 
 Additionally,
-[we need to re-export `derive_deftly`](define_derive_deftly#you-must-re-export-derive_deftly-usually-no-semver-implications)
+[we need to re-export `derive_deftly`](define_derive_deftly#you-must-re-export-derive_deftly-semver-implications)
 from our crate, so that users get the correct version:
 
 ```rust,ignore
