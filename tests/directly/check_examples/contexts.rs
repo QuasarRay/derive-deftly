@@ -105,7 +105,7 @@ type LimitViaDaCond = dyn Fn(()) -> SubstDetails<BooleanContext>;
 /// Table mapping limit regexp to derive-deftly `SubstDetails`
 // Breaking this out here allows us to format it nicely
 #[rustfmt::skip]
-const LIMIT_DA_COND_REGEXPS: &[(&str, &'static LimitViaDaCond)] = &[
+const LIMIT_DD_COND_REGEXPS: &[(&str, &'static LimitViaDaCond)] = &[
     (r"^structs?$",                         &SD::is_struct  as _  ),
     (r"^enum( variant)?s?$",                &SD::is_enum    as _  ),
     (r"^braced (?:(?:struct|variant)s?)?$", &SD::v_is_named as _  ),
@@ -121,19 +121,19 @@ impl Limit {
     ) -> Result<Limit, String> {
         use Limit as L;
 
-        let da_cond = |mk_sd: &dyn Fn(_) -> _| {
+        let dd_cond = |mk_sd: &dyn Fn(_) -> _| {
             L::DdCond(Rc::new(Subst {
                 kw_span: Span::call_site(),
                 sd: mk_sd(()),
             }))
         };
 
-        let limit = if let Some(mk_sd) = LIMIT_DA_COND_REGEXPS
+        let limit = if let Some(mk_sd) = LIMIT_DD_COND_REGEXPS
             .iter()
             .cloned()
             .find_map(|(re, mk_sd)| m!(for_, re).then(|| mk_sd))
         {
-            da_cond(mk_sd)
+            dd_cond(mk_sd)
         } else if let Some((n,)) = mc!(
             for_,
             r"^`(?:struct |Enum::)?(\w+)(?:|\;|\(\.\.\.\)\;| \{\.\.\.\})`$",
