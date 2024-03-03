@@ -146,6 +146,7 @@ dependencies = [
  "sha3",
  "strum",
  "syn 2.0.52",
+ "toml",
  "trybuild",
  "void",
 ]

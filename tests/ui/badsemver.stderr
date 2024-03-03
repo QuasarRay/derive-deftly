@@ -1,0 +1,39 @@
+error: derive-deftly has been updated!
+       Please check the changelog for breaking changes since 0.2.x
+       Search for section titles containing "pub template semver".
+ --> ui/badsemver.rs:3:28
+  |
+3 | pub_template_semver_check!("0.2");
+  |                            ^^^^^
+
+error: derive-deftly has been updated!
+       Please check the changelog for breaking changes since 0.2.x
+       Search for section titles containing "pub template semver".
+ --> ui/badsemver.rs:4:28
+  |
+4 | pub_template_semver_check!("0.2.3");
+  |                            ^^^^^^^
+
+error: declared version is greater than this version of derive-deftly!
+ --> ui/badsemver.rs:5:28
+  |
+5 | pub_template_semver_check!("1000000000.0");
+  |                            ^^^^^^^^^^^^^^
+
+error: expected string literal
+ --> ui/badsemver.rs:7:28
+  |
+7 | pub_template_semver_check!(garbage);
+  |                            ^^^^^^^
+
+error: bad number: invalid digit found in string
+ --> ui/badsemver.rs:8:28
+  |
+8 | pub_template_semver_check!("garbage");
+  |                            ^^^^^^^^^
+
+error: too many components in version number
+ --> ui/badsemver.rs:9:28
+  |
+9 | pub_template_semver_check!("1.2.3.4");
+  |                            ^^^^^^^^^

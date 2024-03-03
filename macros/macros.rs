@@ -26,6 +26,7 @@ pub(crate) mod expand;
 pub(crate) mod options;
 pub(crate) mod paste;
 pub(crate) mod repeat;
+pub(crate) mod semver;
 pub(crate) mod syntax;
 
 pub(crate) mod compat_syn_2;
@@ -198,7 +199,7 @@ pub fn derive_deftly_adhoc(
 /// not in a sub-module,
 /// even if it is *defined* in a sub-module.
 ///
-/// ### You must re-export `derive_deftly`; (usually no) semver implications
+/// ### You must re-export `derive_deftly`; semver implications
 ///
 /// When exporting a template to other crates, you must also
 /// re-export `derive_deftly`,
@@ -224,10 +225,17 @@ pub fn derive_deftly_adhoc(
 /// the derive-deftly version you re-export.
 /// Such use would be outside the semver guarantees.)
 ///
+/// You *should* call
+/// [`derive_deftly::pub_template_semver_check!`](macro@pub_template_semver_check)
+/// once in each crate that exports macros.
+/// This will notify you, by breaking your build,
+/// if you update to a derive-deftly version
+/// that has semver implications for other crates that use your macros.
+///
 /// Changes that would require a semver bump
 /// for all libraries that export templates,
-/// will be rare, and specially marked in the derive-deftly
-/// changelog.
+/// will be rare, and specially marked in the derive-deftly changelog.
+/// Search for sections with titles containing "pub template semver".
 ///
 /// ## Namespacing within a template
 ///
@@ -395,6 +403,56 @@ pub fn derive_deftly(
 ) -> proc_macro::TokenStream {
     let input = TokenStream::from(input);
     let output = capture::derive_deftly(input)
+        .unwrap_or_else(|e| e.into_compile_error());
+    output.into()
+}
+
+/// Check semver compatibility, for a crate which exports macros
+///
+/// Causes a compilation error
+/// if and only if the specified version of `derive-deftly`
+/// is prior to the last *relevant change*,
+/// compared to the currently-running one.
+///
+/// A *relevant change* is one which has semver implications
+/// for the API of a crate which exports derive-deftly templates.
+///
+/// ## When and how to call this
+///
+/// If you export templates, with `define_derive_deftly! { pub ...`,
+/// call this macro too, once in your crate.
+///
+/// Pass it the version of `derive-deftly` that was current,
+/// when you last read the `derive-deftly` changelog
+/// and considered breaking changes.
+///
+/// (The argument must be a string literal, containing a
+/// 2- or 3-element version number.)
+///
+/// ## Guarantee
+///
+/// You can upgrade your derive-deftly version,
+/// even across a semver-breaking change to derive-deftly,
+/// without making any consequential update to your crate's own semver.
+///
+/// If a new version of derive-adhoc means *your* crate's
+/// API has semver-relevant changes, this macro will throw an error.
+///
+/// (Exporting a *driver* struct for derivation in downstream crates,
+/// `#[derive_deftly_adhoc(pub)]`, is not covered by this promise.)
+///
+/// ## Example
+///
+/// ```
+/// # use derive_deftly_macros as derive_deftly;
+/// derive_deftly::pub_template_semver_check!("0.9.0");
+/// ```
+#[cfg_attr(proc_macro, proc_macro)]
+pub fn pub_template_semver_check(
+    input: proc_macro::TokenStream,
+) -> proc_macro::TokenStream {
+    let input = TokenStream::from(input);
+    let output = semver::pub_template_semver_check_func_macro(input)
         .unwrap_or_else(|e| e.into_compile_error());
     output.into()
 }

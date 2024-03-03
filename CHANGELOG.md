@@ -62,6 +62,11 @@ derive_adhoc_expand!            derive_deftly_engine!
 derive_adhoc!                   derive_deftly_adhoc!
 ```
 
+##### pub template semver
+
+Updating to `derive-deftly` from `derive-adhoc` is a breaking change
+to the API of a crate which exports templates.
+
 ### 0.8.1
 
 #### Fixed
@@ -76,7 +81,7 @@ derive_adhoc!                   derive_deftly_adhoc!
 
 ### 0.8.0
 
-#### Nominally breaking -- transitive for exported templates; minor
+#### Nominally breaking (pub template semver)
 
 **We recommend you do *not* treat these changes as semver-breaking
 for template-defining crates.**
