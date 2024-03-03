@@ -49,7 +49,7 @@ error: expected `!`
    |            ^^^^^
 
 error: expected one of `!` or `::`, found `error`
- --> $OUT_DIR[derive-deftly-macros]/derive-deftly~expansions~/d-a-cddab81806d14ed578d5674b.rs
+ --> $OUT_DIR[derive-deftly-macros]/derive-deftly~expansions~/dd-cddab81806d14ed578d5674b.rs
   |
   | syntax error ;
   |        ^^^^^ expected one of `!` or `::`

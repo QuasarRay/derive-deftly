@@ -13,7 +13,7 @@
 # Implementation note:
 #
 # (I experimented with a more formal approach, including having the
-# `bizarre` version of d-a-macros collect the fixed strings that a keyword
+# `bizarre` version of d-d-macros collect the fixed strings that a keyword
 # was compared with during parsing.  It was difficult to properly
 # categorise the keyword and the mechanism was confusing and invasive.)
 

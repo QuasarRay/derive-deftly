@@ -34,7 +34,7 @@ pub fn for_every_example_context<E>(
 #[educe(Debug)]
 pub enum Limit {
     True,
-    DaCond(Rc<Subst<BooleanContext>>),
+    DdCond(Rc<Subst<BooleanContext>>),
     Name(String),
     Field { f: String, n: String },
     Fields { n: String },
@@ -67,14 +67,14 @@ impl Limit {
     // Eg, we have "for" clauses that check the variant
     // kind (unit, tuple, named fields).  That isn't
     // meaningful if we're in an enum and not in a variant.
-    // d-a gives an error there.  That makes this return `Err`.
+    // d-d gives an error there.  That makes this return `Err`.
     pub fn matches(&self, ctx: &Context<'_>) -> Result<bool, ()> {
         let tname = |n| &ctx.top.ident.to_string() == n;
         let vname = |n| ctx.vname_s().map(|s| &s == n) == Some(true);
         let fname = |n| ctx.fname_s().map(|s| &s == n) == Some(true);
         Ok(match self {
             Limit::True => true,
-            Limit::DaCond(cond) => cond.eval_bool(ctx).map_err(|_| ())?,
+            Limit::DdCond(cond) => cond.eval_bool(ctx).map_err(|_| ())?,
             Limit::Name(n) => tname(n) || vname(n) || fname(n),
             Limit::Field { f, n } => fname(f) && (tname(n) || vname(n)),
             Limit::Fields { n } => {
@@ -105,7 +105,7 @@ type LimitViaDaCond = dyn Fn(()) -> SubstDetails<BooleanContext>;
 /// Table mapping limit regexp to derive-deftly `SubstDetails`
 // Breaking this out here allows us to format it nicely
 #[rustfmt::skip]
-const LIMIT_DA_COND_REGEXPS: &[(&str, &'static LimitViaDaCond)] = &[
+const LIMIT_DD_COND_REGEXPS: &[(&str, &'static LimitViaDaCond)] = &[
     (r"^structs?$",                         &SD::is_struct  as _  ),
     (r"^enum( variant)?s?$",                &SD::is_enum    as _  ),
     (r"^braced (?:(?:struct|variant)s?)?$", &SD::v_is_named as _  ),
@@ -121,19 +121,19 @@ impl Limit {
     ) -> Result<Limit, String> {
         use Limit as L;
 
-        let da_cond = |mk_sd: &dyn Fn(_) -> _| {
-            L::DaCond(Rc::new(Subst {
+        let dd_cond = |mk_sd: &dyn Fn(_) -> _| {
+            L::DdCond(Rc::new(Subst {
                 kw_span: Span::call_site(),
                 sd: mk_sd(()),
             }))
         };
 
-        let limit = if let Some(mk_sd) = LIMIT_DA_COND_REGEXPS
+        let limit = if let Some(mk_sd) = LIMIT_DD_COND_REGEXPS
             .iter()
             .cloned()
             .find_map(|(re, mk_sd)| m!(for_, re).then(|| mk_sd))
         {
-            da_cond(mk_sd)
+            dd_cond(mk_sd)
         } else if let Some((n,)) = mc!(
             for_,
             r"^`(?:struct |Enum::)?(\w+)(?:|\;|\(\.\.\.\)\;| \{\.\.\.\})`$",

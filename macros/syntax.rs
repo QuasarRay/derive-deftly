@@ -814,7 +814,7 @@ impl<O: SubstParseContext> Parse for Subst<O> {
         keyword! { select1(parse_if(input)?, not_in_bool()?) }
         keyword! { dbg_all_keywords(not_in_bool()?) }
         keyword! { "crate": Crate(not_in_paste()?, not_in_bool()?) }
-        keyword! { "_da_intern_crate": Crate(not_in_paste()?, not_in_bool()?) }
+        keyword! { "_dd_intern_crate": Crate(not_in_paste()?, not_in_bool()?) }
 
         keyword! { "for": For(
             RepeatedTemplate::parse_for(input)?,

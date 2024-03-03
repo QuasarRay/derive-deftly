@@ -60,13 +60,13 @@ impl Parse for TemplateDefinition {
 /// No-one is likely to notice this.
 ///
 /// Additionally, if we're turning `$crate` into `$orig_dollar crate`,
-/// we change the keyword `crate` to `_da_intern_crate`
+/// we change the keyword `crate` to `_dd_intern_crate`
 /// (and `${crate}` likewise), with the span of the original.
 /// This is necessary to avoid clippy seeing the bare `crate`
 /// and thinking the user should have written `$crate`
 /// (whereas, in fact, they did),
 /// and emitting a spurious lint `crate_in_macro_def`.
-/// `$_da_intern_crate` is an internal alias for d-a's `$crate`.
+/// `$_dd_intern_crate` is an internal alias for d-d's `$crate`.
 ///
 /// ### Alternative tactics we rejected:
 ///
@@ -126,7 +126,7 @@ pub fn escape_dollars(input: TokenStream) -> TokenStream {
                 return St::Dollar;
             }
             TT::Ident(i) if st.exp_kw() && i == "crate" => {
-                out.extend(quote_spanned! {i.span()=> _da_intern_crate });
+                out.extend(quote_spanned! {i.span()=> _dd_intern_crate });
                 return St::Other;
             }
             other => other,

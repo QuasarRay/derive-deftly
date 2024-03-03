@@ -12,7 +12,7 @@ struct EngineInput {
     template_brace: token::Brace,
     template_crate: syn::Path,
     template_name: Option<syn::Path>,
-    options: DaOptions,
+    options: DdOptions,
     template: Template<TokenAccumulator>,
 }
 
@@ -22,8 +22,8 @@ impl Parse for EngineInput {
         // come out of syn parsing.  The braced! etc. macros insist that the
         // calling scope throws syn::Error.
         // See the match at the bottom for what the return values mean.
-        match (|| {
-            let mut options = DaOptions::default();
+        parse_advised(move || {
+            let mut options = DdOptions::default();
 
             // If `got` is an error, returns Some of what the outer closure
             // should return.  Otherwise, return None.
@@ -95,13 +95,7 @@ impl Parse for EngineInput {
                 template_name,
                 options,
             }))
-        })() {
-            Ok(Ok(dae_input)) => Ok(dae_input),
-            Ok(Err(err_to_return_directly)) => Err(err_to_return_directly),
-            Err(err_needing_advice) => {
-                Err(advise_incompatibility(err_needing_advice))
-            }
-        }
+        })
     }
 }
 
@@ -195,7 +189,7 @@ pub fn derive_deftly_engine_func_macro(
     let input: EngineInput = syn::parse2(input)?;
     // eprintln!("derive_deftly_engine! crate = {:?}", &input.template_crate);
 
-    let DaOptions {
+    let DdOptions {
         dbg,
         driver_kind,
         expect_target,

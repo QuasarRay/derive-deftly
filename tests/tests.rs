@@ -158,6 +158,6 @@ mod list_names;
 #[cfg(test)]
 mod modules;
 
-// This is special, and contains tests that use a clone of the d-a-m crate
+// This is special, and contains tests that use a clone of the d-d-m crate
 #[cfg(not(doc))]
 mod directly;

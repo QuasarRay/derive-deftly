@@ -231,9 +231,9 @@ fn extract_structs(input: &Preprocessed) -> Vec<syn::DeriveInput> {
     })
     .flatten()
     .map(|mut derive_input| {
-        let mut seen_d_a = false;
+        let mut seen_d_d = false;
         derive_input.attrs.retain(|attr| {
-            seen_d_a
+            seen_d_d
                 || (|| {
                     // IEFI simulates a long if let && chain
                     matches!(attr.style, syn::AttrStyle::Outer)
@@ -248,7 +248,7 @@ fn extract_structs(input: &Preprocessed) -> Vec<syn::DeriveInput> {
                         pm.path.is_ident("Deftly").then_some(())
                     })?;
 
-                    seen_d_a = true;
+                    seen_d_d = true;
                     Some(false)
                 })()
                 .unwrap_or_default()

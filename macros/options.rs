@@ -40,15 +40,15 @@ pub struct UnprocessedOptions(TokenStream);
 
 /// Template options, semantically resolved
 #[derive(Default, Debug, Clone)]
-pub struct DaOptions {
+pub struct DdOptions {
     pub dbg: bool,
-    pub driver_kind: Option<DaOptVal<ExpectedDriverKind>>,
-    pub expect_target: Option<DaOptVal<check::Target>>,
+    pub driver_kind: Option<DdOptVal<ExpectedDriverKind>>,
+    pub expect_target: Option<DdOptVal<check::Target>>,
 }
 
 /// A single template option
 #[derive(Debug)]
-struct DaOption {
+struct DdOption {
     #[allow(dead_code)] // TODO maybe remove instead ?
     pub kw_span: Span,
     pub od: OptionDetails,
@@ -59,23 +59,23 @@ struct DaOption {
 #[allow(non_camel_case_types)] // clearer to use the exact ident
 enum OptionDetails {
     dbg,
-    For(DaOptVal<ExpectedDriverKind>),
+    For(DdOptVal<ExpectedDriverKind>),
     // TODO should this be `producing` or something?
-    expect(DaOptVal<check::Target>),
+    expect(DdOptVal<check::Target>),
 }
 
 /// Value for an option
 ///
-/// If `V` is `FromStr` and `DaOptValDescribable`,
+/// If `V` is `FromStr` and `DdOptValDescribable`,
 /// this is `Parse`, taking a single keyword.
 #[derive(Debug, Clone, Copy)]
-pub struct DaOptVal<V> {
+pub struct DdOptVal<V> {
     pub value: V,
     pub span: Span,
 }
 
-/// Things that go into a `DaOptVal`
-pub trait DaOptValDescribable {
+/// Things that go into a `DdOptVal`
+pub trait DdOptValDescribable {
     const DESCRIPTION: &'static str;
 }
 
@@ -97,15 +97,15 @@ pub enum ExpectedDriverKind {
 pub struct OpCompatVersions {
     /// Increased when we make a wholly-incompatible change
     ///
-    /// Bumping this will cause rejection of AOPTIONS by old d-a engines.
-    /// Hopefully a newer d-a will able to cope with both.
+    /// Bumping this will cause rejection of AOPTIONS by old d-d engines.
+    /// Hopefully a newer d-d will able to cope with both.
     major: OpCompatVersionNumber,
 
     /// Increased when we make a more subtle change
     ///
-    /// Current d-a versions will ignore this.
+    /// Current d-d versions will ignore this.
     /// Bumping it can be used to psas information
-    /// from a newer capturing d-a to a newer template/driver d-a.
+    /// from a newer capturing d-d to a newer template/driver d-d.
     minor: OpCompatVersionNumber,
 
     /// Span for error reporting
@@ -122,14 +122,14 @@ impl OpCompatVersions {
     }
 }
 
-impl DaOptValDescribable for ExpectedDriverKind {
+impl DdOptValDescribable for ExpectedDriverKind {
     const DESCRIPTION: &'static str = "expected driver kind (in `for` option)";
 }
 
 //---------- parsing ----------
 
 impl OpContext {
-    fn allowed(self, option: &DaOption) -> syn::Result<()> {
+    fn allowed(self, option: &DdOption) -> syn::Result<()> {
         use OpContext as OC;
         match &option.od {
             OD::dbg | //.
@@ -203,7 +203,7 @@ impl UnprocessedOptions {
         opcontext: OpContext,
     ) -> syn::Result<Self> {
         // Scan ahead for a syntax check
-        DaOption::parse_several(&input.fork(), opcontext, |_| Ok(()))?;
+        DdOption::parse_several(&input.fork(), opcontext, |_| Ok(()))?;
 
         // Collect everything until the : or =
         let mut out = TokenStream::new();
@@ -215,19 +215,19 @@ impl UnprocessedOptions {
     }
 }
 
-impl DaOptions {
+impl DdOptions {
     pub fn parse_update(
         &mut self,
         input: ParseStream,
         opcontext: OpContext,
     ) -> syn::Result<()> {
-        DaOption::parse_several(input, opcontext, |option| {
+        DdOption::parse_several(input, opcontext, |option| {
             self.update_from_option(option)
         })
     }
 }
 
-impl DaOption {
+impl DdOption {
     /// Parses zero or more options, in `opcontext`
     ///
     /// With `OpContext::DriverApplicationPassed`,
@@ -235,7 +235,7 @@ impl DaOption {
     fn parse_several(
         input: ParseStream,
         opcontext: OpContext,
-        mut each: impl FnMut(DaOption) -> syn::Result<()>,
+        mut each: impl FnMut(DdOption) -> syn::Result<()>,
     ) -> syn::Result<()> {
         let _versions = opcontext
             .parse_versions(input)
@@ -263,12 +263,12 @@ impl DaOption {
     }
 }
 
-impl Parse for DaOption {
+impl Parse for DdOption {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let kw: IdentAny = input.parse()?;
 
         let from_od = |od| {
-            Ok(DaOption {
+            Ok(DdOption {
                 kw_span: kw.span(),
                 od,
             })
@@ -287,14 +287,14 @@ impl Parse for DaOption {
     }
 }
 
-impl<V: FromStr + DaOptValDescribable> Parse for DaOptVal<V> {
+impl<V: FromStr + DdOptValDescribable> Parse for DdOptVal<V> {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let kw: IdentAny = input.parse()?;
         let value = kw.to_string().parse().map_err(|_| {
             kw.error(format_args!("unknown value for {}", V::DESCRIPTION))
         })?;
         let span = kw.span();
-        Ok(DaOptVal { value, span })
+        Ok(DdOptVal { value, span })
     }
 }
 
@@ -313,17 +313,17 @@ impl UnprocessedOptions {
     }
 }
 
-impl DaOptions {
+impl DdOptions {
     /// Update `self` according to the option specified in `option`
     ///
     /// On error (eg, contradictory options), fails.
-    fn update_from_option(&mut self, option: DaOption) -> syn::Result<()> {
+    fn update_from_option(&mut self, option: DdOption) -> syn::Result<()> {
         fn store<V>(
-            already: &mut Option<DaOptVal<V>>,
-            new: DaOptVal<V>,
+            already: &mut Option<DdOptVal<V>>,
+            new: DdOptVal<V>,
         ) -> syn::Result<()>
         where
-            V: PartialEq + DaOptValDescribable,
+            V: PartialEq + DdOptValDescribable,
         {
             match already {
                 Some(already) if already.value == new.value => Ok(()),
