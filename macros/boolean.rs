@@ -55,9 +55,8 @@ impl Subst<BooleanContext> {
 
             SD::xmeta(sm) => {
                 let meta::Subst {
-                    label,
+                    desig: meta::Desig { label, scope: _ },
                     as_,
-                    scope: _,
                 } = sm;
                 use meta::SubstAs as MSA;
                 if let Some(as_) = as_ {

@@ -22,12 +22,18 @@ pub struct Label {
     pub lpaths: Vec<syn::Path>,
 }
 
+/// Meta designator eg `fmeta(foo(bar))`
+#[derive(Debug, Clone)]
+pub struct Desig {
+    pub scope: Scope,
+    pub label: Label,
+}
+
 //========== substitutions in a template ==========
 
 #[derive(Debug, Clone)]
 pub struct Subst<O: SubstParseContext> {
-    pub scope: Scope,
-    pub label: Label,
+    pub desig: Desig,
     pub as_: Option<SubstAs<O>>,
 }
 
@@ -110,7 +116,7 @@ pub use FoundNode as FN;
 
 impl<O: SubstParseContext> Spanned for Subst<O> {
     fn span(&self) -> Span {
-        self.label.span()
+        self.desig.label.span()
     }
 }
 
@@ -162,7 +168,7 @@ impl<O: SubstParseContext> Subst<O> {
             as_ = None;
         }
 
-        Ok(Subst { label, as_, scope })
+        Ok(Subst { desig: Desig { label, scope }, as_ })
     }
 }
 
@@ -325,7 +331,7 @@ where
     O: SubstParseContext,
 {
     pub fn repeat_over(&self) -> Option<RepeatOver> {
-        match self.scope {
+        match self.desig.scope {
             Scope::T => None,
             Scope::V => Some(RO::Variants),
             Scope::F => Some(RO::Fields),
@@ -341,7 +347,7 @@ where
         &self,
         ctx: &'c Context<'c>,
     ) -> syn::Result<&'c PreprocessedMetas> {
-        Ok(match self.scope {
+        Ok(match self.desig.scope {
             Scope::T => &ctx.tmetas,
             Scope::V => &ctx.variant(self)?.pmetas,
             Scope::F => &ctx.field(self)?.pfield.pmetas,
@@ -366,7 +372,7 @@ where
         let self_loc = || (self.span(), "expansion");
         let error_loc = || [ctx.error_loc(), self_loc()];
 
-        self.label.search(
+        self.desig.label.search(
             pmetas,
             &mut |av: FoundNode| {
                 if let Some(first) = &found {
