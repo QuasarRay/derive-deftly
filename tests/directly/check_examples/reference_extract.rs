@@ -240,7 +240,9 @@ fn extract_structs(input: &Preprocessed) -> Vec<syn::DeriveInput> {
                         .then_some(())?;
                     attr.path().is_ident("derive").then_some(())?;
                     let derives = attr
-                        .call_in_parens(macros::meta::PreprocessedValueList::parse_inner)
+                        .call_in_parens(
+                            macros::meta::PreprocessedValueList::parse_inner,
+                        )
                         .ok()?;
                     derives.content.iter().find_map(|pm| {
                         pm.path.is_ident("Deftly").then_some(())

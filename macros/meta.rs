@@ -103,8 +103,8 @@ pub enum FoundNearbyNodeKind {
     List,
 }
 
-pub use FoundNode as FN;
 pub use FoundNearbyNodeKind as FNNK;
+pub use FoundNode as FN;
 
 //========== template parsing ==========
 
