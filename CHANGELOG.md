@@ -38,7 +38,7 @@ We expect to increase it cautiously and only with good reason.
 
 ### 0.9.0
 
-### Breaking
+#### Breaking
 
  * Crate renamed to `derive-deftly`, and many other renamings:
  * `#[derive_deftly_adhoc]` is now required for `derive_deftly_adhoc!`
