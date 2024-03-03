@@ -22,6 +22,7 @@ pub(crate) mod invocation;
 // Implementation - specific areas
 pub(crate) mod boolean;
 pub(crate) mod dbg_allkw;
+pub(crate) mod engine;
 pub(crate) mod expand;
 pub(crate) mod meta;
 pub(crate) mod options;
@@ -96,7 +97,7 @@ pub fn derive_deftly_engine(
     input: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
     let input: proc_macro2::TokenStream = input.into();
-    let output = expand::derive_deftly_engine_func_macro(input)
+    let output = engine::derive_deftly_engine_func_macro(input)
         .unwrap_or_else(|e| e.into_compile_error());
     output.into()
 }
