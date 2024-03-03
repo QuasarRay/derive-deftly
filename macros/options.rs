@@ -97,15 +97,15 @@ pub enum ExpectedDriverKind {
 pub struct OpCompatVersions {
     /// Increased when we make a wholly-incompatible change
     ///
-    /// Bumping this will cause rejection of AOPTIONS by old d-a engines.
-    /// Hopefully a newer d-a will able to cope with both.
+    /// Bumping this will cause rejection of AOPTIONS by old d-d engines.
+    /// Hopefully a newer d-d will able to cope with both.
     major: OpCompatVersionNumber,
 
     /// Increased when we make a more subtle change
     ///
-    /// Current d-a versions will ignore this.
+    /// Current d-d versions will ignore this.
     /// Bumping it can be used to psas information
-    /// from a newer capturing d-a to a newer template/driver d-a.
+    /// from a newer capturing d-d to a newer template/driver d-d.
     minor: OpCompatVersionNumber,
 
     /// Span for error reporting

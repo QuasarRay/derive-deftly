@@ -67,7 +67,7 @@ impl Limit {
     // Eg, we have "for" clauses that check the variant
     // kind (unit, tuple, named fields).  That isn't
     // meaningful if we're in an enum and not in a variant.
-    // d-a gives an error there.  That makes this return `Err`.
+    // d-d gives an error there.  That makes this return `Err`.
     pub fn matches(&self, ctx: &Context<'_>) -> Result<bool, ()> {
         let tname = |n| &ctx.top.ident.to_string() == n;
         let vname = |n| ctx.vname_s().map(|s| &s == n) == Some(true);

@@ -2,7 +2,7 @@
 use derive_deftly_tests::*;
 
 // We don't run this unless the CI explicitly enables it.
-// That's done only for the tests with all d-a features enabled,
+// That's done only for the tests with all d-d features enabled,
 // Ie, the ones that aren't -minfeatures.
 //
 // So there is n testing of what feature controls what.
@@ -27,7 +27,7 @@ pub fn run_pass_expand() {
 //
 // We don't run this unless the CI explicitly enables it.
 // That's one only for our main test with the pinned compiler,
-// and all d-a features enabled.
+// and all d-d features enabled.
 //
 // We basically trust that the features-disabled fallback code
 // for handling the disabled feature is good enough.

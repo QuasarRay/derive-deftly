@@ -66,7 +66,7 @@ impl Parse for TemplateDefinition {
 /// and thinking the user should have written `$crate`
 /// (whereas, in fact, they did),
 /// and emitting a spurious lint `crate_in_macro_def`.
-/// `$_dd_intern_crate` is an internal alias for d-a's `$crate`.
+/// `$_dd_intern_crate` is an internal alias for d-d's `$crate`.
 ///
 /// ### Alternative tactics we rejected:
 ///
