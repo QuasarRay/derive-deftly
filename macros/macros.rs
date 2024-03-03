@@ -14,13 +14,6 @@ pub(crate) use prelude::*;
 pub(crate) mod utils;
 pub(crate) mod framework;
 
-// modules containing the actual implementations of our proc-macros
-pub(crate) mod adhoc;
-pub(crate) mod define;
-pub(crate) mod derive;
-pub(crate) mod engine;
-pub(crate) mod semver;
-
 // Implementation - specific areas
 pub(crate) mod boolean;
 pub(crate) mod dbg_allkw;
@@ -30,6 +23,13 @@ pub(crate) mod options;
 pub(crate) mod paste;
 pub(crate) mod repeat;
 pub(crate) mod syntax;
+
+// Implementations of each proc-macros
+pub(crate) mod adhoc;
+pub(crate) mod define;
+pub(crate) mod derive;
+pub(crate) mod engine;
+pub(crate) mod semver;
 
 pub(crate) mod compat_syn_2;
 pub(crate) mod compat_syn_common;
