@@ -22,7 +22,7 @@ impl Parse for EngineInput {
         // come out of syn parsing.  The braced! etc. macros insist that the
         // calling scope throws syn::Error.
         // See the match at the bottom for what the return values mean.
-        match (|| {
+        parse_advised(move || {
             let mut options = DaOptions::default();
 
             // If `got` is an error, returns Some of what the outer closure
@@ -95,13 +95,7 @@ impl Parse for EngineInput {
                 template_name,
                 options,
             }))
-        })() {
-            Ok(Ok(dae_input)) => Ok(dae_input),
-            Ok(Err(err_to_return_directly)) => Err(err_to_return_directly),
-            Err(err_needing_advice) => {
-                Err(advise_incompatibility(err_needing_advice))
-            }
-        }
+        })
     }
 }
 
