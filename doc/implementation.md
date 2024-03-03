@@ -103,7 +103,7 @@ is expanded according to the `macro_rules!` definition,
 resulting in a call to `derive_deftly_engine`:
 
 ```rust,ignore
-    derive_deftly_engine!{
+    derive_deftly_engine! {
         { pub struct StructName { /* original struct definition */ } }
         [1 0 AOPTIONS]    // but only if AOPTIONS is nonempty
         { }
