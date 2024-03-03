@@ -60,14 +60,18 @@ pub fn pub_template_semver_check_func_macro(
     let version: SemverCheckInput = syn::parse2(input)?;
 
     let mk_err = |e: &dyn Display| Err(version.error(e));
-    let too_new = || mk_err(
-        &"declared version is greater than this version of derive-deftly!"
-    );
-    let too_old = || mk_err(&format_args!(
-r#"derive-deftly has been updated!
+    let too_new = || {
+        mk_err(
+            &"declared version is greater than this version of derive-deftly!",
+        )
+    };
+    let too_old = || {
+        mk_err(&format_args!(
+            r#"derive-deftly has been updated!
 Please check the changelog for breaking changes since {}"#,
-        version,
-    ));
+            version,
+        ))
+    };
 
     match (version.major, version.minor) {
         (0, 0..=8) => return too_old(),
