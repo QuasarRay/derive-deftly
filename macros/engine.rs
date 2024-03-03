@@ -4,14 +4,16 @@ use super::framework::*;
 
 /// Input to `derive_deftly_engine!`
 #[derive(Debug)]
-pub struct EngineInput {
-    pub driver_brace: token::Brace,
-    pub driver: syn::DeriveInput,
-    pub template_brace: token::Brace,
-    pub template_crate: syn::Path,
-    pub template_name: Option<syn::Path>,
-    pub options: DaOptions,
-    pub template: Template<TokenAccumulator>,
+struct EngineInput {
+    #[allow(dead_code)]
+    driver_brace: token::Brace,
+    driver: syn::DeriveInput,
+    #[allow(dead_code)]
+    template_brace: token::Brace,
+    template_crate: syn::Path,
+    template_name: Option<syn::Path>,
+    options: DaOptions,
+    template: Template<TokenAccumulator>,
 }
 
 impl Parse for EngineInput {
