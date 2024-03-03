@@ -5,7 +5,7 @@ use super::framework::*;
 //---------- common definitions ----------
 
 /// Indicates one of `fmeta`, `vmeta` or `tmeta`
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, Eq, PartialEq, Hash)]
 pub enum Scope {
     T,
     V,
@@ -15,7 +15,7 @@ pub enum Scope {
 /// `(foo(bar))` in eg `fmeta(foo(bar))`
 ///
 /// includes the parens
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Eq, PartialEq, Hash)]
 pub struct Label {
     // Nonempty list, each with nonempty segments.
     // Outermost first.
@@ -23,7 +23,7 @@ pub struct Label {
 }
 
 /// Meta designator eg `fmeta(foo(bar))`
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Eq, PartialEq, Hash)]
 pub struct Desig {
     pub scope: Scope,
     pub label: Label,
