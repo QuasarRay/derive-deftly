@@ -1,6 +1,6 @@
 //! Macro impl for defining a template `define_derive_deftly!`
 
-use super::prelude::*;
+use super::framework::*;
 
 #[derive(Debug, Clone)]
 struct TemplateDefinition {
@@ -166,6 +166,25 @@ pub fn define_derive_deftly_func_macro(
         template,
     } = syn::parse2(input)?;
 
+    let mut output = TokenStream::new();
+
+    let (template, _parsed_template) = {
+        let parse = |ts: TokenStream| {
+            Ok::<_, syn::Error>((
+                ts.clone(),
+                syn::parse2::<Template<TokenAccumulator>>(ts)?,
+            ))
+        };
+        match parse(template) {
+            Ok(y) => y,
+            Err(e) => {
+                e.into_compile_error().to_tokens(&mut output);
+                parse(TokenStream::new())
+                    .expect("empty tokenstream didn't parse as template")
+            }
+        }
+    };
+
     let template = escape_dollars(template);
 
     let templ_mac_name =
@@ -198,7 +217,7 @@ To use it, write: `#[derive(Deftly)] #[derive_deftly({})]`."#,
 
     // the macro must recent a dollar as its first argument because
     // it is hard to find a dollar otherwise!
-    let output = quote! {
+    output.extend(quote! {
         #( #doc_attrs )*
         #doc_addendum
         #vis_export
@@ -225,7 +244,7 @@ To use it, write: `#[derive(Deftly)] #[derive_deftly({})]`."#,
                 )}
             };
         }
-    };
+    });
 
     // eprintln!(
     //     "---------- derive_deftly_define start for {} ----------",
