@@ -304,11 +304,12 @@ error: expected path segment after `::`
    |
 84 |     struct ${paste Bad ${tmeta(std::cell::Cell::<String>::ne)w as str}};
    |                                                 ^
-...
-87 | #[derive(Deftly)]
-   |          ------ in this derive macro expansion
+
+error: expected path segment after `::`
+  --> ui/badmeta.rs:90:27
    |
-   = note: this error originates in the macro `derive_deftly_template_TestFunkyPath` which comes from the expansion of the derive macro `Deftly` (in Nightly builds, run with -Z macro-backtrace for more info)
+90 | #[deftly(std::cell::Cell::<String>::new)]
+   |                           ^
 
 error: expected path segment after `::`
   --> ui/badmeta.rs:90:27
@@ -322,14 +323,3 @@ error: expected path segment after `::`
    | |_- in this macro invocation
    |
    = note: this error originates in the macro `derive_deftly_driver_WithFunkyPath` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
-
-error: expected path segment after `::`
-  --> ui/badmeta.rs:84:49
-   |
-84 |     struct ${paste Bad ${tmeta(std::cell::Cell::<String>::ne)w as str}};
-   |                                                 ^
-...
-97 | #[derive(Deftly)]
-   |          ------ in this derive macro expansion
-   |
-   = note: this error originates in the macro `derive_deftly_template_TestFunkyPath` which comes from the expansion of the derive macro `Deftly` (in Nightly builds, run with -Z macro-backtrace for more info)
