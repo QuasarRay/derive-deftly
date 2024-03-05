@@ -170,19 +170,18 @@ impl<'c> Context<'c> {
 
 impl EngineInput {
   fn process(self) -> syn::Result<TokenStream> {
-      let input = self;
-    dprintln!("derive_deftly_engine! crate = {:?}", &input.template_crate);
+    dprintln!("derive_deftly_engine! crate = {:?}", &self.template_crate);
 
     let DdOptions {
         dbg,
         driver_kind,
         expect_target,
         //
-    } = input.options;
+    } = self.options;
 
     if let Some(exp) = driver_kind {
         macro_rules! got_kind { { $($kind:ident)* } => {
-            match &input.driver.data {
+            match &self.driver.data {
                 $(
                     syn::Data::$kind(..) => ExpectedDriverKind::$kind,
                 )*
@@ -193,7 +192,7 @@ impl EngineInput {
         if got_kind != exp.value {
             return Err([
                 (exp.span, "expected kind"),
-                (input.driver.span(), "actual kind"),
+                (self.driver.span(), "actual kind"),
             ]
             .error(format_args!(
                 "template defined for {}, but applied to {}",
@@ -203,12 +202,12 @@ impl EngineInput {
     }
 
     Context::call(
-        &input.driver,
-        &input.template_crate,
-        input.template_name.as_ref(),
+        &self.driver,
+        &self.template_crate,
+        self.template_name.as_ref(),
         |ctx| {
             let mut output = TokenAccumulator::new();
-            input.template.expand(&ctx, &mut output);
+            self.template.expand(&ctx, &mut output);
             let output = output.tokens()?;
 
             //    dbg!(&&output);
