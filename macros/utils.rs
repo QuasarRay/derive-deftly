@@ -125,6 +125,18 @@ impl MakeError for [ErrorLoc] {
     }
 }
 
+//---------- Span::join with fallback ----------
+
+/// Returns a span covering the inputs
+///
+/// Sometimes this isn't possible (see [`Span::join`],
+/// in which case prefers the span of the final component.
+///
+/// Returns `Some` iff the iterator was nonempty.
+pub fn spans_join(spans: impl IntoIterator<Item = Span>) -> Option<Span> {
+    spans.into_iter().reduce(|a, b| a.join(b).unwrap_or(b))
+}
+
 //---------- ToTokensPunctComposable ----------
 
 /// Convert to a token stream in a way that composes nicely

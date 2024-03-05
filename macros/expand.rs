@@ -304,8 +304,9 @@ where
     ) -> syn::Result<()> {
         // eprintln!("@@@@@@@@@@@@@@@@@@@@ EXPAND {:?}", self);
 
-        let do_meta =
-            |sm: &meta::SubstMeta<_>, out, meta| sm.expand(ctx, out, meta);
+        let do_meta = |sm: &meta::SubstMeta<_>, out, meta| {
+            sm.expand(ctx, kw_span, out, meta)
+        };
 
         // Methods for handling generics.  Most take `composable: bool`,
         // which lets us control the trailing comma.  This is desirable
@@ -423,7 +424,7 @@ where
                     Ident::new(&format!("f_{}", f.fname(kw_span)), kw_span);
                 out.append_identfrag_toks(&fpatname)?;
             }
-            SD::xmeta(sm) => do_meta(sm, out, sm.pmetas(ctx)?)?,
+            SD::xmeta(sm) => do_meta(sm, out, sm.pmetas(ctx, kw_span)?)?,
 
             SD::Vis(vis, np) => {
                 out.append_tokens(np, vis.syn_vis(ctx, kw_span)?)?

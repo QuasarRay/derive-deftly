@@ -41,8 +41,9 @@ impl SubstParseContext for BooleanContext {
 impl Subst<BooleanContext> {
     pub fn eval_bool(&self, ctx: &Context) -> syn::Result<bool> {
         // eprintln!("@@@@@@@@@@@@@@@@@@@@ EVAL {:?}", self);
+        let kw_span = self.kw_span;
 
-        let v_fields = || ctx.variant(&self.kw_span).map(|v| &v.fields);
+        let v_fields = || ctx.variant(&kw_span).map(|v| &v.fields);
         use syn::Fields as SF;
 
         let r = match &self.sd {
@@ -66,7 +67,7 @@ impl Subst<BooleanContext> {
                         }
                     }
                 };
-                is_found(label.search_eval_bool(sm.pmetas(ctx)?))
+                is_found(label.search_eval_bool(sm.pmetas(ctx, kw_span)?))
             }
 
             SD::approx_equal(_, [a, b]) => {
@@ -102,7 +103,7 @@ impl Subst<BooleanContext> {
                 })
                 .unwrap_or(Ok(true))?,
 
-            SD::Vis(vis, _) => match vis.syn_vis(ctx, self.kw_span)? {
+            SD::Vis(vis, _) => match vis.syn_vis(ctx, kw_span)? {
                 syn::Visibility::Public(_) => true,
                 _ => false,
             },

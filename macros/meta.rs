@@ -114,21 +114,26 @@ pub use FoundNode as FN;
 
 //========== template parsing ==========
 
-impl<O: SubstParseContext> Spanned for SubstMeta<O> {
-    fn span(&self) -> Span {
-        self.desig.label.span()
+impl<O: SubstParseContext> SubstMeta<O> {
+    fn span_whole(&self, scope_span: Span) -> Span {
+        spans_join(chain!(
+            [scope_span], //
+            self.desig.label.spans(),
+        ))
+        .unwrap()
     }
 }
 
 impl Spanned for Label {
     fn span(&self) -> Span {
-        self.lpaths
-            .first()
-            .expect("empty label")
-            .segments
-            .first()
-            .expect("empty path!")
-            .span()
+        spans_join(self.spans()).expect("empty label!")
+    }
+}
+
+impl Label {
+    /// Nonempty
+    pub fn spans(&self) -> impl Iterator<Item = Span> + '_ {
+        self.lpaths.iter().map(|path| path.span())
     }
 }
 
@@ -349,11 +354,12 @@ where
     pub fn pmetas<'c>(
         &self,
         ctx: &'c Context<'c>,
+        kw_span: Span,
     ) -> syn::Result<&'c PreprocessedMetas> {
         Ok(match self.desig.scope {
             Scope::T => &ctx.tmetas,
-            Scope::V => &ctx.variant(self)?.pmetas,
-            Scope::F => &ctx.field(self)?.pfield.pmetas,
+            Scope::V => &ctx.variant(&kw_span)?.pmetas,
+            Scope::F => &ctx.field(&kw_span)?.pfield.pmetas,
         })
     }
 }
@@ -367,12 +373,14 @@ where
     pub fn expand(
         &self,
         ctx: &Context,
+        kw_span: Span,
         out: &mut O,
         pmetas: &PreprocessedMetas,
     ) -> syn::Result<()> {
         let mut found = None::<FoundNode>;
         let mut hint = None::<FoundNearbyNode>;
-        let self_loc = || (self.span(), "expansion");
+        let span_whole = self.span_whole(kw_span);
+        let self_loc = || (span_whole, "expansion");
         let error_loc = || [ctx.error_loc(), self_loc()];
 
         self.desig.label.search(
@@ -416,7 +424,7 @@ where
             }
         })?;
 
-        found.expand(self.span(), &self.as_, out)?;
+        found.expand(span_whole, &self.as_, out)?;
 
         Ok(())
     }

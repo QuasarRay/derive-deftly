@@ -92,10 +92,10 @@ error: attribute value expanded, but no suitable value in data structure definit
    = note: this error originates in the macro `derive_deftly_driver_DataType` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: attribute value expanded, but no suitable value in data structure definition (expansion)
-  --> ui/badmeta.rs:28:32
+  --> ui/badmeta.rs:28:26
    |
 28 |     struct ${paste Bad ${tmeta(dot(has_equals)) as str}};
-   |                                ^^^
+   |                          ^^^^^^^^^^^^^^^^^^^^
 
 error: tried to expand just attribute value, but it was specified multiple times (first occurrence)
   --> ui/badmeta.rs:7:10
@@ -132,10 +132,10 @@ error: tried to expand just attribute value, but it was specified multiple times
    = note: this error originates in the macro `derive_deftly_driver_DataType` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: tried to expand just attribute value, but it was specified multiple times (expansion)
-  --> ui/badmeta.rs:30:32
+  --> ui/badmeta.rs:30:26
    |
 30 |     struct ${paste Bad ${tmeta(several) as str}};
-   |                                ^^^^^^^
+   |                          ^^^^^^^^^^^^^
 
 error: tried to expand just attribute value, but it was specified multiple times (first occurrence)
   --> ui/badmeta.rs:9:24
@@ -172,10 +172,10 @@ error: tried to expand just attribute value, but it was specified multiple times
    = note: this error originates in the macro `derive_deftly_driver_DataType` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: tried to expand just attribute value, but it was specified multiple times (expansion)
-  --> ui/badmeta.rs:31:32
+  --> ui/badmeta.rs:31:26
    |
 31 |     struct ${paste Bad ${tmeta(several_inner(several)) as str}};
-   |                                ^^^^^^^^^^^^^
+   |                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 error: attribute value expanded, but no value in data structure definition (in this data structure)
   --> ui/badmeta.rs:4:1
@@ -200,10 +200,10 @@ error: attribute value expanded, but no value in data structure definition (in t
    = note: this error originates in the macro `derive_deftly_driver_DataType` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: attribute value expanded, but no value in data structure definition (expansion)
-  --> ui/badmeta.rs:40:32
+  --> ui/badmeta.rs:40:26
    |
 40 |     struct ${paste Bad ${tmeta(barelit(is_value)) as str}};
-   |                                ^^^^^^^
+   |                          ^^^^^^^^^^^^^^^^^^^^^^
 
 error: expected a leaf node, found a list with sub-attributes
   --> ui/badmeta.rs:9:10
@@ -244,10 +244,10 @@ error: attribute value expanded, but no suitable value in data structure definit
    = note: this error originates in the macro `derive_deftly_driver_DataType` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: attribute value expanded, but no suitable value in data structure definition (expansion)
-  --> ui/badmeta.rs:47:32
+  --> ui/badmeta.rs:47:26
    |
 47 |     struct ${paste Bad ${tmeta(several_inner) as str}};
-   |                                ^^^^^^^^^^^^^
+   |                          ^^^^^^^^^^^^^^^^^^^
 
 error: expected identifier
   --> ui/badmeta.rs:52:10
