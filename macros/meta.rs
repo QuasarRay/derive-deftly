@@ -122,13 +122,14 @@ impl<O: SubstParseContext> Spanned for SubstMeta<O> {
 
 impl Spanned for Label {
     fn span(&self) -> Span {
-        self.lpaths
-            .first()
-            .expect("empty label")
-            .segments
-            .first()
-            .expect("empty path!")
-            .span()
+        spans_join(self.spans()).expect("empty label!")
+    }
+}
+
+impl Label {
+    /// Nonempty
+    pub fn spans(&self) -> impl Iterator<Item = Span> + '_ {
+        self.lpaths.iter().map(|path| path.span())
     }
 }
 

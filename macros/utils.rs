@@ -133,7 +133,6 @@ impl MakeError for [ErrorLoc] {
 /// in which case prefers the span of the final component.
 ///
 /// Returns `Some` iff the iterator was nonempty.
-#[allow(dead_code)] // XXXX
 pub fn spans_join(spans: impl IntoIterator<Item = Span>) -> Option<Span> {
     spans.into_iter().reduce(|a, b| a.join(b).unwrap_or(b))
 }
