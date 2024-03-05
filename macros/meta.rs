@@ -114,9 +114,13 @@ pub use FoundNode as FN;
 
 //========== template parsing ==========
 
-impl<O: SubstParseContext> Spanned for SubstMeta<O> {
-    fn span(&self) -> Span {
-        self.desig.label.span()
+impl<O: SubstParseContext> SubstMeta<O> {
+    fn span_whole(&self, scope_span: Span) -> Span {
+        spans_join(chain!(
+            [scope_span], //
+            self.desig.label.spans(),
+        ))
+        .unwrap()
     }
 }
 
@@ -369,12 +373,14 @@ where
     pub fn expand(
         &self,
         ctx: &Context,
+        kw_span: Span,
         out: &mut O,
         pmetas: &PreprocessedMetas,
     ) -> syn::Result<()> {
         let mut found = None::<FoundNode>;
         let mut hint = None::<FoundNearbyNode>;
-        let self_loc = || (self.span(), "expansion");
+        let span_whole = self.span_whole(kw_span);
+        let self_loc = || (span_whole, "expansion");
         let error_loc = || [ctx.error_loc(), self_loc()];
 
         self.desig.label.search(
@@ -418,7 +424,7 @@ where
             }
         })?;
 
-        found.expand(self.span(), &self.as_, out)?;
+        found.expand(span_whole, &self.as_, out)?;
 
         Ok(())
     }
