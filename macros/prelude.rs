@@ -34,7 +34,7 @@ pub use TokenTree as TT;
 pub use super::define::escape_dollars;
 pub use super::framework::TokenAccumulator;
 pub use super::paste::TokenPastesAsIdent;
-pub use super::utils::expand_macro_name;
+pub use super::utils::{expand_macro_name, spans_join};
 pub use super::utils::ErrorAccumulator;
 pub use super::utils::ToTokensPunctComposable;
 pub use super::utils::{advise_incompatibility, parse_advised};
