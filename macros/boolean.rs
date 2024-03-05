@@ -67,7 +67,7 @@ impl Subst<BooleanContext> {
                         }
                     }
                 };
-                is_found(label.search_eval_bool(sm.pmetas(ctx)?))
+                is_found(label.search_eval_bool(sm.pmetas(ctx, kw_span)?))
             }
 
             SD::approx_equal(_, [a, b]) => {

@@ -423,7 +423,7 @@ where
                     Ident::new(&format!("f_{}", f.fname(kw_span)), kw_span);
                 out.append_identfrag_toks(&fpatname)?;
             }
-            SD::xmeta(sm) => do_meta(sm, out, sm.pmetas(ctx)?)?,
+            SD::xmeta(sm) => do_meta(sm, out, sm.pmetas(ctx, kw_span)?)?,
 
             SD::Vis(vis, np) => {
                 out.append_tokens(np, vis.syn_vis(ctx, kw_span)?)?

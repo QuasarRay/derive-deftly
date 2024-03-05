@@ -349,11 +349,12 @@ where
     pub fn pmetas<'c>(
         &self,
         ctx: &'c Context<'c>,
+        kw_span: Span,
     ) -> syn::Result<&'c PreprocessedMetas> {
         Ok(match self.desig.scope {
             Scope::T => &ctx.tmetas,
-            Scope::V => &ctx.variant(self)?.pmetas,
-            Scope::F => &ctx.field(self)?.pfield.pmetas,
+            Scope::V => &ctx.variant(&kw_span)?.pmetas,
+            Scope::F => &ctx.field(&kw_span)?.pfield.pmetas,
         })
     }
 }
