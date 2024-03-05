@@ -304,8 +304,9 @@ where
     ) -> syn::Result<()> {
         // eprintln!("@@@@@@@@@@@@@@@@@@@@ EXPAND {:?}", self);
 
-        let do_meta =
-            |sm: &meta::SubstMeta<_>, out, meta| sm.expand(ctx, kw_span, out, meta);
+        let do_meta = |sm: &meta::SubstMeta<_>, out, meta| {
+            sm.expand(ctx, kw_span, out, meta)
+        };
 
         // Methods for handling generics.  Most take `composable: bool`,
         // which lets us control the trailing comma.  This is desirable
