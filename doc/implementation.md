@@ -134,6 +134,8 @@ resulting in a call to `derive_deftly_engine`:
     }
 ```
 
+### Accumulation expansion
+
 The second call matches the 2nd arm in the template macro.
 Each template's arm takes the next macro from `$chain0`,
 adds its recognised meta attributes to the list in `$accum`,
@@ -141,7 +143,24 @@ and then chains to `$chain0!`
 passing the subsequent template(s) in `$chains`.
 Eventually, the result is passed to the engine
 which also receives, in the `$passthrough`,
-the `AOPTIONS` and the driver.
+the `AOPTIONS` and the driver:
+
+```rust,ignore
+derive_deftly_engine! {
+	[ ]
+	[ _name [Template] _meta [ fmeta(foo) ?tmeta(bar) ] ]
+    { #[derive_adhoc(Template, Template2)] struct StructName { ... } }
+}
+
+```
+
+The accumulated parts are all of the form: `KEYWORD [DATA]`;
+`_KEYWORD [DATA]` for a part which can be safely ignored,
+if unrecognised.
+Each template's parts start with a `_name` part.
+There can also be `error []` parts which
+appear when the template couldn't be parsed
+(which is used to suppress "unrecognised attribute" errors).
 
 (Doing this with two macro calls means that
 if a template is misreferenced, the user gets two errors.

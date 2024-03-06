@@ -245,8 +245,8 @@ To use it, write: `#[derive(Deftly)] #[derive_deftly({})]`."#,
                 $chain0 ! {
                     [ $($chains,)* ]
                     [ $($accum)*
-                      ~name [ #templ_name ]
-                      metas [ #recog_metas ]
+                      _name [ #templ_name ]
+                      _meta [ #recog_metas ]
                     ]
                     $($passthrough)*
                 }
