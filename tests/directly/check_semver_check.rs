@@ -47,7 +47,13 @@ impl ToTokens for TrackedVersion {
 }
 
 fn read_tested_back_compat() -> TrackedVersion {
-    let cargo = fs::read_to_string("../tests/compat/old-b/Cargo.toml")
+    // We test (only) old-b here: that's the test case that tests
+    // a template user using older d-d
+    // depending on a template exporter using current d-d,
+    // which is what the semver check (called in the exporter)
+    // is guaranteeing will work.
+    const PKG: &str = "tests/compat/old-b";
+    let cargo = fs::read_to_string(format!("../{PKG}/Cargo.toml"))
         .unwrap()
         .parse::<toml::Value>()
         .unwrap();
@@ -62,7 +68,7 @@ fn read_tested_back_compat() -> TrackedVersion {
         dep
     };
     let version = version.as_str().unwrap().strip_prefix("=").unwrap();
-    TrackedVersion::new(version, "tests/compat")
+    TrackedVersion::new(version, PKG)
 }
 
 fn read_current() -> TrackedVersion {
