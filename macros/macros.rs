@@ -391,6 +391,9 @@ pub fn define_derive_deftly(
 /// If you do this, you must **pin your derive-deftly** to a minor version,
 /// as you may need to treat *minor* version updates in derive-deftly
 /// as semver breaks for your crate.
+/// And every time you update, you must read the `CHANGELOG.md`,
+/// since there is nothing that will warn you automatically
+/// about breaking changes.
 //
 // This is the implementation of #[derive(Deftly)]
 #[cfg_attr(
