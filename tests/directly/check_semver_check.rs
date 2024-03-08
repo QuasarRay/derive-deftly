@@ -25,15 +25,35 @@ impl Display for Version {
     }
 }
 
-impl ToTokens for Version {
+struct TrackedVersion {
+    v: Version,
+    why: String,
+}
+
+impl TrackedVersion {
+    fn new(v: impl Display, why: impl Display) -> Self {
+        let v = Version(v.to_string());
+        let why = why.to_string();
+        println!("{why:25} {v}");
+        TrackedVersion { v, why }
+    }
+}
+
+impl ToTokens for TrackedVersion {
     fn to_tokens(&self, out: &mut TokenStream) {
-        let lit = proc_macro2::Literal::string(&self.0);
+        let lit = proc_macro2::Literal::string(&self.v.0);
         out.extend([TT::Literal(lit)]);
     }
 }
 
-fn read_tested_back_compat() -> Version {
-    let cargo = fs::read_to_string("../tests/compat/old-b/Cargo.toml")
+fn read_tested_back_compat() -> TrackedVersion {
+    // We test (only) old-b here: that's the test case that tests
+    // a template user using older d-d
+    // depending on a template exporter using current d-d,
+    // which is what the semver check (called in the exporter)
+    // is guaranteeing will work.
+    const PKG: &str = "tests/compat/old-b";
+    let cargo = fs::read_to_string(format!("../{PKG}/Cargo.toml"))
         .unwrap()
         .parse::<toml::Value>()
         .unwrap();
@@ -48,11 +68,10 @@ fn read_tested_back_compat() -> Version {
         dep
     };
     let version = version.as_str().unwrap().strip_prefix("=").unwrap();
-    println!("tested back compat    {version}");
-    Version(version.to_owned())
+    TrackedVersion::new(version, PKG)
 }
 
-fn read_current() -> Version {
+fn read_current() -> TrackedVersion {
     let cargo = fs::read_to_string("../Cargo.toml")
         .unwrap()
         .parse::<toml::Value>()
@@ -64,12 +83,15 @@ fn read_current() -> Version {
         .unwrap()["version"]
         .as_str()
         .unwrap();
-    println!("current               {version}");
-    Version(version.to_owned())
+    TrackedVersion::new(version, "current")
 }
 
-fn read_changelog(back_compat: &Version) -> (Vec<Version>, Version) {
-    let file = File::open("../CHANGELOG.md").unwrap();
+fn read_changelog(
+    back_compat: &Version,
+) -> (Vec<TrackedVersion>, TrackedVersion) {
+    const CHANGELOG: &str = "CHANGELOG.md";
+
+    let file = File::open(format!("../{CHANGELOG}")).unwrap();
     let file = BufReader::new(file);
     let mut lines = file
         .lines()
@@ -93,39 +115,42 @@ fn read_changelog(back_compat: &Version) -> (Vec<Version>, Version) {
         let Some(version) = l.strip_prefix("### ") else {
             continue;
         };
-        let version = version
-            .split_once(' ')
-            .map(|(l, _)| l)
-            .unwrap_or(version)
-            .to_owned();
-        let version = Version(version);
+        let version_str =
+            version.split_once(' ').map(|(l, _)| l).unwrap_or(version);
+        let tracked_version = |status: &str| {
+            TrackedVersion::new(
+                version_str,
+                format_args!("{CHANGELOG}:{lno} {status}"),
+            )
+        };
         if had_back_compat {
-            println!("changelog {lno:3} broken  {version}");
-            return (good, version);
+            return (good, tracked_version("broken"));
         } else {
-            println!("changelog {lno:3} good    {version}");
-            good.push(version.clone());
+            good.push(tracked_version("good"));
         }
-        if &version == back_compat {
+        if &version_str == &back_compat.0 {
             had_back_compat = true;
         }
     }
 }
 
-fn check_1(v: &Version, exp: Result<(), ()>) {
-    let got = macros::semver::pub_template_semver_check_func_macro(
-        quote! { #v }, //
+fn check_1(tv: &TrackedVersion, exp: Result<(), ()>) {
+    let got_full = macros::semver::pub_template_semver_check_func_macro(
+        quote! { #tv }, //
     );
-    eprintln!("{v:10} exp={exp:?} got={got:?}");
-    assert_eq!(got.is_ok(), exp.is_ok());
+    let got_abbrev = got_full.as_ref().map_err(|_| ()).map(|_| ());
+    eprintln!("{:25} {} exp={exp:?} got={got_abbrev:?}", tv.why, tv.v);
+    assert_eq!(got_abbrev, exp, "at={} v={} got={got_full:?}", tv.why, tv.v);
 }
 
 #[test]
 fn check() {
+    println!("collecting:");
     let current = read_current();
     let back_compat = read_tested_back_compat();
-    let (changelog_good, changelog_bad) = read_changelog(&back_compat);
+    let (changelog_good, changelog_bad) = read_changelog(&back_compat.v);
 
+    println!("checking:");
     for v in chain!([&current, &back_compat], &changelog_good) {
         check_1(v, Ok(()));
     }

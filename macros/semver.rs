@@ -76,8 +76,11 @@ Search for section titles containing "pub template semver"."#,
 
     match (version.major, version.minor) {
         (0, 0..=8) => return too_old(),
-        (0, 9) => {}
-        (0, 10..) | (1.., _) => return too_new(),
+        // We tolerate "too new" within the same minor version,
+        // since otherwise updating the minor version is too tedious.
+        // There are tests to catch failure to update this.
+        (0, 9..) => {}
+        (1.., _) => return too_new(),
     }
 
     Ok(TokenStream::new())
