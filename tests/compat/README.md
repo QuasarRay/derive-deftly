@@ -3,6 +3,9 @@
 These three crates test forward/backward compatibility with the
 version of derive-deftly prior at the  most recent flag day.
 
+See also "Compatibility testing (and semver updates)"
+in `macros/HACKING.md`.
+
 ## Tests
 
 I. Forward compatibility (higher layer crate is more up to date)
