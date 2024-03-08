@@ -35,6 +35,9 @@ impl Parse for EngineInput {
             let driver = driver.parse()?;
 
             if input.peek(syn::token::Bracket) {
+                // AOPTIONS appears iff we're being invoked for a precanned
+                // template, rather than an adhoc one; it's from the
+                // `#[derive()` application.
                 let tokens;
                 let _ = bracketed!(tokens in input);
                 let r = options

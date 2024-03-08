@@ -45,13 +45,13 @@ Expands to
 ```rust,ignore
     macro_rules! derive_deftly_template_Template { {
         { $($driver:tt)* }
-     $( [ $($aoptions:tt)* ] )?
+        [ $($aoptions:tt)* ]
         { $($future:tt)* }
         $($dpassthrough:tt)*
     } => {
         derive_deftly_engine! {
             { $($driver)* }
-         $( [ $(aoptions)* ] )?
+            [ $(aoptions)* ]
             { $($dpassthrough)* }
             { TEMPLATE... }
             { $crate; [TOPTIONS...] Template; }
@@ -88,7 +88,7 @@ Generates (in addition to the `derive_deftly_driver_StructName` definition)
 ```rust,ignore
     derive_deftly_template_Template! {
         { #[derive_deftly(Template)] struct StructName { ... } }
-        [1 0 AOPTIONS]    // but only if AOPTIONS is nonempty
+        [1 0 AOPTIONS]
         { }
     }
 ```
@@ -105,7 +105,7 @@ resulting in a call to `derive_deftly_engine`:
 ```rust,ignore
     derive_deftly_engine! {
         { pub struct StructName { /* original struct definition */ } }
-        [1 0 AOPTIONS]    // but only if AOPTIONS is nonempty
+        [1 0 AOPTIONS]
         { }
         { TEMPLATE... }
         { $crate; [TOPTIONS...] Template; }
@@ -130,6 +130,7 @@ generates this
      } => {
         derive_deftly_engine!{
             { pub struct StructName { /* original struct definition */ } }
+            /* no AOPTIONS since there's no derive() application */
             { }
             { $($template)* }
             { $($tpassthrough)* }

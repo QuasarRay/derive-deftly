@@ -241,9 +241,9 @@ pub fn derive_deftly(
         let last = templ_path.segments.last_mut().expect("became empty!");
         last.ident = format_ident!("derive_deftly_template_{}", last.ident);
 
-        // We must output the driver-specified application options.
-        //
-        // But maybe the template engine we are speaking to is old,
+        // Previously we conditionally output the driver-specified
+        // application options, since
+        // maybe the template engine we were speaking to is old,
         // so if there aren't any we leave the whole clause out.
         //
         // If future things like this were to appear, we would need to
@@ -251,7 +251,10 @@ pub fn derive_deftly(
         // Hence this, which leaves off "blank" trailing clauses.
         // The outer syntax means none of these these clauses are allowed
         // to start with a curly bracket.
+        //
+        // Currently there aren't any, so `Blank` is _'d out.
         enum Extra {
+            #[allow(dead_code)]
             Blank(TokenStream),
             Required(TokenStream),
         }
@@ -265,11 +268,7 @@ pub fn derive_deftly(
         }
         let aoptions = {
             let versions = OpCompatVersions::ours();
-            if aoptions.is_empty() {
-                Extra::Blank(quote! { [ #versions ] })
-            } else {
-                Extra::Required(quote! { [ #versions #aoptions ] })
-            }
+            Extra::Required(quote! { [ #versions #aoptions ] })
         };
         let mut extras = vec![
             aoptions,

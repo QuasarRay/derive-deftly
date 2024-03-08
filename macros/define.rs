@@ -224,13 +224,13 @@ To use it, write: `#[derive(Deftly)] #[derive_deftly({})]`."#,
         macro_rules! #templ_mac_name {
             {
                 { $($driver:tt)* }
-             $( [ $($aoptions:tt)* ] )?
+                [ $($aoptions:tt)* ]
                 { $($future:tt)* }
                 $($dpassthrough:tt)*
             } => {
                 #engine_macro! {
                     { $( $driver )* }
-                 $( [ $($aoptions)* ] )?
+                    [ $($aoptions)* ]
                     { $($dpassthrough)* }
                     { # template }
                     { $crate; [#options] #templ_name; }
