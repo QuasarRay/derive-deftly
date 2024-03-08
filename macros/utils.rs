@@ -277,7 +277,7 @@ impl<T: AsRef<str> + ?Sized> PartialEq<T> for IdentAny {
     }
 }
 
-//---------- expand_macro_name ----------
+//---------- engine_macro_name ----------
 
 /// Return a full path to the location of `derive_deftly_engine`.
 ///
@@ -286,7 +286,7 @@ impl<T: AsRef<str> + ?Sized> PartialEq<T> for IdentAny {
 /// This is a problem with the way cargo and rustc
 /// handle imports and proc-macro crates,
 /// which I think we can't properly solve here.)
-pub fn expand_macro_name() -> Result<TokenStream, syn::Error> {
+pub fn engine_macro_name() -> Result<TokenStream, syn::Error> {
     let name = crate_name("derive-deftly-macros")
         .or_else(|_| crate_name("derive-deftly"));
 

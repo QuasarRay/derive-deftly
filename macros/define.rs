@@ -201,17 +201,17 @@ To use it, write: `#[derive(Deftly)] #[derive_deftly({})]`."#,
         quote!( #[doc = #addendum] )
     });
 
-    let expand_macro;
+    let engine_macro;
     let vis_export;
     match vis {
         None => {
             vis_export = quote! {};
-            expand_macro = expand_macro_name()?;
+            engine_macro = engine_macro_name()?;
         }
         Some(pub_token) => {
             let span = pub_token.span();
             vis_export = quote_spanned!(span=> #[macro_export]);
-            expand_macro = quote_spanned!(span=> $crate::derive_deftly::derive_deftly_engine);
+            engine_macro = quote_spanned!(span=> $crate::derive_deftly::derive_deftly_engine);
         }
     }
 
@@ -224,13 +224,13 @@ To use it, write: `#[derive(Deftly)] #[derive_deftly({})]`."#,
         macro_rules! #templ_mac_name {
             {
                 { $($driver:tt)* }
-             $( [ $($aoptions:tt)* ] )?
+                [ $($aoptions:tt)* ]
                 { $($future:tt)* }
                 $($dpassthrough:tt)*
             } => {
-                #expand_macro! {
+                #engine_macro! {
                     { $( $driver )* }
-                 $( [ $($aoptions)* ] )?
+                    [ $($aoptions)* ]
                     { $($dpassthrough)* }
                     { # template }
                     { $crate; [#options] #templ_name; }
