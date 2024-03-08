@@ -20,7 +20,6 @@ and, especially, testing them can be complex.
    * [Updating the pinned Nightly Rust (used in tests and CI)](#updating-the-pinned-nightly-rust-used-in-tests-and-ci)
       * [Choosing which Nightly Rust version to update to](#choosing-which-nightly-rust-version-to-update-to)
       * [Updating the nightly version number](#updating-the-nightly-version-number)
-      * [Updating the pinned docker image](#updating-the-pinned-docker-image)
       * [Updating the cargo-expand version](#updating-the-cargo-expand-version)
       * [Preparing and merging the changes](#preparing-and-merging-the-changes)
 
@@ -230,8 +229,6 @@ cargo +nightly-YYYY-MM-DD test --workspace --all-features
 
 **Inspect the output carefully** before committing.
 Use `git-grep` on the old nightly date string and fix all the instances.
-
-### Updating the pinned docker image
 
 ### Updating the cargo-expand version
 
