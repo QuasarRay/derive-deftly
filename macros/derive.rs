@@ -166,7 +166,7 @@ pub fn derive_deftly(
 
     check_for_misplaced_atrs(&driver.data)?;
 
-    let expand_macro = expand_macro_name()?;
+    let engine_macro = engine_macro_name()?;
 
     // If the driver contains any $ tokens, we must do something about them.
     // Otherwise, they might get mangled by the macro_rules expander.
@@ -212,7 +212,7 @@ pub fn derive_deftly(
                     { ($orig_dollar:tt) $(future:tt)* }
                     $($tpassthrough:tt)*
                 } => {
-                    #expand_macro!{
+                    #engine_macro!{
                         { #driver_escaped }
                         { }
                         { $($template)* }
