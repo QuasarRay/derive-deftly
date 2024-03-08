@@ -80,10 +80,9 @@ fn read_current() -> TrackedVersion {
     TrackedVersion::new(version, "current")
 }
 
-fn read_changelog(back_compat: &Version) -> (
-    Vec<TrackedVersion>,
-    TrackedVersion,
-) {
+fn read_changelog(
+    back_compat: &Version,
+) -> (Vec<TrackedVersion>, TrackedVersion) {
     const CHANGELOG: &str = "CHANGELOG.md";
 
     let file = File::open(format!("../{CHANGELOG}")).unwrap();
@@ -110,14 +109,14 @@ fn read_changelog(back_compat: &Version) -> (
         let Some(version) = l.strip_prefix("### ") else {
             continue;
         };
-        let version_str = version
-            .split_once(' ')
-            .map(|(l, _)| l)
-            .unwrap_or(version);
-        let tracked_version = |status: &str| TrackedVersion::new(
-            version_str,
-            format_args!("{CHANGELOG}:{lno} {status}"),
-        );
+        let version_str =
+            version.split_once(' ').map(|(l, _)| l).unwrap_or(version);
+        let tracked_version = |status: &str| {
+            TrackedVersion::new(
+                version_str,
+                format_args!("{CHANGELOG}:{lno} {status}"),
+            )
+        };
         if had_back_compat {
             return (good, tracked_version("broken"));
         } else {
