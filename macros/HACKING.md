@@ -22,6 +22,7 @@ and, especially, testing them can be complex.
       * [Updating the nightly version number](#updating-the-nightly-version-number)
       * [Updating the cargo-expand version](#updating-the-cargo-expand-version)
       * [Preparing and merging the changes](#preparing-and-merging-the-changes)
+   * [Compatibility testing (and semver updates)](#compatibility-testing-and-semver-updates)
 
 ## Required reading
 
@@ -261,3 +262,25 @@ Edit `.gitlab-ci.yml` with search-and-replace to fix all the occurrences.
     <p></p>
 
  3. Finally, make an MR for any changes you wish to make to this doc.
+
+## Compatibility testing (and semver updates)
+
+New template features can be added,
+and that's just a semver addition, as usual;
+if a breaking change to a template feature is needed,
+that is just a semver breaking change.
+
+More intrusive or technical changes can cause semver breaks
+*in crates that export templates*.
+See [the public API docs for `define_derive_deftly`](macro@define_derive_deftly#you-must-re-export-derive_deftly-semver-implications)
+and [`pub_template_semver_check`](macro@pub_template_semver_check).
+Such breaking changes should be avoided if at all possible.
+There are complex arrangements for testing that
+compatibility isn't broken accidentally,
+mostly in `compat/`.  (See `tests/compat/README.md`.)
+
+If it is necessary to make such a totally breaking change,
+consult the git history and see how it was done last time.
+(`git annotate` on the implementation of `pub_template_semver_check`
+or `git log -G` on a relevant version number
+may be helpful to find the relevant MR and its commits).
