@@ -9,6 +9,9 @@ Updates versions to VERSION, if supplied, and then runs
     cargo fetch --offline  # to update the lockfile
     maint/update-bizarre
 to refresh lockfiles etc.
+
+It may be necessary to update macros/semver.rs too - see
+  pub_template_semver_check_func_macro
 END
 }
 # We're not using cargo-edit or cargo-version because our
