@@ -23,6 +23,14 @@ We expect to increase it cautiously and only with good reason.
 
 ## Changelog
 
+### 0.10.0 UNRELEASED
+
+ * (changes to be documented here)
+
+#### pub template semver
+
+(changes to be documented here)
+
 ### 0.9.2
 
 #### Improved

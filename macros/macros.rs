@@ -452,7 +452,7 @@ pub fn derive_deftly(
 ///
 /// ```
 /// # use derive_deftly_macros as derive_deftly;
-/// derive_deftly::pub_template_semver_check!("0.9.0");
+/// derive_deftly::pub_template_semver_check!("0.10.0");
 /// ```
 #[cfg_attr(proc_macro, proc_macro)]
 pub fn pub_template_semver_check(
