@@ -162,7 +162,7 @@ pub fn define_derive_deftly_func_macro(
 
     let mut output = TokenStream::new();
 
-    let (template, _parsed_template) = {
+    let (template, parsed_template) = {
         let parse = |ts: TokenStream| {
             Ok::<_, syn::Error>((
                 ts.clone(),
@@ -180,6 +180,8 @@ pub fn define_derive_deftly_func_macro(
     };
 
     let template = escape_dollars(template);
+
+    drop::<Template<_>>(parsed_template); // TODO actually use this
 
     let templ_mac_name =
         format_ident!("derive_deftly_template_{}", &templ_name);
