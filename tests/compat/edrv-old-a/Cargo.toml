@@ -10,7 +10,8 @@ description="driver export compat testing - old part A"
 publish = false
 
 [dependencies]
-derive-deftly = "=0.9.0"
+# After 0.10.0 is released, remove the `path`, don't bump the versoin!
+derive-deftly = { version = "=0.10.0", path = "../../.." }
 
 [lib]
 path = "../../pub-export/pub-a/pub-a.rs"
