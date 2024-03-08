@@ -181,8 +181,6 @@ pub fn define_derive_deftly_func_macro(
 
     let template = escape_dollars(template);
 
-    drop::<Template<_>>(parsed_template); // TODO actually use this
-
     let templ_mac_name =
         format_ident!("derive_deftly_template_{}", &templ_name);
 
@@ -211,6 +209,13 @@ To use it, write: `#[derive(Deftly)] #[derive_deftly({})]`."#,
         }
     }
 
+    let recog_metas = {
+        use meta::FindRecogMetas as _;
+        let mut recog = meta::Recognised::default();
+        parsed_template.find_recog_metas(&mut recog);
+        recog
+    };
+
     // the macro must recent a dollar as its first argument because
     // it is hard to find a dollar otherwise!
     output.extend(quote! {
@@ -230,6 +235,20 @@ To use it, write: `#[derive(Deftly)] #[derive_deftly({})]`."#,
                     { $($dpassthrough)* }
                     { # template }
                     { $crate; [#options] #templ_name; }
+                }
+            };
+            {
+                [ $chain0:path, $($chains:path,)* ]
+                [ $($accum:tt)* ]
+                $($passthrough:tt)*
+            } => {
+                $chain0 ! {
+                    [ $($chains,)* ]
+                    [ $($accum)*
+                      ~name [ #templ_name ]
+                      metas [ #recog_metas ]
+                    ]
+                    $($passthrough)*
                 }
             };
             { $($wrong:tt)* } => {
