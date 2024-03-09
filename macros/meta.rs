@@ -2,7 +2,7 @@
 
 use super::framework::*;
 
-//========== common definitions ==========
+//---------- common definitions ----------
 
 /// Indicates one of `fmeta`, `vmeta` or `tmeta`
 #[derive(Debug, Clone, Copy)]
@@ -29,7 +29,7 @@ pub struct Desig {
     pub label: Label,
 }
 
-//========== substitutions in a template ==========
+//---------- substitutions in a template ----------
 
 #[derive(Debug, Clone)]
 pub struct SubstMeta<O: SubstParseContext> {
@@ -45,7 +45,7 @@ pub enum SubstAs<O: SubstParseContext> {
     str(O::NotInBool),
 }
 
-//========== meta attrs in a driver ==========
+//---------- meta attrs in a driver ----------
 
 /// A part like `(foo,bar(baz),zonk="value")`
 #[derive(Debug, Clone)]
@@ -78,7 +78,7 @@ pub enum PreprocessedValue {
     List(PreprocessedValueList),
 }
 
-//========== search and match results ==========
+//---------- search and match results ----------
 
 /// Node in tree structure found in driver `#[deftly(some(thing))]`
 #[derive(Debug)]
@@ -112,7 +112,7 @@ pub enum FoundNearbyNodeKind {
 pub use FoundNearbyNodeKind as FNNK;
 pub use FoundNode as FN;
 
-//========== template parsing ==========
+//---------- template parsing ----------
 
 impl<O: SubstParseContext> SubstMeta<O> {
     fn span_whole(&self, scope_span: Span) -> Span {
@@ -180,7 +180,7 @@ impl<O: SubstParseContext> SubstMeta<O> {
     }
 }
 
-//========== driver parsing ==========
+//---------- driver parsing ----------
 
 impl PreprocessedValueList {
     fn parse_outer(input: ParseStream) -> syn::Result<Self> {
@@ -248,7 +248,7 @@ impl Parse for Label {
     }
 }
 
-//========== searching and matching ==========
+//---------- searching and matching ----------
 
 impl Label {
     pub fn search<'a, A, F, G, E>(
@@ -332,7 +332,7 @@ impl Label {
     }
 }
 
-//========== scope handling ==========
+//---------- scope handling ----------
 
 impl<O> SubstMeta<O>
 where
@@ -364,7 +364,7 @@ where
     }
 }
 
-//========== template expansion ==========
+//---------- template expansion ----------
 
 impl<O> SubstMeta<O>
 where
