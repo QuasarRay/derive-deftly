@@ -525,7 +525,7 @@ impl<'l> FoundNode<'l> {
             FN::Lit { lit, .. } => lit,
         };
 
-        use meta::SubstAs as MSA;
+        use SubstAs as SA;
 
         let default_buf;
         let as_ = match as_ {
@@ -537,15 +537,15 @@ impl<'l> FoundNode<'l> {
         };
 
         match as_ {
-            MSA::tokens(_, np) => {
+            SA::tokens(_, np) => {
                 let tokens: TokenStream =
                     metavalue_lit_as(lit, tspan, &"tokens")?;
                 out.append_tokens(np, tokens)?;
             }
-            as_ @ MSA::ty(..) => {
+            as_ @ SA::ty(..) => {
                 out.append_syn_type(tspan, &metavalue_lit_as(lit, tspan, as_)?)
             }
-            MSA::str(..) => {
+            SA::str(..) => {
                 let s = metavalue_litstr(
                     lit,
                     tspan,
