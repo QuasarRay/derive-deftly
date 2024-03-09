@@ -1,6 +1,7 @@
 //! `derive_deftly_engine!()`
 
 use super::framework::*;
+use adviseable::*;
 
 /// Input to `derive_deftly_engine!`
 #[derive(Debug)]

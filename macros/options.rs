@@ -4,6 +4,7 @@
 //! are allowed, so long as they are compatible.
 
 use super::prelude::*;
+use adviseable::*;
 
 use OptionDetails as OD;
 
