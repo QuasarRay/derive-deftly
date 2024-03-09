@@ -169,18 +169,18 @@ impl<'c> Context<'c> {
 }
 
 impl EngineInput {
-  fn process(self) -> syn::Result<TokenStream> {
-    dprintln!("derive_deftly_engine! crate = {:?}", &self.template_crate);
+    fn process(self) -> syn::Result<TokenStream> {
+        dprintln!("derive_deftly_engine! crate = {:?}", &self.template_crate);
 
-    let DdOptions {
-        dbg,
-        driver_kind,
-        expect_target,
-        //
-    } = self.options;
+        let DdOptions {
+            dbg,
+            driver_kind,
+            expect_target,
+            //
+        } = self.options;
 
-    if let Some(exp) = driver_kind {
-        macro_rules! got_kind { { $($kind:ident)* } => {
+        if let Some(exp) = driver_kind {
+            macro_rules! got_kind { { $($kind:ident)* } => {
             match &self.driver.data {
                 $(
                     syn::Data::$kind(..) => ExpectedDriverKind::$kind,
@@ -188,54 +188,57 @@ impl EngineInput {
             }
         } }
 
-        let got_kind = got_kind!(Struct Enum Union);
-        if got_kind != exp.value {
-            return Err([
-                (exp.span, "expected kind"),
-                (self.driver.span(), "actual kind"),
-            ]
-            .error(format_args!(
-                "template defined for {}, but applied to {}",
-                exp.value, got_kind,
-            )));
+            let got_kind = got_kind!(Struct Enum Union);
+            if got_kind != exp.value {
+                return Err([
+                    (exp.span, "expected kind"),
+                    (self.driver.span(), "actual kind"),
+                ]
+                .error(format_args!(
+                    "template defined for {}, but applied to {}",
+                    exp.value, got_kind,
+                )));
+            }
         }
+
+        Context::call(
+            &self.driver,
+            &self.template_crate,
+            self.template_name.as_ref(),
+            |ctx| {
+                let mut output = TokenAccumulator::new();
+                self.template.expand(&ctx, &mut output);
+                let output = output.tokens()?;
+
+                //    dbg!(&&output);
+                if dbg {
+                    let description = ctx.expansion_description();
+                    let dump = format!(
+                        concat!(
+                            "---------- {} (start) ----------\n",
+                            "{}\n",
+                            "---------- {} (end) ----------\n",
+                        ),
+                        &description, &output, &description,
+                    );
+                    eprint!("{}", dump);
+                }
+
+                let mut output = output;
+                if let Some(target) = expect_target {
+                    check::check_expected_target_syntax(
+                        &ctx,
+                        &mut output,
+                        target,
+                    );
+                }
+
+                Ok(output)
+            },
+        )
     }
-
-    Context::call(
-        &self.driver,
-        &self.template_crate,
-        self.template_name.as_ref(),
-        |ctx| {
-            let mut output = TokenAccumulator::new();
-            self.template.expand(&ctx, &mut output);
-            let output = output.tokens()?;
-
-            //    dbg!(&&output);
-            if dbg {
-                let description = ctx.expansion_description();
-                let dump = format!(
-                    concat!(
-                        "---------- {} (start) ----------\n",
-                        "{}\n",
-                        "---------- {} (end) ----------\n",
-                    ),
-                    &description, &output, &description,
-                );
-                eprint!("{}", dump);
-            }
-
-            let mut output = output;
-            if let Some(target) = expect_target {
-                check::check_expected_target_syntax(&ctx, &mut output, target);
-            }
-
-            Ok(output)
-        },
-    )
-
-  }
 }
-    
+
 /// `derive_deftly_engine!` -- implements the actual template engine
 ///
 /// In my design, the input contains, firstly, literally the definition
