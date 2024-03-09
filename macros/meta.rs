@@ -415,6 +415,18 @@ impl Desig {
     }
 }
 
+impl Parse for Desig {
+    fn parse(input: ParseStream) -> syn::Result<Self> {
+        let scope: syn::Ident = input.parse()?;
+        let scope = scope
+            .to_string()
+            .parse()
+            .map_err(|_| scope.error("invalid meta keyword/level"))?;
+        let label = input.parse()?;
+        Ok(Self { scope, label })
+    }
+}
+
 //---------- template expansion ----------
 
 impl<O> SubstMeta<O>
