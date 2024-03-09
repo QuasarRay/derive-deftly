@@ -22,11 +22,6 @@ impl Parse for EngineInput {
         parse_advised(move || {
             let mut options = DdOptions::default();
 
-            // If `got` is an error, returns Some of what the outer closure
-            // should return.  Otherwise, return None.
-            let unadvised_err_of_unit =
-                |got: syn::Result<()>| got.err().map(ErrNNA).map(Ok);
-
             let driver;
             let driver_brace = braced!(driver in input);
             let driver = driver.parse()?;
@@ -39,7 +34,7 @@ impl Parse for EngineInput {
                 let _ = bracketed!(tokens in input);
                 let r = options
                     .parse_update(&tokens, OpContext::DriverApplicationPassed);
-                if let Some(r) = unadvised_err_of_unit(r) {
+                if let Some(r) = err_mk_unadvised(r) {
                     return r;
                 }
             }
@@ -65,7 +60,7 @@ impl Parse for EngineInput {
                 let tokens;
                 let _ = bracketed!(tokens in input);
                 let r = options.parse_update(&tokens, OpContext::Template);
-                if let Some(r) = unadvised_err_of_unit(r) {
+                if let Some(r) = err_mk_unadvised(r) {
                     return r;
                 }
 

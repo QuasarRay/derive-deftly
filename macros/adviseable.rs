@@ -59,3 +59,18 @@ pub fn parse_advised<T>(
 ) -> syn::Result<T> {
     handle_adviseable_result(call())
 }
+
+/// Within `parse_advised`, handle an error *without* giving advice
+///
+/// If `got` is an error, returns Some of what the closure for
+/// [`parse_advised`] should return (always `Err`, then).
+///
+/// Otherwise, return None.
+pub fn err_mk_unadvised<T>(
+    got: syn::Result<()>,
+) -> Option<AdviseableResult<T>> {
+    match got {
+        Ok(()) => None,
+        Err(e) => Some(Ok(ErrNNA(e))),
+    }
+}
