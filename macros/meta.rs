@@ -115,6 +115,14 @@ pub enum FoundNearbyNodeKind {
 pub use FoundNearbyNodeKind as FNNK;
 pub use FoundNode as FN;
 
+//---------- meta attr enumeration and checking ----------
+
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, Eq, PartialEq)]
+pub enum RecogAllow {
+    BoolOnly,
+    Value,
+}
+
 //==================== implementations ====================
 
 //---------- template parsing ----------
