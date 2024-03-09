@@ -112,6 +112,8 @@ pub enum FoundNearbyNodeKind {
 pub use FoundNearbyNodeKind as FNNK;
 pub use FoundNode as FN;
 
+//==================== implementations ====================
+
 //---------- template parsing ----------
 
 impl<O: SubstParseContext> SubstMeta<O> {
