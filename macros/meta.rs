@@ -2,6 +2,8 @@
 
 use super::framework::*;
 
+use indexmap::IndexMap;
+
 //---------- common definitions ----------
 
 /// Indicates one of `fmeta`, `vmeta` or `tmeta`
@@ -121,6 +123,19 @@ pub use FoundNode as FN;
 pub enum RecogAllow {
     BoolOnly,
     Value,
+}
+
+#[derive(Default, Debug)]
+pub struct Recognised {
+    map: IndexMap<Desig, RecogAllow>,
+}
+
+pub trait FindRecogMetas {
+    /// Search for `fmeta(..)` etc. expansions
+    ///
+    /// Add to `acc` any that are
+    /// (recusively) within `self`, syntactically,
+    fn find_recog_metas(&self, acc: &mut Recognised);
 }
 
 //==================== implementations ====================
@@ -566,5 +581,188 @@ impl<'l> FoundNode<'l> {
             }
         }
         Ok(())
+    }
+}
+
+//---------- impl Recognised etc. ----------
+
+impl Recognised {
+    /// Ensures that `self[k] >= v`
+    pub fn update(&mut self, k: Desig, v: RecogAllow) {
+        let ent = self.map.entry(k).or_insert(v);
+        *ent = cmp::max(*ent, v);
+    }
+}
+
+//---------- impl FindRecogMetas ----------
+
+impl<O: SubstParseContext> FindRecogMetas for Template<O> {
+    fn find_recog_metas(&self, acc: &mut Recognised) {
+        for e in &self.elements {
+            e.find_recog_metas(acc)
+        }
+    }
+}
+
+impl<O: SubstParseContext> FindRecogMetas for TemplateElement<O> {
+    fn find_recog_metas(&self, acc: &mut Recognised) {
+        match self {
+            TE::Ident(_) | TE::LitStr(_) | TE::Literal(..) | TE::Punct(..) => {
+            }
+            TE::Group { template, .. } => template.find_recog_metas(acc),
+            TE::Subst(n) => n.find_recog_metas(acc),
+            TE::Repeat(n) => n.find_recog_metas(acc),
+        }
+    }
+}
+
+impl<O: SubstParseContext> FindRecogMetas for RepeatedTemplate<O> {
+    fn find_recog_metas(&self, acc: &mut Recognised) {
+        self.template.find_recog_metas(acc);
+        self.whens.find_recog_metas(acc);
+    }
+}
+
+impl<O: SubstParseContext> FindRecogMetas for Subst<O> {
+    fn find_recog_metas(&self, acc: &mut Recognised) {
+        self.sd.find_recog_metas(acc);
+    }
+}
+
+macro_rules! impL_find_recog_metas_via_iter { {
+    ( $($gens:tt)* ), $i:ty
+} => {
+    impl<T: FindRecogMetas, $($gens)*> FindRecogMetas for $i {
+        fn find_recog_metas(&self, acc: &mut Recognised) {
+            for item in self {
+                item.find_recog_metas(acc)
+            }
+        }
+    }
+} }
+impL_find_recog_metas_via_iter!((), [T]);
+impL_find_recog_metas_via_iter!((), Option<T>);
+impL_find_recog_metas_via_iter!((U), Punctuated<T, U>);
+
+impl<T: FindRecogMetas> FindRecogMetas for Box<T> {
+    fn find_recog_metas(&self, acc: &mut Recognised) {
+        self.deref().find_recog_metas(acc)
+    }
+}
+
+impl<O: SubstParseContext> FindRecogMetas for SubstDetails<O> {
+    fn find_recog_metas(&self, acc: &mut Recognised) {
+        use SD::*;
+
+        match self {
+            xmeta(v) => v.find_recog_metas(acc),
+            vpat(v, _, _) => v.find_recog_metas(acc),
+            vtype(v, _, _) => v.find_recog_metas(acc),
+            tdefvariants(v, _, _) => v.find_recog_metas(acc),
+            fdefine(v, _, _) => v.find_recog_metas(acc),
+            vdefbody(a, b, _, _) => {
+                a.find_recog_metas(acc);
+                b.find_recog_metas(acc);
+            }
+            paste(v, _) => v.find_recog_metas(acc),
+            ChangeCase(v, _, _) => v.find_recog_metas(acc),
+
+            when(v, _) => v.find_recog_metas(acc),
+            define(v, _) => v.find_recog_metas(acc),
+            defcond(v, _) => v.find_recog_metas(acc),
+
+            not(v, _) => v.find_recog_metas(acc),
+            any(v, _) | all(v, _) => v.find_recog_metas(acc),
+            approx_equal(_, v) => v.find_recog_metas(acc),
+
+            For(v, _) => v.find_recog_metas(acc),
+            If(v, _) | select1(v, _) => v.find_recog_metas(acc),
+
+            tname(_)
+            | ttype(_)
+            | tdeftype(_)
+            | vname(_)
+            | fname(_)
+            | ftype(_)
+            | fpatname(_)
+            | tdefkwd(_)
+            | Vis(_, _)
+            | tattrs(_, _, _)
+            | vattrs(_, _, _)
+            | fattrs(_, _, _)
+            | tgens(_, _)
+            | tdefgens(_, _)
+            | tgnames(_, _)
+            | twheres(_, _)
+            | UserDefined(_)
+            | False(_)
+            | True(_)
+            | is_struct(_)
+            | is_enum(_)
+            | is_union(_)
+            | v_is_unit(_)
+            | v_is_tuple(_)
+            | v_is_named(_)
+            | dbg_all_keywords(_)
+            | Crate(_, _) => {}
+        }
+    }
+}
+
+impl<O: SubstParseContext> FindRecogMetas for SubstMeta<O> {
+    fn find_recog_metas(&self, acc: &mut Recognised) {
+        let allow = O::meta_recog_allow();
+        acc.update(self.desig.clone(), allow);
+    }
+}
+
+impl FindRecogMetas for SubstVType {
+    fn find_recog_metas(&self, acc: &mut Recognised) {
+        let Self { self_, vname } = self;
+        self_.find_recog_metas(acc);
+        vname.find_recog_metas(acc);
+    }
+}
+
+impl FindRecogMetas for SubstVPat {
+    fn find_recog_metas(&self, acc: &mut Recognised) {
+        let Self { vtype, fprefix } = self;
+        vtype.find_recog_metas(acc);
+        fprefix.find_recog_metas(acc);
+    }
+}
+
+impl<B: FindRecogMetas> FindRecogMetas for Definition<B> {
+    fn find_recog_metas(&self, acc: &mut Recognised) {
+        let Self {
+            name: _,
+            body_span: _,
+            body,
+        } = self;
+        body.find_recog_metas(acc);
+    }
+}
+
+impl FindRecogMetas for DefinitionBody {
+    fn find_recog_metas(&self, acc: &mut Recognised) {
+        match self {
+            DefinitionBody::Normal(v) => v.find_recog_metas(acc),
+            DefinitionBody::Paste(v) => v.find_recog_metas(acc),
+        }
+    }
+}
+
+impl<O: SubstParseContext> FindRecogMetas for SubstIf<O> {
+    fn find_recog_metas(&self, acc: &mut Recognised) {
+        let Self {
+            tests,
+            otherwise,
+            kw_span: _,
+        } = self;
+        for (if_, then) in tests {
+            if_.find_recog_metas(acc);
+            then.find_recog_metas(acc);
+        }
+        otherwise.find_recog_metas(acc);
     }
 }
