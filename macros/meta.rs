@@ -152,12 +152,6 @@ impl<O: SubstParseContext> SubstMeta<O> {
     }
 }
 
-impl Spanned for Label {
-    fn span(&self) -> Span {
-        spans_join(self.spans()).expect("empty label!")
-    }
-}
-
 impl Label {
     /// Nonempty
     pub fn spans(&self) -> impl Iterator<Item = Span> + '_ {
@@ -360,7 +354,7 @@ impl Label {
     }
 }
 
-//---------- scope handling ----------
+//---------- scope and designator handling ----------
 
 impl<O> SubstMeta<O>
 where
@@ -389,6 +383,35 @@ where
             Scope::V => &ctx.variant(&kw_span)?.pmetas,
             Scope::F => &ctx.field(&kw_span)?.pfield.pmetas,
         })
+    }
+}
+
+impl ToTokens for Label {
+    fn to_tokens(&self, out: &mut TokenStream) {
+        let mut lpaths = self.lpaths.iter().rev();
+        let mut current =
+            lpaths.next().expect("empty path!").to_token_stream();
+        let r = loop {
+            let span = current.span();
+            let mut group =
+                proc_macro2::Group::new(Delimiter::Parenthesis, current);
+            group.set_span(span);
+            let wrap = if let Some(y) = lpaths.next() {
+                y
+            } else {
+                break group;
+            };
+            current = quote! { #wrap #group };
+        };
+        r.to_tokens(out);
+    }
+}
+
+impl Desig {
+    fn to_tokens(&self, scope_span: Span, out: &mut TokenStream) {
+        let scope: &str = self.scope.as_ref();
+        Ident::new(scope, scope_span).to_tokens(out);
+        self.label.to_tokens(out);
     }
 }
 
@@ -591,6 +614,20 @@ impl Recognised {
     pub fn update(&mut self, k: Desig, v: RecogAllow) {
         let ent = self.map.entry(k).or_insert(v);
         *ent = cmp::max(*ent, v);
+    }
+}
+
+impl ToTokens for Recognised {
+    fn to_tokens(&self, out: &mut TokenStream) {
+        for (desig, allow) in &self.map {
+            match allow {
+                RecogAllow::BoolOnly => {
+                    out.extend(quote! { ? });
+                }
+                RecogAllow::Value => {}
+            }
+            desig.to_tokens(Span::call_site(), out);
+        }
     }
 }
 
