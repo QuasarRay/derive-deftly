@@ -28,10 +28,18 @@ pub struct Label {
 }
 
 /// Meta designator eg `fmeta(foo(bar))`
+// Field order must be the same as BorrowedDesig
 #[derive(Debug, Clone, Eq, PartialEq, Hash)]
 pub struct Desig {
     pub scope: Scope,
     pub label: Label,
+}
+
+#[derive(Hash)]
+// Field order must be the same as meta::Desig
+struct BorrowedDesig<'p> {
+    pub scope: Scope,
+    pub lpaths: &'p [&'p syn::Path],
 }
 
 //---------- substitutions in a template ----------
@@ -425,6 +433,19 @@ impl Parse for Desig {
         let label = input.parse()?;
         Ok(Self { scope, label })
     }
+}
+
+impl indexmap::Equivalent<Desig> for BorrowedDesig<'_> {
+    fn equivalent(&self, desig: &Desig) -> bool {
+        let BorrowedDesig { scope, lpaths } = self;
+        *scope == desig.scope
+            && itertools::equal(lpaths.iter().copied(), &desig.label.lpaths)
+    }
+}
+
+#[test]
+fn check_borrowed_desig() {
+    // XXXX test Hash for BorrowedDesig
 }
 
 //---------- template expansion ----------
