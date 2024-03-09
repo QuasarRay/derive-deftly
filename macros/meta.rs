@@ -8,7 +8,7 @@ use indexmap::IndexMap;
 
 /// Indicates one of `fmeta`, `vmeta` or `tmeta`
 #[derive(Debug, Clone, Copy, Eq, PartialEq, Hash)]
-#[derive(AsRefStr, EnumString)]
+#[derive(AsRefStr, EnumString, EnumIter)]
 #[rustfmt::skip]
 pub enum Scope {
     // NB these keywords are duplicated in SubstDetails
@@ -443,9 +443,104 @@ impl indexmap::Equivalent<Desig> for BorrowedDesig<'_> {
     }
 }
 
+// Tests that our `BorrowedDesig` `equivalent` impl is justified.
 #[test]
 fn check_borrowed_desig() {
-    // XXXX test Hash for BorrowedDesig
+    use super::*;
+    use indexmap::Equivalent;
+    use itertools::iproduct;
+    use std::hash::{Hash, Hasher};
+
+    #[derive(PartialEq, Eq, Debug, Default)]
+    struct TrackingHasher(Vec<Vec<u8>>);
+    impl Hasher for TrackingHasher {
+        fn write(&mut self, bytes: &[u8]) {
+            self.0.push(bytes.to_owned());
+        }
+        fn finish(&self) -> u64 {
+            unreachable!()
+        }
+    }
+    impl TrackingHasher {
+        fn hash(t: impl Hash) -> Self {
+            let mut self_ = Self::default();
+            t.hash(&mut self_);
+            self_
+        }
+    }
+
+    type Case = (Scope, &'static [&'static str]);
+    const TEST_CASES: &[Case] = &[
+        (Scope::T, &["path"]),
+        (Scope::T, &["r#path"]),
+        (Scope::V, &["path", "some::path"]),
+        (Scope::V, &["r#struct", "with_generics::<()>"]),
+        (Scope::F, &[]), // illegal Desig, but test anyway
+    ];
+
+    struct Desigs<'b> {
+        owned: Desig,
+        borrowed: BorrowedDesig<'b>,
+    }
+    impl Desigs<'_> {
+        fn with((scope, lpaths): &Case, f: impl FnOnce(Desigs<'_>)) {
+            let scope = *scope;
+            let lpaths = lpaths
+                .iter()
+                .map(|l| syn::parse_str(l).expect(l))
+                .collect_vec();
+            let owned = {
+                let label = Label {
+                    lpaths: lpaths.clone(),
+                };
+                Desig { scope, label }
+            };
+            let lpaths_borrowed;
+            let borrowed = {
+                lpaths_borrowed = lpaths.iter().collect_vec();
+                BorrowedDesig {
+                    scope,
+                    lpaths: &*lpaths_borrowed,
+                }
+            };
+            f(Desigs { owned, borrowed })
+        }
+    }
+
+    // Test that for each entry in TEST_CASES, when parsed into Paths, etc.,
+    // BorrowedDesig is `equivalent` to, and hashes the same as, Desig.
+
+    for case in TEST_CASES {
+        Desigs::with(case, |d| {
+            assert!(d.borrowed.equivalent(&d.owned));
+            assert_eq!(
+                TrackingHasher::hash(&d.owned),
+                TrackingHasher::hash(&d.borrowed),
+            );
+        });
+    }
+
+    // Compare every TEST_CASES entry with every other entry.
+    // See if the owned forms are equal (according to `PartialEq`).
+    // Insist that the Borrowed vs owned `equivalent` relation agrees,
+    // in both directions.
+    // And, if they are equal, insist that the hashes all agree.
+
+    for (case0, case1) in iproduct!(TEST_CASES, TEST_CASES) {
+        Desigs::with(case0, |d0| {
+            Desigs::with(case1, |d1| {
+                let equal = d0.owned == d1.owned;
+                assert_eq!(equal, d0.borrowed.equivalent(&d1.owned));
+                assert_eq!(equal, d1.borrowed.equivalent(&d0.owned));
+                if equal {
+                    let hash = TrackingHasher::hash(&d0.owned);
+                    assert_eq!(hash, TrackingHasher::hash(&d1.owned));
+                    assert_eq!(hash, TrackingHasher::hash(&d0.borrowed));
+                    assert_eq!(hash, TrackingHasher::hash(&d1.borrowed));
+                }
+            });
+        });
+    }
 }
 
 //---------- template expansion ----------

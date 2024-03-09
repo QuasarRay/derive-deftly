@@ -18,7 +18,7 @@ pub use itertools::{chain, izip, Either, Itertools};
 pub use proc_macro2::{Delimiter, Ident, Punct};
 pub use proc_macro2::{Span, TokenStream, TokenTree};
 pub use quote::{format_ident, quote, quote_spanned, ToTokens};
-pub use strum::EnumString;
+pub use strum::{EnumString, EnumIter};
 pub use strum::IntoEnumIterator as _;
 pub use strum::{AsRefStr, Display, EnumCount};
 pub use syn::ext::IdentExt;
