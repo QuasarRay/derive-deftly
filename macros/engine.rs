@@ -267,7 +267,14 @@ impl ParseAdviseable for Box<dyn EngineInput> {
             Ok(parsed.map(|parsed| Box::new(parsed) as _))
         }
 
-        parse_as::<EngineExpandInput>(input)
+        let la = input.lookahead1();
+        if la.peek(token::Brace) {
+            parse_as::<EngineExpandInput>(input)
+        } else if la.peek(token::Bracket) {
+            todo!() // XXXX
+        } else {
+            Err(la.error())
+        }
     }
 }
 
