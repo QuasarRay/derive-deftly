@@ -29,7 +29,7 @@ impl Parse for EngineInput {
             // If `got` is an error, returns Some of what the outer closure
             // should return.  Otherwise, return None.
             let unadvised_err_of_unit =
-                |got: syn::Result<()>| got.err().map(Err).map(Ok);
+                |got: syn::Result<()>| got.err().map(ErrNNA).map(Ok);
 
             let driver;
             let driver_brace = braced!(driver in input);
@@ -87,10 +87,10 @@ impl Parse for EngineInput {
 
             let template = match template {
                 Ok(template) => template,
-                Err(err_return_raw) => return Ok(Err(err_return_raw)),
+                Err(err_return_raw) => return Ok(ErrNNA(err_return_raw)),
             };
 
-            Ok(Ok(EngineInput {
+            Ok(AOk(EngineInput {
                 driver_brace,
                 driver,
                 template_brace,
