@@ -11,6 +11,18 @@ pub fn advise_incompatibility(err_needing_advice: syn::Error) -> syn::Error {
     advice
 }
 
+pub fn handle_adviseable_result<T>(
+    ar: syn::Result<syn::Result<T>>
+) -> syn::Result<T> {
+    match ar {
+        Ok(Ok(good)) => Ok(good),
+        Ok(Err(err_to_return_directly)) => Err(err_to_return_directly),
+        Err(err_needing_advice) => {
+            Err(advise_incompatibility(err_needing_advice))
+        }
+    }
+}
+
 /// Tries to parse `T` using `call`, possibly offering compat advice
 ///
 /// `call` can return:
@@ -24,11 +36,5 @@ pub fn advise_incompatibility(err_needing_advice: syn::Error) -> syn::Error {
 pub fn parse_advised<T>(
     call: impl FnOnce() -> syn::Result<syn::Result<T>>,
 ) -> syn::Result<T> {
-    match call() {
-        Ok(Ok(good)) => Ok(good),
-        Ok(Err(err_to_return_directly)) => Err(err_to_return_directly),
-        Err(err_needing_advice) => {
-            Err(advise_incompatibility(err_needing_advice))
-        }
-    }
+    handle_adviseable_result(call())
 }
