@@ -191,7 +191,11 @@ pub fn derive_deftly(
 
     let mut output = TokenStream::new();
 
+    let mut meta_recog_check;
+
     if let Some(adhoc) = adhoc {
+        meta_recog_check = None;
+
         let macro_export = adhoc
             .pub_
             .map(|vis_pub| {
@@ -226,6 +230,8 @@ pub fn derive_deftly(
                 };
             }
         });
+    } else {
+        meta_recog_check = Some(vec![]);
     }
 
     for (mut templ_path, aoptions) in precanned_paths {
@@ -283,6 +289,23 @@ pub fn derive_deftly(
                 { }
             }
         });
+
+        if let Some(meta_recog_check) = &mut meta_recog_check {
+            meta_recog_check.push(templ_path);
+        }
+    }
+
+    if let Some(meta_recog_check) = meta_recog_check {
+        if let Some((first, rest)) = meta_recog_check.split_first() {
+            output.extend(quote! {
+                #first! {
+                    [ #( #rest, )* #engine_macro, ]
+                    [ ]
+                    /* should be [ 1 0 AOPTIONS ] here XXXX */
+                    { #driver }
+                }
+            });
+        }
     }
 
     dprint_block!(&output, "#[derive(Deftly)] output for {}", &driver.ident);
