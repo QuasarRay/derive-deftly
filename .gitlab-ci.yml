@@ -187,3 +187,9 @@ minimal-versions-minfeatures:
   script:
     - mv Cargo.lock.minimal Cargo.lock
     - maint/cargo-test-locked +1.56.0 -p derive-deftly-tests --no-default-features
+
+cargo-test-dprint:
+  stage: comprehensive
+  script:
+    - RUSTFLAGS="--cfg derive_deftly_dprint" DERIVE_DEFTLY_DPRINT=1 maint/cargo-test-locked --workspace --all-features -- run_pass_expand 3>&2 2>&1 1>&3 3>&- | tee dprint-output
+    - grep -m1 'derive_deftly_define start input' dprint-output

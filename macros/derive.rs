@@ -99,9 +99,9 @@ pub fn derive_deftly(
     // a bit like syn::DeriveInput.
     let driver: syn::DeriveInput = syn::parse2(driver_stream.clone())?;
 
-    // eprintln!("---------- #[derive(Deftly)] got start ----------");
-    // eprintln!("{}", &driver_stream);
-    // eprintln!("---------- #[derive(Deftly)] got end ----------");
+    dprintln!("---------- #[derive(Deftly)] got start ----------");
+    dprintln!("{}", &driver_stream);
+    dprintln!("---------- #[derive(Deftly)] got end ----------");
 
     let driver_mac_name =
         format_ident!("derive_deftly_driver_{}", &driver.ident);
@@ -287,10 +287,11 @@ pub fn derive_deftly(
         });
     }
 
-    // let ident = &driver.ident;
-    // eprintln!("---------- derive(Deftly) start on {} ----------", ident);
-    // eprintln!("{}", &output);
-    // eprintln!("---------- derive(Deftly) end on {} ----------", ident);
+    #[allow(unused_variables)]
+    let ident = &driver.ident;
+    dprintln!("---------- derive(Deftly) start on {} ----------", ident);
+    dprintln!("{}", &output);
+    dprintln!("---------- derive(Deftly) end on {} ----------", ident);
 
     Ok(output)
 }

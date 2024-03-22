@@ -47,9 +47,9 @@ pub fn derive_deftly_adhoc(
         template,
     } = syn::parse2(input)?;
 
-    // eprintln!("---------- derive_deftly got start ----------");
-    // eprintln!("{}\n{}", &driver.to_token_stream(), &template);
-    // eprintln!("---------- derive_deftly got end ----------");
+    dprintln!("---------- derive_deftly got start ----------");
+    dprintln!("{}\n{}", &driver.to_token_stream(), &template);
+    dprintln!("---------- derive_deftly got end ----------");
 
     let driver_mac_name = {
         let mut name = driver;
@@ -70,9 +70,9 @@ pub fn derive_deftly_adhoc(
         }
     };
 
-    // eprintln!("---------- derive_deftly_adhoc! output start ----------");
-    // eprintln!("{}", &output);
-    // eprintln!("---------- derive_deftly_adhoc! output end ----------");
+    dprintln!("---------- derive_deftly_adhoc! output start ----------");
+    dprintln!("{}", &output);
+    dprintln!("---------- derive_deftly_adhoc! output end ----------");
 
     Ok(output)
 }

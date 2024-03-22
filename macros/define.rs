@@ -150,13 +150,9 @@ pub fn escape_dollars(input: TokenStream) -> TokenStream {
 pub fn define_derive_deftly_func_macro(
     input: TokenStream,
 ) -> Result<TokenStream, syn::Error> {
-    // eprintln!(
-    //     "---------- derive_deftly_define start input ----------",
-    // );
-    // eprintln!("{}", &input);
-    // eprintln!(
-    //     "---------- derive_deftly_define end input ----------",
-    // );
+    dprintln!("---------- derive_deftly_define start input ----------");
+    dprintln!("{}", &input);
+    dprintln!("---------- derive_deftly_define end input ----------");
 
     let TemplateDefinition {
         doc_attrs,
@@ -246,15 +242,15 @@ To use it, write: `#[derive(Deftly)] #[derive_deftly({})]`."#,
         }
     });
 
-    // eprintln!(
-    //     "---------- derive_deftly_define start for {} ----------",
-    //     templ_mac_name
-    // );
-    // eprintln!("{}", &output);
-    // eprintln!(
-    //     "---------- derive_deftly_define end for {} ----------",
-    //     templ_mac_name
-    // );
+    dprintln!(
+        "---------- derive_deftly_define start for {} ----------",
+        templ_mac_name
+    );
+    dprintln!("{}", &output);
+    dprintln!(
+        "---------- derive_deftly_define end for {} ----------",
+        templ_mac_name
+    );
 
     Ok(output)
 }
