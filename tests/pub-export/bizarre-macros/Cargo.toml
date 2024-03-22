@@ -31,7 +31,7 @@ strum = { version = ">=0.24, <0.26", features = ["derive"] }
 syn = { version = "2.0.1", features = ["extra-traits"] }
 void = "1"
 
-heck = { version = "0.4", optional = true }
+heck = { version = ">=0.4, <0.6", optional = true }
 
 [lib]
 path = "../../../macros/macros.rs"
