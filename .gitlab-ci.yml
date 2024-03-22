@@ -83,7 +83,7 @@ cargo-test:
   image: rustlang/rust@sha256:ee4511e23bbd1d06ed24bed884e9df6ac4dc858d2e188b49c199bf56a7ece3f3
   script:
     - ./maint/via-cargo-install-in-ci cargo-expand --locked --version=1.0.67 --features=prettyplease
-    - cargo test --locked --workspace --verbose --all-features -- --skip directly::check_examples
+    - maint/cargo-test-locked --workspace --verbose --all-features -- --skip directly::check_examples
   cache:
     when: 'always'
     paths:
@@ -97,7 +97,7 @@ check-doc-examples:
   image: rustlang/rust@sha256:ee4511e23bbd1d06ed24bed884e9df6ac4dc858d2e188b49c199bf56a7ece3f3
   allow_failure: true
   script:
-    - cargo test --locked -p derive-deftly-tests --verbose --all-features -- --nocapture directly::check_examples
+    - maint/cargo-test-locked -p derive-deftly-tests --verbose --all-features -- --nocapture directly::check_examples
 
 # Test every commit
 #
@@ -109,7 +109,7 @@ every-commit:
   image: rustlang/rust@sha256:ee4511e23bbd1d06ed24bed884e9df6ac4dc858d2e188b49c199bf56a7ece3f3
   script:
     - ./maint/via-cargo-install-in-ci cargo-expand --locked --version=1.0.67 --features=prettyplease
-    - maint/for-every-commit cargo test --locked --workspace --verbose --all-features -- --skip directly::check_examples
+    - maint/for-every-commit maint/cargo-test-locked --workspace --verbose --all-features -- --skip directly::check_examples
   cache:
     when: 'always'
     paths:
@@ -119,7 +119,7 @@ cargo-test-minfeatures:
   stage: comprehensive
   image: rustlang/rust@sha256:ee4511e23bbd1d06ed24bed884e9df6ac4dc858d2e188b49c199bf56a7ece3f3
   script:
-    - cargo test --locked  -p derive-deftly-tests --no-default-features --features=derive-deftly-tests/recent -- --skip directly::check_examples
+    - maint/cargo-test-locked  -p derive-deftly-tests --no-default-features --features=derive-deftly-tests/recent -- --skip directly::check_examples
 
 # Test on Stable Rust
 #
@@ -130,12 +130,12 @@ cargo-test-minfeatures:
 stable:
   stage: comprehensive
   script:
-    - cargo test --locked --workspace --verbose --features=derive-deftly-tests/recent,derive-deftly-tests/full
+    - maint/cargo-test-locked --workspace --verbose --features=derive-deftly-tests/recent,derive-deftly-tests/full
 
 stable-minfeatures:
   stage: comprehensive
   script:
-    - cargo test --locked  -p derive-deftly-tests --no-default-features --features=derive-deftly-tests/recent
+    - maint/cargo-test-locked  -p derive-deftly-tests --no-default-features --features=derive-deftly-tests/recent
 
 # Test that users who like clippy don't get spurious warnings.
 # (eg, that the #27 lint avoidance technique hasn't regressed).
@@ -179,11 +179,11 @@ minimal-versions:
   image: "rust:1.56.0"
   script:
     - mv Cargo.lock.minimal Cargo.lock
-    - cargo +1.56.0 test --locked --workspace --no-default-features --features=derive-deftly-tests/full
+    - maint/cargo-test-locked +1.56.0 --workspace --no-default-features --features=derive-deftly-tests/full
 
 minimal-versions-minfeatures:
   stage: comprehensive
   image: "rust:1.56.0"
   script:
     - mv Cargo.lock.minimal Cargo.lock
-    - cargo +1.56.0 test --locked  -p derive-deftly-tests --no-default-features
+    - maint/cargo-test-locked +1.56.0 -p derive-deftly-tests --no-default-features
