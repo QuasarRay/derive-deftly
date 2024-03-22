@@ -188,9 +188,9 @@ impl<'c> Context<'c> {
 pub fn derive_deftly_engine_func_macro(
     input: TokenStream,
 ) -> syn::Result<TokenStream> {
-    // eprintln!("derive_deftly_engine! {}", &input);
+    dprintln!("derive_deftly_engine! {}", &input);
     let input: EngineInput = syn::parse2(input)?;
-    // eprintln!("derive_deftly_engine! crate = {:?}", &input.template_crate);
+    dprintln!("derive_deftly_engine! crate = {:?}", &input.template_crate);
 
     let DdOptions {
         dbg,

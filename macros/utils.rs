@@ -3,6 +3,10 @@
 use super::prelude::*;
 use proc_macro_crate::{crate_name, FoundCrate};
 
+//---------- dbg dumps of macro inputs/outputs ----------
+
+macro_rules! dprintln { { $( $x:tt )* } => {} }
+
 //---------- misc ----------
 
 /// Construct a braced group from a token expansion
