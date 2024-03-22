@@ -5,7 +5,39 @@ use proc_macro_crate::{crate_name, FoundCrate};
 
 //---------- dbg dumps of macro inputs/outputs ----------
 
-macro_rules! dprintln { { $( $x:tt )* } => {} }
+/// Calls eprintln! but only if enabled
+///
+/// Enabling means *both* `--cfg derive_deftly_dprint`
+/// and `DERIVE_DEFTLY_DPRINT` set to `1`.
+///
+/// ```text
+/// RUSTFLAGS="--cfg derive_deftly_dprint" DERIVE_DEFTLY_DPRINT=1 cargo build
+/// ```
+#[cfg(not(derive_deftly_dprint))]
+#[macro_use]
+pub mod dprint {
+    macro_rules! dprintln { { $( $x:tt )* } => {} }
+}
+
+#[cfg(derive_deftly_dprint)]
+#[macro_use]
+pub mod dprint {
+    pub fn wanted() -> bool {
+        const VAR: &str = "DERIVE_DEFTLY_DPRINT";
+        match std::env::var_os(VAR) {
+            None => false,
+            Some(y) if y == "0" => false,
+            Some(y) if y == "1" => true,
+            other => panic!("bad value for {}: {:?}", VAR, other),
+        }
+    }
+
+    macro_rules! dprintln { { $( $x:tt )* } => { {
+        if dprint::wanted() {
+            eprintln!( $($x)* )
+        }
+    } } }
+}
 
 //---------- misc ----------
 

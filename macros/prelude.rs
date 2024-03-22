@@ -38,7 +38,7 @@ pub use super::utils::ErrorAccumulator;
 pub use super::utils::ToTokensPunctComposable;
 pub use super::utils::{advise_incompatibility, parse_advised};
 pub use super::utils::{braced_group, delimit_token_group};
-pub use super::utils::{engine_macro_name, spans_join};
+pub use super::utils::{dprint, engine_macro_name, spans_join};
 pub use super::utils::{Concatenated, Discard};
 pub use super::utils::{ErrorLoc, IdentAny, MakeError};
 pub(super) use super::{check, dbg_allkw, framework, meta};
