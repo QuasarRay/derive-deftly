@@ -38,10 +38,15 @@ pub use super::utils::ErrorAccumulator;
 pub use super::utils::ToTokensPunctComposable;
 pub use super::utils::{advise_incompatibility, parse_advised};
 pub use super::utils::{braced_group, delimit_token_group};
-pub use super::utils::{dprint, engine_macro_name, spans_join};
+pub use super::utils::{engine_macro_name, spans_join};
 pub use super::utils::{Concatenated, Discard};
 pub use super::utils::{ErrorLoc, IdentAny, MakeError};
 pub(super) use super::{check, dbg_allkw, framework, meta};
+
+// this is used by the dprintln! macro, which can't just use crate
+// but which doesn't use the import if it's not enabled
+#[allow(unused_imports)]
+pub use super::utils::dprint;
 
 pub use super::compat_syn_2::*;
 pub use super::compat_syn_common::*;
