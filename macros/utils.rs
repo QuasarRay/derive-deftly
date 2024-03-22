@@ -13,10 +13,21 @@ use proc_macro_crate::{crate_name, FoundCrate};
 /// ```text
 /// RUSTFLAGS="--cfg derive_deftly_dprint" DERIVE_DEFTLY_DPRINT=1 cargo build
 /// ```
+///
+/// Output can be rather interleaved due to test parallelism etc.
 #[cfg(not(derive_deftly_dprint))]
 #[macro_use]
 pub mod dprint {
     macro_rules! dprintln { { $( $x:tt )* } => {} }
+
+    /// For debug printing a block of input or output
+    ///
+    ///  * `dprint_block!( VALUE, FORMAT [, ARGS...]);`
+    ///  * `dprint_block!( [VALUE, ...], FORMAT [, ARGS...]);`
+    ///
+    /// Each `VALUE` is formatting with `Display`.
+    /// `FORMAT, [, ARGS]` is used in the dividers surrounding the output.
+    macro_rules! dprint_block { { $( $x:tt )* } => {} }
 }
 
 #[cfg(derive_deftly_dprint)]
@@ -36,6 +47,28 @@ pub mod dprint {
         if dprint::wanted() {
             eprintln!( $($x)* )
         }
+    } } }
+
+    macro_rules! dprint_block { {
+        [ $($value:expr),* $(,)? ], $f:literal $( $x:tt )*
+    } => { {
+        dprintln!(concat!("---------- ", $f, " start ----------") $($x)*);
+        dprint_block!(@ $( $value, )*);
+        dprintln!(concat!("---------- ", $f, " end ----------") $($x)*);
+    } }; {
+        @ $value:expr,
+    } => { {
+        dprintln!("{}", $value);
+    } }; {
+        @ $value:expr, $($more:tt)+
+    } => { {
+        dprint_block!(@ $value,);
+        dprintln!("----------");
+        dprint_block!(@ $($more)+);
+    } }; {
+        $value:expr, $f:literal $( $x:tt )*
+    } => { {
+        dprint_block!([$value], $f $($x)*);
     } } }
 }
 
