@@ -3,7 +3,9 @@
 use super::framework::*;
 use adviseable::*;
 
-/// Input to `derive_deftly_engine!`
+/// Input to `derive_deftly_engine!`, principal form (template expansion)
+///
+/// See `implementation.md`.
 #[derive(Debug)]
 struct EngineInput {
     #[allow(dead_code)]
@@ -166,18 +168,9 @@ impl<'c> Context<'c> {
     }
 }
 
-/// `derive_deftly_engine!` -- implements the actual template engine
-///
-/// In my design, the input contains, firstly, literally the definition
-/// that #[derive(Deftly)] was applied to (see NOTES.txt).
-/// Using the literal input, rather than some pre-parsed version, is
-/// slower, but means that we aren't inventing a nontrivial data format which
-/// potentially crosses crate boundaries with semver implications.
-pub fn derive_deftly_engine_func_macro(
-    input: TokenStream,
-) -> syn::Result<TokenStream> {
-    dprint_block!(&input, "derive_deftly_engine! input");
-    let input: EngineInput = adviseable_parse2(input)?;
+impl EngineInput {
+  fn process(self) -> syn::Result<TokenStream> {
+      let input = self;
     dprintln!("derive_deftly_engine! crate = {:?}", &input.template_crate);
 
     let DdOptions {
@@ -240,4 +233,21 @@ pub fn derive_deftly_engine_func_macro(
             Ok(output)
         },
     )
+
+  }
+}
+    
+/// `derive_deftly_engine!` -- implements the actual template engine
+///
+/// In my design, the input contains, firstly, literally the definition
+/// that #[derive(Deftly)] was applied to (see NOTES.txt).
+/// Using the literal input, rather than some pre-parsed version, is
+/// slower, but means that we aren't inventing a nontrivial data format which
+/// potentially crosses crate boundaries with semver implications.
+pub fn derive_deftly_engine_func_macro(
+    input: TokenStream,
+) -> syn::Result<TokenStream> {
+    dprint_block!(&input, "derive_deftly_engine! input");
+    let input: EngineInput = adviseable_parse2(input)?;
+    input.process()
 }
