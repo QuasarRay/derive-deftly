@@ -13,11 +13,11 @@ error: this file contains an unclosed delimiter
    |
    = note: this error originates in the macro `::derive_adhoc::derive_adhoc_expand` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error: lex error
-  --> ui/badmeta.rs:4:17
+error: cannot parse string into token stream
+  --> ui/badmeta.rs:3:10
    |
-4  |   #[adhoc(wrong = "{")]
-   |                   ^^^
+3  |   #[derive(Adhoc)]
+   |            ^^^^^
 ...
 11 | / derive_adhoc! {
 12 | |     DataType:
@@ -26,7 +26,7 @@ error: lex error
 15 | | }
    | |_- in this macro invocation
    |
-   = note: this error originates in the macro `derive_adhoc_driver_DataType` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+   = note: this error originates in the macro `::derive_adhoc::derive_adhoc_expand` which comes from the expansion of the macro `derive_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: constructed identifier "Bad." is invalid
   --> ui/badmeta.rs:25:14
