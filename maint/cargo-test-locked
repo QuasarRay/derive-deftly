@@ -1,0 +1,14 @@
+#! /bin/sh
+#
+# Usage:
+#    maint/cargo-test-locked [OPTIONS TO CARGO TEST]
+#
+# We always use --locked.
+
+set -e
+
+: ${CARGO:=cargo}
+
+set -x
+
+$CARGO test --locked "$@"
