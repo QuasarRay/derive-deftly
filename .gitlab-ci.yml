@@ -179,11 +179,11 @@ minimal-versions:
   image: "rust:1.56.0"
   script:
     - mv Cargo.lock.minimal Cargo.lock
-    - cargo +1.56.0 test --locked --workspace --no-default-features --features=derive-deftly-tests/full
+    - maint/cargo-test-locked +1.56.0 --workspace --no-default-features --features=derive-deftly-tests/full
 
 minimal-versions-minfeatures:
   stage: comprehensive
   image: "rust:1.56.0"
   script:
     - mv Cargo.lock.minimal Cargo.lock
-    - cargo +1.56.0 test --locked  -p derive-deftly-tests --no-default-features
+    - maint/cargo-test-locked +1.56.0 -p derive-deftly-tests --no-default-features
