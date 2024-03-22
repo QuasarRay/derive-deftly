@@ -70,9 +70,7 @@ pub fn derive_deftly_adhoc(
         }
     };
 
-    dprintln!("---------- derive_deftly_adhoc! output start ----------");
-    dprintln!("{}", &output);
-    dprintln!("---------- derive_deftly_adhoc! output end ----------");
+    dprint_block!(&output, "derive_deftly_adhoc! output");
 
     Ok(output)
 }
