@@ -13,6 +13,8 @@
 # and it relies on the workspace fetch having fetched everything.
 #
 # So instead of running `cargo test`, we always do a `fetch` first
+#
+# See https://github.com/dtolnay/trybuild/issues/261
 
 set -e
 
