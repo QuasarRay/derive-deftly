@@ -5,10 +5,20 @@
 #
 # We always use --locked.
 
+# Some recent versions of cargo don't seem to fetch every crate that
+# *might* be needed, because they can calculate based on features
+# that some of them won't be.
+#
+# The result can be that `trybuild` fails, because it uses --offline,
+# and it relies on the workspace fetch having fetched everything.
+#
+# So instead of running `cargo test`, we always do a `fetch` first
+
 set -e
 
 : ${CARGO:=cargo}
 
 set -x
 
+$CARGO fetch --locked
 $CARGO test --locked "$@"
