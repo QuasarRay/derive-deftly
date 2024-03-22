@@ -26,6 +26,14 @@ We expect to increase it cautiously and only with good reason.
 This is the changelog for the *stable branch* 0.8.x.
 This branch is currently maintained but will not receive new features.
 
+### 0.8.3
+
+#### Fixed
+
+ * Fixed a largely-theoretical concurrency bug which could cause
+   wrong error output if multiple invocations generated identical,
+   but syntactically-invalid, expansions.  (!262 / !263).
+
 ### 0.8.2
 
 #### Improved
