@@ -13,6 +13,8 @@ use proc_macro_crate::{crate_name, FoundCrate};
 /// ```text
 /// RUSTFLAGS="--cfg derive_deftly_dprint" DERIVE_DEFTLY_DPRINT=1 cargo build
 /// ```
+///
+/// Output can be rather interleaved due to test parallelism etc.
 #[cfg(not(derive_deftly_dprint))]
 #[macro_use]
 pub mod dprint {
