@@ -170,12 +170,13 @@ fn one_collection(coll: &str, compiles: Result<(), ()>) {
     }
 }
 
+#[cfg(feature = "ui")]
 #[test]
 fn stderr_main() {
     one_collection("main", Err(()));
 }
 
-#[cfg(feature = "recent")]
+#[cfg(all(feature = "ui", feature = "recent"))]
 #[test]
 fn stderr_recent() {
     one_collection("recent", Ok(()));
