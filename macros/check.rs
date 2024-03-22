@@ -102,7 +102,7 @@ fn expand_via_file(
     broken: TokenStream,
 ) -> Result<TokenStream, String> {
     use sha3::{Digest as _, Sha3_256};
-    use std::{fs, io, path::PathBuf};
+    use std::{fs, io, io::Write as _, path::PathBuf};
 
     let text = format!("// {}:\n{}\n", ctx.expansion_description(), broken);
 
@@ -133,12 +133,28 @@ fn expand_via_file(
     let file = file
         .to_str()
         .ok_or_else(|| format!("non UTF-8 path? from env var! {:?}", file))?;
-    let file_tmp = some_file(&format!("{}~", leaf));
 
-    fs::write(&file_tmp, &text)
-        .map_err(|e| format!("create {:?}: {}", &file_tmp, e))?;
-    fs::rename(&file_tmp, &file)
-        .map_err(|e| format!("install new {:?}: {}", &file, e))?;
+    // We *overwrite* the file in place.
+    //
+    // This is because it's theoretically possible that multiple calls
+    // to this function, at the same time, might be generating files
+    // with identical contents, and therefore the same name.
+    //
+    // So we open it with O_CREATE|O_WRITE but *not* O_TRUNC,
+    // and write our data, and then declare our job done.
+    // This is idempotent and concurrency-safe.
+    //
+    // There is no need to truncate the file, since all writers
+    // are writing the same text.  (If we change the hashing scheme,
+    // we must change the filename too.)
+
+    let mut fh = fs::OpenOptions::new()
+        .write(true)
+        .create(true)
+        .open(file)
+        .map_err(|e| format!("create/open {:?}: {}", &file, e))?;
+    fh.write_all(text.as_ref())
+        .map_err(|e| format!("write {:?}: {}", &file, e))?;
 
     Ok(target.include_syntax(file))
 }
