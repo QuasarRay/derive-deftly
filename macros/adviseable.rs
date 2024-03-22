@@ -91,15 +91,44 @@ pub fn parse_advised<T>(
 
 /// Within `parse_advised`, handle an error *without* giving advice
 ///
-/// If `got` is an error, returns Some of what the closure for
-/// [`parse_advised`] should return (always `Err`, then).
+/// `parse_unadvised! { CONTENT_IDENT => || CLOSURE_BODY }`
+/// expects `CONTENT_IDENT` to be the contents from
+/// [`braced!`], [`bracketed!]` or [`parenthesized!`].
+/// Calls the closure.
+/// Errors within the closure won't get advice.
 ///
-/// Otherwise, return None.
-pub fn err_mk_unadvised<T>(
-    got: syn::Result<()>,
-) -> Option<AdviseableResult<T>> {
-    match got {
-        Ok(()) => None,
-        Err(e) => Some(Ok(ErrNNA(e))),
+/// `parse_unadvised! { CONTENT_IDENT }`
+/// shorthand for calling `.parse()` on the content.
+///
+/// # Sketch
+///
+/// ```rust,ignore
+/// let something;
+/// let _ = bracketed!(something in input);
+/// parse_unadvised! {
+///     something => || {
+///         // do something with something, eg something.parse()
+///         Ok(...)
+///     }
+/// }
+/// ```
+macro_rules! parse_unadvised { {
+    $content:ident
+} => {
+    parse_unadvised! { $content => || $content.parse() }
+}; {
+    $content:ident => || $( $call:tt )*
+} => {
+    match syn::parse::Parser::parse2(
+        // We convert the input to the `TokenStream2` and back,
+        // so that we surface "unexpected token errors" here
+        // rather than at the toplevel parsing call.
+        |$content: ParseStream<'_>| -> syn::Result<_> {
+            $($call)*
+        },
+        $content.parse::<TokenStream>()?
+    ) {
+        Ok(y) => y,
+        Err::<_, syn::Error>(e) => return Ok(ErrNNA(e)),
     }
-}
+} }

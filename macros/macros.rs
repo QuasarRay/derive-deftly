@@ -12,6 +12,7 @@ pub(crate) use prelude::*;
 // Implementation - common parts
 #[macro_use]
 pub(crate) mod utils;
+#[macro_use]
 pub(crate) mod adviseable;
 pub(crate) mod framework;
 

@@ -32,10 +32,11 @@ impl Parse for EngineInput {
                 // `#[derive()` application.
                 let tokens;
                 let _ = bracketed!(tokens in input);
-                let r = options
-                    .parse_update(&tokens, OpContext::DriverApplicationPassed);
-                if let Some(r) = err_mk_unadvised(r) {
-                    return r;
+                parse_unadvised! {
+                    tokens => || {
+                        let oc = OpContext::DriverApplicationPassed;
+                        options .parse_update(&tokens, oc)
+                    }
                 }
             }
 
@@ -45,7 +46,6 @@ impl Parse for EngineInput {
 
             let template;
             let template_brace = braced!(template in input);
-            let template = Template::parse(&template);
 
             let template_crate;
             let template_name;
@@ -59,9 +59,10 @@ impl Parse for EngineInput {
 
                 let tokens;
                 let _ = bracketed!(tokens in input);
-                let r = options.parse_update(&tokens, OpContext::Template);
-                if let Some(r) = err_mk_unadvised(r) {
-                    return r;
+                parse_unadvised! {
+                    tokens => || {
+                        options.parse_update(&tokens, OpContext::Template)
+                    }
                 }
 
                 template_name = if input.peek(Token![;]) {
@@ -76,10 +77,7 @@ impl Parse for EngineInput {
 
             let _: TokenStream = input.parse()?;
 
-            let template = match template {
-                Ok(template) => template,
-                Err(err_return_raw) => return Ok(ErrNNA(err_return_raw)),
-            };
+            let template = parse_unadvised! { template };
 
             Ok(AOk(EngineInput {
                 driver_brace,
