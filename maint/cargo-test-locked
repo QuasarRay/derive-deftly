@@ -1,7 +1,7 @@
 #! /bin/sh
 #
 # Usage:
-#    maint/cargo-test-locked [OPTIONS TO CARGO TEST]
+#    maint/cargo-test-locked [+VERSION] [OPTIONS TO CARGO TEST]
 #
 # We always use --locked.
 
@@ -17,6 +17,10 @@
 set -e
 
 : ${CARGO:=cargo}
+
+case "$1" in
++*)	CARGO="$CARGO $1"; shift ;;
+esac
 
 set -x
 
