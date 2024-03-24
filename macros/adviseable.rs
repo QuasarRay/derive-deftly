@@ -1,6 +1,21 @@
 //! errors with compatibility advice
 //!
 //! Suitable for local glob import.
+//!
+//! ### Non-local errors from syn
+//!
+//! `syn` automatically produces "unexpected token" errors,
+//! if not all of the input is consumed, somewhere.
+//!
+//! Empirically:
+//! these errors are squirreled away somewhere, and surface
+//! on return from one of the top-level syn `parse` functions
+//! (the ones that provide a `ParseStream`).
+//!
+//! If the top-level function would return `Ok`,
+//! the unexpected tokens error appears instead.
+//! But if there's going to be an error anyway,
+//! the unexpected tokens error is discarded.
 
 use super::prelude::*;
 
@@ -35,6 +50,20 @@ pub use AdviseableInnerResult::ErrNeedsNoAdvice as ErrNNA;
 pub use AdviseableInnerResult::Ok as AOk;
 
 /// Add a warning about derive-deftly version incompatibility
+///
+/// ### Lost advice hazard
+///
+/// Take care!
+/// `syn` generates errors from unprocessed tokens in [`syn::parse2`] etc.
+/// Calling this function *within* `syn::parse2`
+/// (ie, somewhere you have a `ParseStream`,
+/// will result in those errors not receiving advice.
+///
+/// Ideally, call this from functions that have a `TokenStream`.
+/// If you do that, then functions *isnide* that can
+/// use this method, avoiding the problem:
+/// any errors stored up by `syn` will emerge at that call site,
+/// and be properly dealt with.
 pub fn advise_incompatibility(err_needing_advice: syn::Error) -> syn::Error {
     let mut advice = Span::call_site().error(
         "bad input to derive_deftly_engine inner template expansion proc macro; might be due to incompatible derive-deftly versions(s)"
