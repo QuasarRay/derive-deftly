@@ -19,74 +19,74 @@ struct EngineInput {
 
 impl ParseAdviseable for EngineInput {
     fn parse_adviseable(input: ParseStream) -> AdviseableResult<Self> {
-            let mut options = DdOptions::default();
+        let mut options = DdOptions::default();
 
-            let driver;
-            let driver_brace = braced!(driver in input);
-            let driver = driver.parse()?;
+        let driver;
+        let driver_brace = braced!(driver in input);
+        let driver = driver.parse()?;
 
-            if input.peek(syn::token::Bracket) {
-                // AOPTIONS appears iff we're being invoked for a precanned
-                // template, rather than an adhoc one; it's from the
-                // `#[derive()` application.
-                let tokens;
-                let _ = bracketed!(tokens in input);
-                parse_unadvised! {
-                    tokens => || {
-                        let oc = OpContext::DriverApplicationPassed;
-                        options .parse_update(&tokens, oc)
-                    }
+        if input.peek(syn::token::Bracket) {
+            // AOPTIONS appears iff we're being invoked for a precanned
+            // template, rather than an adhoc one; it's from the
+            // `#[derive()` application.
+            let tokens;
+            let _ = bracketed!(tokens in input);
+            parse_unadvised! {
+                tokens => || {
+                    let oc = OpContext::DriverApplicationPassed;
+                    options .parse_update(&tokens, oc)
+                }
+            }
+        }
+
+        let driver_passed;
+        let _ = braced!(driver_passed in input);
+        let _: TokenStream = driver_passed.parse()?;
+
+        let template;
+        let template_brace = braced!(template in input);
+
+        let template_crate;
+        let template_name;
+        {
+            let template_passed;
+            let _ = braced!(template_passed in input);
+            let input = template_passed;
+
+            template_crate = input.parse()?;
+            let _: Token![;] = input.parse()?;
+
+            let tokens;
+            let _ = bracketed!(tokens in input);
+            parse_unadvised! {
+                tokens => || {
+                    options.parse_update(&tokens, OpContext::Template)
                 }
             }
 
-            let driver_passed;
-            let _ = braced!(driver_passed in input);
-            let _: TokenStream = driver_passed.parse()?;
-
-            let template;
-            let template_brace = braced!(template in input);
-
-            let template_crate;
-            let template_name;
-            {
-                let template_passed;
-                let _ = braced!(template_passed in input);
-                let input = template_passed;
-
-                template_crate = input.parse()?;
-                let _: Token![;] = input.parse()?;
-
-                let tokens;
-                let _ = bracketed!(tokens in input);
-                parse_unadvised! {
-                    tokens => || {
-                        options.parse_update(&tokens, OpContext::Template)
-                    }
-                }
-
-                template_name = if input.peek(Token![;]) {
-                    None
-                } else {
-                    Some(input.parse()?)
-                };
-                let _: Token![;] = input.parse()?;
-
-                let _: TokenStream = input.parse()?;
-            }
+            template_name = if input.peek(Token![;]) {
+                None
+            } else {
+                Some(input.parse()?)
+            };
+            let _: Token![;] = input.parse()?;
 
             let _: TokenStream = input.parse()?;
+        }
 
-            let template = parse_unadvised! { template };
+        let _: TokenStream = input.parse()?;
 
-            Ok(AOk(EngineInput {
-                driver_brace,
-                driver,
-                template_brace,
-                template,
-                template_crate,
-                template_name,
-                options,
-            }))
+        let template = parse_unadvised! { template };
+
+        Ok(AOk(EngineInput {
+            driver_brace,
+            driver,
+            template_brace,
+            template,
+            template_crate,
+            template_name,
+            options,
+        }))
     }
 }
 
