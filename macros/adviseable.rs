@@ -12,6 +12,10 @@ use super::prelude::*;
 ///  * `Ok(ErrNeedsNoAdvice(cooked))`: "expected" error, fully reported for
 ///    the user's benefit.  Returned as-is by `parse_advised`.
 ///  * `Ok(Ok(T))`.  All went well.
+///
+/// This odd structure is to add a note to most of the errors that
+/// come out of syn parsing.  The `braced!` etc. macros insist that the
+/// calling scope throws `syn::Error`.
 pub type AdviseableResult<T> = syn::Result<AdviseableInnerResult<T>>;
 
 /// Typically found as `syn::Result<AdvisedResult<T>>`

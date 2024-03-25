@@ -19,10 +19,6 @@ struct EngineInput {
 
 impl Parse for EngineInput {
     fn parse(input: ParseStream) -> syn::Result<Self> {
-        // This strange structure is to add a note to most of the errors that
-        // come out of syn parsing.  The braced! etc. macros insist that the
-        // calling scope throws syn::Error.
-        // See the match at the bottom for what the return values mean.
         parse_advised(move || {
             let mut options = DdOptions::default();
 
