@@ -19,6 +19,25 @@ struct EngineExpandInput {
     template: Template<TokenAccumulator>,
 }
 
+/// Input to an invocation of `derive_deftly_engine!`
+///
+/// The trait impl includes knowledge of how to
+/// parse it (via of the [`ParseAdviseable`] supertrait bound)
+/// and process it.
+///
+/// Having this as a trait avoids having to have an enum,
+/// with a lot of repeated code.
+pub trait EngineInput: ParseAdviseable + Debug + 'static {
+    /// Process this input
+    ///
+    /// Commented-out debugging printing of the *input* has been done.
+    ///
+    /// Debugging printing of the *output* is to be done by this  function,
+    /// since for `EngineExpandInput` it is the `dbg` d-d option,
+    /// but for others is commented out raw eprintln.
+    fn process(self: Box<Self>) -> syn::Result<TokenStream>;
+}
+
 impl ParseAdviseable for EngineExpandInput {
     fn parse_adviseable(input: ParseStream) -> AdviseableResult<Self> {
         let mut options = DdOptions::default();
@@ -168,8 +187,8 @@ impl<'c> Context<'c> {
     }
 }
 
-impl EngineExpandInput {
-    fn process(self) -> syn::Result<TokenStream> {
+impl EngineInput for EngineExpandInput {
+    fn process(self: Box<Self>) -> syn::Result<TokenStream> {
         dprintln!("derive_deftly_engine! crate = {:?}", &self.template_crate);
 
         let DdOptions {
@@ -239,6 +258,19 @@ impl EngineExpandInput {
     }
 }
 
+impl ParseAdviseable for Box<dyn EngineInput> {
+    fn parse_adviseable(input: ParseStream) -> AdviseableResult<Self> {
+        fn parse_as<T: EngineInput>(
+            input: ParseStream,
+        ) -> AdviseableResult<Box<dyn EngineInput>> {
+            let parsed = T::parse_adviseable(input)?;
+            Ok(parsed.map(|parsed| Box::new(parsed) as _))
+        }
+
+        parse_as::<EngineExpandInput>(input)
+    }
+}
+
 /// `derive_deftly_engine!` -- implements the actual template engine
 ///
 /// In my design, the input contains, firstly, literally the definition
@@ -250,6 +282,6 @@ pub fn derive_deftly_engine_func_macro(
     input: TokenStream,
 ) -> syn::Result<TokenStream> {
     dprint_block!(&input, "derive_deftly_engine! input");
-    let input: EngineExpandInput = adviseable_parse2(input)?;
+    let input: Box<dyn EngineInput> = adviseable_parse2(input)?;
     input.process()
 }
