@@ -7,7 +7,7 @@ use adviseable::*;
 ///
 /// See `implementation.md`.
 #[derive(Debug)]
-struct EngineInput {
+struct EngineExpandInput {
     #[allow(dead_code)]
     driver_brace: token::Brace,
     driver: syn::DeriveInput,
@@ -19,7 +19,7 @@ struct EngineInput {
     template: Template<TokenAccumulator>,
 }
 
-impl ParseAdviseable for EngineInput {
+impl ParseAdviseable for EngineExpandInput {
     fn parse_adviseable(input: ParseStream) -> AdviseableResult<Self> {
         let mut options = DdOptions::default();
 
@@ -80,7 +80,7 @@ impl ParseAdviseable for EngineInput {
 
         let template = parse_unadvised! { template };
 
-        Ok(AOk(EngineInput {
+        Ok(AOk(EngineExpandInput {
             driver_brace,
             driver,
             template_brace,
@@ -168,7 +168,7 @@ impl<'c> Context<'c> {
     }
 }
 
-impl EngineInput {
+impl EngineExpandInput {
     fn process(self) -> syn::Result<TokenStream> {
         dprintln!("derive_deftly_engine! crate = {:?}", &self.template_crate);
 
@@ -250,6 +250,6 @@ pub fn derive_deftly_engine_func_macro(
     input: TokenStream,
 ) -> syn::Result<TokenStream> {
     dprint_block!(&input, "derive_deftly_engine! input");
-    let input: EngineInput = adviseable_parse2(input)?;
+    let input: EngineExpandInput = adviseable_parse2(input)?;
     input.process()
 }
