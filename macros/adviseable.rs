@@ -31,6 +31,8 @@ use super::prelude::*;
 /// This odd structure is to add a note to most of the errors that
 /// come out of syn parsing.  The `braced!` etc. macros insist that the
 /// calling scope throws `syn::Error`.
+///
+/// This is the return type of `ParseAdviseable::parse_adviseable`.
 pub type AdviseableResult<T> = syn::Result<AdviseableInnerResult<T>>;
 
 /// Typically found as `syn::Result<AdvisedResult<T>>`
@@ -46,8 +48,56 @@ pub enum AdviseableInnerResult<T> {
     ErrNeedsNoAdvice(syn::Error),
 }
 
+/// Types that can be parsed, but might need compat advice
+pub trait ParseAdviseable {
+    fn parse_adviseable(input: ParseStream) -> AdviseableResult<Self>
+    where
+        Self: Sized;
+}
+
 pub use AdviseableInnerResult::ErrNeedsNoAdvice as ErrNNA;
 pub use AdviseableInnerResult::Ok as AOk;
+
+/// **Parses `T`, and produces advice if necessary** (principal entrypoint)
+///
+/// All top-level proc_macro entrypoints that want to give advice,
+/// should ideally call this.
+/// (See the note in `advise_incompatibility`.)
+pub fn adviseable_parse2<T: ParseAdviseable>(
+    input: TokenStream,
+) -> syn::Result<T> {
+    // If somehow our closure doesn't get called, we want to give
+    // advice, so make that the default.
+    let mut needs_advice = true;
+    let ar = syn::parse::Parser::parse2(
+        |input: ParseStream<'_>| {
+            // When we're returning an error that needs no advice, we must
+            // return *Err* from here, not Ok(NNA), because if we return Ok,
+            // syn might surface an unexpected tokens error instead of the
+            // non-advice-needing error we actually want.
+            //
+            // Encoding the advice-needed status in the error would
+            // be difficult, given how opaque syn::Error is.  So
+            // we smuggle a &mut bool into the closure.
+            match T::parse_adviseable(input) {
+                Err(needs) => Err(needs),
+                Ok(ErrNNA(unadv)) => {
+                    needs_advice = false;
+                    Err(unadv)
+                }
+                Ok(AOk(y)) => Ok(y),
+            }
+        },
+        input,
+    );
+    ar.map_err(|e| {
+        if needs_advice {
+            advise_incompatibility(e)
+        } else {
+            e
+        }
+    })
+}
 
 /// Add a warning about derive-deftly version incompatibility
 ///
@@ -72,24 +122,7 @@ pub fn advise_incompatibility(err_needing_advice: syn::Error) -> syn::Error {
     advice
 }
 
-pub fn handle_adviseable_result<T>(ar: AdviseableResult<T>) -> syn::Result<T> {
-    match ar {
-        Ok(AOk(good)) => Ok(good),
-        Ok(ErrNNA(err_to_return_directly)) => Err(err_to_return_directly),
-        Err(err_needing_advice) => {
-            Err(advise_incompatibility(err_needing_advice))
-        }
-    }
-}
-
-/// Tries to parse `T` using `call`, possibly offering compat advice
-pub fn parse_advised<T>(
-    call: impl FnOnce() -> AdviseableResult<T>,
-) -> syn::Result<T> {
-    handle_adviseable_result(call())
-}
-
-/// Within `parse_advised`, handle an error *without* giving advice
+/// Within `parse_adviseable`, handle errors *without* giving advice
 ///
 /// `parse_unadvised! { CONTENT_IDENT => || CLOSURE_BODY }`
 /// expects `CONTENT_IDENT` to be the contents from

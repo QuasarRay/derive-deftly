@@ -17,9 +17,8 @@ struct EngineInput {
     template: Template<TokenAccumulator>,
 }
 
-impl Parse for EngineInput {
-    fn parse(input: ParseStream) -> syn::Result<Self> {
-        parse_advised(move || {
+impl ParseAdviseable for EngineInput {
+    fn parse_adviseable(input: ParseStream) -> AdviseableResult<Self> {
             let mut options = DdOptions::default();
 
             let driver;
@@ -88,7 +87,6 @@ impl Parse for EngineInput {
                 template_name,
                 options,
             }))
-        })
     }
 }
 
@@ -179,7 +177,7 @@ pub fn derive_deftly_engine_func_macro(
     input: TokenStream,
 ) -> syn::Result<TokenStream> {
     dprint_block!(&input, "derive_deftly_engine! input");
-    let input: EngineInput = syn::parse2(input)?;
+    let input: EngineInput = adviseable_parse2(input)?;
     dprintln!("derive_deftly_engine! crate = {:?}", &input.template_crate);
 
     let DdOptions {
