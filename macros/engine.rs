@@ -1,6 +1,7 @@
 //! `derive_deftly_engine!()`
 
 use super::framework::*;
+use adviseable::*;
 
 /// Input to `derive_deftly_engine!`
 #[derive(Debug)]
@@ -16,89 +17,76 @@ struct EngineInput {
     template: Template<TokenAccumulator>,
 }
 
-impl Parse for EngineInput {
-    fn parse(input: ParseStream) -> syn::Result<Self> {
-        // This strange structure is to add a note to most of the errors that
-        // come out of syn parsing.  The braced! etc. macros insist that the
-        // calling scope throws syn::Error.
-        // See the match at the bottom for what the return values mean.
-        parse_advised(move || {
-            let mut options = DdOptions::default();
+impl ParseAdviseable for EngineInput {
+    fn parse_adviseable(input: ParseStream) -> AdviseableResult<Self> {
+        let mut options = DdOptions::default();
 
-            // If `got` is an error, returns Some of what the outer closure
-            // should return.  Otherwise, return None.
-            let unadvised_err_of_unit =
-                |got: syn::Result<()>| got.err().map(Err).map(Ok);
+        let driver;
+        let driver_brace = braced!(driver in input);
+        let driver = driver.parse()?;
 
-            let driver;
-            let driver_brace = braced!(driver in input);
-            let driver = driver.parse()?;
+        if input.peek(syn::token::Bracket) {
+            // AOPTIONS appears iff we're being invoked for a precanned
+            // template, rather than an adhoc one; it's from the
+            // `#[derive()` application.
+            let tokens;
+            let _ = bracketed!(tokens in input);
+            parse_unadvised! {
+                tokens => || {
+                    let oc = OpContext::DriverApplicationPassed;
+                    options .parse_update(&tokens, oc)
+                }
+            }
+        }
 
-            if input.peek(syn::token::Bracket) {
-                // AOPTIONS appears iff we're being invoked for a precanned
-                // template, rather than an adhoc one; it's from the
-                // `#[derive()` application.
-                let tokens;
-                let _ = bracketed!(tokens in input);
-                let r = options
-                    .parse_update(&tokens, OpContext::DriverApplicationPassed);
-                if let Some(r) = unadvised_err_of_unit(r) {
-                    return r;
+        let driver_passed;
+        let _ = braced!(driver_passed in input);
+        let _: TokenStream = driver_passed.parse()?;
+
+        let template;
+        let template_brace = braced!(template in input);
+
+        let template_crate;
+        let template_name;
+        {
+            let template_passed;
+            let _ = braced!(template_passed in input);
+            let input = template_passed;
+
+            template_crate = input.parse()?;
+            let _: Token![;] = input.parse()?;
+
+            let tokens;
+            let _ = bracketed!(tokens in input);
+            parse_unadvised! {
+                tokens => || {
+                    options.parse_update(&tokens, OpContext::Template)
                 }
             }
 
-            let driver_passed;
-            let _ = braced!(driver_passed in input);
-            let _: TokenStream = driver_passed.parse()?;
-
-            let template;
-            let template_brace = braced!(template in input);
-            let template = Template::parse(&template);
-
-            let template_crate;
-            let template_name;
-            {
-                let template_passed;
-                let _ = braced!(template_passed in input);
-                let input = template_passed;
-
-                template_crate = input.parse()?;
-                let _: Token![;] = input.parse()?;
-
-                let tokens;
-                let _ = bracketed!(tokens in input);
-                let r = options.parse_update(&tokens, OpContext::Template);
-                if let Some(r) = unadvised_err_of_unit(r) {
-                    return r;
-                }
-
-                template_name = if input.peek(Token![;]) {
-                    None
-                } else {
-                    Some(input.parse()?)
-                };
-                let _: Token![;] = input.parse()?;
-
-                let _: TokenStream = input.parse()?;
-            }
+            template_name = if input.peek(Token![;]) {
+                None
+            } else {
+                Some(input.parse()?)
+            };
+            let _: Token![;] = input.parse()?;
 
             let _: TokenStream = input.parse()?;
+        }
 
-            let template = match template {
-                Ok(template) => template,
-                Err(err_return_raw) => return Ok(Err(err_return_raw)),
-            };
+        let _: TokenStream = input.parse()?;
 
-            Ok(Ok(EngineInput {
-                driver_brace,
-                driver,
-                template_brace,
-                template,
-                template_crate,
-                template_name,
-                options,
-            }))
-        })
+        let template = parse_unadvised! { template };
+
+        Ok(AOk(EngineInput {
+            driver_brace,
+            driver,
+            template_brace,
+            template,
+            template_crate,
+            template_name,
+            options,
+        }))
     }
 }
 
@@ -189,7 +177,7 @@ pub fn derive_deftly_engine_func_macro(
     input: TokenStream,
 ) -> syn::Result<TokenStream> {
     dprint_block!(&input, "derive_deftly_engine! input");
-    let input: EngineInput = syn::parse2(input)?;
+    let input: EngineInput = adviseable_parse2(input)?;
     dprintln!("derive_deftly_engine! crate = {:?}", &input.template_crate);
 
     let DdOptions {
