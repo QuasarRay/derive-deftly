@@ -33,6 +33,11 @@ use super::prelude::*;
 /// calling scope throws `syn::Error`.
 ///
 /// This is the return type of `ParseAdviseable::parse_adviseable`.
+//
+// TODO this is rather unsatisfactory.  For example, it implies
+// the AOk and ErrNNA type aliases and consequent ad-hoc glob imports
+// of this module.  Perhaps a custom error type, convertible from
+// syn::Error, would be better.
 pub type AdviseableResult<T> = syn::Result<AdviseableInnerResult<T>>;
 
 /// Typically found as `syn::Result<AdvisedResult<T>>`
