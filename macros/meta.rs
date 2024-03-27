@@ -127,7 +127,8 @@ pub use FoundNode as FN;
 
 //---------- meta attr enumeration and checking ----------
 
-#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, Eq, PartialEq)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, Eq, PartialEq)] //
+#[derive(EnumIter)]
 pub enum RecogAllow {
     BoolOnly,
     Value,
@@ -756,6 +757,13 @@ impl ToTokens for Recognised {
             }
             desig.to_tokens(Span::call_site(), out);
         }
+    }
+}
+
+impl RecogAllow {
+    #[allow(dead_code)] // XXXX
+    fn max() -> Self {
+        Self::iter().rev().next().unwrap()
     }
 }
 
