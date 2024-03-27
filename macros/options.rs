@@ -60,7 +60,6 @@ struct DdOption {
 enum OptionDetails {
     dbg,
     For(DdOptVal<ExpectedDriverKind>),
-    // TODO should this be `producing` or something?
     expect(DdOptVal<check::Target>),
 }
 
