@@ -50,7 +50,6 @@ pub struct DdOptions {
 /// A single template option
 #[derive(Debug)]
 struct DdOption {
-    #[allow(dead_code)] // TODO maybe remove instead ?
     pub kw_span: Span,
     pub od: OptionDetails,
 }
@@ -61,7 +60,6 @@ struct DdOption {
 enum OptionDetails {
     dbg,
     For(DdOptVal<ExpectedDriverKind>),
-    // TODO should this be `producing` or something?
     expect(DdOptVal<check::Target>),
 }
 
