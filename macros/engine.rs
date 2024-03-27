@@ -271,7 +271,7 @@ impl ParseAdviseable for Box<dyn EngineInput> {
         if la.peek(token::Brace) {
             parse_as::<EngineExpandInput>(input)
         } else if la.peek(token::Bracket) {
-            todo!() // XXXX
+            parse_as::<accum::EngineAccumInput>(input)
         } else {
             Err(la.error())
         }

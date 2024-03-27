@@ -761,9 +761,129 @@ impl ToTokens for Recognised {
 }
 
 impl RecogAllow {
-    #[allow(dead_code)] // XXXX
     fn max() -> Self {
         Self::iter().rev().next().unwrap()
+    }
+}
+
+//---------- support for checking ----------
+
+pub struct RecogChecker<'e> {
+    recog: meta::Recognised,
+    errors: &'e mut ErrorAccumulator,
+}
+
+impl<'e> RecogChecker<'e> {
+    pub fn new(
+        recog: meta::Recognised,
+        errors: &'e mut ErrorAccumulator,
+    ) -> Self {
+        RecogChecker { errors, recog }
+    }
+
+    /// Check one meta attribute found in a driver
+    pub fn check(
+        &mut self,
+        pmetas: &[meta::PreprocessedTree],
+        scopes: &[meta::Scope],
+    ) {
+        let mut paths = vec![];
+        for pmeta in pmetas {
+            self.check_1(scopes, &mut paths, pmeta);
+        }
+    }
+
+    fn check_1<'p>(
+        &mut self,
+        scopes: &[meta::Scope],
+        lpaths: &mut Vec<&'p syn::Path>,
+        ptree: &'p meta::PreprocessedTree,
+    ) {
+        use PreprocessedValue as PV;
+        use RecogAllow as RA;
+
+        lpaths.push(&ptree.path);
+        // closure stops us forgetting to pop again via an early exit
+        (|| {
+            let want = match &ptree.value {
+                PV::Unit => RA::BoolOnly,
+                PV::Value { .. } => RA::Value,
+                PV::List(l) if l.content.is_empty() => RA::BoolOnly,
+                PV::List(l) => {
+                    for ptree in &l.content {
+                        self.check_1(scopes, lpaths, ptree);
+                    }
+                    // don't care about *this* path, care about deeper ones
+                    return;
+                }
+            };
+
+            struct Nearest {
+                allow: RecogAllow,
+                scope: Scope,
+                span: Span,
+            }
+
+            let mut nearest: Option<Nearest> = None;
+            for scope in scopes.iter().rev().copied() {
+                let test = BorrowedDesig { scope, lpaths };
+
+                if let Some((got_desig, &got)) =
+                    self.recog.map.get_key_value(&test)
+                {
+                    if got >= want {
+                        // found a justification - a recognised meta
+                        // that matches this provided one
+                        return;
+                    }
+
+                    let span = got_desig
+                        .label
+                        .lpaths
+                        .last()
+                        .expect("empty lpaths")
+                        .span();
+
+                    if Some(got) > nearest.as_ref().map(|n| n.allow) {
+                        let allow = got;
+                        nearest = Some(Nearest { allow, scope, span });
+                    }
+                }
+            }
+
+            let scope;
+            let error;
+
+            if let Some(found) = nearest {
+                scope = found.scope;
+                error =
+                    [(ptree.path.span(), "provided, in driver"),
+                     (found.span, "recognised, in template")].error(
+                         match (want, found.allow) {
+                             (RA::Value, RA::BoolOnly) =>
+ "meta attribute value provided, but is used only as a boolean",
+                             (RA::Value, RA::Value) |
+                             (RA::BoolOnly, RA::BoolOnly) |
+                             (RA::BoolOnly, RA::Value) =>
+                                 panic!("want < found"),
+                         }
+                    );
+            } else {
+                error = ptree.path.error(
+                    "meta attribute provided, but not used by template",
+                );
+                scope = scopes[0];
+            };
+
+            self.errors.push(error);
+
+            // avoid repeated errors, by adding this to recog
+            let lpaths = lpaths.iter().copied().cloned().collect();
+            let label = Label { lpaths };
+            let desig = Desig { scope, label };
+            self.recog.update(desig, RA::max());
+        })();
+        lpaths.pop();
     }
 }
 

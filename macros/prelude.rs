@@ -3,6 +3,7 @@
 //! Should be included with `use super::prelude::*`, not `crate::`,
 //! so that it works with `tests/directly.rs` too.
 
+pub use std::cell::RefCell;
 pub use std::cmp::{self, Ordering};
 pub use std::convert::{TryFrom, TryInto};
 pub use std::default::Default;
@@ -40,7 +41,7 @@ pub use super::utils::{braced_group, delimit_token_group};
 pub use super::utils::{engine_macro_name, spans_join};
 pub use super::utils::{Concatenated, Discard};
 pub use super::utils::{ErrorLoc, IdentAny, MakeError};
-pub(super) use super::{adviseable, check, dbg_allkw, framework, meta};
+pub(super) use super::{accum, adviseable, check, dbg_allkw, engine, framework, meta};
 
 // this is used by the dprintln! macro, which can't just use crate
 // but which doesn't use the import if it's not enabled

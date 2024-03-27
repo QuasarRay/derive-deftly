@@ -17,6 +17,7 @@ pub(crate) mod adviseable;
 pub(crate) mod framework;
 
 // Implementation - specific areas
+pub(crate) mod accum;
 pub(crate) mod boolean;
 pub(crate) mod dbg_allkw;
 pub(crate) mod expand;
