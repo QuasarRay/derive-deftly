@@ -913,9 +913,42 @@ impl<'r, 'e> RecogChecker<'r, 'e> {
                          }
                     );
             } else {
-                error = ptree.path.error(
-                    "meta attribute provided, but not used by template",
-                );
+                if let Some(yes) = {
+                    // Look to see if it would have been recognised in
+                    // another scope.  That would mean the attr is
+                    // merely misplaced, rather than totally wrong.
+                    let y_scopes = Scope::iter()
+                        .filter(|&scope| {
+                            self.recog_real
+                                .map
+                                .contains_key(&BorrowedDesig { scope, lpaths })
+                        })
+                        .collect_vec();
+                    if !y_scopes.is_empty() {
+                        let y_ss = SuppliedScope::iter()
+                            .filter(|ss| {
+                                ss.recog_search()
+                                    .any(|s| y_scopes.contains(&s))
+                            })
+                            .map(|ss| ss.to_string())
+                            .join("/");
+                        let y_scopes =
+                            y_scopes.iter().map(|s| s.as_ref()).join("/");
+                        Some(format!("{} ({})", y_ss, y_scopes))
+                    } else {
+                        None
+                    }
+                } {
+                    error = ptree.path.error(format_args!(
+ "meta attribute provided for {}, but recognised by template only for {}",
+                        supplied,
+                        yes,
+                    ));
+                } else {
+                    error = ptree.path.error(
+                        "meta attribute provided, but not used by template",
+                    );
+                }
                 scope = supplied.widest();
             };
 

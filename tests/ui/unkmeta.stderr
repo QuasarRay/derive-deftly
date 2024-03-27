@@ -39,25 +39,25 @@ error: meta attribute provided, but not used by template
 27 | #[deftly(tnest(by_value(deeper)))] // ERROR (too deep) - TODO message too bland
    |                         ^^^^^^
 
-error: meta attribute provided, but not used by template
+error: meta attribute provided for struct, but recognised by template only for field (fmeta)
   --> ui/unkmeta.rs:30:16
    |
-30 | #[deftly(fnest(bool_only))] // ERROR (wrong scope) - TODO all these too bland
+30 | #[deftly(fnest(bool_only))] // ERROR (wrong scope)
    |                ^^^^^^^^^
 
-error: meta attribute provided, but not used by template
+error: meta attribute provided for struct, but recognised by template only for field (fmeta)
   --> ui/unkmeta.rs:33:16
    |
 33 | #[deftly(fnest(by_value = "t"))] // ERROR (wrong scope)
    |                ^^^^^^^^
 
-error: meta attribute provided, but not used by template
+error: meta attribute provided for field, but recognised by template only for struct/enum (tmeta)
   --> ui/unkmeta.rs:35:20
    |
 35 |     #[deftly(tnest(bool_only))] // ERROR (wrong scope)
    |                    ^^^^^^^^^
 
-error: meta attribute provided, but not used by template
+error: meta attribute provided for field, but recognised by template only for struct/variant (vmeta)
   --> ui/unkmeta.rs:36:20
    |
 36 |     #[deftly(vnest(bool_only))] // ERROR (wrong scope)
@@ -69,85 +69,85 @@ error: meta attribute provided, but not used by template
 38 |     #[deftly(fnest = '1')] // ERROR - TODO message could be improved
    |              ^^^^^
 
-error: meta attribute provided, but not used by template
+error: meta attribute provided for field, but recognised by template only for struct/enum (tmeta)
   --> ui/unkmeta.rs:39:20
    |
 39 |     #[deftly(tnest(by_value = "f"))] // ERROR (wrong scope)
    |                    ^^^^^^^^
 
-error: meta attribute provided, but not used by template
+error: meta attribute provided for field, but recognised by template only for struct/variant (vmeta)
   --> ui/unkmeta.rs:40:20
    |
 40 |     #[deftly(vnest(by_value = "f"))] // ERROR (wrong scope)
    |                    ^^^^^^^^
 
-error: meta attribute provided, but not used by template
+error: meta attribute provided for enum, but recognised by template only for struct/variant (vmeta)
   --> ui/unkmeta.rs:48:16
    |
 48 | #[deftly(vnest(bool_only))] // ERROR (wrong scope)
    |                ^^^^^^^^^
 
-error: meta attribute provided, but not used by template
+error: meta attribute provided for enum, but recognised by template only for field (fmeta)
   --> ui/unkmeta.rs:49:16
    |
 49 | #[deftly(fnest(bool_only))] // ERROR (wrong scope)
    |                ^^^^^^^^^
 
-error: meta attribute provided, but not used by template
+error: meta attribute provided for enum, but recognised by template only for struct/variant (vmeta)
   --> ui/unkmeta.rs:51:16
    |
 51 | #[deftly(vnest(by_value = "t"))] // ERROR (wrong scope)
    |                ^^^^^^^^
 
-error: meta attribute provided, but not used by template
+error: meta attribute provided for enum, but recognised by template only for field (fmeta)
   --> ui/unkmeta.rs:52:16
    |
 52 | #[deftly(fnest(by_value = "t"))] // ERROR (wrong scope)
    |                ^^^^^^^^
 
-error: meta attribute provided, but not used by template
+error: meta attribute provided for variant, but recognised by template only for struct/enum (tmeta)
   --> ui/unkmeta.rs:54:20
    |
 54 |     #[deftly(tnest(bool_only))] // ERROR (wrong scope)
    |                    ^^^^^^^^^
 
-error: meta attribute provided, but not used by template
+error: meta attribute provided for variant, but recognised by template only for field (fmeta)
   --> ui/unkmeta.rs:56:20
    |
 56 |     #[deftly(fnest(bool_only))] // ERROR (wrong scope)
    |                    ^^^^^^^^^
 
-error: meta attribute provided, but not used by template
+error: meta attribute provided for variant, but recognised by template only for struct/enum (tmeta)
   --> ui/unkmeta.rs:57:20
    |
 57 |     #[deftly(tnest(by_value = "v"))] // ERROR (wrong scope)
    |                    ^^^^^^^^
 
-error: meta attribute provided, but not used by template
+error: meta attribute provided for variant, but recognised by template only for field (fmeta)
   --> ui/unkmeta.rs:59:20
    |
 59 |     #[deftly(fnest(by_value = "v"))] // ERROR (wrong scope)
    |                    ^^^^^^^^
 
-error: meta attribute provided, but not used by template
+error: meta attribute provided for field, but recognised by template only for struct/enum (tmeta)
   --> ui/unkmeta.rs:61:24
    |
 61 |         #[deftly(tnest(bool_only))] // ERROR (wrong scope)
    |                        ^^^^^^^^^
 
-error: meta attribute provided, but not used by template
+error: meta attribute provided for field, but recognised by template only for struct/variant (vmeta)
   --> ui/unkmeta.rs:62:24
    |
 62 |         #[deftly(vnest(bool_only))] // ERROR (wrong scope)
    |                        ^^^^^^^^^
 
-error: meta attribute provided, but not used by template
+error: meta attribute provided for field, but recognised by template only for struct/enum (tmeta)
   --> ui/unkmeta.rs:64:24
    |
 64 |         #[deftly(tnest(by_value = "f"))] // ERROR (wrong scope)
    |                        ^^^^^^^^
 
-error: meta attribute provided, but not used by template
+error: meta attribute provided for field, but recognised by template only for struct/variant (vmeta)
   --> ui/unkmeta.rs:65:24
    |
 65 |         #[deftly(vnest(by_value = "f"))] // ERROR (wrong scope)

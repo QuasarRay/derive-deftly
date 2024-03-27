@@ -27,7 +27,7 @@ define_derive_deftly! {
 #[deftly(tnest(by_value(deeper)))] // ERROR (too deep) - TODO message too bland
 #[deftly(tnest(bool_only))] // ok
 #[deftly(vnest(bool_only))] // ok
-#[deftly(fnest(bool_only))] // ERROR (wrong scope) - TODO all these too bland
+#[deftly(fnest(bool_only))] // ERROR (wrong scope)
 #[deftly(tnest(by_value = "t"))] // ok
 #[deftly(vnest(by_value = "t"))] // ok
 #[deftly(fnest(by_value = "t"))] // ERROR (wrong scope)
