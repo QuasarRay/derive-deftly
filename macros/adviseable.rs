@@ -30,14 +30,15 @@ use super::prelude::*;
 ///
 /// This odd structure is to add a note to most of the errors that
 /// come out of syn parsing.  The `braced!` etc. macros insist that the
-/// calling scope throws `syn::Error`.
+/// calling scope throws precisely `syn::Error`; `Into<syn::Error>`
+/// isn't enough.
 ///
 /// This is the return type of `ParseAdviseable::parse_adviseable`.
 //
-// TODO this is rather unsatisfactory.  For example, it implies
+// This is all rather unsatisfactory.  For example, it implies
 // the AOk and ErrNNA type aliases and consequent ad-hoc glob imports
-// of this module.  Perhaps a custom error type, convertible from
-// syn::Error, would be better.
+// of this module.  We'd prefer a custom error type, convertible from
+// syn::Error, but syn won't allow that.
 pub type AdviseableResult<T> = syn::Result<AdviseableInnerResult<T>>;
 
 /// Typically found as `syn::Result<AdvisedResult<T>>`
