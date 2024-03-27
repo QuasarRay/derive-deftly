@@ -41,7 +41,8 @@ pub use super::utils::{braced_group, delimit_token_group};
 pub use super::utils::{engine_macro_name, spans_join};
 pub use super::utils::{Concatenated, Discard};
 pub use super::utils::{ErrorLoc, IdentAny, MakeError};
-pub(super) use super::{accum, adviseable, check, dbg_allkw, engine, framework, meta};
+pub(super) use super::{accum, adviseable, check};
+pub(super) use super::{dbg_allkw, engine, framework, meta};
 
 // this is used by the dprintln! macro, which can't just use crate
 // but which doesn't use the import if it's not enabled
