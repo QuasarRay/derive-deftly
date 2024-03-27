@@ -94,9 +94,6 @@ fn check_for_misplaced_atrs(data: &syn::Data) -> syn::Result<()> {
 pub fn derive_deftly(
     driver_stream: TokenStream,
 ) -> Result<TokenStream, syn::Error> {
-    // TODO optimisation: parse this in a way that doesn't actually
-    // parse the input data, with some custom CaptureInput which is
-    // a bit like syn::DeriveInput.
     let driver: syn::DeriveInput = syn::parse2(driver_stream.clone())?;
 
     dprint_block!(&driver_stream, "#[derive(Deftly)] input");
