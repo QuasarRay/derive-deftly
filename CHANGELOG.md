@@ -26,6 +26,12 @@ We expect to increase it cautiously and only with good reason.
 This is the changelog for the *stable branch* 0.8.x.
 This branch is currently maintained but will not receive new features.
 
+### 0.8.4
+
+#### Improved
+
+ * Now that derive-deftly is fairly stable, recommend upgrading to it.
+
 ### 0.8.3
 
 #### Fixed
