@@ -79,7 +79,7 @@ fn check_meta_recog(
     errors: &mut ErrorAccumulator,
 ) -> syn::Result<()> {
     use meta::*;
-    use Scope as S;
+    use SuppliedScope as SS;
 
     let c = RefCell::new(RecogChecker::new(recog, errors));
 
@@ -90,7 +90,7 @@ fn check_meta_recog(
 
     let chk_punct = |p: &Punctuated<syn::Field, _>| {
         for f in p {
-            chk_attrs(&f.attrs, &[S::F])?;
+            chk_attrs(&f.attrs, SS::Field)?;
         }
         Ok::<_, syn::Error>(())
     };
@@ -103,17 +103,17 @@ fn check_meta_recog(
 
     match &driver.data {
         syn::Data::Struct(ds) => {
-            chk_attrs(&driver.attrs, &[S::T, S::V])?;
+            chk_attrs(&driver.attrs, SS::Struct)?;
             chk_fields(&ds.fields)?;
         }
         syn::Data::Union(du) => {
-            chk_attrs(&driver.attrs, &[S::T, S::V])?;
+            chk_attrs(&driver.attrs, SS::Struct)?;
             chk_punct(&du.fields.named)?;
         }
         syn::Data::Enum(de) => {
-            chk_attrs(&driver.attrs, &[S::T])?;
+            chk_attrs(&driver.attrs, SS::Enum)?;
             for v in &de.variants {
-                chk_attrs(&v.attrs, &[S::V])?;
+                chk_attrs(&v.attrs, SS::Variant)?;
                 chk_fields(&v.fields)?;
             }
         }

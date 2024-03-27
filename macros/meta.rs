@@ -17,6 +17,39 @@ pub enum Scope {
     #[strum(serialize = "fmeta")] F,
 }
 
+/// Scope of a *supplied* meta (`#[deftly(...)]`) attribute
+///
+/// Also encodes, for metas at the toplevel,
+/// whether it's a struct or an enum.
+#[derive(Debug, Clone, Copy, Eq, PartialEq, Hash)] //
+#[derive(strum::Display, EnumIter)]
+#[strum(serialize_all = "snake_case")]
+pub enum SuppliedScope {
+    Struct,
+    Enum,
+    Variant,
+    Field,
+}
+
+impl SuppliedScope {
+    fn recog_search(self) -> impl Iterator<Item = Scope> {
+        use Scope as S;
+        use SuppliedScope as SS;
+        match self {
+            SS::Struct => &[S::T, S::V] as &[_],
+            SS::Enum => &[S::T],
+            SS::Variant => &[S::V],
+            SS::Field => &[S::F],
+        }
+        .iter()
+        .copied()
+    }
+
+    fn widest(self) -> Scope {
+        self.recog_search().next().unwrap()
+    }
+}
+
 /// `(foo(bar))` in eg `fmeta(foo(bar))`
 ///
 /// includes the parens
@@ -785,17 +818,17 @@ impl<'e> RecogChecker<'e> {
     pub fn check(
         &mut self,
         pmetas: &[meta::PreprocessedTree],
-        scopes: &[meta::Scope],
+        supplied: meta::SuppliedScope,
     ) {
         let mut paths = vec![];
         for pmeta in pmetas {
-            self.check_1(scopes, &mut paths, pmeta);
+            self.check_1(supplied, &mut paths, pmeta);
         }
     }
 
     fn check_1<'p>(
         &mut self,
-        scopes: &[meta::Scope],
+        supplied: meta::SuppliedScope,
         lpaths: &mut Vec<&'p syn::Path>,
         ptree: &'p meta::PreprocessedTree,
     ) {
@@ -811,7 +844,7 @@ impl<'e> RecogChecker<'e> {
                 PV::List(l) if l.content.is_empty() => RA::BoolOnly,
                 PV::List(l) => {
                     for ptree in &l.content {
-                        self.check_1(scopes, lpaths, ptree);
+                        self.check_1(supplied, lpaths, ptree);
                     }
                     // don't care about *this* path, care about deeper ones
                     return;
@@ -825,7 +858,7 @@ impl<'e> RecogChecker<'e> {
             }
 
             let mut nearest: Option<Nearest> = None;
-            for scope in scopes.iter().rev().copied() {
+            for scope in supplied.recog_search() {
                 let test = BorrowedDesig { scope, lpaths };
 
                 if let Some((got_desig, &got)) =
@@ -872,7 +905,7 @@ impl<'e> RecogChecker<'e> {
                 error = ptree.path.error(
                     "meta attribute provided, but not used by template",
                 );
-                scope = scopes[0];
+                scope = supplied.widest();
             };
 
             self.errors.push(error);
