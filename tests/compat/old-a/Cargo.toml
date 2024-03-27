@@ -10,8 +10,7 @@ description="compat testing crates - old part A"
 publish = false
 
 [dependencies]
-# After 0.10.0 is released, remove the `path`, don't bump the versoin!
-derive-deftly = { version = "=0.10.0", path = "../../.." }
+derive-deftly = "=0.10.0"
 
 [lib]
 path = "../../pub-export/pub-a/pub-a.rs"

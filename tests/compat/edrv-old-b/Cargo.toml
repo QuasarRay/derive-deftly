@@ -11,8 +11,7 @@ publish = false
 
 [dependencies]
 pub-a = { path = "../../pub-export/pub-a", version = "0.0.1" }
-# After 0.10.0 is released, remove the `path`, don't bump the versoin!
-derive-deftly = { version = "=0.10.0", path = "../../.." }
+derive-deftly = "=0.10.0"
 
 [lib]
 path = "../old-b/old-b.rs"
