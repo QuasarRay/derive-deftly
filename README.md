@@ -8,7 +8,7 @@ but without having to wrestle with the proc macro system.
 
 We intend to make a 1.x release of this crate fairly soon.
 We can't rule out breaking changes before then,
-but hopefully they will be minor.x
+but hopefully they will be minor.
 
 We aren't planning breaking changes to the template language before 1.0.
 
