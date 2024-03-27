@@ -597,7 +597,7 @@ impl Items {
         //
         // This applies to `fpatname`, `vpat`, and so on, too.
         //
-        // TODO should this apply to fname too?  The template author ought to
+        // We don't apply to fname too.  The template author ought to
         // us $vpat to bind fields, not $fname, since $fname risks clashes
         // with other variables that might be in scope.  But the rustc error
         // messages for identifiers with the wrong span are rather poor.
