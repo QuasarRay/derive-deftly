@@ -95,7 +95,7 @@ fn dump_whole(mut w: &mut Out, ctx: &Context) -> R {
     // check-keywords-documented is happy.  (That is nicer than
     // using the check-keywords-documented exception table.)
     if false {
-        // TODO: search attributes and dump what would work
+        // Perhaps we should search attributes and dump what would work
         expand! { c, $tmeta }
         expand! { c, $vmeta }
         expand! { c, $fmeta }
