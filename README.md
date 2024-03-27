@@ -4,20 +4,24 @@
 by Rust data structures, just like proc macro derive macros,
 but without having to wrestle with the proc macro system.
 
-**Stability warning**
+**Maintenance - status of this crate**
 
-We plan to make a `1.x` version of this library fairly soon.
+This library has now been renamed to
+[`derive-deftly`](https://lib.rs/crates/derive-deftly),
+which has some significant improvements.
 
-However, it will have a different name:
-[`derive-deftly`](https://lib.rs/crates/derive-deftly).
-If you are considering this for a new project,
-you should probably go straight to `derive-deftly`.
+We recommend that users upgrade to that crate,
+when it is convenient to do so.
+This crate, `derive-adhoc`, will get important bugfixes,
+but not new features etc.
 
-Some further breaking changes are expected for that library,
-so if you're already using `derive-adhoc`
-you should stick with it for now.
+Everything is renamed and there are other breaking changes;
+consult
+[derive-deftly's changelog](https://docs.rs/derive-deftly/latest/derive_deftly/doc_changelog/index.html#changelog)
+for information about how to upgrade.
 
-The template syntax isn't likely to change very much.
+As of derive-deftly 0.10.0,
+the template syntax does *not* have breaking changes.
 
 ## Overview
 
