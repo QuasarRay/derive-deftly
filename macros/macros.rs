@@ -295,7 +295,10 @@ pub fn define_derive_deftly(
 /// [`${Xmeta}`](doc_reference/index.html#tmeta-vmeta-fmeta--deftly-attributes)
 /// expansions.
 ///
-/// If the template(s) don't use them, they are ignored.
+/// If none of the template(s) recognise them,
+/// [it is an error](doc_reference/index.html#unrecognisedunused-deftly-attributes),
+/// (unless `#[derive_deftly_adhoc]` is specified).
+///
 /// `derive-deftly` does not impose any namespacing within `#[deftly]`:
 /// all templates see the same `deftly` meta attributes.
 ///

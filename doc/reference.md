@@ -399,6 +399,22 @@ look in the top-level attributes.
 This allows a template to have uniform handling of attributes
 which should affect how a set of fields should be processed.
 
+#### Unrecognised/unused `#[deftly(...)]` attributes
+
+Every `#[deftly(...)]` attribute on the input data structure
+must correspond to a `${Xmeta...}` expansion
+(or `fmeta(...)` boolean test, as applicable)
+in the template(s) applied to that driver.
+
+Any appropriate `Xmeta` reference in the template counts -
+even if that part of the template is not expanded.
+So complex templates may need to explicitly detect
+and reject inappropriate combinations of attributes.
+
+<!-- TOOD there should be a ${error ...} -->
+
+These checks are disabled by `#[derive_deftly_adhoc]`.
+
 #### Examples
 
  * `${tmeta(simple)}`: `String`
