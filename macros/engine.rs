@@ -3,9 +3,11 @@
 use super::framework::*;
 use adviseable::*;
 
-/// Input to `derive_deftly_engine!`
+/// Input to `derive_deftly_engine!`, principal form (template expansion)
+///
+/// See `implementation.md`.
 #[derive(Debug)]
-struct EngineInput {
+struct EngineExpandInput {
     #[allow(dead_code)]
     driver_brace: token::Brace,
     driver: syn::DeriveInput,
@@ -17,7 +19,26 @@ struct EngineInput {
     template: Template<TokenAccumulator>,
 }
 
-impl ParseAdviseable for EngineInput {
+/// Input to an invocation of `derive_deftly_engine!`
+///
+/// The trait impl includes knowledge of how to
+/// parse it (via of the [`ParseAdviseable`] supertrait bound)
+/// and process it.
+///
+/// Having this as a trait avoids having to have an enum,
+/// with a lot of repeated code.
+pub trait EngineInput: ParseAdviseable + Debug + 'static {
+    /// Process this input
+    ///
+    /// Commented-out debugging printing of the *input* has been done.
+    ///
+    /// Debugging printing of the *output* is to be done by this  function,
+    /// since for `EngineExpandInput` it is the `dbg` d-d option,
+    /// but for others is commented out raw eprintln.
+    fn process(self: Box<Self>) -> syn::Result<TokenStream>;
+}
+
+impl ParseAdviseable for EngineExpandInput {
     fn parse_adviseable(input: ParseStream) -> AdviseableResult<Self> {
         let mut options = DdOptions::default();
 
@@ -78,7 +99,7 @@ impl ParseAdviseable for EngineInput {
 
         let template = parse_unadvised! { template };
 
-        Ok(AOk(EngineInput {
+        Ok(AOk(EngineExpandInput {
             driver_brace,
             driver,
             template_brace,
@@ -166,6 +187,97 @@ impl<'c> Context<'c> {
     }
 }
 
+impl EngineInput for EngineExpandInput {
+    fn process(self: Box<Self>) -> syn::Result<TokenStream> {
+        dprintln!("derive_deftly_engine! crate = {:?}", &self.template_crate);
+
+        let DdOptions {
+            dbg,
+            driver_kind,
+            expect_target,
+            //
+        } = self.options;
+
+        if let Some(exp) = driver_kind {
+            macro_rules! got_kind { { $($kind:ident)* } => {
+            match &self.driver.data {
+                $(
+                    syn::Data::$kind(..) => ExpectedDriverKind::$kind,
+                )*
+            }
+        } }
+
+            let got_kind = got_kind!(Struct Enum Union);
+            if got_kind != exp.value {
+                return Err([
+                    (exp.span, "expected kind"),
+                    (self.driver.span(), "actual kind"),
+                ]
+                .error(format_args!(
+                    "template defined for {}, but applied to {}",
+                    exp.value, got_kind,
+                )));
+            }
+        }
+
+        Context::call(
+            &self.driver,
+            &self.template_crate,
+            self.template_name.as_ref(),
+            |ctx| {
+                let mut output = TokenAccumulator::new();
+                self.template.expand(&ctx, &mut output);
+                let output = output.tokens()?;
+
+                //    dbg!(&&output);
+                if dbg {
+                    let description = ctx.expansion_description();
+                    let dump = format!(
+                        concat!(
+                            "---------- {} (start) ----------\n",
+                            "{}\n",
+                            "---------- {} (end) ----------\n",
+                        ),
+                        &description, &output, &description,
+                    );
+                    eprint!("{}", dump);
+                }
+
+                let mut output = output;
+                if let Some(target) = expect_target {
+                    check::check_expected_target_syntax(
+                        &ctx,
+                        &mut output,
+                        target,
+                    );
+                }
+
+                Ok(output)
+            },
+        )
+    }
+}
+
+impl ParseAdviseable for Box<dyn EngineInput> {
+    fn parse_adviseable(input: ParseStream) -> AdviseableResult<Self> {
+        fn parse_as<T: EngineInput>(
+            input: ParseStream,
+        ) -> AdviseableResult<Box<dyn EngineInput>> {
+            let parsed = T::parse_adviseable(input)?;
+            Ok(parsed.map(|parsed| Box::new(parsed) as _))
+        }
+
+        let la = input.lookahead1();
+        if la.peek(token::Brace) {
+            parse_as::<EngineExpandInput>(input)
+        } else if la.peek(token::Bracket) {
+            parse_as::<accum::EngineAccumInput>(input)
+        } else {
+            Err(la.error())
+        }
+    }
+}
+
 /// `derive_deftly_engine!` -- implements the actual template engine
 ///
 /// In my design, the input contains, firstly, literally the definition
@@ -177,67 +289,6 @@ pub fn derive_deftly_engine_func_macro(
     input: TokenStream,
 ) -> syn::Result<TokenStream> {
     dprint_block!(&input, "derive_deftly_engine! input");
-    let input: EngineInput = adviseable_parse2(input)?;
-    dprintln!("derive_deftly_engine! crate = {:?}", &input.template_crate);
-
-    let DdOptions {
-        dbg,
-        driver_kind,
-        expect_target,
-        //
-    } = input.options;
-
-    if let Some(exp) = driver_kind {
-        macro_rules! got_kind { { $($kind:ident)* } => {
-            match &input.driver.data {
-                $(
-                    syn::Data::$kind(..) => ExpectedDriverKind::$kind,
-                )*
-            }
-        } }
-
-        let got_kind = got_kind!(Struct Enum Union);
-        if got_kind != exp.value {
-            return Err([
-                (exp.span, "expected kind"),
-                (input.driver.span(), "actual kind"),
-            ]
-            .error(format_args!(
-                "template defined for {}, but applied to {}",
-                exp.value, got_kind,
-            )));
-        }
-    }
-
-    Context::call(
-        &input.driver,
-        &input.template_crate,
-        input.template_name.as_ref(),
-        |ctx| {
-            let mut output = TokenAccumulator::new();
-            input.template.expand(&ctx, &mut output);
-            let output = output.tokens()?;
-
-            //    dbg!(&&output);
-            if dbg {
-                let description = ctx.expansion_description();
-                let dump = format!(
-                    concat!(
-                        "---------- {} (start) ----------\n",
-                        "{}\n",
-                        "---------- {} (end) ----------\n",
-                    ),
-                    &description, &output, &description,
-                );
-                eprint!("{}", dump);
-            }
-
-            let mut output = output;
-            if let Some(target) = expect_target {
-                check::check_expected_target_syntax(&ctx, &mut output, target);
-            }
-
-            Ok(output)
-        },
-    )
+    let input: Box<dyn EngineInput> = adviseable_parse2(input)?;
+    input.process()
 }

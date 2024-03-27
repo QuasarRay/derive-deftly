@@ -90,6 +90,7 @@ impl GetUsize for Tuple {
     }
 }
 #[derive_deftly(Trait, GetUsize)]
+#[derive_deftly_adhoc]
 #[deftly(hello(there = 42))]
 struct Struct {
     field: usize,
@@ -132,6 +133,7 @@ impl GetUsize for Struct {
     }
 }
 #[derive_deftly(Trait, GetUsize)]
+#[derive_deftly_adhoc]
 enum Enum {
     #[deftly(hello(there))]
     Unit,

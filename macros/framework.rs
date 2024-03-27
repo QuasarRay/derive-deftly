@@ -121,6 +121,13 @@ pub trait SubstParseContext: Sized {
         ))
     }
 
+    /// When we find a `fmeta` etc. in this context, does it allow a value?
+    ///
+    /// Used by the template-scanning code, to report whether an `Xmeta`
+    /// in the template justifies a value-bearing `Xmeta` attribute
+    /// on/in the driver, or just a boolean.
+    fn meta_recog_allow() -> meta::RecogAllow;
+
     /// For communicating through `parse_special`
     type SpecialParseContext: Default;
 
@@ -371,6 +378,9 @@ impl SubstParseContext for TokenAccumulator {
     }
     fn not_in_paste(_: &impl Spanned) -> syn::Result<()> {
         Ok(())
+    }
+    fn meta_recog_allow() -> meta::RecogAllow {
+        meta::RecogAllow::Value
     }
 
     type BoolOnly = Void;

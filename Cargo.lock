@@ -24,6 +24,7 @@ name = "bizarre-derive-deftly-macros"
 version = "0.0.666"
 dependencies = [
  "heck 0.5.0",
+ "indexmap",
  "itertools",
  "proc-macro-crate",
  "proc-macro2",
@@ -75,6 +76,7 @@ name = "derive-deftly-macros"
 version = "0.10.0"
 dependencies = [
  "heck 0.5.0",
+ "indexmap",
  "itertools",
  "proc-macro-crate",
  "proc-macro2",
@@ -101,6 +103,7 @@ dependencies = [
  "educe",
  "glob",
  "heck 0.5.0",
+ "indexmap",
  "itertools",
  "macrotest",
  "proc-macro-crate",

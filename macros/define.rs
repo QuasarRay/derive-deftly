@@ -162,21 +162,19 @@ pub fn define_derive_deftly_func_macro(
 
     let mut output = TokenStream::new();
 
-    let (template, _parsed_template) = {
-        let parse = |ts: TokenStream| {
-            Ok::<_, syn::Error>((
-                ts.clone(),
-                syn::parse2::<Template<TokenAccumulator>>(ts)?,
-            ))
-        };
-        match parse(template) {
-            Ok(y) => y,
-            Err(e) => {
-                e.into_compile_error().to_tokens(&mut output);
-                parse(TokenStream::new())
-                    .expect("empty tokenstream didn't parse as template")
-            }
-        }
+    let (template, parsed_template) = {
+        let mut template = template;
+        let parsed =
+            syn::parse2::<Template<TokenAccumulator>>(template.clone())
+                .map_err(|e| {
+                    // Make sure the error is emitted
+                    e.into_compile_error().to_tokens(&mut output);
+                    // But from now on, let's just use an empty template
+                    template = TokenStream::new();
+                    // parsed_template becomes Err(())
+                    ()
+                });
+        (template, parsed)
     };
 
     let template = escape_dollars(template);
@@ -209,6 +207,20 @@ To use it, write: `#[derive(Deftly)] #[derive_deftly({})]`."#,
         }
     }
 
+    let recog_metas = match &parsed_template {
+        Ok(parsed) => {
+            use meta::FindRecogMetas as _;
+            let mut recog = meta::Recognised::default();
+            parsed.find_recog_metas(&mut recog);
+            quote! { _meta [ #recog ] }
+        }
+        Err(()) => {
+            // This avoids potential complains about meta attrs
+            // that would be recognised if the templates were OK.
+            quote! { error [] }
+        }
+    };
+
     // the macro must recent a dollar as its first argument because
     // it is hard to find a dollar otherwise!
     output.extend(quote! {
@@ -228,6 +240,20 @@ To use it, write: `#[derive(Deftly)] #[derive_deftly({})]`."#,
                     { $($dpassthrough)* }
                     { # template }
                     { $crate; [#options] #templ_name; }
+                }
+            };
+            {
+                [ $chain0:path, $($chains:path,)* ]
+                [ $($accum:tt)* ]
+                $($passthrough:tt)*
+            } => {
+                $chain0 ! {
+                    [ $($chains,)* ]
+                    [ $($accum)*
+                      _name [ #templ_name ]
+                      #recog_metas
+                    ]
+                    $($passthrough)*
                 }
             };
             { $($wrong:tt)* } => {

@@ -2,14 +2,19 @@
 
 use super::framework::*;
 
+use indexmap::IndexMap;
+
 //---------- common definitions ----------
 
 /// Indicates one of `fmeta`, `vmeta` or `tmeta`
 #[derive(Debug, Clone, Copy, Eq, PartialEq, Hash)]
+#[derive(AsRefStr, EnumString, EnumIter)]
+#[rustfmt::skip]
 pub enum Scope {
-    T,
-    V,
-    F,
+    // NB these keywords are duplicated in SubstDetails
+    #[strum(serialize = "tmeta")] T,
+    #[strum(serialize = "vmeta")] V,
+    #[strum(serialize = "fmeta")] F,
 }
 
 /// `(foo(bar))` in eg `fmeta(foo(bar))`
@@ -23,10 +28,18 @@ pub struct Label {
 }
 
 /// Meta designator eg `fmeta(foo(bar))`
+// Field order must be the same as BorrowedDesig
 #[derive(Debug, Clone, Eq, PartialEq, Hash)]
 pub struct Desig {
     pub scope: Scope,
     pub label: Label,
+}
+
+#[derive(Hash)]
+// Field order must be the same as meta::Desig
+struct BorrowedDesig<'p> {
+    pub scope: Scope,
+    pub lpaths: &'p [&'p syn::Path],
 }
 
 //---------- substitutions in a template ----------
@@ -112,6 +125,28 @@ pub enum FoundNearbyNodeKind {
 pub use FoundNearbyNodeKind as FNNK;
 pub use FoundNode as FN;
 
+//---------- meta attr enumeration and checking ----------
+
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, Eq, PartialEq)] //
+#[derive(EnumIter)]
+pub enum RecogAllow {
+    BoolOnly,
+    Value,
+}
+
+#[derive(Default, Debug)]
+pub struct Recognised {
+    map: IndexMap<Desig, RecogAllow>,
+}
+
+pub trait FindRecogMetas {
+    /// Search for `fmeta(..)` etc. expansions
+    ///
+    /// Add to `acc` any that are
+    /// (recusively) within `self`, syntactically,
+    fn find_recog_metas(&self, acc: &mut Recognised);
+}
+
 //==================== implementations ====================
 
 //---------- template parsing ----------
@@ -123,12 +158,6 @@ impl<O: SubstParseContext> SubstMeta<O> {
             self.desig.label.spans(),
         ))
         .unwrap()
-    }
-}
-
-impl Spanned for Label {
-    fn span(&self) -> Span {
-        spans_join(self.spans()).expect("empty label!")
     }
 }
 
@@ -334,7 +363,7 @@ impl Label {
     }
 }
 
-//---------- scope handling ----------
+//---------- scope and designator handling ----------
 
 impl<O> SubstMeta<O>
 where
@@ -363,6 +392,155 @@ where
             Scope::V => &ctx.variant(&kw_span)?.pmetas,
             Scope::F => &ctx.field(&kw_span)?.pfield.pmetas,
         })
+    }
+}
+
+impl ToTokens for Label {
+    fn to_tokens(&self, out: &mut TokenStream) {
+        let mut lpaths = self.lpaths.iter().rev();
+        let mut current =
+            lpaths.next().expect("empty path!").to_token_stream();
+        let r = loop {
+            let span = current.span();
+            let mut group =
+                proc_macro2::Group::new(Delimiter::Parenthesis, current);
+            group.set_span(span);
+            let wrap = if let Some(y) = lpaths.next() {
+                y
+            } else {
+                break group;
+            };
+            current = quote! { #wrap #group };
+        };
+        r.to_tokens(out);
+    }
+}
+
+impl Desig {
+    fn to_tokens(&self, scope_span: Span, out: &mut TokenStream) {
+        let scope: &str = self.scope.as_ref();
+        Ident::new(scope, scope_span).to_tokens(out);
+        self.label.to_tokens(out);
+    }
+}
+
+impl Parse for Desig {
+    fn parse(input: ParseStream) -> syn::Result<Self> {
+        let scope: syn::Ident = input.parse()?;
+        let scope = scope
+            .to_string()
+            .parse()
+            .map_err(|_| scope.error("invalid meta keyword/level"))?;
+        let label = input.parse()?;
+        Ok(Self { scope, label })
+    }
+}
+
+impl indexmap::Equivalent<Desig> for BorrowedDesig<'_> {
+    fn equivalent(&self, desig: &Desig) -> bool {
+        let BorrowedDesig { scope, lpaths } = self;
+        *scope == desig.scope
+            && itertools::equal(lpaths.iter().copied(), &desig.label.lpaths)
+    }
+}
+
+// Tests that our `BorrowedDesig` `equivalent` impl is justified.
+#[test]
+fn check_borrowed_desig() {
+    use super::*;
+    use indexmap::Equivalent;
+    use itertools::iproduct;
+    use std::hash::{Hash, Hasher};
+
+    #[derive(PartialEq, Eq, Debug, Default)]
+    struct TrackingHasher(Vec<Vec<u8>>);
+    impl Hasher for TrackingHasher {
+        fn write(&mut self, bytes: &[u8]) {
+            self.0.push(bytes.to_owned());
+        }
+        fn finish(&self) -> u64 {
+            unreachable!()
+        }
+    }
+    impl TrackingHasher {
+        fn hash(t: impl Hash) -> Self {
+            let mut self_ = Self::default();
+            t.hash(&mut self_);
+            self_
+        }
+    }
+
+    type Case = (Scope, &'static [&'static str]);
+    const TEST_CASES: &[Case] = &[
+        (Scope::T, &["path"]),
+        (Scope::T, &["r#path"]),
+        (Scope::V, &["path", "some::path"]),
+        (Scope::V, &["r#struct", "with_generics::<()>"]),
+        (Scope::F, &[]), // illegal Desig, but test anyway
+    ];
+
+    struct Desigs<'b> {
+        owned: Desig,
+        borrowed: BorrowedDesig<'b>,
+    }
+    impl Desigs<'_> {
+        fn with((scope, lpaths): &Case, f: impl FnOnce(Desigs<'_>)) {
+            let scope = *scope;
+            let lpaths = lpaths
+                .iter()
+                .map(|l| syn::parse_str(l).expect(l))
+                .collect_vec();
+            let owned = {
+                let label = Label {
+                    lpaths: lpaths.clone(),
+                };
+                Desig { scope, label }
+            };
+            let lpaths_borrowed;
+            let borrowed = {
+                lpaths_borrowed = lpaths.iter().collect_vec();
+                BorrowedDesig {
+                    scope,
+                    lpaths: &*lpaths_borrowed,
+                }
+            };
+            f(Desigs { owned, borrowed })
+        }
+    }
+
+    // Test that for each entry in TEST_CASES, when parsed into Paths, etc.,
+    // BorrowedDesig is `equivalent` to, and hashes the same as, Desig.
+
+    for case in TEST_CASES {
+        Desigs::with(case, |d| {
+            assert!(d.borrowed.equivalent(&d.owned));
+            assert_eq!(
+                TrackingHasher::hash(&d.owned),
+                TrackingHasher::hash(&d.borrowed),
+            );
+        });
+    }
+
+    // Compare every TEST_CASES entry with every other entry.
+    // See if the owned forms are equal (according to `PartialEq`).
+    // Insist that the Borrowed vs owned `equivalent` relation agrees,
+    // in both directions.
+    // And, if they are equal, insist that the hashes all agree.
+
+    for (case0, case1) in iproduct!(TEST_CASES, TEST_CASES) {
+        Desigs::with(case0, |d0| {
+            Desigs::with(case1, |d1| {
+                let equal = d0.owned == d1.owned;
+                assert_eq!(equal, d0.borrowed.equivalent(&d1.owned));
+                assert_eq!(equal, d1.borrowed.equivalent(&d0.owned));
+                if equal {
+                    let hash = TrackingHasher::hash(&d0.owned);
+                    assert_eq!(hash, TrackingHasher::hash(&d1.owned));
+                    assert_eq!(hash, TrackingHasher::hash(&d0.borrowed));
+                    assert_eq!(hash, TrackingHasher::hash(&d1.borrowed));
+                }
+            });
+        });
     }
 }
 
@@ -555,5 +733,329 @@ impl<'l> FoundNode<'l> {
             }
         }
         Ok(())
+    }
+}
+
+//---------- impl Recognised etc. ----------
+
+impl Recognised {
+    /// Ensures that `self[k] >= v`
+    pub fn update(&mut self, k: Desig, v: RecogAllow) {
+        let ent = self.map.entry(k).or_insert(v);
+        *ent = cmp::max(*ent, v);
+    }
+}
+
+impl ToTokens for Recognised {
+    fn to_tokens(&self, out: &mut TokenStream) {
+        for (desig, allow) in &self.map {
+            match allow {
+                RecogAllow::BoolOnly => {
+                    out.extend(quote! { ? });
+                }
+                RecogAllow::Value => {}
+            }
+            desig.to_tokens(Span::call_site(), out);
+        }
+    }
+}
+
+impl RecogAllow {
+    fn max() -> Self {
+        Self::iter().rev().next().unwrap()
+    }
+}
+
+//---------- support for checking ----------
+
+pub struct RecogChecker<'e> {
+    recog: meta::Recognised,
+    errors: &'e mut ErrorAccumulator,
+}
+
+impl<'e> RecogChecker<'e> {
+    pub fn new(
+        recog: meta::Recognised,
+        errors: &'e mut ErrorAccumulator,
+    ) -> Self {
+        RecogChecker { errors, recog }
+    }
+
+    /// Check one meta attribute found in a driver
+    pub fn check(
+        &mut self,
+        pmetas: &[meta::PreprocessedTree],
+        scopes: &[meta::Scope],
+    ) {
+        let mut paths = vec![];
+        for pmeta in pmetas {
+            self.check_1(scopes, &mut paths, pmeta);
+        }
+    }
+
+    fn check_1<'p>(
+        &mut self,
+        scopes: &[meta::Scope],
+        lpaths: &mut Vec<&'p syn::Path>,
+        ptree: &'p meta::PreprocessedTree,
+    ) {
+        use PreprocessedValue as PV;
+        use RecogAllow as RA;
+
+        lpaths.push(&ptree.path);
+        // closure stops us forgetting to pop again via an early exit
+        (|| {
+            let want = match &ptree.value {
+                PV::Unit => RA::BoolOnly,
+                PV::Value { .. } => RA::Value,
+                PV::List(l) if l.content.is_empty() => RA::BoolOnly,
+                PV::List(l) => {
+                    for ptree in &l.content {
+                        self.check_1(scopes, lpaths, ptree);
+                    }
+                    // don't care about *this* path, care about deeper ones
+                    return;
+                }
+            };
+
+            struct Nearest {
+                allow: RecogAllow,
+                scope: Scope,
+                span: Span,
+            }
+
+            let mut nearest: Option<Nearest> = None;
+            for scope in scopes.iter().rev().copied() {
+                let test = BorrowedDesig { scope, lpaths };
+
+                if let Some((got_desig, &got)) =
+                    self.recog.map.get_key_value(&test)
+                {
+                    if got >= want {
+                        // found a justification - a recognised meta
+                        // that matches this provided one
+                        return;
+                    }
+
+                    let span = got_desig
+                        .label
+                        .lpaths
+                        .last()
+                        .expect("empty lpaths")
+                        .span();
+
+                    if Some(got) > nearest.as_ref().map(|n| n.allow) {
+                        let allow = got;
+                        nearest = Some(Nearest { allow, scope, span });
+                    }
+                }
+            }
+
+            let scope;
+            let error;
+
+            if let Some(found) = nearest {
+                scope = found.scope;
+                error =
+                    [(ptree.path.span(), "provided, in driver"),
+                     (found.span, "recognised, in template")].error(
+                         match (want, found.allow) {
+                             (RA::Value, RA::BoolOnly) =>
+ "meta attribute value provided, but is used only as a boolean",
+                             (RA::Value, RA::Value) |
+                             (RA::BoolOnly, RA::BoolOnly) |
+                             (RA::BoolOnly, RA::Value) =>
+                                 panic!("want < found"),
+                         }
+                    );
+            } else {
+                error = ptree.path.error(
+                    "meta attribute provided, but not used by template",
+                );
+                scope = scopes[0];
+            };
+
+            self.errors.push(error);
+
+            // avoid repeated errors, by adding this to recog
+            let lpaths = lpaths.iter().copied().cloned().collect();
+            let label = Label { lpaths };
+            let desig = Desig { scope, label };
+            self.recog.update(desig, RA::max());
+        })();
+        lpaths.pop();
+    }
+}
+
+//---------- impl FindRecogMetas ----------
+
+impl<O: SubstParseContext> FindRecogMetas for Template<O> {
+    fn find_recog_metas(&self, acc: &mut Recognised) {
+        for e in &self.elements {
+            e.find_recog_metas(acc)
+        }
+    }
+}
+
+impl<O: SubstParseContext> FindRecogMetas for TemplateElement<O> {
+    fn find_recog_metas(&self, acc: &mut Recognised) {
+        match self {
+            TE::Ident(_) | TE::LitStr(_) | TE::Literal(..) | TE::Punct(..) => {
+            }
+            TE::Group { template, .. } => template.find_recog_metas(acc),
+            TE::Subst(n) => n.find_recog_metas(acc),
+            TE::Repeat(n) => n.find_recog_metas(acc),
+        }
+    }
+}
+
+impl<O: SubstParseContext> FindRecogMetas for RepeatedTemplate<O> {
+    fn find_recog_metas(&self, acc: &mut Recognised) {
+        self.template.find_recog_metas(acc);
+        self.whens.find_recog_metas(acc);
+    }
+}
+
+impl<O: SubstParseContext> FindRecogMetas for Subst<O> {
+    fn find_recog_metas(&self, acc: &mut Recognised) {
+        self.sd.find_recog_metas(acc);
+    }
+}
+
+macro_rules! impL_find_recog_metas_via_iter { {
+    ( $($gens:tt)* ), $i:ty
+} => {
+    impl<T: FindRecogMetas, $($gens)*> FindRecogMetas for $i {
+        fn find_recog_metas(&self, acc: &mut Recognised) {
+            for item in self {
+                item.find_recog_metas(acc)
+            }
+        }
+    }
+} }
+impL_find_recog_metas_via_iter!((), [T]);
+impL_find_recog_metas_via_iter!((), Option<T>);
+impL_find_recog_metas_via_iter!((U), Punctuated<T, U>);
+
+impl<T: FindRecogMetas> FindRecogMetas for Box<T> {
+    fn find_recog_metas(&self, acc: &mut Recognised) {
+        self.deref().find_recog_metas(acc)
+    }
+}
+
+impl<O: SubstParseContext> FindRecogMetas for SubstDetails<O> {
+    fn find_recog_metas(&self, acc: &mut Recognised) {
+        use SD::*;
+
+        match self {
+            xmeta(v) => v.find_recog_metas(acc),
+            vpat(v, _, _) => v.find_recog_metas(acc),
+            vtype(v, _, _) => v.find_recog_metas(acc),
+            tdefvariants(v, _, _) => v.find_recog_metas(acc),
+            fdefine(v, _, _) => v.find_recog_metas(acc),
+            vdefbody(a, b, _, _) => {
+                a.find_recog_metas(acc);
+                b.find_recog_metas(acc);
+            }
+            paste(v, _) => v.find_recog_metas(acc),
+            ChangeCase(v, _, _) => v.find_recog_metas(acc),
+
+            when(v, _) => v.find_recog_metas(acc),
+            define(v, _) => v.find_recog_metas(acc),
+            defcond(v, _) => v.find_recog_metas(acc),
+
+            not(v, _) => v.find_recog_metas(acc),
+            any(v, _) | all(v, _) => v.find_recog_metas(acc),
+            approx_equal(_, v) => v.find_recog_metas(acc),
+
+            For(v, _) => v.find_recog_metas(acc),
+            If(v, _) | select1(v, _) => v.find_recog_metas(acc),
+
+            tname(_)
+            | ttype(_)
+            | tdeftype(_)
+            | vname(_)
+            | fname(_)
+            | ftype(_)
+            | fpatname(_)
+            | tdefkwd(_)
+            | Vis(_, _)
+            | tattrs(_, _, _)
+            | vattrs(_, _, _)
+            | fattrs(_, _, _)
+            | tgens(_, _)
+            | tdefgens(_, _)
+            | tgnames(_, _)
+            | twheres(_, _)
+            | UserDefined(_)
+            | False(_)
+            | True(_)
+            | is_struct(_)
+            | is_enum(_)
+            | is_union(_)
+            | v_is_unit(_)
+            | v_is_tuple(_)
+            | v_is_named(_)
+            | dbg_all_keywords(_)
+            | Crate(_, _) => {}
+        }
+    }
+}
+
+impl<O: SubstParseContext> FindRecogMetas for SubstMeta<O> {
+    fn find_recog_metas(&self, acc: &mut Recognised) {
+        let allow = O::meta_recog_allow();
+        acc.update(self.desig.clone(), allow);
+    }
+}
+
+impl FindRecogMetas for SubstVType {
+    fn find_recog_metas(&self, acc: &mut Recognised) {
+        let Self { self_, vname } = self;
+        self_.find_recog_metas(acc);
+        vname.find_recog_metas(acc);
+    }
+}
+
+impl FindRecogMetas for SubstVPat {
+    fn find_recog_metas(&self, acc: &mut Recognised) {
+        let Self { vtype, fprefix } = self;
+        vtype.find_recog_metas(acc);
+        fprefix.find_recog_metas(acc);
+    }
+}
+
+impl<B: FindRecogMetas> FindRecogMetas for Definition<B> {
+    fn find_recog_metas(&self, acc: &mut Recognised) {
+        let Self {
+            name: _,
+            body_span: _,
+            body,
+        } = self;
+        body.find_recog_metas(acc);
+    }
+}
+
+impl FindRecogMetas for DefinitionBody {
+    fn find_recog_metas(&self, acc: &mut Recognised) {
+        match self {
+            DefinitionBody::Normal(v) => v.find_recog_metas(acc),
+            DefinitionBody::Paste(v) => v.find_recog_metas(acc),
+        }
+    }
+}
+
+impl<O: SubstParseContext> FindRecogMetas for SubstIf<O> {
+    fn find_recog_metas(&self, acc: &mut Recognised) {
+        let Self {
+            tests,
+            otherwise,
+            kw_span: _,
+        } = self;
+        for (if_, then) in tests {
+            if_.find_recog_metas(acc);
+            then.find_recog_metas(acc);
+        }
+        otherwise.find_recog_metas(acc);
     }
 }

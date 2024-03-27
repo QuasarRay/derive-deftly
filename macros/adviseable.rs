@@ -104,6 +104,15 @@ pub fn adviseable_parse2<T: ParseAdviseable>(
     })
 }
 
+impl<T> AdviseableInnerResult<T> {
+    pub fn map<U>(self, f: impl FnOnce(T) -> U) -> AdviseableInnerResult<U> {
+        match self {
+            AOk(y) => AOk(f(y)),
+            ErrNNA(e) => ErrNNA(e),
+        }
+    }
+}
+
 /// Add a warning about derive-deftly version incompatibility
 ///
 /// ### Lost advice hazard

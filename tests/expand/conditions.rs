@@ -89,6 +89,7 @@ struct Tuple(usize);
 
 #[derive(Deftly)]
 #[derive_deftly(Trait, GetUsize)]
+#[derive_deftly_adhoc] // allow this, which is matched only as bool
 #[deftly(hello(there = 42))]
 struct Struct {
     field: usize,
@@ -96,6 +97,7 @@ struct Struct {
 
 #[derive(Deftly)]
 #[derive_deftly(Trait, GetUsize)]
+#[derive_deftly_adhoc] // allow hello(there(nner)) which is never matched
 enum Enum {
     #[deftly(hello(there))]
     Unit,
