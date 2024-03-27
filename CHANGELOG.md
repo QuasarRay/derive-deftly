@@ -25,11 +25,33 @@ We expect to increase it cautiously and only with good reason.
 
 ### 0.10.0 UNRELEASED
 
- * (changes to be documented here)
+#### Breaking
+
+ * Reject invalid templates in `define_derive_deftly!`,
+   even if they are never invoked.
+ * Reject `#[deftly(...)]` attributes not recognised by
+   any relevant template.
+
+#### Added
+
+ * `template_export_semver_check!` for helping ensure semver
+   compliance when exporting macros, and associated docs.
+
+#### Fixed
+
+ * Fixed a largely-theoretical concurrency bug which could cause
+   wrong error output if multiple invocations generated identical,
+   but syntactically-invalid, expansions.  (!262 / !263).
+ * Improve spans in certain error messages relating to `Xmeta`.
+ * Fix heading formatting issues in the entry for 0.9.0.
 
 #### pub template semver
 
-(changes to be documented here)
+Updating to derive-deftly 0.10.0 is a breaking change
+to the API of a crate which exports templates:
+
+Exported templates are not compatible due to renaming of the
+internal keyword `$_da_intern_crate` to `$_dd_intern_crate`.
 
 ### 0.9.2
 
