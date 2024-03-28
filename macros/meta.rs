@@ -804,18 +804,18 @@ impl RecogAllow {
 pub struct RecogChecker<'r, 'e> {
     /// The actual set of recognised meta attributes
     #[allow(dead_code)] // XXXX
-    recog_real: &'r meta::Recognised,
+    recog_real: &'r Recognised,
     /// "Working" set of recognised meta attributes
     ///
     /// We add things to this to suppress duplicate error messages,
     /// but that means it has synthetic entries.
-    recog_work: Cow<'r, meta::Recognised>,
+    recog_work: Cow<'r, Recognised>,
     errors: &'e mut ErrorAccumulator,
 }
 
 impl<'r, 'e> RecogChecker<'r, 'e> {
     pub fn new(
-        recog: &'r meta::Recognised,
+        recog: &'r Recognised,
         errors: &'e mut ErrorAccumulator,
     ) -> Self {
         RecogChecker {
@@ -828,8 +828,8 @@ impl<'r, 'e> RecogChecker<'r, 'e> {
     /// Check one meta attribute found in a driver
     pub fn check(
         &mut self,
-        pmetas: &[meta::PreprocessedTree],
-        supplied: meta::SuppliedScope,
+        pmetas: &[PreprocessedTree],
+        supplied: SuppliedScope,
     ) {
         let mut paths = vec![];
         for pmeta in pmetas {
@@ -839,9 +839,9 @@ impl<'r, 'e> RecogChecker<'r, 'e> {
 
     fn check_1<'p>(
         &mut self,
-        supplied: meta::SuppliedScope,
+        supplied: SuppliedScope,
         lpaths: &mut Vec<&'p syn::Path>,
-        ptree: &'p meta::PreprocessedTree,
+        ptree: &'p PreprocessedTree,
     ) {
         use PreprocessedValue as PV;
         use RecogAllow as RA;
