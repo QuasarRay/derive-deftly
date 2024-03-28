@@ -938,7 +938,8 @@ impl<'r, 'e> RecogChecker<'r, 'e> {
                     supplied,
                     ptree.path.span(),
                     lpaths,
-                );
+                )
+                .void_unwrap_err();
                 scope = supplied.widest();
             };
 
@@ -959,13 +960,16 @@ fn unrecognised_error(
     supplied: SuppliedScope,
     supplied_span: Span,
     lpaths: &[&syn::Path],
-) -> syn::Error {
+) -> Result<Void, syn::Error> /* return type allows (ab)use of ? */ {
     use RecogAllow as RA;
 
-    if let Some(yes) = {
-        // Look to see if it would have been recognised in
-        // another scope.  That would mean the attr is
-        // merely misplaced, rather than totally wrong.
+    let try_case = |e: Option<_>| e.map(Err).unwrap_or(Ok(()));
+    let some_err = |m: &dyn Display| Some(supplied_span.error(m));
+
+    // Look to see if it would have been recognised in
+    // another scope.  That would mean the attr is
+    // merely misplaced, rather than totally wrong.
+    try_case((|| {
         let y_scopes = Scope::iter()
             .filter(|&scope| {
                 recog_real
@@ -973,25 +977,26 @@ fn unrecognised_error(
                     .contains_key(&BorrowedDesig { scope, lpaths })
             })
             .collect_vec();
-        if !y_scopes.is_empty() {
-            let y_ss = SuppliedScope::iter()
-                .filter(|ss| ss.recog_search().any(|s| y_scopes.contains(&s)))
-                .map(|ss| ss.to_string())
-                .join("/");
-            let y_scopes = y_scopes.iter().map(|s| s.as_ref()).join("/");
-            Some(format!("{} ({})", y_ss, y_scopes))
-        } else {
-            None
+
+        if y_scopes.is_empty() {
+            return None;
         }
-    } {
-        supplied_span.error(format_args!(
- "meta attribute provided for {}, but recognised by template only for {}",
+        let y_ss = SuppliedScope::iter()
+            .filter(|ss| ss.recog_search().any(|s| y_scopes.contains(&s)))
+            .map(|ss| ss.to_string())
+            .join("/");
+        let y_scopes = y_scopes.iter().map(|s| s.as_ref()).join("/");
+        some_err(&format_args!(
+ "meta attribute provided for {}, but recognised by template only for {} ({})",
             supplied,
-            yes,
+            y_ss,
+            y_scopes,
         ))
-    } else if let Some(y) = (|| {
-        // Look to see if user supplied `#[deftly(foo(bar))]`
-        // when the template wanted `#[deftly(foo = "bar")]`.
+    })())?;
+
+    // Look to see if user supplied `#[deftly(foo(bar))]`
+    // when the template wanted `#[deftly(foo = "bar")]`.
+    try_case((|| {
         let (upper, recog) = supplied.recog_search().find_map(|scope| {
             let upper = BorrowedDesig {
                 scope,
@@ -1003,19 +1008,17 @@ fn unrecognised_error(
         if *recog != RA::Value {
             return None;
         }
-        Some(supplied_span.error(format_args!(
+        some_err(&format_args!(
  "nested meta provided and not recognised; but, template would recognise {}",
             DisplayAsIfSpecified {
                 lpaths: upper.lpaths,
                 inside_after: " = ..",
             },
-        )))
-    })() {
-        return y;
-    } else {
-        supplied_span
-            .error("meta attribute provided, but not used by template")
-    }
+        ))
+    })())?;
+
+    Err(supplied_span
+        .error("meta attribute provided, but not used by template"))
 }
 
 //---------- impl FindRecogMetas ----------
