@@ -953,14 +953,10 @@ fn unrecognised_error(
             .collect_vec();
         if !y_scopes.is_empty() {
             let y_ss = SuppliedScope::iter()
-                .filter(|ss| {
-                    ss.recog_search()
-                        .any(|s| y_scopes.contains(&s))
-                })
+                .filter(|ss| ss.recog_search().any(|s| y_scopes.contains(&s)))
                 .map(|ss| ss.to_string())
                 .join("/");
-            let y_scopes =
-                y_scopes.iter().map(|s| s.as_ref()).join("/");
+            let y_scopes = y_scopes.iter().map(|s| s.as_ref()).join("/");
             Some(format!("{} ({})", y_ss, y_scopes))
         } else {
             None
@@ -972,9 +968,8 @@ fn unrecognised_error(
             yes,
         ))
     } else {
-        supplied_span.error(
-            "meta attribute provided, but not used by template",
-        )
+        supplied_span
+            .error("meta attribute provided, but not used by template")
     }
 }
 
