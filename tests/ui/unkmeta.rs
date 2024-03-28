@@ -25,7 +25,7 @@ define_derive_deftly! {
 #[deftly(tnest = '1')] // (error, but suppressed)
 #[deftly(tnest())] // ok
 #[deftly(tnest(bool_only = 42))] // ERROR (only recognised as boolean)
-#[deftly(tnest(bool_only(deeper)))] // ERROR (too deep) - TODO message too bland
+#[deftly(tnest(bool_only(deeper)))] // ERROR (too deep, unrecog.. subpath)
 #[deftly(tnest(by_value(deeper)))] // ERROR (too deep, wanted value instead)
 #[deftly(tnest(bool_only))] // ok
 #[deftly(vnest(bool_only))] // ok

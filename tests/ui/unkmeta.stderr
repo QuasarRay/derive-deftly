@@ -30,7 +30,7 @@ error: meta attribute value provided, but is used only as a boolean (recognised,
 error: meta attribute provided, but not used by template
   --> ui/unkmeta.rs:28:26
    |
-28 | #[deftly(tnest(bool_only(deeper)))] // ERROR (too deep) - TODO message too bland
+28 | #[deftly(tnest(bool_only(deeper)))] // ERROR (too deep, unrecog.. subpath)
    |                          ^^^^^^
 
 error: nested meta provided and not recognised; but, template would recognise #[deftly(tnest(by_value = ..))
