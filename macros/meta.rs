@@ -1036,7 +1036,7 @@ fn unrecognised_error(
     })())?;
 
     Err(supplied_span
-        .error("meta attribute provided, but not used by template"))
+        .error("meta attribute provided, but not recognised by template"))
 }
 
 //---------- impl FindRecogMetas ----------
