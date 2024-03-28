@@ -25,6 +25,7 @@
       * [`$tdefvariants`, `$vdefbody`, `$fdefine` -- tools for defining types](#tdefvariants-vdefbody-fdefine--tools-for-defining-types)
       * [`$dbg_all_keywords` -- Dump expansions of all keywords to compiler stderr](#dbg_all_keywords--dump-expansions-of-all-keywords-to-compiler-stderr)
       * [`${define ...}`, `${defcond ...}` -- user-defined expansions and conditions](#define--defcond---user-defined-expansions-and-conditions)
+      * [`${error "message"}` -- explicitly throw a compile error](#error-message--explicitly-throw-a-compile-error)
    * [Conditions](#conditions)
       * [`fvis`, `tvis`, `fdefvis` -- test for public visibility](#fvis-tvis-fdefvis--test-for-public-visibility)
       * [`fmeta(NAME)`, `vmeta(NAME)`, `tmeta(NAME)` -- `#[deftly]` attributes](#fmetaname-vmetaname-tmetaname--deftly-attributes)
@@ -765,6 +766,14 @@ const ALL_STRUCT_FIELDS: StructFields = {
     field: true,
 };
 ```
+
+### `${error "message"}` -- explicitly throw a compile error
+
+Generates a compilation error, if expanded.
+
+This can be used anywhere a derive-deftly expansion is allowed;
+(unlike std's `compile_error!`,
+which, like any Rust macro, is permitted only in certain syntactic contexts).
 
 ## Conditions
 
