@@ -105,6 +105,12 @@ error: meta attribute provided for enum, but recognised by template only for fie
 55 | #[deftly(fnest(by_value = "t"))] // ERROR (wrong scope)
    |                ^^^^^^^^
 
+error: meta attribute provided for enum, but recognised by template only for struct/variant/field (vmeta/fmeta)
+  --> ui/unkmeta.rs:56:17
+   |
+56 | #[deftly(vfnest(by_value = "t"))] // ERROR (should be per-field or -variant)
+   |                 ^^^^^^^^
+
 error: meta attribute provided for variant, but recognised by template only for struct/enum (tmeta)
   --> ui/unkmeta.rs:58:20
    |
