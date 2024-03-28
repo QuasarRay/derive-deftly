@@ -17,6 +17,39 @@ pub enum Scope {
     #[strum(serialize = "fmeta")] F,
 }
 
+/// Scope of a *supplied* meta (`#[deftly(...)]`) attribute
+///
+/// Also encodes, for metas at the toplevel,
+/// whether it's a struct or an enum.
+#[derive(Debug, Clone, Copy, Eq, PartialEq, Hash)] //
+#[derive(strum::Display, EnumIter)]
+#[strum(serialize_all = "snake_case")]
+pub enum SuppliedScope {
+    Struct,
+    Enum,
+    Variant,
+    Field,
+}
+
+impl SuppliedScope {
+    fn recog_search(self) -> impl Iterator<Item = Scope> {
+        use Scope as S;
+        use SuppliedScope as SS;
+        match self {
+            SS::Struct => &[S::T, S::V] as &[_],
+            SS::Enum => &[S::T],
+            SS::Variant => &[S::V],
+            SS::Field => &[S::F],
+        }
+        .iter()
+        .copied()
+    }
+
+    fn widest(self) -> Scope {
+        self.recog_search().next().unwrap()
+    }
+}
+
 /// `(foo(bar))` in eg `fmeta(foo(bar))`
 ///
 /// includes the parens
@@ -134,7 +167,7 @@ pub enum RecogAllow {
     Value,
 }
 
-#[derive(Default, Debug)]
+#[derive(Default, Debug, Clone)]
 pub struct Recognised {
     map: IndexMap<Desig, RecogAllow>,
 }
@@ -441,6 +474,26 @@ impl indexmap::Equivalent<Desig> for BorrowedDesig<'_> {
         let BorrowedDesig { scope, lpaths } = self;
         *scope == desig.scope
             && itertools::equal(lpaths.iter().copied(), &desig.label.lpaths)
+    }
+}
+
+/// `Display`s as a `#[deftly(...)]` as the user might write it
+struct DisplayAsIfSpecified<'r> {
+    lpaths: &'r [&'r syn::Path],
+    /// Included after the innermost lpath, inside the parens
+    inside_after: &'r str,
+}
+impl Display for DisplayAsIfSpecified<'_> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "#[deftly")?;
+        for p in self.lpaths {
+            write!(f, "({}", p.to_token_stream())?;
+        }
+        write!(f, "{}", self.inside_after)?;
+        for _ in self.lpaths {
+            write!(f, ")")?;
+        }
+        Ok(())
     }
 }
 
@@ -768,36 +821,47 @@ impl RecogAllow {
 
 //---------- support for checking ----------
 
-pub struct RecogChecker<'e> {
-    recog: meta::Recognised,
+pub struct RecogChecker<'r, 'e> {
+    /// The actual set of recognised meta attributes
+    #[allow(dead_code)] // XXXX
+    recog_real: &'r Recognised,
+    /// "Working" set of recognised meta attributes
+    ///
+    /// We add things to this to suppress duplicate error messages,
+    /// but that means it has synthetic entries.
+    recog_work: Cow<'r, Recognised>,
     errors: &'e mut ErrorAccumulator,
 }
 
-impl<'e> RecogChecker<'e> {
+impl<'r, 'e> RecogChecker<'r, 'e> {
     pub fn new(
-        recog: meta::Recognised,
+        recog: &'r Recognised,
         errors: &'e mut ErrorAccumulator,
     ) -> Self {
-        RecogChecker { errors, recog }
+        RecogChecker {
+            errors,
+            recog_real: recog,
+            recog_work: Cow::Borrowed(recog),
+        }
     }
 
     /// Check one meta attribute found in a driver
     pub fn check(
         &mut self,
-        pmetas: &[meta::PreprocessedTree],
-        scopes: &[meta::Scope],
+        pmetas: &[PreprocessedTree],
+        supplied: SuppliedScope,
     ) {
         let mut paths = vec![];
         for pmeta in pmetas {
-            self.check_1(scopes, &mut paths, pmeta);
+            self.check_1(supplied, &mut paths, pmeta);
         }
     }
 
     fn check_1<'p>(
         &mut self,
-        scopes: &[meta::Scope],
+        supplied: SuppliedScope,
         lpaths: &mut Vec<&'p syn::Path>,
-        ptree: &'p meta::PreprocessedTree,
+        ptree: &'p PreprocessedTree,
     ) {
         use PreprocessedValue as PV;
         use RecogAllow as RA;
@@ -811,7 +875,7 @@ impl<'e> RecogChecker<'e> {
                 PV::List(l) if l.content.is_empty() => RA::BoolOnly,
                 PV::List(l) => {
                     for ptree in &l.content {
-                        self.check_1(scopes, lpaths, ptree);
+                        self.check_1(supplied, lpaths, ptree);
                     }
                     // don't care about *this* path, care about deeper ones
                     return;
@@ -825,11 +889,11 @@ impl<'e> RecogChecker<'e> {
             }
 
             let mut nearest: Option<Nearest> = None;
-            for scope in scopes.iter().rev().copied() {
+            for scope in supplied.recog_search() {
                 let test = BorrowedDesig { scope, lpaths };
 
                 if let Some((got_desig, &got)) =
-                    self.recog.map.get_key_value(&test)
+                    self.recog_work.map.get_key_value(&test)
                 {
                     if got >= want {
                         // found a justification - a recognised meta
@@ -869,10 +933,14 @@ impl<'e> RecogChecker<'e> {
                          }
                     );
             } else {
-                error = ptree.path.error(
-                    "meta attribute provided, but not used by template",
-                );
-                scope = scopes[0];
+                error = unrecognised_error(
+                    &self.recog_real,
+                    supplied,
+                    ptree.path.span(),
+                    lpaths,
+                )
+                .void_unwrap_err();
+                scope = supplied.widest();
             };
 
             self.errors.push(error);
@@ -881,10 +949,94 @@ impl<'e> RecogChecker<'e> {
             let lpaths = lpaths.iter().copied().cloned().collect();
             let label = Label { lpaths };
             let desig = Desig { scope, label };
-            self.recog.update(desig, RA::max());
+            self.recog_work.to_mut().update(desig, RA::max());
         })();
         lpaths.pop();
     }
+}
+
+fn unrecognised_error(
+    recog_real: &Recognised,
+    supplied: SuppliedScope,
+    supplied_span: Span,
+    lpaths: &[&syn::Path],
+) -> Result<Void, syn::Error> /* return type allows (ab)use of ? */ {
+    use RecogAllow as RA;
+
+    let try_case = |e: Option<_>| e.map(Err).unwrap_or(Ok(()));
+    let some_err = |m: &dyn Display| Some(supplied_span.error(m));
+
+    // Look to see if it would have been recognised in
+    // another scope.  That would mean the attr is
+    // merely misplaced, rather than totally wrong.
+    try_case((|| {
+        let y_scopes = Scope::iter()
+            .filter(|&scope| {
+                recog_real
+                    .map
+                    .contains_key(&BorrowedDesig { scope, lpaths })
+            })
+            .collect_vec();
+
+        if y_scopes.is_empty() {
+            return None;
+        }
+        let y_ss = SuppliedScope::iter()
+            .filter(|ss| ss.recog_search().any(|s| y_scopes.contains(&s)))
+            .map(|ss| ss.to_string())
+            .join("/");
+        let y_scopes = y_scopes.iter().map(|s| s.as_ref()).join("/");
+        some_err(&format_args!(
+ "meta attribute provided for {}, but recognised by template only for {} ({})",
+            supplied,
+            y_ss,
+            y_scopes,
+        ))
+    })())?;
+
+    // Look to see if user supplied `#[deftly(foo(bar))]`
+    // when the template wanted `#[deftly(foo = "bar")]`.
+    try_case((|| {
+        let (upper, recog) = supplied.recog_search().find_map(|scope| {
+            let upper = BorrowedDesig {
+                scope,
+                lpaths: lpaths.split_last()?.1,
+            };
+            let recog = recog_real.map.get(&upper)?;
+            Some((upper, recog))
+        })?;
+        if *recog != RA::Value {
+            return None;
+        }
+        some_err(&format_args!(
+ "nested meta provided and not recognised; but, template would recognise {}",
+            DisplayAsIfSpecified {
+                lpaths: upper.lpaths,
+                inside_after: " = ..",
+            },
+        ))
+    })())?;
+
+    // Look to see if the specified attribute is a prefix of
+    // a recognised one
+    try_case((|| {
+        recog_real.map.keys().find_map(|desig| {
+            // deliberately ignore scope
+            if !itertools::equal(
+                lpaths.iter().copied(),
+                desig.label.lpaths.iter().take(lpaths.len()),
+            ) {
+                return None;
+            }
+            Some(())
+        })?;
+        some_err(&format_args!(
+ "meta attribute provided, but not recognised; template only uses it as a container"
+        ))
+    })())?;
+
+    Err(supplied_span
+        .error("meta attribute provided, but not recognised by template"))
 }
 
 //---------- impl FindRecogMetas ----------

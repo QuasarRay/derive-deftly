@@ -7,6 +7,8 @@ define_derive_deftly! {
         ${tmeta(tnest(by_value))}
         ${vmeta(vnest(by_value))}
         ${fmeta(fnest(by_value))}
+        ${fmeta(vfnest(by_value))}
+        ${vmeta(vfnest(by_value))}
     }}
 
     ${defcond BOOL_ONLY all(
@@ -19,23 +21,24 @@ define_derive_deftly! {
 #[derive(Deftly)]
 #[derive_deftly(UseSomeAttrs)]
 #[deftly(unknown)] // ERROR (simply not recognised)
-#[deftly(tnest)] // ERROR - TODO message could be improved
+#[deftly(tnest)] // ERROR (is only a container)
 #[deftly(tnest = '1')] // (error, but suppressed)
 #[deftly(tnest())] // ok
 #[deftly(tnest(bool_only = 42))] // ERROR (only recognised as boolean)
-#[deftly(tnest(bool_only(deeper)))] // ERROR (too deep) - TODO message too bland
-#[deftly(tnest(by_value(deeper)))] // ERROR (too deep) - TODO message too bland
+#[deftly(tnest(bool_only(deeper)))] // ERROR (too deep, unrecog.. subpath)
+#[deftly(tnest(by_value(deeper)))] // ERROR (too deep, wanted value instead)
 #[deftly(tnest(bool_only))] // ok
 #[deftly(vnest(bool_only))] // ok
-#[deftly(fnest(bool_only))] // ERROR (wrong scope) - TODO all these too bland
+#[deftly(fnest(bool_only))] // ERROR (wrong scope)
 #[deftly(tnest(by_value = "t"))] // ok
 #[deftly(vnest(by_value = "t"))] // ok
 #[deftly(fnest(by_value = "t"))] // ERROR (wrong scope)
+#[deftly(vfnest(by_value = "t"))] // ok (struct counts as V)
 struct Struct {
     #[deftly(tnest(bool_only))] // ERROR (wrong scope)
     #[deftly(vnest(bool_only))] // ERROR (wrong scope)
     #[deftly(fnest(bool_only))] // ok
-    #[deftly(fnest = '1')] // ERROR - TODO message could be improved
+    #[deftly(fnest = '1')] // ERROR (is only a container)
     #[deftly(tnest(by_value = "f"))] // ERROR (wrong scope)
     #[deftly(vnest(by_value = "f"))] // ERROR (wrong scope)
     #[deftly(fnest(by_value = "f"))] // ok
@@ -50,6 +53,7 @@ struct Struct {
 #[deftly(tnest(by_value = "t"))] // ok
 #[deftly(vnest(by_value = "t"))] // ERROR (wrong scope)
 #[deftly(fnest(by_value = "t"))] // ERROR (wrong scope)
+#[deftly(vfnest(by_value = "t"))] // ERROR (should be per-field or -variant)
 enum Enum {
     #[deftly(tnest(bool_only))] // ERROR (wrong scope)
     #[deftly(vnest(bool_only))] // ok
