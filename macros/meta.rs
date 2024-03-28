@@ -913,42 +913,12 @@ impl<'r, 'e> RecogChecker<'r, 'e> {
                          }
                     );
             } else {
-                if let Some(yes) = {
-                    // Look to see if it would have been recognised in
-                    // another scope.  That would mean the attr is
-                    // merely misplaced, rather than totally wrong.
-                    let y_scopes = Scope::iter()
-                        .filter(|&scope| {
-                            self.recog_real
-                                .map
-                                .contains_key(&BorrowedDesig { scope, lpaths })
-                        })
-                        .collect_vec();
-                    if !y_scopes.is_empty() {
-                        let y_ss = SuppliedScope::iter()
-                            .filter(|ss| {
-                                ss.recog_search()
-                                    .any(|s| y_scopes.contains(&s))
-                            })
-                            .map(|ss| ss.to_string())
-                            .join("/");
-                        let y_scopes =
-                            y_scopes.iter().map(|s| s.as_ref()).join("/");
-                        Some(format!("{} ({})", y_ss, y_scopes))
-                    } else {
-                        None
-                    }
-                } {
-                    error = ptree.path.error(format_args!(
- "meta attribute provided for {}, but recognised by template only for {}",
-                        supplied,
-                        yes,
-                    ));
-                } else {
-                    error = ptree.path.error(
-                        "meta attribute provided, but not used by template",
-                    );
-                }
+                error = unrecognised_error(
+                    &self.recog_real,
+                    supplied,
+                    ptree.path.span(),
+                    lpaths,
+                );
                 scope = supplied.widest();
             };
 
@@ -961,6 +931,50 @@ impl<'r, 'e> RecogChecker<'r, 'e> {
             self.recog_work.to_mut().update(desig, RA::max());
         })();
         lpaths.pop();
+    }
+}
+
+fn unrecognised_error(
+    recog_real: &Recognised,
+    supplied: SuppliedScope,
+    supplied_span: Span,
+    lpaths: &[&syn::Path],
+) -> syn::Error {
+    if let Some(yes) = {
+        // Look to see if it would have been recognised in
+        // another scope.  That would mean the attr is
+        // merely misplaced, rather than totally wrong.
+        let y_scopes = Scope::iter()
+            .filter(|&scope| {
+                recog_real
+                    .map
+                    .contains_key(&BorrowedDesig { scope, lpaths })
+            })
+            .collect_vec();
+        if !y_scopes.is_empty() {
+            let y_ss = SuppliedScope::iter()
+                .filter(|ss| {
+                    ss.recog_search()
+                        .any(|s| y_scopes.contains(&s))
+                })
+                .map(|ss| ss.to_string())
+                .join("/");
+            let y_scopes =
+                y_scopes.iter().map(|s| s.as_ref()).join("/");
+            Some(format!("{} ({})", y_ss, y_scopes))
+        } else {
+            None
+        }
+    } {
+        supplied_span.error(format_args!(
+ "meta attribute provided for {}, but recognised by template only for {}",
+            supplied,
+            yes,
+        ))
+    } else {
+        supplied_span.error(
+            "meta attribute provided, but not used by template",
+        )
     }
 }
 
