@@ -3,6 +3,7 @@
 //! Should be included with `use super::prelude::*`, not `crate::`,
 //! so that it works with `tests/directly.rs` too.
 
+pub use std::borrow::Cow;
 pub use std::cell::RefCell;
 pub use std::cmp::{self, Ordering};
 pub use std::convert::{TryFrom, TryInto};

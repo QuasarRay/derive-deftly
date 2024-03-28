@@ -167,7 +167,7 @@ pub enum RecogAllow {
     Value,
 }
 
-#[derive(Default, Debug)]
+#[derive(Default, Debug, Clone)]
 pub struct Recognised {
     map: IndexMap<Desig, RecogAllow>,
 }
@@ -801,17 +801,28 @@ impl RecogAllow {
 
 //---------- support for checking ----------
 
-pub struct RecogChecker<'e> {
-    recog: meta::Recognised,
+pub struct RecogChecker<'r, 'e> {
+    /// The actual set of recognised meta attributes
+    #[allow(dead_code)] // XXXX
+    recog_real: &'r meta::Recognised,
+    /// "Working" set of recognised meta attributes
+    ///
+    /// We add things to this to suppress duplicate error messages,
+    /// but that means it has synthetic entries.
+    recog_work: Cow<'r, meta::Recognised>,
     errors: &'e mut ErrorAccumulator,
 }
 
-impl<'e> RecogChecker<'e> {
+impl<'r, 'e> RecogChecker<'r, 'e> {
     pub fn new(
-        recog: meta::Recognised,
+        recog: &'r meta::Recognised,
         errors: &'e mut ErrorAccumulator,
     ) -> Self {
-        RecogChecker { errors, recog }
+        RecogChecker {
+            errors,
+            recog_real: recog,
+            recog_work: Cow::Borrowed(recog),
+        }
     }
 
     /// Check one meta attribute found in a driver
@@ -862,7 +873,7 @@ impl<'e> RecogChecker<'e> {
                 let test = BorrowedDesig { scope, lpaths };
 
                 if let Some((got_desig, &got)) =
-                    self.recog.map.get_key_value(&test)
+                    self.recog_work.map.get_key_value(&test)
                 {
                     if got >= want {
                         // found a justification - a recognised meta
@@ -914,7 +925,7 @@ impl<'e> RecogChecker<'e> {
             let lpaths = lpaths.iter().copied().cloned().collect();
             let label = Label { lpaths };
             let desig = Desig { scope, label };
-            self.recog.update(desig, RA::max());
+            self.recog_work.to_mut().update(desig, RA::max());
         })();
         lpaths.pop();
     }

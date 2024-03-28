@@ -81,7 +81,7 @@ fn check_meta_recog(
     use meta::*;
     use SuppliedScope as SS;
 
-    let c = RefCell::new(RecogChecker::new(recog, errors));
+    let c = RefCell::new(RecogChecker::new(&recog, errors));
 
     let chk_attrs = |attrs: &_, levels| {
         c.borrow_mut().check(&preprocess_attrs(attrs)?, levels);
