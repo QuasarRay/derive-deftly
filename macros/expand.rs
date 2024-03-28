@@ -425,6 +425,7 @@ where
                 out.append_identfrag_toks(&fpatname)?;
             }
             SD::xmeta(sm) => do_meta(sm, out, sm.pmetas(ctx, kw_span)?)?,
+            SD::error(e, _) => e.throw(ctx)?,
 
             SD::Vis(vis, np) => {
                 out.append_tokens(np, vis.syn_vis(ctx, kw_span)?)?
@@ -582,6 +583,14 @@ where
             | SD::all(_, bo) => out.append_bool_only(bo),
         };
         Ok(())
+    }
+}
+
+impl ExplicitError {
+    pub fn throw<T>(&self, ctx: &Context<'_>) -> Result<T, syn::Error> {
+        Err([ctx.error_loc(),
+             (self.message.span(), "template")]
+            .error(self.message.value()))
     }
 }
 
