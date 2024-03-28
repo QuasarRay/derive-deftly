@@ -7,6 +7,8 @@ define_derive_deftly! {
         ${tmeta(tnest(by_value))}
         ${vmeta(vnest(by_value))}
         ${fmeta(fnest(by_value))}
+        //
+        //
     }}
 
     ${defcond BOOL_ONLY all(
@@ -31,6 +33,7 @@ define_derive_deftly! {
 #[deftly(tnest(by_value = "t"))] // ok
 #[deftly(vnest(by_value = "t"))] // ok
 #[deftly(fnest(by_value = "t"))] // ERROR (wrong scope)
+//
 struct Struct {
     #[deftly(tnest(bool_only))] // ERROR (wrong scope)
     #[deftly(vnest(bool_only))] // ERROR (wrong scope)
@@ -50,6 +53,7 @@ struct Struct {
 #[deftly(tnest(by_value = "t"))] // ok
 #[deftly(vnest(by_value = "t"))] // ERROR (wrong scope)
 #[deftly(fnest(by_value = "t"))] // ERROR (wrong scope)
+//
 enum Enum {
     #[deftly(tnest(bool_only))] // ERROR (wrong scope)
     #[deftly(vnest(bool_only))] // ok
