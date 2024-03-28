@@ -4,10 +4,10 @@ error: meta attribute provided, but not used by template
 23 | #[deftly(unknown)] // ERROR (simply not recognised)
    |          ^^^^^^^
 
-error: meta attribute provided, but not used by template
+error: meta attribute provided, but not recognised; template only uses it as a container
   --> ui/unkmeta.rs:24:10
    |
-24 | #[deftly(tnest)] // ERROR - TODO message could be improved
+24 | #[deftly(tnest)] // ERROR (is only a container)
    |          ^^^^^
 
 error: meta attribute value provided, but is used only as a boolean (provided, in driver)
@@ -63,10 +63,10 @@ error: meta attribute provided for field, but recognised by template only for st
 39 |     #[deftly(vnest(bool_only))] // ERROR (wrong scope)
    |                    ^^^^^^^^^
 
-error: meta attribute provided, but not used by template
+error: meta attribute provided, but not recognised; template only uses it as a container
   --> ui/unkmeta.rs:41:14
    |
-41 |     #[deftly(fnest = '1')] // ERROR - TODO message could be improved
+41 |     #[deftly(fnest = '1')] // ERROR (is only a container)
    |              ^^^^^
 
 error: meta attribute provided for field, but recognised by template only for struct/enum (tmeta)

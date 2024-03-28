@@ -21,7 +21,7 @@ define_derive_deftly! {
 #[derive(Deftly)]
 #[derive_deftly(UseSomeAttrs)]
 #[deftly(unknown)] // ERROR (simply not recognised)
-#[deftly(tnest)] // ERROR - TODO message could be improved
+#[deftly(tnest)] // ERROR (is only a container)
 #[deftly(tnest = '1')] // (error, but suppressed)
 #[deftly(tnest())] // ok
 #[deftly(tnest(bool_only = 42))] // ERROR (only recognised as boolean)
@@ -38,7 +38,7 @@ struct Struct {
     #[deftly(tnest(bool_only))] // ERROR (wrong scope)
     #[deftly(vnest(bool_only))] // ERROR (wrong scope)
     #[deftly(fnest(bool_only))] // ok
-    #[deftly(fnest = '1')] // ERROR - TODO message could be improved
+    #[deftly(fnest = '1')] // ERROR (is only a container)
     #[deftly(tnest(by_value = "f"))] // ERROR (wrong scope)
     #[deftly(vnest(by_value = "f"))] // ERROR (wrong scope)
     #[deftly(fnest(by_value = "f"))] // ok

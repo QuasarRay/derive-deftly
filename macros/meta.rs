@@ -1017,6 +1017,24 @@ fn unrecognised_error(
         ))
     })())?;
 
+    // Look to see if the specified attribute is a prefix of
+    // a recognised one
+    try_case((|| {
+        recog_real.map.keys().find_map(|desig| {
+            // deliberately ignore scope
+            if !itertools::equal(
+                lpaths.iter().copied(),
+                desig.label.lpaths.iter().take(lpaths.len()),
+            ) {
+                return None;
+            }
+            Some(())
+        })?;
+        some_err(&format_args!(
+ "meta attribute provided, but not recognised; template only uses it as a container"
+        ))
+    })())?;
+
     Err(supplied_span
         .error("meta attribute provided, but not used by template"))
 }
