@@ -33,10 +33,10 @@ error: meta attribute provided, but not used by template
 28 | #[deftly(tnest(bool_only(deeper)))] // ERROR (too deep) - TODO message too bland
    |                          ^^^^^^
 
-error: meta attribute provided, but not used by template
+error: nested meta provided and not recognised; but, template would recognise #[deftly(tnest(by_value = ..))
   --> ui/unkmeta.rs:29:25
    |
-29 | #[deftly(tnest(by_value(deeper)))] // ERROR (too deep) - TODO message too bland
+29 | #[deftly(tnest(by_value(deeper)))] // ERROR (too deep, wanted value instead)
    |                         ^^^^^^
 
 error: meta attribute provided for struct, but recognised by template only for field (fmeta)

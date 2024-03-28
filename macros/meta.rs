@@ -477,6 +477,26 @@ impl indexmap::Equivalent<Desig> for BorrowedDesig<'_> {
     }
 }
 
+/// `Display`s as a `#[deftly(...)]` as the user might write it
+struct DisplayAsIfSpecified<'r> {
+    lpaths: &'r [&'r syn::Path],
+    /// Included after the innermost lpath, inside the parens
+    inside_after: &'r str,
+}
+impl Display for DisplayAsIfSpecified<'_> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "#[deftly")?;
+        for p in self.lpaths {
+            write!(f, "({}", p.to_token_stream())?;
+        }
+        write!(f, "{}", self.inside_after)?;
+        for _ in self.lpaths {
+            write!(f, ")")?;
+        }
+        Ok(())
+    }
+}
+
 // Tests that our `BorrowedDesig` `equivalent` impl is justified.
 #[test]
 fn check_borrowed_desig() {
@@ -940,6 +960,8 @@ fn unrecognised_error(
     supplied_span: Span,
     lpaths: &[&syn::Path],
 ) -> syn::Error {
+    use RecogAllow as RA;
+
     if let Some(yes) = {
         // Look to see if it would have been recognised in
         // another scope.  That would mean the attr is
@@ -967,6 +989,29 @@ fn unrecognised_error(
             supplied,
             yes,
         ))
+    } else if let Some(y) = (|| {
+        // Look to see if user supplied `#[deftly(foo(bar))]`
+        // when the template wanted `#[deftly(foo = "bar")]`.
+        let (upper, recog) = supplied.recog_search().find_map(|scope| {
+            let upper = BorrowedDesig {
+                scope,
+                lpaths: lpaths.split_last()?.1,
+            };
+            let recog = recog_real.map.get(&upper)?;
+            Some((upper, recog))
+        })?;
+        if *recog != RA::Value {
+            return None;
+        }
+        Some(supplied_span.error(format_args!(
+ "nested meta provided and not recognised; but, template would recognise {}",
+            DisplayAsIfSpecified {
+                lpaths: upper.lpaths,
+                inside_after: " = ..",
+            },
+        )))
+    })() {
+        return y;
     } else {
         supplied_span
             .error("meta attribute provided, but not used by template")
