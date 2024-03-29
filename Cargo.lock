@@ -78,7 +78,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f98fe590c49d973215c63446a539ad46df696aedcaf8a1f027afc360911d56aa"
 dependencies = [
  "derive-deftly-macros 0.10.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "heck 0.4.1",
+ "heck 0.5.0",
 ]
 
 [[package]]
@@ -103,7 +103,7 @@ version = "0.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ba38f7a9eb6b53496d634ea75a89e73003ced5a672a45004eed33df9c506ebbf"
 dependencies = [
- "heck 0.4.1",
+ "heck 0.5.0",
  "indexmap",
  "itertools",
  "proc-macro-crate",
@@ -326,9 +326,9 @@ dependencies = [
 
 [[package]]
 name = "memchr"
-version = "2.7.1"
+version = "2.7.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "523dc4f511e55ab87b694dc30d0f820d60906ef06413f93d4d7a1385599cc149"
+checksum = "6c8640c5d730cb13ebd907d8d04b52f55ac9a2eec55b440c8892f40d56c76c1d"
 
 [[package]]
 name = "new-b"
