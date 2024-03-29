@@ -49,8 +49,12 @@ fn dump_any_one(
 ) -> R {
     let show_templ_string = {
         let mut s = show_templ.to_string();
-        if let Some(rhs) = s.strip_prefix("$ {") {
-            s = format!("${{{}", rhs);
+        if let Some(inner) = {
+            s.strip_prefix("$ {")
+                .or_else(|| s.strip_prefix("${"))
+                .and_then(|s| s.strip_suffix('}'))
+        } {
+            s = format!("${{{}}}", inner.trim());
         }
         s
     };
