@@ -23,6 +23,17 @@ We expect to increase it cautiously and only with good reason.
 
 ## Changelog
 
+### 0.10.1
+
+#### Added
+
+ * `${error "message"}` keyword for explicitly causing compile errors.
+
+#### Improved
+
+ * Prettier output from `${dbg_all_keywords}`.
+ * Better error messages for unecognised `#[deftly(...)]` attributes.
+
 ### 0.10.0
 
 #### Breaking
