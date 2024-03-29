@@ -86,12 +86,18 @@ won't get in the way.
  * **`#[derive_defly_adhoc]`**:
    Inert helper attribute to enable use of `derive_deftly_adhoc!`.
 
- * **`#[item_derive_deftly]`**:
+ * **`#[item_derive_deftly(MACNAME)]`**:
    attribute macro to be applied to items.
    The item is reproduced unchanged, except that
    `#[deftly]` attributes *in places where we would look for them*
    are filtered out.
-   `#[item_derive_deftly(MACNAME)]` can be used to apply a reuseable template.
+   `#[item_derive_deftly]` will look forward to see if there are
+   further `#[item_derive_deftly]` attributes,
+   so that they can be combined and processed together
+   (this is necessary for correctness of meta attr handling).
+   Template *must* use `for ...` option.
+   `#[derive_deftly_adhoc]` works as usual.
+   It's an error to have `#[item_derive_deftly]` without the `()`.
 
  * **`#[deftly]`**:
    Inert helper attribute for `#[derive(Deftly)]`.
