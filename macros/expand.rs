@@ -588,9 +588,11 @@ where
 
 impl ExplicitError {
     pub fn throw<T>(&self, ctx: &Context<'_>) -> Result<T, syn::Error> {
-        Err([ctx.error_loc(),
-             (self.message.span(), "template")]
-            .error(self.message.value()))
+        Err([
+            ctx.error_loc(), //
+            (self.message.span(), "template"),
+        ]
+        .error(self.message.value()))
     }
 }
 
