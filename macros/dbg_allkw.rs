@@ -47,7 +47,14 @@ fn dump_any_one(
     show_op: &str,
     make_real_templ: &dyn Fn(TokenStream) -> TokenStream,
 ) -> R {
-    let lh = format!("{:12} {}", show_templ.to_string(), show_op);
+    let show_templ_string = {
+        let mut s = show_templ.to_string();
+        if let Some(rhs) = s.strip_prefix("$ {") {
+            s = format!("${{{}", rhs);
+        }
+        s
+    };
+    let lh = format!("{:12} {}", show_templ_string, show_op);
     let templ = make_real_templ(show_templ);
     writeln!(w, "        {:16} {}", lh, template_result(ctx, templ))?;
     Ok(())
