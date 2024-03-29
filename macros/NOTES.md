@@ -153,12 +153,7 @@ Outstanding questions, therefore:
 
 # Things to check before declaring 1.0
 
-Ensure we haven't painted ourselves into a corner for deftly-derive
-from a trait, fn, impl block, ... .  And for being able to apply deftly
-derive as an attribute macro, rather than derive macro, thus arranging
-that the decorated struct is not actually emitted.
+None!
 
-See
-[Future plans wrt macro namespace questions](#future-plans-wrt-macro-namespace-questions)
-and the feedback request ticket
-<https://gitlab.torproject.org/Diziet/rust-derive-deftly/-/issues/3>
+But we should get some experience with the renamed crate,
+probably by upgrading arti to it.
