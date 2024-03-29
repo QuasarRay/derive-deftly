@@ -108,6 +108,8 @@ fn dump_whole(mut w: &mut Out, ctx: &Context) -> R {
         expand! { c, $crate }
         // Recursive, would be silly
         expand! { c, $dbg_all_keywords }
+        // Would throw an error if we expanded it
+        expand! { c, $error }
         // Control flow, can't sensibly be dumped
         expand! { c, $when }
         expand! { c, $if }
