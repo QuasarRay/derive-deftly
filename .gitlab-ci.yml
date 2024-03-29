@@ -82,7 +82,7 @@ cargo-test:
   # See "Using the proper Nightly Rust" in tests/tests.rs
   image: rustlang/rust@sha256:ee4511e23bbd1d06ed24bed884e9df6ac4dc858d2e188b49c199bf56a7ece3f3
   script:
-    - ./maint/via-cargo-install-in-ci cargo-expand --locked --version=1.0.67 --features=prettyplease
+    - ./maint/via-cargo-install-in-ci cargo-expand --locked --version=1.0.80 --features=prettyplease
     - maint/cargo-test-locked --workspace --verbose --all-features -- --skip directly::check_examples
   cache:
     when: 'always'
