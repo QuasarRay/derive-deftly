@@ -119,6 +119,26 @@ won't get in the way.
  * d-d option `transform`.
    Insists that this template is for `#[transform_deftly]` only.
 
+## `for ...` d-d options
+
+Currently, we have `for enum`, `for struct`, `for union`.
+These are fine.
+
+We want also want ways to say:
+
+ * `struct` or `enum`, not `union`: `for data`?
+ * Particular kind of item: `fn`, `trait`, `mod`, `const`.
+ * Any item: `item` (with `#[item_derive_adhoc]` for non-data items).
+ * Combinations of the above: eg `for fn/const`?
+
+Outstanding questions, therefore:
+
+ * Does `for any` mean anything?
+ * What keyword is "`struct`/`enum`"?
+ * Do we need a keyword for `struct`/`enum`/`union`? 
+   Probably, since this is going to be the default!
+ * Is `/` the right separator for "or"?
+
 ### Internals
 
  * **`derive_deftly_engine!`**: Proc macro that does all the work.
