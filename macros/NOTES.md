@@ -111,6 +111,14 @@ won't get in the way.
    this will be an unusual case and we can give it whatever name seems good,
    later.)
 
+## Possible alternative plan for transforming (consume and not emit):
+
+ * **`#[transform_deftly]`**:
+   attribute macro to be applied to items.
+
+ * d-d option `transform`.
+   Insists that this template is for `#[transform_deftly]` only.
+
 ### Internals
 
  * **`derive_deftly_engine!`**: Proc macro that does all the work.
