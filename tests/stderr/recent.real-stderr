@@ -9,7 +9,7 @@ top-level:
         $tdeftype    =>  Enum
         $tdefgens    =>  
         $tdefkwd     =>  enum
-        ${ tdefvariants VARIANTS } => { VARIANTS }
+        ${tdefvariants VARIANTS} => { VARIANTS }
         is_struct    =   false
         is_enum      =   true
         is_union     =   false
@@ -19,7 +19,7 @@ variant Unit:
         $vname       =>  Unit
         $vtype       =>  Enum :: Unit
         $vpat        =>  Enum :: Unit {}
-        ${ vdefbody VNAME FIELDS .. } => VNAME FIELDS ..,
+        ${vdefbody VNAME FIELDS ..} => VNAME FIELDS ..,
         v_is_unit    =   true
         v_is_tuple   =   false
         v_is_named   =   false
@@ -28,7 +28,7 @@ variant Tuple:
         $vname       =>  Tuple
         $vtype       =>  Enum :: Tuple
         $vpat        =>  Enum :: Tuple { 0 : f_0, }
-        ${ vdefbody VNAME FIELDS .. } => VNAME(FIELDS ..),
+        ${vdefbody VNAME FIELDS ..} => VNAME(FIELDS ..),
         v_is_unit    =   false
         v_is_tuple   =   true
         v_is_named   =   false
@@ -47,7 +47,7 @@ variant Struct:
         $vname       =>  Struct
         $vtype       =>  Enum :: Struct
         $vpat        =>  Enum :: Struct { field : f_field, }
-        ${ vdefbody VNAME FIELDS .. } => VNAME { FIELDS .. }
+        ${vdefbody VNAME FIELDS ..} => VNAME { FIELDS .. }
         v_is_unit    =   false
         v_is_tuple   =   false
         v_is_named   =   true
@@ -74,7 +74,7 @@ top-level:
         $tdeftype    =>  Unit
         $tdefgens    =>  
         $tdefkwd     =>  struct
-        ${ tdefvariants VARIANTS } => VARIANTS
+        ${tdefvariants VARIANTS} => VARIANTS
         is_struct    =   true
         is_enum      =   false
         is_union     =   false
@@ -84,7 +84,7 @@ value:
         $vname       =>  <error>
         $vtype       =>  Unit
         $vpat        =>  Unit {}
-        ${ vdefbody VNAME FIELDS .. } => FIELDS .. ;
+        ${vdefbody VNAME FIELDS ..} => FIELDS .. ;
         v_is_unit    =   true
         v_is_tuple   =   false
         v_is_named   =   false
@@ -101,7 +101,7 @@ top-level:
         $tdeftype    =>  Tuple
         $tdefgens    =>  
         $tdefkwd     =>  struct
-        ${ tdefvariants VARIANTS } => VARIANTS
+        ${tdefvariants VARIANTS} => VARIANTS
         is_struct    =   true
         is_enum      =   false
         is_union     =   false
@@ -111,7 +111,7 @@ value:
         $vname       =>  <error>
         $vtype       =>  Tuple
         $vpat        =>  Tuple { 0 : f_0, }
-        ${ vdefbody VNAME FIELDS .. } => (FIELDS ..) ;
+        ${vdefbody VNAME FIELDS ..} => (FIELDS ..) ;
         v_is_unit    =   false
         v_is_tuple   =   true
         v_is_named   =   false
@@ -138,7 +138,7 @@ top-level:
         $tdeftype    =>  Struct
         $tdefgens    =>  
         $tdefkwd     =>  struct
-        ${ tdefvariants VARIANTS } => VARIANTS
+        ${tdefvariants VARIANTS} => VARIANTS
         is_struct    =   true
         is_enum      =   false
         is_union     =   false
@@ -148,7 +148,7 @@ value:
         $vname       =>  <error>
         $vtype       =>  Struct
         $vpat        =>  Struct { field : f_field, }
-        ${ vdefbody VNAME FIELDS .. } => { FIELDS .. }
+        ${vdefbody VNAME FIELDS ..} => { FIELDS .. }
         v_is_unit    =   false
         v_is_tuple   =   false
         v_is_named   =   true
@@ -250,7 +250,7 @@ top-level:
         $tdeftype    =>  EnumReference < 'reference, F = (), >
         $tdefgens    =>  'reference, F = (),
         $tdefkwd     =>  enum
-        ${ tdefvariants VARIANTS } => { VARIANTS }
+        ${tdefvariants VARIANTS} => { VARIANTS }
         is_struct    =   false
         is_enum      =   true
         is_union     =   false
@@ -260,7 +260,7 @@ variant Unit:
         $vname       =>  Unit
         $vtype       =>  EnumReference :: Unit :: < 'reference, F, >
         $vpat        =>  EnumReference :: Unit {}
-        ${ vdefbody VNAME FIELDS .. } => VNAME FIELDS ..,
+        ${vdefbody VNAME FIELDS ..} => VNAME FIELDS ..,
         v_is_unit    =   true
         v_is_tuple   =   false
         v_is_named   =   false
@@ -269,7 +269,7 @@ variant Tuple:
         $vname       =>  Tuple
         $vtype       =>  EnumReference :: Tuple :: < 'reference, F, >
         $vpat        =>  EnumReference :: Tuple { 0 : f_0, }
-        ${ vdefbody VNAME FIELDS .. } => VNAME(FIELDS ..),
+        ${vdefbody VNAME FIELDS ..} => VNAME(FIELDS ..),
         v_is_unit    =   false
         v_is_tuple   =   true
         v_is_named   =   false
@@ -288,7 +288,7 @@ variant Struct:
         $vname       =>  Struct
         $vtype       =>  EnumReference :: Struct :: < 'reference, F, >
         $vpat        =>  EnumReference :: Struct { field : f_field, }
-        ${ vdefbody VNAME FIELDS .. } => VNAME { FIELDS .. }
+        ${vdefbody VNAME FIELDS ..} => VNAME { FIELDS .. }
         v_is_unit    =   false
         v_is_tuple   =   false
         v_is_named   =   true
