@@ -2,7 +2,7 @@
 [package]
 name = "edrv-new-b"
 version = "0.0.1"
-edition = "2018"
+edition = "2021"
 license="MIT"
 authors=["Ian Jackson <ijackson@chiark.greenend.org.uk>",
          "and the contributors to Rust derive-deftly"]
