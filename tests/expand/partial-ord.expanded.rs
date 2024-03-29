@@ -92,7 +92,7 @@ fn main() {
 /// Without too many macros cluttering the expanded output
 fn expect(ok: bool) {
     if !ok {
-        { ::std::rt::begin_panic("explicit panic") };
+        ::core::panicking::panic("explicit panic");
     }
 }
 fn expect_none<T: PartialOrd>(a: T, b: T) {

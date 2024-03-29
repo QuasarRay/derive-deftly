@@ -22,6 +22,6 @@ fn main() {
     };
     let cloned_error = error.clone();
     if cloned_error.error.kind() != std::io::ErrorKind::NotFound {
-        { ::std::rt::begin_panic("explicit panic") };
+        ::core::panicking::panic("explicit panic");
     }
 }
