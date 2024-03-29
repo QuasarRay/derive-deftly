@@ -1148,6 +1148,7 @@ impl<O: SubstParseContext> FindRecogMetas for SubstDetails<O> {
             | v_is_unit(_)
             | v_is_tuple(_)
             | v_is_named(_)
+            | error(..)
             | dbg_all_keywords(_)
             | Crate(_, _) => {}
         }

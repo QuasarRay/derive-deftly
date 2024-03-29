@@ -134,6 +134,7 @@ pub enum SubstDetails<O: SubstParseContext> {
     If(SubstIf<O>, O::NotInBool),
     select1(SubstIf<O>, O::NotInBool),
 
+    error(ExplicitError, O::NotInBool),
     dbg_all_keywords(O::NotInBool),
 
     Crate(O::NotInPaste, O::NotInBool),
@@ -156,6 +157,11 @@ pub enum DefinitionBody {
 }
 
 pub type DefCondBody = Box<Subst<BooleanContext>>;
+
+#[derive(Debug)]
+pub struct ExplicitError {
+    pub message: syn::LitStr,
+}
 
 #[derive(Debug)]
 pub struct SubstIf<O: SubstParseContext> {
@@ -812,6 +818,7 @@ impl<O: SubstParseContext> Parse for Subst<O> {
         keyword! { "true": True(bool_only()?) }
         keyword! { "if": If(parse_if(input)?, not_in_bool()?) }
         keyword! { select1(parse_if(input)?, not_in_bool()?) }
+        keyword! { error(input.parse()?, not_in_bool()?) }
         keyword! { dbg_all_keywords(not_in_bool()?) }
         keyword! { "crate": Crate(not_in_paste()?, not_in_bool()?) }
         keyword! { "_dd_intern_crate": Crate(not_in_paste()?, not_in_bool()?) }
@@ -841,6 +848,16 @@ impl<O: SubstParseContext> Parse for Subst<O> {
         }
 
         Err(kw.error("unknown derive-deftly keyword"))
+    }
+}
+
+impl Parse for ExplicitError {
+    fn parse(input: ParseStream) -> syn::Result<Self> {
+        let message: syn::LitStr = input.parse()?;
+        if message.suffix() != "" {
+            return Err(message.error("suffix forbidden on error string"));
+        }
+        Ok(ExplicitError { message })
     }
 }
 
