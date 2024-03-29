@@ -66,6 +66,8 @@ dependencies = [
 [[package]]
 name = "derive-deftly"
 version = "0.10.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f98fe590c49d973215c63446a539ad46df696aedcaf8a1f027afc360911d56aa"
 dependencies = [
  "derive-deftly-macros 0.10.0",
  "heck 0.5.0",
@@ -73,28 +75,10 @@ dependencies = [
 
 [[package]]
 name = "derive-deftly"
-version = "0.10.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f98fe590c49d973215c63446a539ad46df696aedcaf8a1f027afc360911d56aa"
+version = "0.10.1"
 dependencies = [
- "derive-deftly-macros 0.10.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "heck 0.5.0",
-]
-
-[[package]]
-name = "derive-deftly-macros"
-version = "0.10.0"
-dependencies = [
- "heck 0.5.0",
- "indexmap",
- "itertools",
- "proc-macro-crate",
- "proc-macro2",
- "quote",
- "sha3",
- "strum",
- "syn 2.0.55",
- "void",
+ "derive-deftly-macros 0.10.1",
+ "heck 0.4.1",
 ]
 
 [[package]]
@@ -116,17 +100,33 @@ dependencies = [
 ]
 
 [[package]]
+name = "derive-deftly-macros"
+version = "0.10.1"
+dependencies = [
+ "heck 0.4.1",
+ "indexmap",
+ "itertools",
+ "proc-macro-crate",
+ "proc-macro2",
+ "quote",
+ "sha3",
+ "strum",
+ "syn 2.0.55",
+ "void",
+]
+
+[[package]]
 name = "derive-deftly-stderr-test"
 version = "0.0.1"
 dependencies = [
- "derive-deftly 0.10.0",
+ "derive-deftly 0.10.1",
 ]
 
 [[package]]
 name = "derive-deftly-tests"
 version = "0.0.1"
 dependencies = [
- "derive-deftly 0.10.0",
+ "derive-deftly 0.10.1",
  "easy-ext",
  "educe",
  "glob",
@@ -180,14 +180,14 @@ dependencies = [
 name = "edrv-old-a"
 version = "0.0.1"
 dependencies = [
- "derive-deftly 0.10.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "derive-deftly 0.10.0",
 ]
 
 [[package]]
 name = "edrv-old-b"
 version = "0.0.1"
 dependencies = [
- "derive-deftly 0.10.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "derive-deftly 0.10.0",
  "pub-a",
 ]
 
@@ -342,14 +342,14 @@ dependencies = [
 name = "old-a"
 version = "0.0.1"
 dependencies = [
- "derive-deftly 0.10.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "derive-deftly 0.10.0",
 ]
 
 [[package]]
 name = "old-b"
 version = "0.0.1"
 dependencies = [
- "derive-deftly 0.10.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "derive-deftly 0.10.0",
  "pub-a",
 ]
 
@@ -391,7 +391,7 @@ dependencies = [
 name = "pub-a"
 version = "0.0.1"
 dependencies = [
- "derive-deftly 0.10.0",
+ "derive-deftly 0.10.1",
 ]
 
 [[package]]
