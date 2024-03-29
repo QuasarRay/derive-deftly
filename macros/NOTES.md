@@ -68,7 +68,9 @@ won't get in the way.
    invokes the from-struct derivation machinery; enables:
     1. use of `#[derive_deftly(ReuseableMacro)]` on this very struct
     2. later use of `derive_deftly_adhoc!` of the same struct
+	   (if `#[derive_defly_adhoc]` specified)
     3. `#[deftly(...)]` attributes on bits of the data structure
+	   (checked via chaining technique).
 
  * **`define_derive_deftly!{ [pub] MACNAME = TEMPLATE }`**:
    define a reusable template, which may be invoked as
@@ -80,6 +82,9 @@ won't get in the way.
    adhoc derivation from something previously annotated with
    `#[derive(Deftly)]` or `#[item_derive_deftly]`.
    `DRIVERNAME` is an item path; we conflate the type and value namespaces.
+
+ * **`#[derive_defly_adhoc]`**:
+   Inert helper attribute to enable use of `derive_deftly_adhoc!`.
 
  * **`#[item_derive_deftly]`**:
    attribute macro to be applied to items.
