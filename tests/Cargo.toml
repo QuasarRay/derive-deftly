@@ -44,7 +44,7 @@ void = "1"
 heck = ">=0.4, <0.6"
 
 macrotest = { version = "1.0.10", optional = true }
-trybuild = "1.0.38"
+trybuild = "1.0.46"
 
 [lib]
 path = "tests.rs"
