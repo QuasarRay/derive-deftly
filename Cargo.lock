@@ -12,6 +12,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "basic-toml"
+version = "0.1.9"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "823388e228f614e9558c6804262db37960ec8821856535f5c3f59913140558f8"
+dependencies = [
+ "serde",
+]
+
+[[package]]
 name = "bizarre-derive-deftly"
 version = "0.0.666"
 dependencies = [
@@ -31,7 +40,7 @@ dependencies = [
  "quote",
  "sha3",
  "strum",
- "syn 2.0.55",
+ "syn",
  "void",
 ]
 
@@ -78,7 +87,7 @@ name = "derive-deftly"
 version = "0.10.1"
 dependencies = [
  "derive-deftly-macros 0.10.1",
- "heck 0.4.1",
+ "heck 0.5.0",
 ]
 
 [[package]]
@@ -95,7 +104,7 @@ dependencies = [
  "quote",
  "sha3",
  "strum",
- "syn 2.0.55",
+ "syn",
  "void",
 ]
 
@@ -103,7 +112,7 @@ dependencies = [
 name = "derive-deftly-macros"
 version = "0.10.1"
 dependencies = [
- "heck 0.4.1",
+ "heck 0.5.0",
  "indexmap",
  "itertools",
  "proc-macro-crate",
@@ -111,7 +120,7 @@ dependencies = [
  "quote",
  "sha3",
  "strum",
- "syn 2.0.55",
+ "syn",
  "void",
 ]
 
@@ -140,8 +149,8 @@ dependencies = [
  "regex",
  "sha3",
  "strum",
- "syn 2.0.55",
- "toml 0.8.12",
+ "syn",
+ "toml",
  "trybuild",
  "void",
 ]
@@ -200,7 +209,7 @@ dependencies = [
  "enum-ordinalize",
  "proc-macro2",
  "quote",
- "syn 2.0.55",
+ "syn",
 ]
 
 [[package]]
@@ -226,7 +235,7 @@ checksum = "0d28318a75d4aead5c4db25382e8ef717932d0346600cacae6357eb5941bc5ff"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.55",
+ "syn",
 ]
 
 [[package]]
@@ -311,17 +320,18 @@ checksum = "9c198f91728a82281a64e1f4f9eeb25d82cb32a5de251c6bd1b5154d63a8e7bd"
 
 [[package]]
 name = "macrotest"
-version = "1.0.9"
+version = "1.0.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7489ae0986ce45414b7b3122c2e316661343ecf396b206e3e15f07c846616f10"
+checksum = "119d028d9d69a00b737d6af1081a690cee15df8ef75b3f71c86bcc48b301528e"
 dependencies = [
+ "basic-toml",
  "diff",
  "glob",
  "prettyplease",
  "serde",
+ "serde_derive",
  "serde_json",
- "syn 1.0.109",
- "toml 0.5.11",
+ "syn",
 ]
 
 [[package]]
@@ -361,12 +371,12 @@ checksum = "3fdb12b2476b595f9358c5161aa467c2438859caa136dec86c26fdd2efe17b92"
 
 [[package]]
 name = "prettyplease"
-version = "0.1.25"
+version = "0.2.17"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6c8646e95016a7a6c4adea95bafa8a16baab64b583356217f2c85db4a39d9a86"
+checksum = "8d3928fb5db768cb86f891ff014f0144589297e3c6a1aba6ed7cecfdace270c7"
 dependencies = [
  "proc-macro2",
- "syn 1.0.109",
+ "syn",
 ]
 
 [[package]]
@@ -469,7 +479,7 @@ checksum = "7eb0b34b42edc17f6b7cac84a52a1c5f0e1bb2227e997ca9011ea3dd34e8610b"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.55",
+ "syn",
 ]
 
 [[package]]
@@ -521,25 +531,14 @@ dependencies = [
  "proc-macro2",
  "quote",
  "rustversion",
- "syn 2.0.55",
+ "syn",
 ]
 
 [[package]]
 name = "syn"
-version = "1.0.109"
+version = "2.0.57"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "72b64191b275b66ffe2469e8af2c1cfe3bafa67b529ead792a6d0160888b4237"
-dependencies = [
- "proc-macro2",
- "quote",
- "unicode-ident",
-]
-
-[[package]]
-name = "syn"
-version = "2.0.55"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "002a1b3dbf967edfafc32655d0f377ab0bb7b994aa1d32c8cc7e9b8bf3ebb8f0"
+checksum = "11a6ae1e52eb25aab8f3fb9fca13be982a373b8f1157ca14b897a825ba4a2d35"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -553,15 +552,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "06794f8f6c5c898b3275aebefa6b8a1cb24cd2c6c79397ab15774837a0bc5755"
 dependencies = [
  "winapi-util",
-]
-
-[[package]]
-name = "toml"
-version = "0.5.11"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f4f7f0dd8d50a853a531c426359045b1998f04219d88799810762cd4ad314234"
-dependencies = [
- "serde",
 ]
 
 [[package]]
@@ -621,7 +611,7 @@ dependencies = [
  "serde_derive",
  "serde_json",
  "termcolor",
- "toml 0.8.12",
+ "toml",
 ]
 
 [[package]]
