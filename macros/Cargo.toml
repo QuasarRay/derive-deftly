@@ -1,7 +1,7 @@
 [package]
 name = "derive-deftly-macros"
 version = "0.10.1"
-edition = "2018"
+edition = "2021"
 readme = "../README.md"
 authors=["Ian Jackson <ijackson@chiark.greenend.org.uk>",
          "and the contributors to Rust derive-deftly"]

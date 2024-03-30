@@ -225,12 +225,12 @@ fn test(top: &str, fields: &str, tmeta: bool, vmeta: bool, v: impl Trait) {
     if !(v.shape_top() == top && v.shape_fields() == fields && v.has_tmeta() == tmeta
         && v.has_vmeta() == vmeta)
     {
-        { ::std::rt::begin_panic("explicit panic") }
+        ::core::panicking::panic("explicit panic")
     }
 }
 fn test_get_usize(some_usize: Option<usize>, v: impl GetUsize) {
     if !(v.get_usize() == some_usize) {
-        { ::std::rt::begin_panic("explicit panic") }
+        ::core::panicking::panic("explicit panic")
     }
 }
 fn main() {

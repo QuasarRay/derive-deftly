@@ -6,7 +6,7 @@
 [package]
 name = "bizarre-derive-deftly-macros"
 version = "0.0.666"
-edition = "2018"
+edition = "2021"
 authors=["Ian Jackson <ijackson@chiark.greenend.org.uk>",
          "and the contributors to Rust derive-deftly"]
 license = "MIT"
