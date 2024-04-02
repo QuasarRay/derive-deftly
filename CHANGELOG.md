@@ -45,7 +45,7 @@ We expect to increase it cautiously and only with good reason.
 
 #### Added
 
- * `template_export_semver_check!` for helping ensure semver
+ * `pub_template_semver_check!` for helping ensure semver
    compliance when exporting macros, and associated docs.
 
 #### Fixed

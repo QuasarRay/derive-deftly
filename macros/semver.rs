@@ -1,4 +1,4 @@
-//! Macro impl for `template_export_semver_check!`
+//! Macro impl for `pub_template_semver_check!`
 
 use super::prelude::*;
 
@@ -53,7 +53,7 @@ impl Spanned for SemverCheckInput {
     }
 }
 
-/// This is `template_export_semver_check!`
+/// This is `pub_template_semver_check!`
 pub fn pub_template_semver_check_func_macro(
     input: TokenStream,
 ) -> Result<TokenStream, syn::Error> {
