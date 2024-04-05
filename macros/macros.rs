@@ -205,6 +205,9 @@ pub fn derive_deftly_adhoc(
 /// Note that a template is always exported at the crate top level,
 /// not in a sub-module,
 /// even if it is *defined* in a sub-module.
+/// Also, note that `pub` does not have any effect on
+/// visibility of the template *within the same crate*.
+/// You may still need `#[macro_use]`.
 ///
 /// ### You must re-export `derive_deftly`; semver implications
 ///

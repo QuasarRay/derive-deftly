@@ -190,6 +190,10 @@ struct TheirStructure {
 }
 ```
 
+Exporting a template to other crates with `pub`
+doesn't affect its visibility *within your crate*.
+You may still need `#[macro_use]`.
+
 ### If you're only deriving once...
 
 If you want, you can
