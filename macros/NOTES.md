@@ -111,7 +111,29 @@ won't get in the way.
    this will be an unusual case and we can give it whatever name seems good,
    later.)
 
-## Possible alternative plan for transforming (consume and not emit):
+## consume and not emit:
+
+### Composition problem with `#[deftly]` attributes
+
+You should be able to compose mutually-ignorant derive-deftly templates.
+In particular you should be able to chain transforming templates,
+and transforming templates should be able to
+output invocations of normal deriving templates.
+
+This won't work without doing "something",
+because the outer invocation (the first to process the input)
+will see a bunch of unrecognised `#[deftly]` attributes.
+
+I'm not sure what the answer is,
+but perhaps a template option for accepting `#[deftly]` attrs
+and `${attr}` for transforming them.
+
+Then the caller could `#[deftly(inner(foo))]`
+and the inner template would receive `#[deftly(foo)]`.
+
+Perhaps.
+
+### Possible alternative syntax/naming
 
  * **`#[transform_deftly]`**:
    attribute macro to be applied to items.
