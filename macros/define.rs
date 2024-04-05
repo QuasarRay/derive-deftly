@@ -26,7 +26,7 @@ impl Parse for TemplateDefinition {
         }
         let vis: Option<_> = input.parse()?;
         let templ_name = input.parse()?;
-        let options = UnprocessedOptions::parse(&input, OpContext::Template)?;
+        let options = UnprocessedOptions::parse(&input, OpContext::TemplateDefinition)?;
         let _equals: syn::Token![=] = input.parse()?;
         let template = input.parse()?;
         Ok(TemplateDefinition {

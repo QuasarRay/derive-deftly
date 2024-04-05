@@ -13,12 +13,14 @@ use OptionDetails as OD;
 /// Where are we finding these options?
 #[derive(Debug, Copy, Clone)]
 pub enum OpContext {
-    /// Just before the template
-    ///
-    /// `derive_deftly_adhoc!{ Driver OPTIONS: ...`
+    /// Just before a precanned template
     ///
     /// `define_derivae_deftly!{ Template OPTIONS = ...`
-    Template,
+    TemplateDefinition,
+    /// Just before an adhoc template
+    ///
+    /// `derive_deftly_adhoc!{ Driver OPTIONS: ...`
+    TemplateAdhoc,
     /// In the driver's application
     ///
     /// `#[derive_deftly(Template[OPTIONS])]`
@@ -136,7 +138,8 @@ impl OpContext {
             OD::For(..) => {}
         }
         match self {
-            OC::Template => Ok(()),
+            OC::TemplateDefinition => Ok(()),
+            OC::TemplateAdhoc => Ok(()),
             OC::DriverApplicationCapture | OC::DriverApplicationPassed => {
                 Err(option.kw_span.error(
                     "this derive-deftly option is only supported in templates",
@@ -152,7 +155,9 @@ impl OpContext {
         use OpContext as OC;
         let ours = OpCompatVersions::ours();
         let got = match self {
-            OC::Template | OC::DriverApplicationCapture => ours,
+            OC::TemplateDefinition
+            | OC::TemplateAdhoc
+            | OC::DriverApplicationCapture => ours,
             OC::DriverApplicationPassed => input.parse()?,
         };
         if got.major != ours.major {
