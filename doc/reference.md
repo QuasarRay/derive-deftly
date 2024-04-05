@@ -965,6 +965,10 @@ that part of the expansiuon.
 
 This is useful for debugging.
 
+Note that a template defined with `define_derive_adhoc!`
+must always expand to items, anyway,
+because Rust insists that a `#[derive]` expands to items.
+
 ### `for struct`, `for enum`, `for union` -- Insist on a particular driver kind
 
 Checks the driver data structure kind
