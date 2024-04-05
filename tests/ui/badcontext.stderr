@@ -1,0 +1,23 @@
+error: macro expansion ignores token `[` and any following
+ --> ui/badcontext.rs:6:5
+  |
+3 | / define_derive_deftly! {
+4 | |     /// This is fundamentally misconceived
+5 | |     FieldNames expect expr =
+6 | |     [ $( stringify!($fname), ) ]
+  | |     ^
+7 | | }
+  | |_- caused by the macro expansion here
+  |
+  = note: the usage of `::derive_deftly::derive_deftly_engine!` is likely invalid in item context
+
+error: macro expansion ignores token `0` and any following
+  --> ui/badcontext.rs:17:27
+   |
+9  | #[derive(Deftly)]
+   |          ------ caused by the macro expansion here
+...
+17 |     ${for fields { 1 + }} 0
+   |                           ^
+   |
+   = note: the usage of `::derive_deftly::derive_deftly_engine!` is likely invalid in item context
