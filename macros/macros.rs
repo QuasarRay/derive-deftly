@@ -187,6 +187,8 @@ pub fn derive_deftly_adhoc(
 /// from `define_derive_deftly!`
 /// must be in scope at the point where you try to use it
 /// (with `#[derive(Deftly)] #[derive_deftly(MyMacro)]`).
+/// If the template definition is in another module,
+/// you may need to annotate that module with `#[macro_use]`.
 /// See the
 /// [documentation for `#[derive(Deftly)]`](derive.Deftly.html#scoping-and-ordering-within-the-same-crate).
 ///
@@ -203,6 +205,9 @@ pub fn derive_deftly_adhoc(
 /// Note that a template is always exported at the crate top level,
 /// not in a sub-module,
 /// even if it is *defined* in a sub-module.
+/// Also, note that `pub` does not have any effect on
+/// visibility of the template *within the same crate*.
+/// You may still need `#[macro_use]`.
 ///
 /// ### You must re-export `derive_deftly`; semver implications
 ///
