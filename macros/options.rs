@@ -133,7 +133,7 @@ impl OpContext {
     fn allowed(self, option: &DdOption) -> syn::Result<()> {
         use OpContext as OC;
         match &option.od {
-            OD::dbg | //.
+            OD::dbg => return Ok(()),
             OD::expect(..) => return Ok(()),
             OD::For(..) => {}
         }
