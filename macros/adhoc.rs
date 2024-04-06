@@ -13,7 +13,8 @@ struct TemplateInvocation {
 impl Parse for TemplateInvocation {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let driver = input.parse()?;
-        let options = UnprocessedOptions::parse(&input, OpContext::TemplateAdhoc)?;
+        let options =
+            UnprocessedOptions::parse(&input, OpContext::TemplateAdhoc)?;
         let colon = input.parse()?;
         let template = input.parse()?;
         Ok(TemplateInvocation {
