@@ -28,6 +28,7 @@ easy-ext = "1"
 #  https://github.com/magiclen/educe/pull/15
 educe = ">=0.4.6, <0.6"
 glob = "0.3"
+paste = "1"
 regex = "1"
 toml = ">=0.5.0, <0.9"
 
