@@ -29,3 +29,17 @@ mod check_examples;
     feature = "recent", // we want toml parser etc.
 ))]
 mod check_semver_check;
+
+#[test]
+fn check_approx_equal() {
+    macro_rules! chk { { $eq_ne:ident, $a:tt, $b:tt } => { paste! {
+        let a = quote! { $a };
+        let b = quote! { $b };
+        let ord = tokens_cmp(a.clone(), b.clone());
+        [< assert_ $eq_ne >]!(
+            ord, Ordering::Equal,
+            "{} <=> {} was {:?}", a, b, ord
+        );
+    } } }
+    chk!(ne, 32.0_f32, 32.0f32);
+}
