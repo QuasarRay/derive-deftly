@@ -40,6 +40,22 @@ pub fn check_expected_target_syntax(
     .check();
 }
 
+pub fn check_expect_opcontext(
+    op: &DdOptVal<Target>,
+    context: OpContext,
+) -> syn::Result<()> {
+    use OpContext as OC;
+    match (context, op.value) {
+        (OC::TemplateDefinition, Target::items) => Ok(()),
+        (OC::TemplateDefinition, _) => {
+            Err(op.span.error(
+                "predefined templates must always expand to items", //
+            ))
+        }
+        _ => Ok(()),
+    }
+}
+
 impl Target {
     /// Checks if `ts` can parse as `self`, returning the error if not
     fn perform_check(self, ts: TokenStream) -> Option<syn::Error> {

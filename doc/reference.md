@@ -390,6 +390,7 @@ Accesses macro parameters passed via `#[deftly(...)]` attributes.
     * **`tokens`**:
      `VALUE` is parsed as an arbtitrary sequence of tokens
      (`TokenStream`).
+     This is the default (except in pasting and case changing).
 
 When expanding `${Xmeta}`,
 it is an error if the value was not specified in the driver,
@@ -974,6 +975,10 @@ the part of the template or driver which generated
 that part of the expansiuon.
 
 This is useful for debugging.
+
+Note that a template defined with `define_derive_adhoc!`
+must always expand to items, anyway,
+because Rust insists that a `#[derive]` expands to items.
 
 ### `for struct`, `for enum`, `for union` -- Insist on a particular driver kind
 

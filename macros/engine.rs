@@ -46,10 +46,12 @@ impl ParseAdviseable for EngineExpandInput {
         let driver_brace = braced!(driver in input);
         let driver = driver.parse()?;
 
+        let opcontext_template;
         if input.peek(syn::token::Bracket) {
             // AOPTIONS appears iff we're being invoked for a precanned
             // template, rather than an adhoc one; it's from the
             // `#[derive()` application.
+            opcontext_template = OpContext::TemplateDefinition;
             let tokens;
             let _ = bracketed!(tokens in input);
             parse_unadvised! {
@@ -58,6 +60,8 @@ impl ParseAdviseable for EngineExpandInput {
                     options .parse_update(&tokens, oc)
                 }
             }
+        } else {
+            opcontext_template = OpContext::TemplateAdhoc;
         }
 
         let driver_passed;
@@ -81,7 +85,7 @@ impl ParseAdviseable for EngineExpandInput {
             let _ = bracketed!(tokens in input);
             parse_unadvised! {
                 tokens => || {
-                    options.parse_update(&tokens, OpContext::Template)
+                    options.parse_update(&tokens, opcontext_template)
                 }
             }
 

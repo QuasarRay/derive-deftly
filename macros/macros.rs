@@ -74,6 +74,13 @@ mod check {
     ) {
         void::unreachable(target.value.0)
     }
+
+    pub fn check_expect_opcontext(
+        op: &DdOptVal<Target>,
+        _context: OpContext,
+    ) -> syn::Result<()> {
+        void::unreachable(op.value.0)
+    }
 }
 impl DdOptValDescribable for check::Target {
     const DESCRIPTION: &'static str =
@@ -142,6 +149,11 @@ pub fn derive_deftly_engine(
 /// with [`#[derive(Deftly)]`](crate::Deftly),
 /// and the resulting `derive_deftly_driver_TYPE` macro must be
 /// available in scope.
+///
+/// `derive_deftly_adhoc!` can be used in any context
+/// where the Rust language permits macro calls.
+/// For example, it can expand to expressions, statements,
+/// types, or patterns.
 #[cfg_attr(proc_macro, proc_macro)]
 pub fn derive_deftly_adhoc(
     input: proc_macro::TokenStream,
