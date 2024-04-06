@@ -41,5 +41,31 @@ fn check_approx_equal() {
             "{} <=> {} was {:?}", a, b, ord
         );
     } } }
+
+    // literals; they are compared by their string representation
+
+    // str
+    chk!(ne, "hi", "h\x69");
+    chk!(ne, "hi"x, "hi");
+    chk!(ne, "hi", r"hi");
+    // byte str
+    chk!(ne, b"hi", b"h\x69");
+    chk!(ne, b"hi"x, b"hi");
+    chk!(ne, b"hi", br"hi");
+    // char
+    chk!(ne, 'i', '\x69');
+    chk!(ne, 'i'x, 'i');
+    // byte
+    chk!(ne, b'i', b'\x69');
+    chk!(ne, b'i'x, b'i');
+    // int
+    chk!(ne, 1, 01);
+    chk!(ne, 1, 0o1);
+    chk!(ne, 1, 0b1);
+    chk!(ne, 1, 0x1);
+    chk!(ne, 1, 1_u32);
+    chk!(ne, 1u32, 1_u32);
+    // float
+    chk!(ne, 32, 32.0);
     chk!(ne, 32.0_f32, 32.0f32);
 }
