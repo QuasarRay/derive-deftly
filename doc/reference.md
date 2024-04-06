@@ -390,6 +390,7 @@ Accesses macro parameters passed via `#[deftly(...)]` attributes.
     * **`tokens`**:
      `VALUE` is parsed as an arbtitrary sequence of tokens
      (`TokenStream`).
+     This is the default (except in pasting and case changing).
 
 When expanding `${Xmeta}`,
 it is an error if the value was not specified in the driver,

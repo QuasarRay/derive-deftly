@@ -134,7 +134,7 @@ impl OpContext {
         use OpContext as OC;
         match &option.od {
             OD::dbg => return Ok(()),
-            OD::expect(..) => return Ok(()),
+            OD::expect(v) => return check::check_expect_opcontext(v, self),
             OD::For(..) => {}
         }
         match self {

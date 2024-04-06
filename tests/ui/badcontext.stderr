@@ -1,15 +1,8 @@
-error: macro expansion ignores token `[` and any following
- --> ui/badcontext.rs:6:5
+error: predefined templates must always expand to items
+ --> ui/badcontext.rs:5:23
   |
-3 | / define_derive_deftly! {
-4 | |     /// This is fundamentally misconceived
-5 | |     FieldNames expect expr =
-6 | |     [ $( stringify!($fname), ) ]
-  | |     ^
-7 | | }
-  | |_- caused by the macro expansion here
-  |
-  = note: the usage of `::derive_deftly::derive_deftly_engine!` is likely invalid in item context
+5 |     FieldNames expect expr =
+  |                       ^^^^
 
 error: macro expansion ignores token `0` and any following
   --> ui/badcontext.rs:17:27
@@ -21,3 +14,9 @@ error: macro expansion ignores token `0` and any following
    |                           ^
    |
    = note: the usage of `::derive_deftly::derive_deftly_engine!` is likely invalid in item context
+
+error: cannot find macro `derive_deftly_template_FieldNames` in this scope
+  --> ui/badcontext.rs:10:17
+   |
+10 | #[derive_deftly(FieldNames)]
+   |                 ^^^^^^^^^^

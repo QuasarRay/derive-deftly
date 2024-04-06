@@ -74,6 +74,13 @@ mod check {
     ) {
         void::unreachable(target.value.0)
     }
+
+    pub fn check_expect_opcontext(
+        op: &DdOptVal<Target>,
+        _context: OpContext,
+    ) -> syn::Result<()> {
+        void::unreachable(op.value.0)
+    }
 }
 impl DdOptValDescribable for check::Target {
     const DESCRIPTION: &'static str =
