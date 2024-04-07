@@ -13,6 +13,14 @@ use derive_deftly::{derive_deftly_adhoc, Deftly};
 
 #[derive(Deftly)]
 #[derive_deftly_adhoc]
+struct Unit;
+
+#[derive(Deftly)]
+#[derive_deftly_adhoc]
+struct ConstOnly<const N: u32 = 0>;
+
+#[derive(Deftly)]
+#[derive_deftly_adhoc]
 enum Enum<T = (), const N: usize = 1> {
     Unit,
     Tuple([T; N]),
@@ -43,4 +51,19 @@ fn main() {
     let _: Option<Enum> = None;
     let _ = Enum::Unit::<u8, 3>;
     let _ = Enum::Tuple([42; 2]);
+
+    let assert = |ok: bool| {
+        if !ok {
+            panic!();
+        }
+    };
+
+    assert(!derive_deftly_adhoc! {
+        Unit:
+        ${if tgens { true } else { false }}
+    });
+    assert(derive_deftly_adhoc! {
+        ConstOnly:
+        ${if tgens { true } else { false }}
+    });
 }
