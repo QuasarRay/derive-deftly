@@ -14,7 +14,7 @@ trait Trait {
 define_derive_deftly! {
     Trait =
 
-    impl Trait for $ttype {
+    impl<$tgens> Trait for $ttype {
         fn shape_top(&self) -> &'static str {
             ${select1
               is_struct { "struct" }
