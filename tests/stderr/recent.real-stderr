@@ -14,6 +14,7 @@ top-level:
         is_enum      =   true
         is_union     =   false
         tvis         =   false
+        tgens        =   false
         $tattrs      =>  #[allow(dead_code)]
 variant Unit:
         $vname       =>  Unit
@@ -79,6 +80,7 @@ top-level:
         is_enum      =   false
         is_union     =   false
         tvis         =   false
+        tgens        =   false
         $tattrs      =>  #[allow(dead_code)]
 value:
         $vname       =>  <error>
@@ -106,6 +108,7 @@ top-level:
         is_enum      =   false
         is_union     =   false
         tvis         =   false
+        tgens        =   false
         $tattrs      =>  #[allow(dead_code)]
 value:
         $vname       =>  <error>
@@ -143,6 +146,7 @@ top-level:
         is_enum      =   false
         is_union     =   false
         tvis         =   false
+        tgens        =   false
         $tattrs      =>  #[allow(dead_code)]
 value:
         $vname       =>  <error>
@@ -255,6 +259,7 @@ top-level:
         is_enum      =   true
         is_union     =   false
         tvis         =   false
+        tgens        =   true
         $tattrs      =>  
 variant Unit:
         $vname       =>  Unit

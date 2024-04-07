@@ -99,6 +99,7 @@ fn dump_whole(mut w: &mut Out, ctx: &Context) -> R {
     bool! { c, is_enum }
     bool! { c, is_union }
     bool! { c, tvis }
+    bool! { c, tgens }
 
     expand! { c, $tattrs }
 

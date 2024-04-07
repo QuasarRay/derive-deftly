@@ -31,6 +31,7 @@
       * [`fmeta(NAME)`, `vmeta(NAME)`, `tmeta(NAME)` -- `#[deftly]` attributes](#fmetaname-vmetaname-tmetaname--deftly-attributes)
       * [`is_struct`, `is_enum`, `is_union`](#is_struct-is_enum-is_union)
       * [`v_is_unit`, `v_is_tuple`, `v_is_named`](#v_is_unit-v_is_tuple-v_is_named)
+      * [`tgens`](#tgens)
       * [`approx_equal(ARG1, ARG2)` -- equality comparison (token comparison)](#approx_equalarg1-arg2--equality-comparison-token-comparison)
       * [`false`, `true`, `not(CONDITION)`, `any(COND1,COND2,...)`, `all(COND1,COND2,...)` -- boolean logic](#false-true-notcondition-anycond1cond2-allcond1cond2--boolean-logic)
    * [Case changing](#case-changing)
@@ -855,9 +856,17 @@ Use `$vdefbody` and `$fdefine` when defining a derived type.
 
 #### Examples
 
- * `v_is_unit`: true for `struct Unit;`, and `Enum::UnitVariant;`
+ * `v_is_unit`: true for `struct Unit;`, `SimpleUnit`, and `Enum::UnitVariant;`
  * `v_is_tuple`: true for `struct Tuple(...);`, and `Enum::TupleVariant(...);`
  * `v_is_named`: true for `struct Struct {...}`, and `Enum::NamedVariant {...}`
+
+### `tgens`
+
+Whether the top-level type has generics.
+
+#### Examples
+
+ * `tgens`: true for `Unit`, `Tuple`, `Struct`, `Enum`
 
 ### `approx_equal(ARG1, ARG2)` -- equality comparison (token comparison)
 
@@ -1039,6 +1048,10 @@ are those generated for the following driver types:
 # use std::fmt::Display;
 # use std::convert::TryInto;
 #
+#[derive(Deftly)]
+#[derive(Clone)]
+struct SimpleUnit;
+
 #[derive(Deftly)]
 #[derive(Clone)]
 #[deftly(simple="String", gentype="Vec<i32>")]

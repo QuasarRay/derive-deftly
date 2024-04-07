@@ -56,8 +56,9 @@ impl Subst<BooleanContext> {
             SD::v_is_unit(..) => matches!(v_fields()?, SF::Unit),
             SD::v_is_tuple(..) => matches!(v_fields()?, SF::Unnamed(..)),
             SD::v_is_named(..) => matches!(v_fields()?, SF::Named(..)),
+            SD::tgens(_) => !ctx.top.generics.params.is_empty(),
 
-            SD::xmeta(sm) => {
+            SD::Xmeta(sm) => {
                 let meta::SubstMeta {
                     desig: meta::Desig { label, scope: _ },
                     as_,
@@ -123,7 +124,6 @@ impl Subst<BooleanContext> {
             | SD::tattrs(_, _, not_in_bool)
             | SD::vattrs(_, _, not_in_bool)
             | SD::fattrs(_, _, not_in_bool)
-            | SD::tgens(_, not_in_bool)
             | SD::tdefgens(_, not_in_bool)
             | SD::tgnames(_, not_in_bool)
             | SD::twheres(_, not_in_bool)

@@ -9,6 +9,10 @@
 #![allow(dead_code)]
 use derive_deftly::{derive_deftly_adhoc, Deftly};
 #[derive_deftly_adhoc]
+struct Unit;
+#[derive_deftly_adhoc]
+struct ConstOnly<const N: u32 = 0>;
+#[derive_deftly_adhoc]
 enum Enum<T = (), const N: usize = 1> {
     Unit,
     Tuple([T; N]),
@@ -29,4 +33,11 @@ fn main() {
     let _: Option<Enum> = None;
     let _ = Enum::Unit::<u8, 3>;
     let _ = Enum::Tuple([42; 2]);
+    let assert = |ok: bool| {
+        if !ok {
+            ::core::panicking::panic("explicit panic");
+        }
+    };
+    assert(!false);
+    assert(true);
 }

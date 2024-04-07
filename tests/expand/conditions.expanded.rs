@@ -7,6 +7,7 @@ trait Trait {
     fn shape_fields(&self) -> &'static str;
     fn has_tmeta(&self) -> bool;
     fn has_vmeta(&self) -> bool;
+    fn has_tgens(&self) -> bool;
 }
 trait GetUsize {
     fn get_usize(&self) -> Option<usize>;
@@ -26,6 +27,9 @@ impl Trait for Unit {
                 Unit {} => "unit",
             }
         }
+    }
+    fn has_tgens(&self) -> bool {
+        false
     }
     fn has_tmeta(&self) -> bool {
         false
@@ -64,6 +68,9 @@ impl Trait for Tuple {
                 Tuple { 0: f_0 } => "tuple",
             }
         }
+    }
+    fn has_tgens(&self) -> bool {
+        false
     }
     fn has_tmeta(&self) -> bool {
         true
@@ -107,6 +114,9 @@ impl Trait for Struct {
                 Struct { field: f_field } => "named",
             }
         }
+    }
+    fn has_tgens(&self) -> bool {
+        false
     }
     fn has_tmeta(&self) -> bool {
         false
@@ -158,6 +168,9 @@ impl Trait for Enum {
             }
         }
     }
+    fn has_tgens(&self) -> bool {
+        false
+    }
     fn has_tmeta(&self) -> bool {
         false
     }
@@ -207,6 +220,9 @@ impl Trait for Union {
             }
         }
     }
+    fn has_tgens(&self) -> bool {
+        false
+    }
     fn has_tmeta(&self) -> bool {
         false
     }
@@ -220,10 +236,41 @@ impl Trait for Union {
         }
     }
 }
+#[derive_deftly(Trait)]
+struct Generic<T>(T);
+impl<T> Trait for Generic<T> {
+    fn shape_top(&self) -> &'static str {
+        "struct"
+    }
+    fn shape_fields(&self) -> &'static str {
+        #[allow(unused_unsafe)]
+        unsafe {
+            match self {
+                #[allow(unused_variables)]
+                Generic { 0: f_0 } => "tuple",
+            }
+        }
+    }
+    fn has_tgens(&self) -> bool {
+        true
+    }
+    fn has_tmeta(&self) -> bool {
+        false
+    }
+    fn has_vmeta(&self) -> bool {
+        #[allow(unused_unsafe)]
+        unsafe {
+            match self {
+                #[allow(unused_variables)]
+                Generic { 0: f_0 } => false,
+            }
+        }
+    }
+}
 fn static_test() {}
-fn test(top: &str, fields: &str, tmeta: bool, vmeta: bool, v: impl Trait) {
-    if !(v.shape_top() == top && v.shape_fields() == fields && v.has_tmeta() == tmeta
-        && v.has_vmeta() == vmeta)
+fn test(top: &str, tgens: bool, fields: &str, tmeta: bool, vmeta: bool, v: impl Trait) {
+    if !(v.shape_top() == top && v.shape_fields() == fields && v.has_tgens() == tgens
+        && v.has_tmeta() == tmeta && v.has_vmeta() == vmeta)
     {
         ::core::panicking::panic("explicit panic")
     }
@@ -235,13 +282,14 @@ fn test_get_usize(some_usize: Option<usize>, v: impl GetUsize) {
 }
 fn main() {
     static_test();
-    test("struct", "unit", false, false, Unit);
-    test("struct", "tuple", true, false, Tuple(0));
-    test("struct", "named", false, true, Struct { field: 0 });
-    test("enum", "unit", false, true, Enum::Unit);
-    test("enum", "tuple", false, true, Enum::Tuple(0));
-    test("enum", "named", false, false, Enum::Named { field: 0 });
-    test("union", "named", false, false, Union { field: 0 });
+    test("struct", false, "unit", false, false, Unit);
+    test("struct", false, "tuple", true, false, Tuple(0));
+    test("struct", false, "named", false, true, Struct { field: 0 });
+    test("enum", false, "unit", false, true, Enum::Unit);
+    test("enum", false, "tuple", false, true, Enum::Tuple(0));
+    test("enum", false, "named", false, false, Enum::Named { field: 0 });
+    test("union", false, "named", false, false, Union { field: 0 });
+    test("struct", true, "tuple", false, false, Generic(""));
     test_get_usize(None, Unit);
     test_get_usize(Some(0), Tuple(0));
     test_get_usize(Some(0), Struct { field: 0 });

@@ -18,7 +18,7 @@
 //!  * `INPUT` ...: ``OUTPUT``, ...
 //!  * `INPUT` ...: nothing
 //!  * `INPUT` ...: error, ``MESSAGE``
-//!  * `CONDITION`: True for SOMETHING, SOMETHING, and ...`
+//!  * `CONDITION`: true for SOMETHING, SOMETHING, and ...`
 //! ```
 //!
 //! ("others" means not any of the preceding contexts.

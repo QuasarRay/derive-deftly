@@ -9,12 +9,13 @@ trait Trait {
     fn shape_fields(&self) -> &'static str;
     fn has_tmeta(&self) -> bool;
     fn has_vmeta(&self) -> bool;
+    fn has_tgens(&self) -> bool;
 }
 
 define_derive_deftly! {
     Trait =
 
-    impl Trait for $ttype {
+    impl<$tgens> Trait for $ttype {
         fn shape_top(&self) -> &'static str {
             ${select1
               is_struct { "struct" }
@@ -34,6 +35,11 @@ define_derive_deftly! {
                     },
                 ) }
             }
+        }
+        fn has_tgens(&self) -> bool {
+            ${if tgens
+              { true }
+              else { false }}
         }
         fn has_tmeta(&self) -> bool {
             ${if tmeta(hi(ferris))
@@ -114,6 +120,10 @@ union Union {
     field: usize,
 }
 
+#[derive(Deftly)]
+#[derive_deftly(Trait)]
+struct Generic<T>(T);
+
 derive_deftly_adhoc! {
     Unit:
 
@@ -136,9 +146,17 @@ derive_deftly_adhoc! {
     }
 }
 
-fn test(top: &str, fields: &str, tmeta: bool, vmeta: bool, v: impl Trait) {
+fn test(
+    top: &str,
+    tgens: bool,
+    fields: &str,
+    tmeta: bool,
+    vmeta: bool,
+    v: impl Trait,
+) {
     if !(v.shape_top() == top
         && v.shape_fields() == fields
+        && v.has_tgens() == tgens
         && v.has_tmeta() == tmeta
         && v.has_vmeta() == vmeta)
     {
@@ -155,13 +173,21 @@ fn test_get_usize(some_usize: Option<usize>, v: impl GetUsize) {
 fn main() {
     static_test();
 
-    test("struct", "unit", false, false, Unit);
-    test("struct", "tuple", true, false, Tuple(0));
-    test("struct", "named", false, true, Struct { field: 0 });
-    test("enum", "unit", false, true, Enum::Unit);
-    test("enum", "tuple", false, true, Enum::Tuple(0));
-    test("enum", "named", false, false, Enum::Named { field: 0 });
-    test("union", "named", false, false, Union { field: 0 });
+    test("struct", false, "unit", false, false, Unit);
+    test("struct", false, "tuple", true, false, Tuple(0));
+    test("struct", false, "named", false, true, Struct { field: 0 });
+    test("enum", false, "unit", false, true, Enum::Unit);
+    test("enum", false, "tuple", false, true, Enum::Tuple(0));
+    test(
+        "enum",
+        false,
+        "named",
+        false,
+        false,
+        Enum::Named { field: 0 },
+    );
+    test("union", false, "named", false, false, Union { field: 0 });
+    test("struct", true, "tuple", false, false, Generic(""));
 
     test_get_usize(None, Unit);
     test_get_usize(Some(0), Tuple(0));
