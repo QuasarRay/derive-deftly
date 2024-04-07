@@ -1118,6 +1118,7 @@ impl<O: SubstParseContext> FindRecogMetas for SubstDetails<O> {
 
             not(v, _) => v.find_recog_metas(acc),
             any(v, _) | all(v, _) => v.find_recog_metas(acc),
+            is_empty(_, v) => v.find_recog_metas(acc),
             approx_equal(_, v) => v.find_recog_metas(acc),
 
             For(v, _) => v.find_recog_metas(acc),

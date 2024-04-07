@@ -81,6 +81,7 @@ impl Subst<BooleanContext> {
                 is_found(label.search_eval_bool(sm.pmetas(ctx, kw_span)?))
             }
 
+            SD::is_empty(_, content) => expand(content)?.is_empty(),
             SD::approx_equal(_, [a, b]) => {
                 tokens_cmp(expand(a)?, expand(b)?) == Ordering::Equal
             }

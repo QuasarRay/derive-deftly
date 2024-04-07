@@ -159,6 +159,7 @@ impl<O: SubstParseContext> Subst<O> {
             SD::define(..) => None,
             SD::defcond(..) => None,
             SD::UserDefined(..) => None,
+            SD::is_empty(_, content) => recurse!(content),
             SD::approx_equal(_, ab) => {
                 for x in ab {
                     x.analyse_repeat(visitor)?;
