@@ -32,7 +32,7 @@
       * [`is_struct`, `is_enum`, `is_union`](#is_struct-is_enum-is_union)
       * [`v_is_unit`, `v_is_tuple`, `v_is_named`](#v_is_unit-v_is_tuple-v_is_named)
       * [`tgens`](#tgens)
-      * [`approx_equal(ARG1, ARG2)` -- equality comparison (token comparison)](#approx_equalarg1-arg2--equality-comparison-token-comparison)
+      * [`is_empty(..)`, `approx_equal(ARG1, ARG2)` -- equality comparison (token comparison)](#is_empty-approx_equalarg1-arg2--equality-comparison-token-comparison)
       * [`false`, `true`, `not(CONDITION)`, `any(COND1,COND2,...)`, `all(COND1,COND2,...)` -- boolean logic](#false-true-notcondition-anycond1cond2-allcond1cond2--boolean-logic)
    * [Case changing](#case-changing)
    * [Expansion options](#expansion-options)
