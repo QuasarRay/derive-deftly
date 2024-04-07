@@ -153,6 +153,34 @@ pub trait SubstParseContext: Sized {
     ) -> syn::Result<Option<SpecialInstructions>> {
         Ok(None)
     }
+
+    /// Parse using `f`, within parens in boolean context, not otherwise
+    ///
+    /// Useful for parsing the arguments to an argument-taking keyword
+    /// which takes an "equivalent" syntax in both contexts.
+    fn parse_maybe_within_parens<T>(
+        input: ParseStream,
+        f: impl FnOnce(ParseStream) -> syn::Result<T>,
+    ) -> syn::Result<T> {
+        if Self::IS_BOOL {
+            let inner;
+            let _ = parenthesized!(inner in input);
+            f(&inner)
+        } else {
+            f(input)
+        }
+    }
+
+    /// Parse maybe a comma (comma in boolean context, not otherwise)
+    ///
+    /// Useful for parsing the arguments to an argument-taking keyword
+    /// which takes an "equivalent" syntax in both contexts.
+    fn parse_maybe_comma(input: ParseStream) -> syn::Result<()> {
+        if Self::IS_BOOL {
+            let _: Token![,] = input.parse()?;
+        }
+        Ok(())
+    }
 }
 
 /// Expansion output accumulator, for a template lexical context
