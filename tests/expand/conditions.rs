@@ -146,7 +146,14 @@ derive_deftly_adhoc! {
     }
 }
 
-fn test(top: &str, tgens: bool, fields: &str, tmeta: bool, vmeta: bool, v: impl Trait) {
+fn test(
+    top: &str,
+    tgens: bool,
+    fields: &str,
+    tmeta: bool,
+    vmeta: bool,
+    v: impl Trait,
+) {
     if !(v.shape_top() == top
         && v.shape_fields() == fields
         && v.has_tgens() == tgens
@@ -171,7 +178,14 @@ fn main() {
     test("struct", false, "named", false, true, Struct { field: 0 });
     test("enum", false, "unit", false, true, Enum::Unit);
     test("enum", false, "tuple", false, true, Enum::Tuple(0));
-    test("enum", false, "named", false, false, Enum::Named { field: 0 });
+    test(
+        "enum",
+        false,
+        "named",
+        false,
+        false,
+        Enum::Named { field: 0 },
+    );
     test("union", false, "named", false, false, Union { field: 0 });
     test("struct", true, "tuple", false, false, Generic(""));
 
