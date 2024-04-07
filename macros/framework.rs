@@ -112,6 +112,12 @@ pub trait SubstParseContext: Sized {
     /// Uninhabited unless this lexical context is within a condition.
     type BoolOnly: Debug + Copy + Sized;
 
+    /// Whether this is a boolean context
+    //
+    // Useful for ad-hoc handling of the way that boolean
+    // context has a different notion of syntax.
+    const IS_BOOL: bool = false;
+
     fn not_in_paste(span: &impl Spanned) -> syn::Result<Self::NotInPaste>;
     fn not_in_bool(span: &impl Spanned) -> syn::Result<Self::NotInBool>;
 

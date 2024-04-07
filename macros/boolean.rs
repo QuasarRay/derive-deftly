@@ -22,6 +22,8 @@ impl SubstParseContext for BooleanContext {
     type NotInPaste = ();
     type NotInBool = Void;
     type BoolOnly = ();
+    const IS_BOOL: bool = true;
+
     fn not_in_paste(_: &impl Spanned) -> syn::Result<()> {
         Ok(())
     }
