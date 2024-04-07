@@ -4,3 +4,69 @@ broken template ;
 ---------- derive-deftly expansion, for BadOptionsDriver (start) ----------
 syntax error ;
 ---------- derive-deftly expansion, for BadOptionsDriver (end) ----------
+---------- derive-deftly dbg dump for DataType from BasicDbgs expansion (start) ----------
+fn struct_fn() {}
+---------- derive-deftly dbg dump for DataType from BasicDbgs expansion (end) ----------
+---------- derive-deftly dbg dump "noted" for DataType from BasicDbgs expansion (start) ----------
+fn struct_noted() {}
+---------- derive-deftly dbg dump "noted" for DataType from BasicDbgs expansion (end) ----------
+derive-deftly dbg condition for DataType from BasicDbgs evaluated to true
+derive-deftly dbg condition "noted" for DataType from BasicDbgs evaluated to false
+---------- derive-deftly dbg dump for DataType from BasicDbgs expansion (start) ----------
+/* ERROR: must be within a field (so, in a repeat group) */
+---------- derive-deftly dbg dump for DataType from BasicDbgs expansion (end) ----------
+---------- derive-deftly dbg dump "error" for DataType from BasicDbgs expansion (start) ----------
+/* ERROR: must be within a field (so, in a repeat group) */
+---------- derive-deftly dbg dump "error" for DataType from BasicDbgs expansion (end) ----------
+derive-deftly dbg condition for DataType from BasicDbgs evaluated to error: must be within a field (so, in a repeat group)
+derive-deftly dbg condition "error" for DataType from BasicDbgs evaluated to error: must be within a field (so, in a repeat group)
+---------- derive-deftly dbg dump for Tuple from Contexts expansion (start) ----------
+/* ERROR: expansion only valid in enums */
+---------- derive-deftly dbg dump for Tuple from Contexts expansion (end) ----------
+---------- derive-deftly dbg dump "noted vtype" for Tuple from Contexts expansion (start) ----------
+Tuple
+---------- derive-deftly dbg dump "noted vtype" for Tuple from Contexts expansion (end) ----------
+---------- derive-deftly dbg dump "noted fname" for Tuple.0 from Contexts expansion (start) ----------
+0
+---------- derive-deftly dbg dump "noted fname" for Tuple.0 from Contexts expansion (end) ----------
+---------- derive-deftly dbg dump for Struct from Contexts expansion (start) ----------
+/* ERROR: expansion only valid in enums */
+---------- derive-deftly dbg dump for Struct from Contexts expansion (end) ----------
+---------- derive-deftly dbg dump "noted vtype" for Struct from Contexts expansion (start) ----------
+Struct
+---------- derive-deftly dbg dump "noted vtype" for Struct from Contexts expansion (end) ----------
+---------- derive-deftly dbg dump "noted fname" for Struct.f from Contexts expansion (start) ----------
+f
+---------- derive-deftly dbg dump "noted fname" for Struct.f from Contexts expansion (end) ----------
+---------- derive-deftly dbg dump for Enum::Tuple from Contexts expansion (start) ----------
+Tuple
+---------- derive-deftly dbg dump for Enum::Tuple from Contexts expansion (end) ----------
+---------- derive-deftly dbg dump for Enum::Struct from Contexts expansion (start) ----------
+Struct
+---------- derive-deftly dbg dump for Enum::Struct from Contexts expansion (end) ----------
+---------- derive-deftly dbg dump "noted vtype" for Enum::Tuple from Contexts expansion (start) ----------
+Enum :: Tuple
+---------- derive-deftly dbg dump "noted vtype" for Enum::Tuple from Contexts expansion (end) ----------
+---------- derive-deftly dbg dump "noted vtype" for Enum::Struct from Contexts expansion (start) ----------
+Enum :: Struct
+---------- derive-deftly dbg dump "noted vtype" for Enum::Struct from Contexts expansion (end) ----------
+---------- derive-deftly dbg dump "noted fname" for Enum::Tuple.0 from Contexts expansion (start) ----------
+0
+---------- derive-deftly dbg dump "noted fname" for Enum::Tuple.0 from Contexts expansion (end) ----------
+---------- derive-deftly dbg dump "noted fname" for Enum::Struct.f from Contexts expansion (start) ----------
+f
+---------- derive-deftly dbg dump "noted fname" for Enum::Struct.f from Contexts expansion (end) ----------
+---------- derive-deftly dbg dump "paste" for WithGenerics from Pastes expansion (start) ----------
+"pasting_" ""+"WithGenerics"+":: < T >" "_pasted"
+---------- derive-deftly dbg dump "paste" for WithGenerics from Pastes expansion (end) ----------
+---------- derive-deftly dbg dump "paste error" for WithGenerics from Pastes expansion (start) ----------
+ERROR: must be within a field (so, in a repeat group)
+"x" "y"
+---------- derive-deftly dbg dump "paste error" for WithGenerics from Pastes expansion (end) ----------
+---------- derive-deftly dbg dump for DataType expansion (start) ----------
+fn struct_adhoc() {}
+---------- derive-deftly dbg dump for DataType expansion (end) ----------
+---------- derive-deftly dbg dump "adhoc" for DataType expansion (start) ----------
+fn tdefkwed_adhoc2() {}
+---------- derive-deftly dbg dump "adhoc" for DataType expansion (end) ----------
+derive-deftly dbg condition "adhoc" for DataType evaluated to true
