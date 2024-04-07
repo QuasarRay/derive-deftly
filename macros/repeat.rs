@@ -185,6 +185,7 @@ impl<O: SubstParseContext> AnalyseRepeat for Subst<O> {
             SD::For(..) => None,
             SD::False(..) | SD::True(..) => None, // condition: ignore.
             SD::error(..) => None,
+            SD::dbg(ddr) => recurse!(ddr.content_parsed),
             SD::dbg_all_keywords(..) => None,
             SD::Crate(..) => None,
         };
@@ -377,7 +378,7 @@ impl<'c> Context<'c> {
         impl Display for Adapter<'_> {
             fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
                 let ctx = self.0;
-                write!(f, "{}", &ctx.top.ident)?;
+                write!(f, "for {}", &ctx.top.ident)?;
                 if let Some(wv) = &ctx.variant {
                     if let Some(v) = &wv.variant {
                         write!(f, "::{}", &v.ident)?;
