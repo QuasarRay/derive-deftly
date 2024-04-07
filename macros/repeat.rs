@@ -24,6 +24,13 @@ pub struct RepeatAnalysisVisitor {
     over: Option<RepeatOverInference>,
 }
 
+pub trait AnalyseRepeat {
+    fn analyse_repeat(
+        &self,
+        visitor: &mut RepeatAnalysisVisitor,
+    ) -> syn::Result<()>;
+}
+
 impl RepeatAnalysisVisitor {
     fn set_over(&mut self, over: RepeatOverInference) -> syn::Result<()> {
         match &self.over {
@@ -58,7 +65,7 @@ impl RepeatAnalysisVisitor {
     }
 }
 
-impl<O: SubstParseContext> SubstIf<O> {
+impl<O: SubstParseContext> AnalyseRepeat for SubstIf<O> {
     fn analyse_repeat(
         &self,
         visitor: &mut RepeatAnalysisVisitor,
@@ -81,9 +88,9 @@ impl<O: SubstParseContext> SubstIf<O> {
     }
 }
 
-impl<O: SubstParseContext> Template<O> {
+impl<O: SubstParseContext> AnalyseRepeat for Template<O> {
     /// Analyses a template section to be repeated
-    pub fn analyse_repeat(
+    fn analyse_repeat(
         &self,
         visitor: &mut RepeatAnalysisVisitor,
     ) -> syn::Result<()> {
@@ -94,7 +101,7 @@ impl<O: SubstParseContext> Template<O> {
     }
 }
 
-impl<O: SubstParseContext> TemplateElement<O> {
+impl<O: SubstParseContext> AnalyseRepeat for TemplateElement<O> {
     fn analyse_repeat(
         &self,
         visitor: &mut RepeatAnalysisVisitor,
@@ -112,7 +119,7 @@ impl<O: SubstParseContext> TemplateElement<O> {
     }
 }
 
-impl<O: SubstParseContext> Subst<O> {
+impl<O: SubstParseContext> AnalyseRepeat for Subst<O> {
     fn analyse_repeat(
         &self,
         visitor: &mut RepeatAnalysisVisitor,
