@@ -6,6 +6,10 @@
 #[path = "../ui/badoptions.rs"]
 mod badoptions;
 
+#[cfg(feature = "enable-main")]
+#[path = "../ui/dbgdump.rs"]
+mod dbgdump;
+
 // Only compare the output using the recent versions, since the
 // minimal-versions produce different output
 // (mostly, different formatting for `$foo`, `$ foo`).

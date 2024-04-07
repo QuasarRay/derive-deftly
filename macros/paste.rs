@@ -676,6 +676,7 @@ impl SubstParseContext for Items {
     type NotInPaste = Void;
     type NotInBool = ();
     type BoolOnly = Void;
+    type DbgContent = Template<Items>;
 
     fn not_in_bool(_: &impl Spanned) -> syn::Result<()> {
         Ok(())
@@ -834,6 +835,54 @@ impl ExpansionOutput for Items {
 
     fn default_subst_meta_as() -> meta::SubstAs<Self> {
         meta::SubstAs::str(())
+    }
+
+    fn dbg_expand(
+        &mut self,
+        kw_span: Span,
+        ctx: &Context,
+        msg: &mut String,
+        content: &Template<Items>,
+    ) {
+        let mut child = Items::new(kw_span);
+        content.expand(ctx, &mut child);
+        let Items {
+            tspan: _,
+            items,
+            errors,
+            atoms: _,
+        } = child;
+
+        (|| {
+            for e in &errors {
+                writeln!(msg, "ERROR: {}", e)?;
+            }
+            for (sep, i) in izip!(
+                chain!([""], iter::repeat(" ")), //
+                &items,
+            ) {
+                write!(msg, "{}", sep)?;
+                match i {
+                    Item::Plain { text, .. } => write!(msg, "{:?}", text)?,
+                    Item::Complex {
+                        pre, text, post, ..
+                    } => {
+                        write!(
+                            msg,
+                            "{:?}+{:?}+{:?}",
+                            pre.to_string(),
+                            text,
+                            post.to_string(),
+                        )?;
+                    }
+                }
+            }
+            Ok::<_, fmt::Error>(())
+        })()
+        .expect("write! failed");
+
+        self.items.extend(items);
+        self.errors.extend(errors);
     }
 }
 

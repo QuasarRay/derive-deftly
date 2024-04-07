@@ -112,6 +112,21 @@ pub trait SubstParseContext: Sized {
     /// Uninhabited unless this lexical context is within a condition.
     type BoolOnly: Debug + Copy + Sized;
 
+    /// Whether this is a boolean context
+    //
+    // Useful for ad-hoc handling of the way that boolean
+    // context has a different notion of syntax.
+    const IS_BOOL: bool = false;
+
+    /// Content of the `dbg` keyword
+    ///
+    /// This has to be in this trait because
+    /// `${dbg }` contains a `Template` but `dbg(...)` contains a `Subst`.
+    ///
+    /// We make bespoke output for each context; for boolean this is sui
+    /// generis, and for expansions it's in [`ExpansionOutput::dbg_expand`].
+    type DbgContent: Parse + Debug + AnalyseRepeat + meta::FindRecogMetas;
+
     fn not_in_paste(span: &impl Spanned) -> syn::Result<Self::NotInPaste>;
     fn not_in_bool(span: &impl Spanned) -> syn::Result<Self::NotInBool>;
 
@@ -146,6 +161,34 @@ pub trait SubstParseContext: Sized {
         _input: ParseStream,
     ) -> syn::Result<Option<SpecialInstructions>> {
         Ok(None)
+    }
+
+    /// Parse using `f`, within parens in boolean context, not otherwise
+    ///
+    /// Useful for parsing the arguments to an argument-taking keyword
+    /// which takes an "equivalent" syntax in both contexts.
+    fn parse_maybe_within_parens<T>(
+        input: ParseStream,
+        f: impl FnOnce(ParseStream) -> syn::Result<T>,
+    ) -> syn::Result<T> {
+        if Self::IS_BOOL {
+            let inner;
+            let _ = parenthesized!(inner in input);
+            f(&inner)
+        } else {
+            f(input)
+        }
+    }
+
+    /// Parse maybe a comma (comma in boolean context, not otherwise)
+    ///
+    /// Useful for parsing the arguments to an argument-taking keyword
+    /// which takes an "equivalent" syntax in both contexts.
+    fn parse_maybe_comma(input: ParseStream) -> syn::Result<()> {
+        if Self::IS_BOOL {
+            let _: Token![,] = input.parse()?;
+        }
+        Ok(())
     }
 }
 
@@ -279,6 +322,22 @@ pub trait ExpansionOutput: SubstParseContext {
     }
 
     fn default_subst_meta_as() -> meta::SubstAs<Self>;
+
+    /// Implement the `dbg` keyword
+    ///
+    /// Specifically:
+    ///   * Write the expansion of `child` to `msg` in human-readable form
+    ///   * Without a trailing newline
+    ///   * Subsume it into `self`
+    ///
+    /// Failures are to be reported, and subsumed into `self`.
+    fn dbg_expand(
+        &mut self,
+        kw_span: Span,
+        ctx: &Context,
+        msg: &mut String,
+        content: &Self::DbgContent,
+    );
 }
 
 /// Convenience trait providing `item.expand()`
@@ -373,6 +432,7 @@ impl TokenAccumulator {
 impl SubstParseContext for TokenAccumulator {
     type NotInPaste = ();
     type NotInBool = ();
+    type DbgContent = Template<TokenAccumulator>;
     fn not_in_bool(_: &impl Spanned) -> syn::Result<()> {
         Ok(())
     }
@@ -446,5 +506,26 @@ impl ExpansionOutput for TokenAccumulator {
 
     fn default_subst_meta_as() -> meta::SubstAs<Self> {
         meta::SubstAs::tokens((), ())
+    }
+
+    fn dbg_expand(
+        &mut self,
+        _kw_span: Span,
+        ctx: &Context,
+        msg: &mut String,
+        content: &Template<TokenAccumulator>,
+    ) {
+        let mut child = TokenAccumulator::new();
+        content.expand(ctx, &mut child);
+        let child = child.tokens();
+        match &child {
+            Err(e) => write!(msg, "/* ERROR: {} */", e),
+            Ok(y) => write!(msg, "{}", y),
+        }
+        .expect("write! failed");
+        match child {
+            Ok(y) => self.append(y),
+            Err(e) => self.record_error(e),
+        }
     }
 }

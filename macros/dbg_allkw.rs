@@ -128,10 +128,12 @@ fn dump_whole(mut w: &mut Out, ctx: &Context) -> R {
         expand! { c, $select1 }
         expand! { c, $define }
         expand! { c, $defcond }
+        expand! { c, $dbg }
         bool! { c, not }
         bool! { c, all }
         bool! { c, any }
         // Requires input arguments to do anything
+        bool! { c, dbg }
         bool! { c, is_empty }
         bool! { c, approx_equal }
         // Vacuous

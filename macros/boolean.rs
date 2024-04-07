@@ -22,6 +22,9 @@ impl SubstParseContext for BooleanContext {
     type NotInPaste = ();
     type NotInBool = Void;
     type BoolOnly = ();
+    const IS_BOOL: bool = true;
+    type DbgContent = Subst<BooleanContext>;
+
     fn not_in_paste(_: &impl Spanned) -> syn::Result<()> {
         Ok(())
     }
@@ -113,6 +116,23 @@ impl Subst<BooleanContext> {
                 syn::Visibility::Public(_) => true,
                 _ => false,
             },
+
+            SD::dbg(ddr) => {
+                let r = ddr.content_parsed.eval_bool(ctx);
+                let () = &ddr.content_string;
+                let w = |s: fmt::Arguments| {
+                    eprintln!(
+                        "derive-deftly dbg condition {} evaluated to {}",
+                        ddr.display_heading(ctx),
+                        s,
+                    )
+                };
+                match &r {
+                    Ok(y) => w(format_args!("{:?}", y)),
+                    Err(e) => w(format_args!("error: {}", e)),
+                };
+                r?
+            }
 
             // ## maint/check-keywords-documented NotInBool ##
             SD::tname(not_in_bool)

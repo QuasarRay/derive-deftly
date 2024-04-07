@@ -24,6 +24,13 @@ pub struct RepeatAnalysisVisitor {
     over: Option<RepeatOverInference>,
 }
 
+pub trait AnalyseRepeat {
+    fn analyse_repeat(
+        &self,
+        visitor: &mut RepeatAnalysisVisitor,
+    ) -> syn::Result<()>;
+}
+
 impl RepeatAnalysisVisitor {
     fn set_over(&mut self, over: RepeatOverInference) -> syn::Result<()> {
         match &self.over {
@@ -58,7 +65,7 @@ impl RepeatAnalysisVisitor {
     }
 }
 
-impl<O: SubstParseContext> SubstIf<O> {
+impl<O: SubstParseContext> AnalyseRepeat for SubstIf<O> {
     fn analyse_repeat(
         &self,
         visitor: &mut RepeatAnalysisVisitor,
@@ -81,9 +88,9 @@ impl<O: SubstParseContext> SubstIf<O> {
     }
 }
 
-impl<O: SubstParseContext> Template<O> {
+impl<O: SubstParseContext> AnalyseRepeat for Template<O> {
     /// Analyses a template section to be repeated
-    pub fn analyse_repeat(
+    fn analyse_repeat(
         &self,
         visitor: &mut RepeatAnalysisVisitor,
     ) -> syn::Result<()> {
@@ -94,7 +101,7 @@ impl<O: SubstParseContext> Template<O> {
     }
 }
 
-impl<O: SubstParseContext> TemplateElement<O> {
+impl<O: SubstParseContext> AnalyseRepeat for TemplateElement<O> {
     fn analyse_repeat(
         &self,
         visitor: &mut RepeatAnalysisVisitor,
@@ -112,7 +119,7 @@ impl<O: SubstParseContext> TemplateElement<O> {
     }
 }
 
-impl<O: SubstParseContext> Subst<O> {
+impl<O: SubstParseContext> AnalyseRepeat for Subst<O> {
     fn analyse_repeat(
         &self,
         visitor: &mut RepeatAnalysisVisitor,
@@ -178,6 +185,7 @@ impl<O: SubstParseContext> Subst<O> {
             SD::For(..) => None,
             SD::False(..) | SD::True(..) => None, // condition: ignore.
             SD::error(..) => None,
+            SD::dbg(ddr) => recurse!(ddr.content_parsed),
             SD::dbg_all_keywords(..) => None,
             SD::Crate(..) => None,
         };
@@ -362,6 +370,34 @@ impl<'c> Context<'c> {
             why.span().error("expansion only valid in enums")
         })?;
         Ok(r)
+    }
+
+    pub fn display_for_dbg(&self) -> impl Display + '_ {
+        struct Adapter<'a>(&'a Context<'a>);
+
+        impl Display for Adapter<'_> {
+            fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+                let ctx = self.0;
+                write!(f, "for {}", &ctx.top.ident)?;
+                if let Some(wv) = &ctx.variant {
+                    if let Some(v) = &wv.variant {
+                        write!(f, "::{}", &v.ident)?;
+                    }
+                }
+                if let Some(wf) = &ctx.field {
+                    // we're just using the Display impl, any span will do
+                    let span = Span::call_site();
+                    write!(f, ".{}", &wf.fname(span))?;
+                }
+                if let Some(templ) = &ctx.template_name {
+                    let templ = templ.to_token_stream().to_string();
+                    write!(f, " from {}", templ)?;
+                }
+                Ok::<_, fmt::Error>(())
+            }
+        }
+
+        Adapter(self)
     }
 }
 

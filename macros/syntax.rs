@@ -136,6 +136,7 @@ pub enum SubstDetails<O: SubstParseContext> {
     select1(SubstIf<O>, O::NotInBool),
 
     error(ExplicitError, O::NotInBool),
+    dbg(DbgDumpRequest<O>),
     dbg_all_keywords(O::NotInBool),
 
     Crate(O::NotInPaste, O::NotInBool),
@@ -210,6 +211,34 @@ pub enum RawAttr {
 #[derive(Debug, Clone)]
 pub struct RawAttrEntry {
     pub path: syn::Path,
+}
+
+#[derive(Debug)]
+pub struct DbgDumpRequest<O: SubstParseContext> {
+    pub note: Option<String>,
+    pub content_parsed: Box<O::DbgContent>,
+
+    // TODO
+    // We want to print the unexpanded/unevaluated template text,
+    // as part of the debugging output.
+    //
+    // However, all our Template TokenStreams have been $-escaped,
+    // so contain `$orig_dollar`.  We could fix this by unescaping
+    // the whole template on input, but it is better for perf
+    // to do this only when required by an actual dbg expansion.
+    //
+    // To resolve this TODO:
+    //   - implement a function to de-escape templates
+    //   - de-escape the template before making it into a String
+    //   - change the type of this variable to contain the String
+    //   - resolve the compile errors at the call sites
+    //     by actually printing the unexpanded content
+    // Or:
+    //   - impl Display for Tempplate
+    //     (this is probably much more work and very intrusive)
+    //
+    // pub content_string: String,
+    pub content_string: (),
 }
 
 /// Error returned by `DefinitionName::try_from(syn::Ident)`
@@ -825,6 +854,7 @@ impl<O: SubstParseContext> Parse for Subst<O> {
         keyword! { "if": If(parse_if(input)?, not_in_bool()?) }
         keyword! { select1(parse_if(input)?, not_in_bool()?) }
         keyword! { error(input.parse()?, not_in_bool()?) }
+        keyword! { dbg(input.parse()?) }
         keyword! { dbg_all_keywords(not_in_bool()?) }
         keyword! { "crate": Crate(not_in_paste()?, not_in_bool()?) }
         keyword! { "_dd_intern_crate": Crate(not_in_paste()?, not_in_bool()?) }
@@ -854,6 +884,60 @@ impl<O: SubstParseContext> Parse for Subst<O> {
         }
 
         Err(kw.error("unknown derive-deftly keyword"))
+    }
+}
+
+impl<O: SubstParseContext> Parse for DbgDumpRequest<O> {
+    fn parse(input: ParseStream) -> syn::Result<Self> {
+        O::parse_maybe_within_parens(input, |input| {
+            let note = if input.peek(syn::LitStr) {
+                let note: syn::LitStr = input.parse()?;
+                O::parse_maybe_comma(input)?;
+                Some(note.value())
+            } else {
+                None
+            };
+
+            let content_buf;
+            let content = if O::IS_BOOL {
+                input
+            } else {
+                let _ = braced!(content_buf in input);
+                &content_buf
+            };
+            // was content.to_string(); but $orig_dollar, see TODO
+            let content_string = ();
+            let content_parsed = content.parse()?;
+            Ok(DbgDumpRequest {
+                note,
+                content_string,
+                content_parsed,
+            })
+        })
+    }
+}
+
+impl<O: SubstParseContext> DbgDumpRequest<O> {
+    pub fn display_heading<'s>(
+        &'s self,
+        ctx: &'s Context,
+    ) -> impl Display + 's {
+        struct Adapter<'a, O: SubstParseContext>(
+            &'a DbgDumpRequest<O>,
+            &'a Context<'a>,
+        );
+
+        impl<O: SubstParseContext> Display for Adapter<'_, O> {
+            fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+                let Adapter(ddr, ctx) = self;
+                if let Some(note) = &ddr.note {
+                    write!(f, "{:?} ", &note)?;
+                }
+                write!(f, "{}", ctx.display_for_dbg())
+            }
+        }
+
+        Adapter(self, ctx)
     }
 }
 

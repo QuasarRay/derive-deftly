@@ -23,7 +23,7 @@
       * [`$crate` -- root of template crate](#crate--root-of-template-crate)
       * [`$tdefkwd` -- keyword introducing the new data structure](#tdefkwd--keyword-introducing-the-new-data-structure)
       * [`$tdefvariants`, `$vdefbody`, `$fdefine` -- tools for defining types](#tdefvariants-vdefbody-fdefine--tools-for-defining-types)
-      * [`$dbg_all_keywords` -- Dump expansions of all keywords to compiler stderr](#dbg_all_keywords--dump-expansions-of-all-keywords-to-compiler-stderr)
+      * [`${dbg ..}`, `$dbg_all_keywords` -- Debugging output](#dbg--dbg_all_keywords--debugging-output)
       * [`${define ...}`, `${defcond ...}` -- user-defined expansions and conditions](#define--defcond---user-defined-expansions-and-conditions)
       * [`${error "message"}` -- explicitly throw a compile error](#error-message--explicitly-throw-a-compile-error)
    * [Conditions](#conditions)
@@ -34,6 +34,7 @@
       * [`tgens`](#tgens)
       * [`is_empty(..)`, `approx_equal(ARG1, ARG2)` -- equality comparison (token comparison)](#is_empty-approx_equalarg1-arg2--equality-comparison-token-comparison)
       * [`false`, `true`, `not(CONDITION)`, `any(COND1,COND2,...)`, `all(COND1,COND2,...)` -- boolean logic](#false-true-notcondition-anycond1cond2-allcond1cond2--boolean-logic)
+      * [`dbg(...)` -- Debug dump of condition value](#dbg--debug-dump-of-condition-value)
    * [Case changing](#case-changing)
    * [Expansion options](#expansion-options)
       * [`expect items`, `expect expr` -- syntax check the expansion](#expect-items-expect-expr--syntax-check-the-expansion)
@@ -659,9 +660,18 @@ pub enum EnumCopy<'a, 'l: 'a, T: Display = usize, const C: usize = 1,> {
 }
 ```
 
-### `$dbg_all_keywords` -- Dump expansions of all keywords to compiler stderr
+### `${dbg ..}`, `$dbg_all_keywords` -- Debugging output
 
-Prints a listing of all the available expansion keywords,
+`${dbg { CONTENT }}` expands to the expansion of `CONTENT`,
+but it also prints the expansion to the compiler stderr.
+
+`${dbg "NOTE" { CONTENT }}` adds the note `"NOTE"`
+to the heading of the expansion dump,
+for identification purposes.
+
+`$dbg_all_keywords` dumps expansions of all keywords:
+
+It prints a listing of all the available expansion keywords,
 and conditions,
 along with their expansions and values.
 (The output goes to the compiler's stderr;
@@ -672,10 +682,13 @@ might be useful for a particular task.
 (Before making a final selection of keyword
 you probably want to refer to this reference manual.)
 
-You will not want to leave this option in production code,
-as it makes builds noisy.
+You will not want to leave these options in production code,
+as they make builds noisy.
 
-See also the [`dbg` expansion option](#dbg--print-the-expansion-to-stderr-for-debugging).
+See also
+the [`dbg` expansion option](#dbg--print-the-expansion-to-stderr-for-debugging),
+and
+the [`dbg` condition](#dbg--debug-dump-of-condition-value).
 
 #### Example
 
@@ -910,6 +923,23 @@ The `ARG`s are in derive-deftly's usual
 
 ### `false`, `true`, `not(CONDITION)`, `any(COND1,COND2,...)`, `all(COND1,COND2,...)` -- boolean logic
 
+### `dbg(...)` -- Debug dump of condition value
+
+`dbg(CONDITION)` evaluates `CONDITION`,
+but it also prints the boolean value to the compiler stderr.
+
+`dbg("NOTE", CONDITION}` adds the note `"NOTE"`
+to the debug message
+for identification purposes.
+
+You will not want to leave this option in production code,
+as it makes builds noisy.
+
+See also
+the [`${dbg ..}` expansion](#dbg--dbg_all_keywords--debugging-output)
+and
+the [`dbg` expansion option](#dbg--print-the-expansion-to-stderr-for-debugging).
+
 ## Case changing
 
 `${CASE_CHANGE ...}` makes an identifier
@@ -1017,7 +1047,10 @@ for debugging purposes.
 You will not want to leave this option in production code,
 as it makes builds noisy.
 
-See also the [`$dbg_all_keywords` expansion](#dbg_all_keywords--dump-expansions-of-all-keywords-to-compiler-stderr).
+See also
+the [`${dbg ..}` expansion](#dbg--dbg_all_keywords--debugging-output),
+the [`dbg` condition](#dbg--debug-dump-of-condition-value),
+the [`$dbg_all_keywords` expansion](#dbg_all_keywords--dump-expansions-of-all-keywords-to-compiler-stderr).
 
 ### Expansion options example
 

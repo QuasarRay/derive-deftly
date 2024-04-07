@@ -566,6 +566,7 @@ where
             SD::select1(conds, ..) => conds.expand_select1(ctx, out)?,
             SD::For(repeat, _) => repeat.expand(ctx, out),
 
+            SD::dbg(ddr) => ddr.expand(ctx, out, kw_span),
             SD::dbg_all_keywords(_) => dbg_allkw::dump(ctx),
 
             // ## maint/check-keywords-documented BoolOnly ##
@@ -584,6 +585,33 @@ where
             | SD::all(_, bo) => out.append_bool_only(bo),
         };
         Ok(())
+    }
+}
+
+impl<O: ExpansionOutput> DbgDumpRequest<O> {
+    fn expand(&self, ctx: &Context, out: &mut O, kw_span: Span) {
+        let desc =
+            format!("derive-deftly dbg dump {}", self.display_heading(ctx),);
+
+        let mut msg = String::new();
+        let () = self.content_string;
+        writeln!(
+            msg, //
+            r#"---------- {} expansion (start) ----------"#,
+            desc,
+        )
+        .expect("write to String failed");
+
+        out.dbg_expand(kw_span, ctx, &mut msg, &self.content_parsed);
+        writeln!(
+            msg,
+            r#"
+---------- {} expansion (end) ----------"#,
+            desc
+        )
+        .expect("write to String failed");
+
+        eprint!("{}", msg);
     }
 }
 
