@@ -29,7 +29,12 @@ impl Trait for Unit {
         }
     }
     fn has_tgens(&self) -> bool {
-        false
+        let tgens = false;
+        let is_empty = true;
+        if tgens != !is_empty {
+            ::core::panicking::panic("explicit panic");
+        }
+        tgens
     }
     fn has_tmeta(&self) -> bool {
         false
@@ -70,7 +75,12 @@ impl Trait for Tuple {
         }
     }
     fn has_tgens(&self) -> bool {
-        false
+        let tgens = false;
+        let is_empty = true;
+        if tgens != !is_empty {
+            ::core::panicking::panic("explicit panic");
+        }
+        tgens
     }
     fn has_tmeta(&self) -> bool {
         true
@@ -116,7 +126,12 @@ impl Trait for Struct {
         }
     }
     fn has_tgens(&self) -> bool {
-        false
+        let tgens = false;
+        let is_empty = true;
+        if tgens != !is_empty {
+            ::core::panicking::panic("explicit panic");
+        }
+        tgens
     }
     fn has_tmeta(&self) -> bool {
         false
@@ -169,7 +184,12 @@ impl Trait for Enum {
         }
     }
     fn has_tgens(&self) -> bool {
-        false
+        let tgens = false;
+        let is_empty = true;
+        if tgens != !is_empty {
+            ::core::panicking::panic("explicit panic");
+        }
+        tgens
     }
     fn has_tmeta(&self) -> bool {
         false
@@ -221,7 +241,12 @@ impl Trait for Union {
         }
     }
     fn has_tgens(&self) -> bool {
-        false
+        let tgens = false;
+        let is_empty = true;
+        if tgens != !is_empty {
+            ::core::panicking::panic("explicit panic");
+        }
+        tgens
     }
     fn has_tmeta(&self) -> bool {
         false
@@ -252,7 +277,12 @@ impl<T> Trait for Generic<T> {
         }
     }
     fn has_tgens(&self) -> bool {
-        true
+        let tgens = true;
+        let is_empty = false;
+        if tgens != !is_empty {
+            ::core::panicking::panic("explicit panic");
+        }
+        tgens
     }
     fn has_tmeta(&self) -> bool {
         false

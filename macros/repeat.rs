@@ -117,6 +117,11 @@ impl<O: SubstParseContext> Subst<O> {
         &self,
         visitor: &mut RepeatAnalysisVisitor,
     ) -> syn::Result<()> {
+        macro_rules! recurse { { $v:expr } => { {
+            $v.analyse_repeat(visitor)?;
+            None
+        } } }
+
         let over = match &self.sd {
             SD::tname(..) => None,
             SD::vname(..) => Some(RO::Variants),
@@ -148,32 +153,21 @@ impl<O: SubstParseContext> Subst<O> {
             SD::tdefvariants(..) => None,
             SD::fdefine(..) => Some(RO::Fields),
             SD::vdefbody(..) => Some(RO::Variants),
-            SD::paste(body, ..) => {
-                body.analyse_repeat(visitor)?;
-                None
-            }
-            SD::ChangeCase(body, ..) => {
-                body.analyse_repeat(visitor)?;
-                None
-            }
+            SD::paste(body, ..) => recurse!(body),
+            SD::ChangeCase(body, ..) => recurse!(body),
             SD::when(..) => None, // out-of-place when, ignore it
             SD::define(..) => None,
             SD::defcond(..) => None,
             SD::UserDefined(..) => None,
+            SD::is_empty(_, content) => recurse!(content),
             SD::approx_equal(_, ab) => {
                 for x in ab {
                     x.analyse_repeat(visitor)?;
                 }
                 None
             }
-            SD::not(cond, _) => {
-                cond.analyse_repeat(visitor)?;
-                None
-            }
-            SD::If(conds, ..) | SD::select1(conds, ..) => {
-                conds.analyse_repeat(visitor)?;
-                None
-            }
+            SD::not(cond, _) => recurse!(cond),
+            SD::If(conds, ..) | SD::select1(conds, ..) => recurse!(conds),
             SD::any(conds, _) | SD::all(conds, _) => {
                 for c in conds.iter() {
                     c.analyse_repeat(visitor)?;

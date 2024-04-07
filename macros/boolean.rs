@@ -49,6 +49,13 @@ impl Subst<BooleanContext> {
         let v_fields = || ctx.variant(&kw_span).map(|v| &v.fields);
         use syn::Fields as SF;
 
+        let expand = |x: &Template<_>| {
+            let mut out = TokenAccumulator::new();
+            x.expand(ctx, &mut out);
+            let out = out.tokens()?;
+            Ok::<TokenStream, syn::Error>(out)
+        };
+
         let r = match &self.sd {
             SD::is_enum(..) => ctx.is_enum(),
             SD::is_struct(..) => matches!(ctx.top.data, syn::Data::Struct(_)),
@@ -74,14 +81,9 @@ impl Subst<BooleanContext> {
                 is_found(label.search_eval_bool(sm.pmetas(ctx, kw_span)?))
             }
 
+            SD::is_empty(_, content) => expand(content)?.is_empty(),
             SD::approx_equal(_, [a, b]) => {
-                let s = |x: &Template<_>| {
-                    let mut out = TokenAccumulator::new();
-                    x.expand(ctx, &mut out);
-                    let out = out.tokens()?;
-                    Ok::<TokenStream, syn::Error>(out)
-                };
-                tokens_cmp(s(a)?, s(b)?) == Ordering::Equal
+                tokens_cmp(expand(a)?, expand(b)?) == Ordering::Equal
             }
 
             SD::UserDefined(name) => name.lookup_eval_bool(ctx)?,

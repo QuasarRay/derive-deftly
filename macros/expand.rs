@@ -575,6 +575,7 @@ where
             | SD::v_is_unit(bo)
             | SD::v_is_tuple(bo)
             | SD::v_is_named(bo)
+            | SD::is_empty(bo, _)
             | SD::approx_equal(bo, _)
             | SD::False(bo)
             | SD::True(bo)

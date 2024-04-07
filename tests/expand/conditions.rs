@@ -37,9 +37,16 @@ define_derive_deftly! {
             }
         }
         fn has_tgens(&self) -> bool {
-            ${if tgens
-              { true }
-              else { false }}
+            let tgens = ${if tgens
+                { true }
+                else { false }};
+            let is_empty = ${if is_empty($tgens)
+                { true }
+                else { false }};
+            if tgens != !is_empty {
+                panic!();
+            }
+            tgens
         }
         fn has_tmeta(&self) -> bool {
             ${if tmeta(hi(ferris))
