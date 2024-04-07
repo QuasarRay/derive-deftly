@@ -83,7 +83,7 @@ pub enum SubstDetails<O: SubstParseContext> {
     fattrs(RawAttr, O::NotInPaste, O::NotInBool),
 
     // generics
-    tgens(O::NotInPaste, O::NotInBool),
+    tgens(O::NotInPaste),
     tdefgens(O::NotInPaste, O::NotInBool),
     tgnames(O::NotInPaste, O::NotInBool),
     twheres(O::NotInPaste, O::NotInBool),
@@ -757,7 +757,7 @@ impl<O: SubstParseContext> Parse for Subst<O> {
         keyword! { v_is_tuple(bool_only()?) }
         keyword! { v_is_named(bool_only()?) }
 
-        keyword! { tgens(not_in_paste()?, not_in_bool()?) }
+        keyword! { tgens(not_in_paste()?) }
         keyword! { tdefgens(not_in_paste()?, not_in_bool()?) }
         keyword! { tgnames(not_in_paste()?, not_in_bool()?) }
         keyword! { twheres(not_in_paste()?, not_in_bool()?) }

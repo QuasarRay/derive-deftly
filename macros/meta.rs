@@ -1135,7 +1135,7 @@ impl<O: SubstParseContext> FindRecogMetas for SubstDetails<O> {
             | tattrs(_, _, _)
             | vattrs(_, _, _)
             | fattrs(_, _, _)
-            | tgens(_, _)
+            | tgens(_)
             | tdefgens(_, _)
             | tgnames(_, _)
             | twheres(_, _)
