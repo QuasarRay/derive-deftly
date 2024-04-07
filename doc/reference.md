@@ -868,10 +868,13 @@ Whether the top-level type has generics.
 
  * `tgens`: true for `Unit`, `Tuple`, `Struct`, `Enum`
 
-### `approx_equal(ARG1, ARG2)` -- equality comparison (token comparison)
+### `is_empty(..)`, `approx_equal(ARG1, ARG2)` -- equality comparison (token comparison)
 
-The two `ARGS`s are each expanded (as series of tokens)
-and compared for equality.
+`is_empty` expands the content, and is true if
+the expansion produced no tokens.
+
+`approx_equal` expands the two `ARGS`s (as series of tokens)
+and compares them for (a kind of) equality.
 
 Span is disregarded, so
 two identifiers that would refer to different types or values,
