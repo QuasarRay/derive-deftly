@@ -855,7 +855,7 @@ Use `$vdefbody` and `$fdefine` when defining a derived type.
 
 #### Examples
 
- * `v_is_unit`: true for `struct Unit;`, and `Enum::UnitVariant;`
+ * `v_is_unit`: true for `struct Unit;`, `SimpleUnit`, and `Enum::UnitVariant;`
  * `v_is_tuple`: true for `struct Tuple(...);`, and `Enum::TupleVariant(...);`
  * `v_is_named`: true for `struct Struct {...}`, and `Enum::NamedVariant {...}`
 
@@ -1039,6 +1039,10 @@ are those generated for the following driver types:
 # use std::fmt::Display;
 # use std::convert::TryInto;
 #
+#[derive(Deftly)]
+#[derive(Clone)]
+struct SimpleUnit;
+
 #[derive(Deftly)]
 #[derive(Clone)]
 #[deftly(simple="String", gentype="Vec<i32>")]
