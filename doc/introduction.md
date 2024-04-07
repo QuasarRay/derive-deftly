@@ -1319,7 +1319,7 @@ For example:
  * [`is_enum`, `is_struct`, `is_union`](crate::doc_reference#is_struct-is_enum-is_union);
    [`v_is_unit`, `is_named`, `is_tuple`](crate::doc_reference#v_is_unit-v_is_tuple-v_is_named);
    [`fvis`, `tvis`](crate::doc_reference#fvis-tvis-fdefvis--test-for-public-visibility):
-   and [`approx_equal`](crate::doc_reference#approx_equalarg1-arg2--equality-comparison-token-comparison):
+   and [`approx_equal`](crate::doc_reference#is_empty-approx_equalarg1-arg2--equality-comparison-token-comparison):
    more conditions for dealing with various cases by hand.
 
  * [`$tdefkwd`](crate::doc_reference#tdefkwd--keyword-introducing-the-new-data-structure);
