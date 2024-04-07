@@ -150,6 +150,8 @@ derive_deftly_adhoc! {
         ${if all(true)         {} else { bad }}
         ${if all(true,false)   { bad }}
         ${if all(false,true)   { bad }}
+        ${if approx_equal({}, {wobble}) { bad }}
+        ${if approx_equal({wobble}, {}) { bad }}
     }
 }
 

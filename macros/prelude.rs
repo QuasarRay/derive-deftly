@@ -16,7 +16,7 @@ pub use std::ops::Deref;
 pub use std::str::FromStr;
 pub use std::thread::panicking;
 
-pub use itertools::{chain, izip, Either, Itertools};
+pub use itertools::{chain, izip, Either, EitherOrBoth, Itertools};
 pub use proc_macro2::{Delimiter, Ident, Punct};
 pub use proc_macro2::{Span, TokenStream, TokenTree};
 pub use quote::{format_ident, quote, quote_spanned, ToTokens};

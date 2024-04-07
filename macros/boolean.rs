@@ -242,7 +242,12 @@ pub fn tokens_cmp(a: TokenStream, b: TokenStream) -> cmp::Ordering {
             .then_with(|| tokens_cmp(a.stream(), b.stream()))
     }
 
-    for (a, b) in izip!(a, b) {
+    for ab in a.into_iter().zip_longest(b) {
+        let (a, b) = match ab {
+            EitherOrBoth::Both(a, b) => (a, b),
+            EitherOrBoth::Left(_) => return Ordering::Greater,
+            EitherOrBoth::Right(_) => return Ordering::Less,
+        };
         match tt_cmp(a, b) {
             Ordering::Equal => {}
             neq => return neq,
