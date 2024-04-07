@@ -1100,7 +1100,7 @@ impl<O: SubstParseContext> FindRecogMetas for SubstDetails<O> {
         use SD::*;
 
         match self {
-            xmeta(v) => v.find_recog_metas(acc),
+            Xmeta(v) => v.find_recog_metas(acc),
             vpat(v, _, _) => v.find_recog_metas(acc),
             vtype(v, _, _) => v.find_recog_metas(acc),
             tdefvariants(v, _, _) => v.find_recog_metas(acc),

@@ -57,7 +57,7 @@ impl Subst<BooleanContext> {
             SD::v_is_tuple(..) => matches!(v_fields()?, SF::Unnamed(..)),
             SD::v_is_named(..) => matches!(v_fields()?, SF::Named(..)),
 
-            SD::xmeta(sm) => {
+            SD::Xmeta(sm) => {
                 let meta::SubstMeta {
                     desig: meta::Desig { label, scope: _ },
                     as_,

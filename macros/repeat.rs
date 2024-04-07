@@ -128,7 +128,7 @@ impl<O: SubstParseContext> Subst<O> {
             SD::Vis(SubstVis::T, ..) => None,
             SD::Vis(SubstVis::F, ..) => Some(RO::Fields),
             SD::Vis(SubstVis::FD, ..) => Some(RO::Fields),
-            SD::xmeta(sm) => sm.repeat_over(),
+            SD::Xmeta(sm) => sm.repeat_over(),
             SD::tattrs(..) => None,
             SD::vattrs(..) => Some(RO::Variants),
             SD::fattrs(..) => Some(RO::Fields),
