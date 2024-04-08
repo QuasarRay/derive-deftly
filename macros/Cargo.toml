@@ -2,7 +2,7 @@
 name = "derive-deftly-macros"
 version = "0.10.3"
 edition = "2021"
-readme = "../README.md"
+readme = "README.md"
 authors=["Ian Jackson <ijackson@chiark.greenend.org.uk>",
          "and the contributors to Rust derive-deftly"]
 license = "MIT"
