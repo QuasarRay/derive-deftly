@@ -1050,7 +1050,7 @@ as it makes builds noisy.
 See also
 the [`${dbg ..}` expansion](#dbg--dbg_all_keywords--debugging-output),
 the [`dbg` condition](#dbg--debug-dump-of-condition-value),
-the [`$dbg_all_keywords` expansion](#dbg_all_keywords--dump-expansions-of-all-keywords-to-compiler-stderr).
+the [`$dbg_all_keywords` expansion](#dbg--dbg_all_keywords--debugging-output).
 
 ### Expansion options example
 
