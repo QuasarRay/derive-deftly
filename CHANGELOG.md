@@ -23,6 +23,28 @@ We expect to increase it cautiously and only with good reason.
 
 ## Changelog
 
+### 0.10.3
+
+#### Fixed
+
+ * Fix `approx_equal` not to treat its arguments as equal
+   if one of them was a prefix of the other.  (#52)
+
+#### Breaking (minor)
+
+ * Reject `expect expr` early, in `define_derive_deftly!`.
+   (Such a template could never be successfully used.)
+
+#### Added
+
+ * `tgens` condition: true if there are any generics.
+ * `${dbg ..}` debug dump expansion, and `dbg(...)` debug dump condition.
+ * `is_empty` condition for testing an expansion for emptiness.
+
+#### Improved
+
+ * Improvements to reference docs.
+
 ### 0.10.2
 
 #### Fixed
