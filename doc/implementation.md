@@ -104,7 +104,7 @@ Generates:
 
 ```rust,ignore
     derive_deftly_template_Template! {
-        { #[derive_deftly(Template)] struct StructName { ... } }
+        { #[derive_deftly(..)] struct StructName { ... } }
         [1 0 AOPTIONS]
         { }
     }
@@ -125,7 +125,7 @@ resulting in a call to `derive_deftly_engine`:
 
 ```rust,ignore
     derive_deftly_engine! {
-        { pub struct StructName { /* original struct definition */ } }
+        { #[derive_deftly(..)] pub struct StructName { .. } }
         [1 0 AOPTIONS]
         { }
         { TEMPLATE... }
