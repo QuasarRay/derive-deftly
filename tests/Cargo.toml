@@ -21,7 +21,7 @@ full = ["derive-deftly/full"]
 case = []
 
 [dependencies]
-derive-deftly = { path = "..", version = "0.10.2", default-features = false, features = ["minimal-1"] }
+derive-deftly = { path = "..", version = "0.10.3", default-features = false, features = ["minimal-1"] }
 easy-ext = "1"
 # educe 0.5.0 to 0.5.10 inclusive are broken but cargo cannot express this
 #  https://github.com/magiclen/educe/issues/14
