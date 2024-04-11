@@ -1170,12 +1170,15 @@ attribute on the type,
 and to use the value of that attribute
 in place of the keyword.
 
-If we want our attribute to be more namespaced,
-we can instead say something like
-`${tmeta(Constructor(newfn = "..."))}`.
-If we do, the template will look for an attribute like
-`#[deftly(Constructor(newfn = "..."))]`.
-
+<span id="meta-attr-scope">If
+we expect our template to be widely used,
+we should namespace our attributes,
+by saying something like
+`${tmeta(constructor(newfn = "..."))}`,
+in our `Constructor` template.
+Then, the template will look for an attribute like
+`#[deftly(constructor(newfn = "..."))]`.
+This avoids name clashes with other templates.</span>
 
 The
 [`$tmeta`](crate::doc_reference#tmeta-vmeta-fmeta--deftly-attributes)
