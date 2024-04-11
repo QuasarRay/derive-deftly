@@ -403,6 +403,19 @@ look in the top-level attributes.
 This allows a template to have uniform handling of attributes
 which should affect how a set of fields should be processed.
 
+#### Attribute namespacing
+
+`derive-deftly` does not impose any namespacing within `#[deftly]`:
+all templates see the same `deftly` meta attributes.
+
+To avoid clashes,
+macros intended for general use should look for attributes
+within a namespace for that template.
+The usual convention is to accept attributes
+scoped within the snake-cased name of the template,
+as demonstrated
+[in the introduction](doc_introduction#meta-attr-scope).
+
 #### Unrecognised/unused `#[deftly(...)]` attributes
 
 Every `#[deftly(...)]` attribute on the input data structure
@@ -414,8 +427,6 @@ Any appropriate `Xmeta` reference in the template counts -
 even if that part of the template is not expanded.
 So complex templates may need to explicitly detect
 and reject inappropriate combinations of attributes.
-
-<!-- TOOD there should be a ${error ...} -->
 
 These checks are disabled by `#[derive_deftly_adhoc]`.
 
@@ -825,7 +836,6 @@ And in each case, false for all others.
 Looks for `#[deftly(NAME)]`.
 
 True iff there was such an attribute.
-`Xmeta(SUB(NAME))` works, just as with the `${Xmeta ...}` expansion.
 
 The condition is true if there is at least one matching entry,
 and (unlike `${Xmeta}`)
@@ -834,6 +844,10 @@ the corresponding driver attribute does not need to be a `=LIT`.
 So `Xmeta(SUB(NAME))` is true if the driver has
 `#[deftly(SUB(NAME(INNER=...)))]` or `#[deftly(SUB(NAME))]` or
 `#[deftly(SUB(NAME=LIT))]` or even `#[deftly(SUB(NAME()))]`.
+
+`Xmeta(SUB(NAME))` works, just as with the `${Xmeta ...}` expansion.
+See [`${Xmeta ...}`](#tmeta-vmeta-fmeta--deftly-attributes)
+for information about namespacing and handling of unused attributes.
 
 #### Examples
 

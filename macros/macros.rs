@@ -316,8 +316,9 @@ pub fn define_derive_deftly(
 /// [it is an error](doc_reference/index.html#unrecognisedunused-deftly-attributes),
 /// (unless `#[derive_deftly_adhoc]` is specified).
 ///
-/// `derive-deftly` does not impose any namespacing within `#[deftly]`:
-/// all templates see the same `deftly` meta attributes.
+/// `derive-deftly`
+/// [does not impose any namespacing](doc_reference/index.html#attribute-namespacing)
+/// within `#[deftly]`:
 ///
 /// ## Captured data structure definition `derive_deftly_driver_TYPE`
 ///
