@@ -415,8 +415,6 @@ even if that part of the template is not expanded.
 So complex templates may need to explicitly detect
 and reject inappropriate combinations of attributes.
 
-<!-- TOOD there should be a ${error ...} -->
-
 These checks are disabled by `#[derive_deftly_adhoc]`.
 
 #### Examples
