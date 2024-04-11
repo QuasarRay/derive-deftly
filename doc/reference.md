@@ -836,7 +836,6 @@ And in each case, false for all others.
 Looks for `#[deftly(NAME)]`.
 
 True iff there was such an attribute.
-`Xmeta(SUB(NAME))` works, just as with the `${Xmeta ...}` expansion.
 
 The condition is true if there is at least one matching entry,
 and (unlike `${Xmeta}`)
@@ -845,6 +844,10 @@ the corresponding driver attribute does not need to be a `=LIT`.
 So `Xmeta(SUB(NAME))` is true if the driver has
 `#[deftly(SUB(NAME(INNER=...)))]` or `#[deftly(SUB(NAME))]` or
 `#[deftly(SUB(NAME=LIT))]` or even `#[deftly(SUB(NAME()))]`.
+
+`Xmeta(SUB(NAME))` works, just as with the `${Xmeta ...}` expansion.
+See [`${Xmeta ...}`](#tmeta-vmeta-fmeta--deftly-attributes)
+for information about namespacing and handling of unused attributes.
 
 #### Examples
 
