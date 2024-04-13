@@ -47,12 +47,12 @@ Expands to
         { $($driver:tt)* }
         [ $($aoptions:tt)* ]
         { $($future:tt)* }
-        $($dpassthrough:tt)*
+        $($tpassthrough:tt)*
     } => {
         derive_deftly_engine! {
             { $($driver)* }
             [ $(aoptions)* ]
-            { $($dpassthrough)* }
+            { $($tpassthrough)* }
             { TEMPLATE... }
             { $crate; [TOPTIONS...] Template; }
         }
@@ -184,14 +184,14 @@ generates this
     macro_rules! derive_deftly_driver_StructName { {
         { $($template:tt)* }
         { ($orig_dollar:tt) $(future:tt)* }
-        $($tpassthrough:tt)* 
+        $($dpassthrough:tt)* 
      } => {
         derive_deftly_engine!{
             { pub struct StructName { /* original struct definition */ } }
             /* no AOPTIONS since there's no derive() application */
             { }
             { $($template)* }
-            { $($tpassthrough)* }
+            { $($dpassthrough)* }
         }
     } }
 ```
