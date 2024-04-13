@@ -248,7 +248,7 @@ generates this
             /* no AOPTIONS since there's no derive() application */
             { }
             { $($template)* }
-            { $($dpassthrough)* }
+            $($dpassthrough)*
         }
     } }
 ```
@@ -278,7 +278,7 @@ Expands to
     derive_deftly_driver_StructName! {
        { TEMPLATE.. }
        { ($) }
-       crate; [TOPTIONS..] /*no template name*/;
+       { crate; [TOPTIONS..] /*no template name*/; }
     }
 ```
 

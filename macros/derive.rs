@@ -229,7 +229,7 @@ pub fn derive_deftly(
                         { #driver_escaped }
                         { }
                         { $($template)* }
-                        { $($dpassthrough)* }
+                        $($dpassthrough)*
                     }
                 };
                 { $($wrong:tt)* } => {
