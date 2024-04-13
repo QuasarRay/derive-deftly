@@ -221,7 +221,7 @@ Expands to
     derive_deftly_driver_StructName! {
        { TEMPLATE.. }
        { ($) }
-       crate; [TOPTIONS..]
+       crate; [TOPTIONS..] /*no template name*/;
     }
 ```
 
