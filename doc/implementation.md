@@ -37,8 +37,8 @@ Implemented in `define.rs::define_derive_deftly_func_macro`.
 When used like this
 ```rust,ignore
     define_derive_deftly! {
-        MyMacro TOPTIONS... =
-        TEMPLATE...
+        MyMacro TOPTIONS.. =
+        TEMPLATE..
     }
 ```
 Expands to
@@ -53,8 +53,8 @@ Expands to
             { $($driver)* }
             [ $(aoptions)* ]
             { $($tpassthrough)* }
-            { TEMPLATE... }
-            { $crate; [TOPTIONS...] Template; }
+            { TEMPLATE.. }
+            { $crate; [TOPTIONS..] Template; }
         }
     }; {
         [ $chain0:path, $($chains:path,)* ]
@@ -96,24 +96,24 @@ This
 
 ```rust,ignore
     #[derive(Deftly)]
-    #[derive_deftly(Template[AOPTIONS,...], Template2)]
-    pub struct StructName { ... }
+    #[derive_deftly(Template[AOPTIONS..], Template2)]
+    pub struct StructName { .. }
 ```
 
 Generates:
 
 ```rust,ignore
     derive_deftly_template_Template! {
-        { #[derive_deftly(..)] struct StructName { ... } }
-        [1 0 AOPTIONS]
+        { #[derive_deftly(..)] struct StructName { .. } }
+        [ 1 0 AOPTIONS ]
         { }
     }
-    derive_deftly_template_Template2! { ... }
+    derive_deftly_template_Template2! { .. }
     derive_deftly_template_Template! { // first template in derive()
         [ derive_deftly_template_Template2, derive_deftly_expand, ]
         [ ]
         /* no AOPTIONS; we don't try to accumulate them */
-        { #[derive_adhoc(Template, Template2)] struct StructName { ... } }
+        { #[derive_adhoc(Template, Template2)] struct StructName { .. } }
     }
 ```
 
@@ -126,10 +126,10 @@ resulting in a call to `derive_deftly_engine`:
 ```rust,ignore
     derive_deftly_engine! {
         { #[derive_deftly(..)] pub struct StructName { .. } }
-        [1 0 AOPTIONS]
+        [ 1 0 AOPTIONS ]
         { }
-        { TEMPLATE... }
-        { $crate; [TOPTIONS...] Template; }
+        { TEMPLATE.. }
+        { $crate; [TOPTIONS..] Template; }
     }
 ```
 
@@ -151,7 +151,7 @@ the `AOPTIONS` and the driver:
 derive_deftly_engine! {
 	[ ]
 	[ _name [Template] _meta [ fmeta(foo) ?tmeta(bar) ] ]
-    { #[derive_adhoc(Template, Template2)] struct StructName { ... } }
+    { #[derive_adhoc(Template, Template2)] struct StructName { .. } }
 }
 
 ```
@@ -211,17 +211,17 @@ Implemented in `adhoc.rs::derive_deftly_adhoc`.
 When applied like this
 ```rust,ignore
     derive_deftly_adhoc!{
-       StructName TOPTIONS...:
-       TEMPLATE...
+       StructName TOPTIONS..:
+       TEMPLATE..
     }
 ```
 
 Expands to
 ```rust,ignore
     derive_deftly_driver_StructName! {
-       { TEMPLATE... }
+       { TEMPLATE.. }
        { ($) }
-       crate; [TOPTIONS...]
+       crate; [TOPTIONS..]
     }
 ```
 
@@ -236,8 +236,8 @@ The result of expanding the above is this:
     derive_deftly_engine!{
         { pub struct StructName { /* original struct definition */ } }
         { }
-        { TEMPLATE... }
-        { crate; [TOPTIONS...] /*no template name*/; }
+        { TEMPLATE.. }
+        { crate; [TOPTIONS..] /*no template name*/; }
     }
 ```
 
