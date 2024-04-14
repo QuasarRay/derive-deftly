@@ -101,10 +101,10 @@ impl ParseAdviseable for EngineExpandInput {
 
         Ok(AOk(EngineExpandInput {
             driver,
+            options,
             template,
             template_crate,
             template_name,
-            options,
         }))
     }
 }
