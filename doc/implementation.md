@@ -78,7 +78,7 @@ literal in the expansion `$`.
 feature, `$$` does this.)
 The template expansion engine treats `$orig_dollar` as just a single `$`.
 
-(Again, the extra `{ }` parts after the driver and template
+(The extra `{ }` parts after the driver and template
 include space for future expansion.)
 
 The second arm of the macro is used for meta attribute checking.
@@ -98,7 +98,7 @@ This
     pub struct StructName { ... }
 ```
 
-Generates (in addition to the `derive_deftly_driver_StructName` definition)
+Generates:
 
 ```rust,ignore
     derive_deftly_template_Template! {
@@ -115,9 +115,6 @@ Generates (in addition to the `derive_deftly_driver_StructName` definition)
     }
 ```
 
-The literal `$` is there to work around a limitation in `macro_rules!`,
-see above.
-
 ## 3. Actual expansion
 
 The first call to `derive_deftly_template_Template!`
@@ -133,6 +130,9 @@ resulting in a call to `derive_deftly_engine`:
         { $crate; [TOPTIONS...] Template; }
     }
 ```
+
+Implemented in `engine.rs::derive_deftly_engine_func_macro`,
+this performs the actual template expansion.
 
 ### Accumulation expansion
 
@@ -170,9 +170,9 @@ and means that the first missing template would stop all processing.)
 
 ## Implementation approach - ad-hoc macro applications
 
-### 1. `#[derive(Deftly)]` proc macro for saving struct definitions
+### 1. `#[derive(Deftly)]` feature for saving struct definitions
 
-Implemented in `derive.rs::derive_deftly`.
+Also implemented in `derive.rs::derive_deftly`.
 
 When applied to (e.g.) `pub struct StructName`,
 with `#[derive_deftly_adhoc]` specified
@@ -194,7 +194,7 @@ generates this
     } }
 ```
 
-(The extra `{ }` parts after the driver and template
+(Again, the extra `{ }` parts after the driver and template
 include space for future expansion.)
 
 In the `pub struct` part every `$` is replaced with `$orig_dollar`,
@@ -221,9 +221,10 @@ Expands to
     }
 ```
 
-### 3. Function-like proc macro to do the actual expansion
+The literal `$` is there to work around a limitation in `macro_rules!`,
+see above.
 
-Implemented in `expand.rs::derive_deftly_engine_func_macro`.
+### 3. Function-like proc macro to do the actual expansion
 
 The result of expanding the above is this:
 
