@@ -233,12 +233,12 @@ To use it, write: `#[derive(Deftly)] #[derive_deftly({})]`."#,
                 { $($driver:tt)* }
                 [ $($aoptions:tt)* ]
                 { $($future:tt)* }
-                $($dpassthrough:tt)*
+                $($tpassthrough:tt)*
             } => {
                 #engine_macro! {
                     { $( $driver )* }
                     [ $($aoptions)* ]
-                    { $($dpassthrough)* }
+                    { $($tpassthrough)* }
                     { # template }
                     { $crate; [#options] #templ_name; }
                 }
