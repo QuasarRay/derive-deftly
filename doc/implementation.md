@@ -30,6 +30,63 @@ to what is conceptually the first macro's output.
 
 ## Implementation approach - reusable template macros
 
+### Expansion chaining
+
+When a `#[derive(Deftly)]` call site invokes multiple templates,
+we don't emit separate macro calls for each template.
+Instead, we generate a macro call for the first template,
+and pass it the names of subsequent templates.
+Each template expansion is responsible for invoking the next.
+
+This allows output from the expansion to be
+threaded through the chain,
+collecting additional information as we go,
+and eventually analysed after *all* the expansions are done.
+(This is done by putting`derive_deftly_engine`
+as the final entry
+in the list of macros to chain to.)
+
+Currently, this data collection is used for
+detecting unused meta attributes.
+
+This does mean that specifying a completely unknown template
+(for example, one that's misspelled or not in scope)
+will prevent error reports from subsequent templates,
+which is a shame.
+
+### Overall input syntax for `derive_deftly_engine!` and templates
+
+Because of expansion chaining, calls to the engine,
+and to templates, overlap.
+
+```rust,ignore
+    macro! {
+        { DRIVER.. }
+        [ 1 0 AOPTIONS.. ] // not present for d_d_dengine expanding ad-hoc
+                           // replaced with just "." at end of chain
+    // always present, but always immediately ignored:
+        ( .... )
+    // these parts passed to d_d_engine only, and not in last call:
+        { TEMPLATE.. }
+        ( CRATE; [TOPTIONS..] 
+          TEMPLATE_NAME /* omitted if not available */;
+          .... )
+    // always present:
+        // after here is simply passed through by templates:
+        [
+          // usually one or more of these; none at end, or ad-hoc
+          CHAIN_TO ( CHAIN_PASS_AFTER_DRIVER .... )
+          ..
+        ]
+        [ACCUM..]
+        ....
+    }
+```
+
+(We use the notation `....` for room we are leaving
+for future expansion;
+these are currently empty.)
+
 ### 1. `define_derive_deftly!` macro for defining a reuseable template
 
 Implemented in `define.rs::define_derive_deftly_func_macro`.

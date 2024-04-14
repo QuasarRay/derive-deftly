@@ -5,7 +5,9 @@ use adviseable::*;
 
 /// Input to `derive_deftly_engine!`, principal form (template expansion)
 ///
-/// See `implementation.md`.
+/// See `implementation.md`,
+/// especially
+/// "Overall input syntax for `derive_deftly_engine!` and templates".
 #[derive(Debug)]
 struct EngineExpandInput {
     driver: syn::DeriveInput,
