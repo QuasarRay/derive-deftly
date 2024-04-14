@@ -841,6 +841,20 @@ impl ExpansionOutput for Items {
         meta::SubstAs::str(())
     }
 
+    fn ignore_impl(self) -> syn::Result<()> {
+        let Items {
+            tspan: _,
+            items: _,
+            atoms: _,
+            errors,
+        } = self;
+        let mut accum = ErrorAccumulator::default();
+        for e in errors {
+            accum.push(e);
+        }
+        accum.finish()
+    }
+
     fn dbg_expand(
         &mut self,
         kw_span: Span,

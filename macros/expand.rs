@@ -558,6 +558,11 @@ where
             ),
             SD::UserDefined(name) => name.lookup_expand(ctx, out)?,
 
+            SD::ignore(content, _) => {
+                let mut ignore = O::new_with_span(kw_span);
+                content.expand(ctx, &mut ignore);
+                let () = ignore.ignore_impl()?;
+            }
             SD::when(..) => out.write_error(
                 &kw_span,
                 "${when } only allowed in toplevel of $( )",

@@ -135,6 +135,7 @@ pub enum SubstDetails<O: SubstParseContext> {
     If(SubstIf<O>, O::NotInBool),
     select1(SubstIf<O>, O::NotInBool),
 
+    ignore(Template<O>, O::NotInBool),
     error(ExplicitError, O::NotInBool),
     dbg(DbgDumpRequest<O>),
     dbg_all_keywords(O::NotInBool),
@@ -853,6 +854,7 @@ impl<O: SubstParseContext> Parse for Subst<O> {
         keyword! { "true": True(bool_only()?) }
         keyword! { "if": If(parse_if(input)?, not_in_bool()?) }
         keyword! { select1(parse_if(input)?, not_in_bool()?) }
+        keyword! { ignore(input.parse()?, not_in_bool()?) }
         keyword! { error(input.parse()?, not_in_bool()?) }
         keyword! { dbg(input.parse()?) }
         keyword! { dbg_all_keywords(not_in_bool()?) }
