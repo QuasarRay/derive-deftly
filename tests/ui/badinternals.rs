@@ -25,6 +25,7 @@ derive_deftly::derive_deftly_engine! {
     ( )
     { pub struct OptOk0; }
     ( crate; [] Template; )
+    // XXXX
     RANDOM STUFF
 }
 
@@ -35,6 +36,7 @@ derive_deftly::derive_deftly_engine! {
     ( )
     { pub struct OptOk200; }
     ( crate; [] Template; )
+    // XXXX
     RANDOM STUFF
 }
 
@@ -45,6 +47,7 @@ derive_deftly::derive_deftly_engine! {
     ( )
     { OUGHT NOT TO BE EXPANDED; }
     ( crate; [] Template; )
+    // XXXX
     RANDOM STUFF
 }
 
