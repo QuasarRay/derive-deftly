@@ -22,27 +22,27 @@ derive_deftly::derive_deftly_engine! { GARBAGE -> INNARDS }
 derive_deftly::derive_deftly_engine! {
     { pub struct StructName {} }
     [1 0]
-    { }
     { pub struct OptOk0; }
     ( crate; [] Template; )
+    RANDOM STUFF
 }
 
 // OpCompatVersions 1.200, some imaginary future compatible one
 derive_deftly::derive_deftly_engine! {
     { pub struct StructName {} }
     [1 200]
-    { }
     { pub struct OptOk200; }
     ( crate; [] Template; )
+    RANDOM STUFF
 }
 
 // OpCompatVersions 200.1, some imaginary future incompatible one
 derive_deftly::derive_deftly_engine! {
     { pub struct StructName {} }
     [200 0]
-    { }
     { OUGHT NOT TO BE EXPANDED; }
     ( crate; [] Template; )
+    RANDOM STUFF
 }
 
 fn main() {

@@ -42,9 +42,9 @@ error: bad input to derive_deftly_engine inner template expansion proc macro; mi
 40 | / derive_deftly::derive_deftly_engine! {
 41 | |     { pub struct StructName {} }
 42 | |     [200 0]
-43 | |     { }
-44 | |     { OUGHT NOT TO BE EXPANDED; }
-45 | |     ( crate; [] Template; )
+43 | |     { OUGHT NOT TO BE EXPANDED; }
+44 | |     ( crate; [] Template; )
+45 | |     RANDOM STUFF
 46 | | }
    | |_^
    |
@@ -56,9 +56,9 @@ error: Incompatible major version for AOPTIONS (driver 200, template/engine 1)
 40 | / derive_deftly::derive_deftly_engine! {
 41 | |     { pub struct StructName {} }
 42 | |     [200 0]
-43 | |     { }
-44 | |     { OUGHT NOT TO BE EXPANDED; }
-45 | |     ( crate; [] Template; )
+43 | |     { OUGHT NOT TO BE EXPANDED; }
+44 | |     ( crate; [] Template; )
+45 | |     RANDOM STUFF
 46 | | }
    | |_^
    |

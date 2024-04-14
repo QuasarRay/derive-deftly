@@ -238,9 +238,9 @@ To use it, write: `#[derive(Deftly)] #[derive_deftly({})]`."#,
                 #engine_macro! {
                     { $( $driver )* }
                     [ $($aoptions)* ]
-                    { $($tpassthrough)* }
                     { # template }
                     ( $crate; [#options] #templ_name; )
+                    $($tpassthrough)*
                 }
             };
             {
