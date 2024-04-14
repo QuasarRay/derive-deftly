@@ -242,47 +242,12 @@ pub fn derive_deftly(
         let last = templ_path.segments.last_mut().expect("became empty!");
         last.ident = format_ident!("derive_deftly_template_{}", last.ident);
 
-        // Previously we conditionally output the driver-specified
-        // application options, since
-        // maybe the template engine we were speaking to is old,
-        // so if there aren't any we leave the whole clause out.
-        //
-        // If future things like this were to appear, we would need to
-        // emit the necessary prefix of them, to avoid parsing ambiguity.
-        // Hence this, which leaves off "blank" trailing clauses.
-        // The outer syntax means none of these these clauses are allowed
-        // to start with a curly bracket.
-        //
-        // Currently there aren't any, so `Blank` is _'d out.
-        enum Extra {
-            #[allow(dead_code)]
-            Blank(TokenStream),
-            Required(TokenStream),
-        }
-        impl ToTokens for Extra {
-            fn to_tokens(&self, out: &mut TokenStream) {
-                match self {
-                    Extra::Required(v) => v.to_tokens(out),
-                    Extra::Blank(v) => v.to_tokens(out),
-                }
-            }
-        }
-        let aoptions = {
-            let versions = OpCompatVersions::ours();
-            Extra::Required(quote! { [ #versions #aoptions ] })
-        };
-        let mut extras = vec![
-            aoptions,
-            //
-        ];
-        while matches!(extras.last(), Some(Extra::Blank(_))) {
-            extras.pop();
-        }
+        let ao_versions = OpCompatVersions::ours();
 
         output.extend(quote! {
             #templ_path !{
                 { #driver }
-                #( #extras )*
+                [ #ao_versions #aoptions ]
                 { }
             }
         });
