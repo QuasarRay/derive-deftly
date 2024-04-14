@@ -321,6 +321,12 @@ pub trait ExpansionOutput: SubstParseContext {
         })
     }
 
+    /// Make a new empty expansion output, introduced at `kw_span`
+    ///
+    /// Normally, call sites use an inherent constructor method.
+    /// This one is used for special cases, eg `${ignore ...}`
+    fn new_with_span(kw_span: Span) -> Self;
+
     fn default_subst_meta_as() -> meta::SubstAs<Self>;
 
     /// Implement the `dbg` keyword
@@ -502,6 +508,11 @@ impl ExpansionOutput for TokenAccumulator {
         } else {
             self.0 = Err(err)
         }
+    }
+
+
+    fn new_with_span(_kw_span: Span) -> Self {
+        Self::new()
     }
 
     fn default_subst_meta_as() -> meta::SubstAs<Self> {

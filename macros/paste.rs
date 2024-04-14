@@ -833,6 +833,10 @@ impl ExpansionOutput for Items {
         self.errors.push(err);
     }
 
+    fn new_with_span(kw_span: Span) -> Self {
+        Self::new(kw_span)
+    }
+
     fn default_subst_meta_as() -> meta::SubstAs<Self> {
         meta::SubstAs::str(())
     }
