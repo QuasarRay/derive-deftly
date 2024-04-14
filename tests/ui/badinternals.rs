@@ -22,6 +22,7 @@ derive_deftly::derive_deftly_engine! { GARBAGE -> INNARDS }
 derive_deftly::derive_deftly_engine! {
     { pub struct StructName {} }
     [1 0]
+    // XXXX
     { pub struct OptOk0; }
     ( crate; [] Template; )
     RANDOM STUFF
@@ -31,6 +32,7 @@ derive_deftly::derive_deftly_engine! {
 derive_deftly::derive_deftly_engine! {
     { pub struct StructName {} }
     [1 200]
+    // XXXX
     { pub struct OptOk200; }
     ( crate; [] Template; )
     RANDOM STUFF
@@ -40,6 +42,7 @@ derive_deftly::derive_deftly_engine! {
 derive_deftly::derive_deftly_engine! {
     { pub struct StructName {} }
     [200 0]
+    // XXXX
     { OUGHT NOT TO BE EXPANDED; }
     ( crate; [] Template; )
     RANDOM STUFF

@@ -37,29 +37,29 @@ error: expected curly braces or square brackets
    |                                        ^^^^^^^
 
 error: bad input to derive_deftly_engine inner template expansion proc macro; might be due to incompatible derive-deftly versions(s)
-  --> ui/badinternals.rs:40:1
+  --> ui/badinternals.rs:42:1
    |
-40 | / derive_deftly::derive_deftly_engine! {
-41 | |     { pub struct StructName {} }
-42 | |     [200 0]
-43 | |     { OUGHT NOT TO BE EXPANDED; }
-44 | |     ( crate; [] Template; )
-45 | |     RANDOM STUFF
-46 | | }
+42 | / derive_deftly::derive_deftly_engine! {
+43 | |     { pub struct StructName {} }
+44 | |     [200 0]
+45 | |     // XXXX
+...  |
+48 | |     RANDOM STUFF
+49 | | }
    | |_^
    |
    = note: this error originates in the macro `derive_deftly::derive_deftly_engine` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: Incompatible major version for AOPTIONS (driver 200, template/engine 1)
-  --> ui/badinternals.rs:40:1
+  --> ui/badinternals.rs:42:1
    |
-40 | / derive_deftly::derive_deftly_engine! {
-41 | |     { pub struct StructName {} }
-42 | |     [200 0]
-43 | |     { OUGHT NOT TO BE EXPANDED; }
-44 | |     ( crate; [] Template; )
-45 | |     RANDOM STUFF
-46 | | }
+42 | / derive_deftly::derive_deftly_engine! {
+43 | |     { pub struct StructName {} }
+44 | |     [200 0]
+45 | |     // XXXX
+...  |
+48 | |     RANDOM STUFF
+49 | | }
    | |_^
    |
    = note: this error originates in the macro `derive_deftly::derive_deftly_engine` (in Nightly builds, run with -Z macro-backtrace for more info)
