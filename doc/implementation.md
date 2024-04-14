@@ -32,7 +32,7 @@ to what is conceptually the first macro's output.
 
 ## 1. `define_derive_deftly!` macro for defining a reuseable template
 
-Implemented in `definition.rs::define_derive_deftly_func_macro`.
+Implemented in `define.rs::define_derive_deftly_func_macro`.
 
 When used like this
 ```rust,ignore
@@ -88,7 +88,7 @@ and baked into the macro definition.
 
 ## 2. `#[derive_deftly(Template)]`, implemented in `#[derive(Deftly)]`
 
-Template reuse is also implemented in `capture.rs::derive_deftly`.
+Template use is implemented in `derive.rs::derive_deftly`.
 
 This
 
@@ -172,7 +172,7 @@ and means that the first missing template would stop all processing.)
 
 ### 1. `#[derive(Deftly)]` proc macro for saving struct definitions
 
-Implemented in `capture.rs::derive_deftly`.
+Implemented in `derive.rs::derive_deftly`.
 
 When applied to (e.g.) `pub struct StructName`,
 with `#[derive_deftly_adhoc]` specified
@@ -202,7 +202,7 @@ to use the `$` passed in at the invocation site.
 
 ### 2. `derive_deftly_adhoc!` function-like proc macro for applying to a template
 
-Implemented in `invocation.rs::derive_deftly_adhoc`.
+Implemented in `adhoc.rs::derive_deftly_adhoc`.
 
 When applied like this
 ```rust,ignore
