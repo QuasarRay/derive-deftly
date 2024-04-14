@@ -111,7 +111,7 @@ Expands to
             [ $(aoptions)* ]
             { $($tpassthrough)* }
             { TEMPLATE.. }
-            { $crate; [TOPTIONS..] Template; }
+            ( $crate; [TOPTIONS..] Template; )
         }
     }; {
         [ $chain0:path, $($chains:path,)* ]
@@ -137,7 +137,7 @@ feature, `$$` does this.)
 (as it does with all unrecognised variables), and
 the template expansion engine treats `$orig_dollar` as just a single `$`.
 
-(The extra `{ }` parts after the driver and template
+(The extra `( )` parts after the driver and template
 include space for future expansion.)
 
 The second arm of the macro is used for meta attribute checking.
@@ -186,7 +186,7 @@ resulting in a call to `derive_deftly_engine`:
         [ 1 0 AOPTIONS ]
         { }
         { TEMPLATE.. }
-        { $crate; [TOPTIONS..] Template; }
+        ( $crate; [TOPTIONS..] Template; )
     }
 ```
 
@@ -278,7 +278,7 @@ Expands to
     derive_deftly_driver_StructName! {
        { TEMPLATE.. }
        { ($) }
-       { crate; [TOPTIONS..] /*no template name*/; }
+       ( crate; [TOPTIONS..] /*no template name*/; )
     }
 ```
 
@@ -294,7 +294,7 @@ The result of expanding the above is this:
         { pub struct StructName { /* original struct definition */ } }
         { }
         { TEMPLATE.. }
-        { crate; [TOPTIONS..] /*no template name*/; }
+        ( crate; [TOPTIONS..] /*no template name*/; )
     }
 ```
 

@@ -24,7 +24,7 @@ derive_deftly::derive_deftly_engine! {
     [1 0]
     { }
     { pub struct OptOk0; }
-    { crate; [] Template; }
+    ( crate; [] Template; )
 }
 
 // OpCompatVersions 1.200, some imaginary future compatible one
@@ -33,7 +33,7 @@ derive_deftly::derive_deftly_engine! {
     [1 200]
     { }
     { pub struct OptOk200; }
-    { crate; [] Template; }
+    ( crate; [] Template; )
 }
 
 // OpCompatVersions 200.1, some imaginary future incompatible one
@@ -42,7 +42,7 @@ derive_deftly::derive_deftly_engine! {
     [200 0]
     { }
     { OUGHT NOT TO BE EXPANDED; }
-    { crate; [] Template; }
+    ( crate; [] Template; )
 }
 
 fn main() {

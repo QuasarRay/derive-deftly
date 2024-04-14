@@ -68,7 +68,7 @@ pub fn derive_deftly_adhoc(
         #driver_mac_name !{
             { #template }
             { ($) }
-            { crate; [#options] ; }
+            ( crate; [#options] ; )
         }
     };
 

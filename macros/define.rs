@@ -240,7 +240,7 @@ To use it, write: `#[derive(Deftly)] #[derive_deftly({})]`."#,
                     [ $($aoptions)* ]
                     { $($tpassthrough)* }
                     { # template }
-                    { $crate; [#options] #templ_name; }
+                    ( $crate; [#options] #templ_name; )
                 }
             };
             {

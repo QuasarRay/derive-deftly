@@ -73,7 +73,7 @@ impl ParseAdviseable for EngineExpandInput {
         let template_name;
         {
             let through_driver;
-            let _ = braced!(through_driver in input);
+            let _ = parenthesized!(through_driver in input);
             let input = through_driver;
 
             template_crate = input.parse()?;

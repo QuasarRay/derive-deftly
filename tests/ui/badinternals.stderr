@@ -44,7 +44,7 @@ error: bad input to derive_deftly_engine inner template expansion proc macro; mi
 42 | |     [200 0]
 43 | |     { }
 44 | |     { OUGHT NOT TO BE EXPANDED; }
-45 | |     { crate; [] Template; }
+45 | |     ( crate; [] Template; )
 46 | | }
    | |_^
    |
@@ -58,7 +58,7 @@ error: Incompatible major version for AOPTIONS (driver 200, template/engine 1)
 42 | |     [200 0]
 43 | |     { }
 44 | |     { OUGHT NOT TO BE EXPANDED; }
-45 | |     { crate; [] Template; }
+45 | |     ( crate; [] Template; )
 46 | | }
    | |_^
    |
