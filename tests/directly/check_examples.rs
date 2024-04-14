@@ -123,7 +123,6 @@ pub struct DissimilarTokenStreams {
 
 impl DissimilarTokenStreams {
     fn eprintln(&self, in_title: impl Display) {
-        use itertools::EitherOrBoth;
         use EitherOrBoth as EOB;
         let in_title = in_title.to_string();
         eprintln!(
@@ -179,7 +178,6 @@ fn check_expected_actual_similar_tokens(
     exp: &TokenStream,
     got: &TokenStream,
 ) -> Result<(), DissimilarTokenStreams> {
-    use itertools::EitherOrBoth;
     use EitherOrBoth as EOB;
 
     /// Having `recurse` return this ensures that on error,

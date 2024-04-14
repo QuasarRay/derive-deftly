@@ -8,15 +8,11 @@ use adviseable::*;
 /// See `implementation.md`.
 #[derive(Debug)]
 struct EngineExpandInput {
-    #[allow(dead_code)]
-    driver_brace: token::Brace,
     driver: syn::DeriveInput,
-    #[allow(dead_code)]
-    template_brace: token::Brace,
-    template_crate: syn::Path,
-    template_name: Option<syn::Path>,
     options: DdOptions,
     template: Template<TokenAccumulator>,
+    template_crate: syn::Path,
+    template_name: Option<syn::Path>,
 }
 
 /// Input to an invocation of `derive_deftly_engine!`
@@ -43,7 +39,7 @@ impl ParseAdviseable for EngineExpandInput {
         let mut options = DdOptions::default();
 
         let driver;
-        let driver_brace = braced!(driver in input);
+        let _ = braced!(driver in input);
         let driver = driver.parse()?;
 
         let opcontext_template;
@@ -64,19 +60,19 @@ impl ParseAdviseable for EngineExpandInput {
             opcontext_template = OpContext::TemplateAdhoc;
         }
 
-        let driver_passed;
-        let _ = braced!(driver_passed in input);
-        let _: TokenStream = driver_passed.parse()?;
+        let through_template;
+        let _ = braced!(through_template in input);
+        let _: TokenStream = through_template.parse()?;
 
         let template;
-        let template_brace = braced!(template in input);
+        let _ = braced!(template in input);
 
         let template_crate;
         let template_name;
         {
-            let template_passed;
-            let _ = braced!(template_passed in input);
-            let input = template_passed;
+            let through_driver;
+            let _ = braced!(through_driver in input);
+            let input = through_driver;
 
             template_crate = input.parse()?;
             let _: Token![;] = input.parse()?;
@@ -104,9 +100,7 @@ impl ParseAdviseable for EngineExpandInput {
         let template = parse_unadvised! { template };
 
         Ok(AOk(EngineExpandInput {
-            driver_brace,
             driver,
-            template_brace,
             template,
             template_crate,
             template_name,
