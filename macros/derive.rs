@@ -254,7 +254,7 @@ pub fn derive_deftly(
             #templ_path !{
                 { #driver }
                 [ #ao_versions #aoptions ]
-                { }
+                ( )
             }
         });
 

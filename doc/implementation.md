@@ -103,7 +103,7 @@ Expands to
     macro_rules! derive_deftly_template_Template { {
         { $($driver:tt)* }
         [ $($aoptions:tt)* ]
-        { $($future:tt)* }
+        ( $($future:tt)* )
         $($tpassthrough:tt)*
     } => {
         derive_deftly_engine! {
@@ -163,7 +163,7 @@ Generates:
     derive_deftly_template_Template! {
         { #[derive_deftly(..)] struct StructName { .. } }
         [ 1 0 AOPTIONS ]
-        { }
+        ( )
     }
     derive_deftly_template_Template2! { .. }
     derive_deftly_template_Template! { // first template in derive()

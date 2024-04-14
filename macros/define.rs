@@ -232,7 +232,7 @@ To use it, write: `#[derive(Deftly)] #[derive_deftly({})]`."#,
             {
                 { $($driver:tt)* }
                 [ $($aoptions:tt)* ]
-                { $($future:tt)* }
+                ( $($future:tt)* )
                 $($tpassthrough:tt)*
             } => {
                 #engine_macro! {
