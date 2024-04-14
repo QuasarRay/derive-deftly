@@ -209,13 +209,13 @@ pub fn derive_deftly(
                 {
                     { $($template:tt)* }
                     { ($orig_dollar:tt) $(future:tt)* }
-                    $($tpassthrough:tt)*
+                    $($dpassthrough:tt)*
                 } => {
                     #engine_macro!{
                         { #driver_escaped }
                         { }
                         { $($template)* }
-                        { $($tpassthrough)* }
+                        { $($dpassthrough)* }
                     }
                 };
                 { $($wrong:tt)* } => {
