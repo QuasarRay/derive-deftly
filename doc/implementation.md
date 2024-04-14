@@ -30,15 +30,15 @@ to what is conceptually the first macro's output.
 
 ## Implementation approach - reusable template macros
 
-## 1. `define_derive_deftly!` macro for defining a reuseable template
+### 1. `define_derive_deftly!` macro for defining a reuseable template
 
-Implemented in `definition.rs::define_derive_deftly_func_macro`.
+Implemented in `define.rs::define_derive_deftly_func_macro`.
 
 When used like this
 ```rust,ignore
     define_derive_deftly! {
-        MyMacro TOPTIONS... =
-        TEMPLATE...
+        MyMacro TOPTIONS.. =
+        TEMPLATE..
     }
 ```
 Expands to
@@ -47,14 +47,14 @@ Expands to
         { $($driver:tt)* }
         [ $($aoptions:tt)* ]
         { $($future:tt)* }
-        $($dpassthrough:tt)*
+        $($tpassthrough:tt)*
     } => {
         derive_deftly_engine! {
             { $($driver)* }
             [ $(aoptions)* ]
-            { $($dpassthrough)* }
-            { TEMPLATE... }
-            { $crate; [TOPTIONS...] Template; }
+            { $($tpassthrough)* }
+            { TEMPLATE.. }
+            { $crate; [TOPTIONS..] Template; }
         }
     }; {
         [ $chain0:path, $($chains:path,)* ]
@@ -76,9 +76,11 @@ literal in the expansion `$`.
 (With the still-unstable
 [`decl_macro`](https://github.com/rust-lang/rust/issues/83527)
 feature, `$$` does this.)
-The template expansion engine treats `$orig_dollar` as just a single `$`.
+`macro_rules!` simply passes through `$orig_dollar`
+(as it does with all unrecognised variables), and
+the template expansion engine treats `$orig_dollar` as just a single `$`.
 
-(Again, the extra `{ }` parts after the driver and template
+(The extra `{ }` parts after the driver and template
 include space for future expansion.)
 
 The second arm of the macro is used for meta attribute checking.
@@ -86,39 +88,36 @@ The template is parsed and distilled into the list of
 meta attributes that it recognises,
 and baked into the macro definition.
 
-## 2. `#[derive_deftly(Template)]`, implemented in `#[derive(Deftly)]`
+### 2. `#[derive_deftly(Template)]`, implemented in `#[derive(Deftly)]`
 
-Template reuse is also implemented in `capture.rs::derive_deftly`.
+Template use is implemented in `derive.rs::derive_deftly`.
 
 This
 
 ```rust,ignore
     #[derive(Deftly)]
-    #[derive_deftly(Template[AOPTIONS,...], Template2)]
-    pub struct StructName { ... }
+    #[derive_deftly(Template[AOPTIONS..], Template2)]
+    pub struct StructName { .. }
 ```
 
-Generates (in addition to the `derive_deftly_driver_StructName` definition)
+Generates:
 
 ```rust,ignore
     derive_deftly_template_Template! {
-        { #[derive_deftly(Template)] struct StructName { ... } }
-        [1 0 AOPTIONS]
+        { #[derive_deftly(..)] struct StructName { .. } }
+        [ 1 0 AOPTIONS ]
         { }
     }
-    derive_deftly_template_Template2! { ... }
+    derive_deftly_template_Template2! { .. }
     derive_deftly_template_Template! { // first template in derive()
         [ derive_deftly_template_Template2, derive_deftly_expand, ]
         [ ]
         /* no AOPTIONS; we don't try to accumulate them */
-        { #[derive_adhoc(Template, Template2)] struct StructName { ... } }
+        { #[derive_adhoc(Template, Template2)] struct StructName { .. } }
     }
 ```
 
-The literal `$` is there to work around a limitation in `macro_rules!`,
-see above.
-
-## 3. Actual expansion
+### 3. Actual expansion
 
 The first call to `derive_deftly_template_Template!`
 is expanded according to the `macro_rules!` definition,
@@ -126,13 +125,16 @@ resulting in a call to `derive_deftly_engine`:
 
 ```rust,ignore
     derive_deftly_engine! {
-        { pub struct StructName { /* original struct definition */ } }
-        [1 0 AOPTIONS]
+        { #[derive_deftly(..)] pub struct StructName { .. } }
+        [ 1 0 AOPTIONS ]
         { }
-        { TEMPLATE... }
-        { $crate; [TOPTIONS...] Template; }
+        { TEMPLATE.. }
+        { $crate; [TOPTIONS..] Template; }
     }
 ```
+
+Implemented in `engine.rs::derive_deftly_engine_func_macro`,
+this performs the actual template expansion.
 
 ### Accumulation expansion
 
@@ -149,7 +151,7 @@ the `AOPTIONS` and the driver:
 derive_deftly_engine! {
 	[ ]
 	[ _name [Template] _meta [ fmeta(foo) ?tmeta(bar) ] ]
-    { #[derive_adhoc(Template, Template2)] struct StructName { ... } }
+    { #[derive_adhoc(Template, Template2)] struct StructName { .. } }
 }
 
 ```
@@ -170,9 +172,9 @@ and means that the first missing template would stop all processing.)
 
 ## Implementation approach - ad-hoc macro applications
 
-### 1. `#[derive(Deftly)]` proc macro for saving struct definitions
+### 1. `#[derive(Deftly)]` feature for saving struct definitions
 
-Implemented in `capture.rs::derive_deftly`.
+Also implemented in `derive.rs::derive_deftly`.
 
 When applied to (e.g.) `pub struct StructName`,
 with `#[derive_deftly_adhoc]` specified
@@ -182,48 +184,51 @@ generates this
     macro_rules! derive_deftly_driver_StructName { {
         { $($template:tt)* }
         { ($orig_dollar:tt) $(future:tt)* }
-        $($tpassthrough:tt)* 
+        $($dpassthrough:tt)* 
      } => {
         derive_deftly_engine!{
             { pub struct StructName { /* original struct definition */ } }
             /* no AOPTIONS since there's no derive() application */
             { }
             { $($template)* }
-            { $($tpassthrough)* }
+            { $($dpassthrough)* }
         }
     } }
 ```
 
-(The extra `{ }` parts after the driver and template
+(Again, the extra `{ }` parts after the driver and template
 include space for future expansion.)
 
 In the `pub struct` part every `$` is replaced with `$orig_dollar`,
 to use the `$` passed in at the invocation site.
+(This is only relevant if the driver contains `$` somehow,
+for example in helper attributes.)
 
 ### 2. `derive_deftly_adhoc!` function-like proc macro for applying to a template
 
-Implemented in `invocation.rs::derive_deftly_adhoc`.
+Implemented in `adhoc.rs::derive_deftly_adhoc`.
 
 When applied like this
 ```rust,ignore
     derive_deftly_adhoc!{
-       StructName TOPTIONS...:
-       TEMPLATE...
+       StructName TOPTIONS..:
+       TEMPLATE..
     }
 ```
 
 Expands to
 ```rust,ignore
     derive_deftly_driver_StructName! {
-       { TEMPLATE... }
+       { TEMPLATE.. }
        { ($) }
-       crate; [TOPTIONS...]
+       crate; [TOPTIONS..] /*no template name*/;
     }
 ```
 
-### 3. Function-like proc macro to do the actual expansion
+The literal `$` is there to work around a limitation in `macro_rules!`,
+see above.
 
-Implemented in `expand.rs::derive_deftly_engine_func_macro`.
+### 3. Function-like proc macro to do the actual expansion
 
 The result of expanding the above is this:
 
@@ -231,8 +236,8 @@ The result of expanding the above is this:
     derive_deftly_engine!{
         { pub struct StructName { /* original struct definition */ } }
         { }
-        { TEMPLATE... }
-        { crate; [TOPTIONS...] /*no template name*/; }
+        { TEMPLATE.. }
+        { crate; [TOPTIONS..] /*no template name*/; }
     }
 ```
 
