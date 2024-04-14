@@ -30,7 +30,7 @@ to what is conceptually the first macro's output.
 
 ## Implementation approach - reusable template macros
 
-## 1. `define_derive_deftly!` macro for defining a reuseable template
+### 1. `define_derive_deftly!` macro for defining a reuseable template
 
 Implemented in `define.rs::define_derive_deftly_func_macro`.
 
@@ -88,7 +88,7 @@ The template is parsed and distilled into the list of
 meta attributes that it recognises,
 and baked into the macro definition.
 
-## 2. `#[derive_deftly(Template)]`, implemented in `#[derive(Deftly)]`
+### 2. `#[derive_deftly(Template)]`, implemented in `#[derive(Deftly)]`
 
 Template use is implemented in `derive.rs::derive_deftly`.
 
@@ -117,7 +117,7 @@ Generates:
     }
 ```
 
-## 3. Actual expansion
+### 3. Actual expansion
 
 The first call to `derive_deftly_template_Template!`
 is expanded according to the `macro_rules!` definition,
