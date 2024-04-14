@@ -90,6 +90,20 @@ fn check_for_misplaced_atrs(data: &syn::Data) -> syn::Result<()> {
     }
 }
 
+/// Returns the template macro name, for a given template name (as a path)
+fn templ_mac_name(mut templ_path: syn::Path) -> syn::Result<syn::Path> {
+    if templ_path.segments.is_empty() {
+        return Err(templ_path
+            .leading_colon
+            .as_ref()
+            .expect("path with no tokens!")
+            .error("cannot derive_deftly the empty path!"));
+    }
+    let last = templ_path.segments.last_mut().expect("became empty!");
+    last.ident = format_ident!("derive_deftly_template_{}", last.ident);
+    Ok(templ_path)
+}
+
 /// This is #[derive(Deftly)]
 pub fn derive_deftly(
     driver_stream: TokenStream,
@@ -231,16 +245,8 @@ pub fn derive_deftly(
         meta_recog_check = Some(vec![]);
     }
 
-    for (mut templ_path, aoptions) in precanned_paths {
-        if templ_path.segments.is_empty() {
-            return Err(templ_path
-                .leading_colon
-                .as_ref()
-                .expect("path with no tokens!")
-                .error("cannot derive_deftly the empty path!"));
-        }
-        let last = templ_path.segments.last_mut().expect("became empty!");
-        last.ident = format_ident!("derive_deftly_template_{}", last.ident);
+    for (templ_path, aoptions) in precanned_paths {
+        let templ_path = templ_mac_name(templ_path)?;
 
         let ao_versions = OpCompatVersions::ours();
 
