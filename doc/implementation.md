@@ -109,6 +109,7 @@ Expands to
         derive_deftly_engine! {
             { $($driver)* }
             [ $(aoptions)* ]
+            ( )
             { TEMPLATE.. }
             ( $crate; [TOPTIONS..] Template; )
             $($tpassthrough)*
@@ -184,6 +185,7 @@ resulting in a call to `derive_deftly_engine`:
     derive_deftly_engine! {
         { #[derive_deftly(..)] pub struct StructName { .. } }
         [ 1 0 AOPTIONS ]
+        ( )
         { TEMPLATE.. }
         ( $crate; [TOPTIONS..] Template; )
     }
@@ -245,6 +247,7 @@ generates this
         derive_deftly_engine!{
             { pub struct StructName { /* original struct definition */ } }
             /* no AOPTIONS since there's no derive() application */
+            ( )
             { $($template)* }
             $($dpassthrough)*
         }
@@ -290,6 +293,7 @@ The result of expanding the above is this:
 ```rust,ignore
     derive_deftly_engine!{
         { pub struct StructName { /* original struct definition */ } }
+        ( )
         { TEMPLATE.. }
         ( crate; [TOPTIONS..] /*no template name*/; )
     }

@@ -227,6 +227,7 @@ pub fn derive_deftly(
                 } => {
                     #engine_macro!{
                         { #driver_escaped }
+                        ( )
                         { $($template)* }
                         $($dpassthrough)*
                     }

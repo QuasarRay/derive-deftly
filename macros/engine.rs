@@ -62,6 +62,10 @@ impl ParseAdviseable for EngineExpandInput {
             opcontext_template = OpContext::TemplateAdhoc;
         }
 
+        let future_ignored;
+        let _ = parenthesized!(future_ignored in input);
+        let _: TokenStream = future_ignored.parse()?;
+
         let template;
         let _ = braced!(template in input);
 
