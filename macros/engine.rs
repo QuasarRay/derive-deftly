@@ -60,9 +60,9 @@ impl ParseAdviseable for EngineExpandInput {
             opcontext_template = OpContext::TemplateAdhoc;
         }
 
-        let driver_passed;
-        let _ = braced!(driver_passed in input);
-        let _: TokenStream = driver_passed.parse()?;
+        let through_template;
+        let _ = braced!(through_template in input);
+        let _: TokenStream = through_template.parse()?;
 
         let template;
         let _ = braced!(template in input);
@@ -70,9 +70,9 @@ impl ParseAdviseable for EngineExpandInput {
         let template_crate;
         let template_name;
         {
-            let template_passed;
-            let _ = braced!(template_passed in input);
-            let input = template_passed;
+            let through_driver;
+            let _ = braced!(through_driver in input);
+            let input = through_driver;
 
             template_crate = input.parse()?;
             let _: Token![;] = input.parse()?;
