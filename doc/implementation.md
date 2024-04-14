@@ -76,7 +76,9 @@ literal in the expansion `$`.
 (With the still-unstable
 [`decl_macro`](https://github.com/rust-lang/rust/issues/83527)
 feature, `$$` does this.)
-The template expansion engine treats `$orig_dollar` as just a single `$`.
+`macro_rules!` simply passes through `$orig_dollar`
+(as it does with all unrecognised variables), and
+the template expansion engine treats `$orig_dollar` as just a single `$`.
 
 (The extra `{ }` parts after the driver and template
 include space for future expansion.)
@@ -199,6 +201,8 @@ include space for future expansion.)
 
 In the `pub struct` part every `$` is replaced with `$orig_dollar`,
 to use the `$` passed in at the invocation site.
+(This is only relevant if the driver contains `$` somehow,
+for example in helper attributes.)
 
 ### 2. `derive_deftly_adhoc!` function-like proc macro for applying to a template
 
