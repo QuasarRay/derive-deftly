@@ -11,12 +11,12 @@ struct EngineExpandInput {
     #[allow(dead_code)]
     driver_brace: token::Brace,
     driver: syn::DeriveInput,
+    options: DdOptions,
     #[allow(dead_code)]
     template_brace: token::Brace,
+    template: Template<TokenAccumulator>,
     template_crate: syn::Path,
     template_name: Option<syn::Path>,
-    options: DdOptions,
-    template: Template<TokenAccumulator>,
 }
 
 /// Input to an invocation of `derive_deftly_engine!`
