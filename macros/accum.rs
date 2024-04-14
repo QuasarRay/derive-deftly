@@ -62,7 +62,7 @@ impl Parse for Accumulated {
                     let _: TokenStream = input.parse()?;
                 }
             } else if kind == "error" {
-                recog_metas = None
+                recog_metas = None;
             } else if kind.to_string().starts_with('_') {
                 let _: TokenStream = input.parse()?;
             } else {
