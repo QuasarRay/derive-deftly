@@ -58,6 +58,8 @@ impl Parse for Accumulated {
                         let desig = input.parse()?;
                         rm.update(desig, allow);
                     }
+                } else {
+                    let _: TokenStream = input.parse()?;
                 }
             } else if kind == "error" {
                 recog_metas = None
