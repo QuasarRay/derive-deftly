@@ -23,6 +23,21 @@ We expect to increase it cautiously and only with good reason.
 
 ## Changelog
 
+### 0.10.4
+
+#### Added
+
+ * `${ignore }` keyword.
+
+#### Fixed
+
+ * Avoid spurious "unexpected token" errors after other errors.
+
+#### Improved
+
+ * Documentation updates.
+ * Slightly improved an error message.
+
 ### 0.10.3
 
 #### Fixed
