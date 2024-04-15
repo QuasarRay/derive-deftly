@@ -128,6 +128,7 @@ fn dump_whole(mut w: &mut Out, ctx: &Context) -> R {
         expand! { c, $select1 }
         expand! { c, $define }
         expand! { c, $defcond }
+        expand! { c, $ignore }
         expand! { c, $dbg }
         bool! { c, not }
         bool! { c, all }
