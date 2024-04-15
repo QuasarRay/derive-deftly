@@ -84,10 +84,10 @@ dependencies = [
 
 [[package]]
 name = "derive-deftly"
-version = "0.10.3"
+version = "0.10.4"
 dependencies = [
- "derive-deftly-macros 0.10.3",
- "heck 0.5.0",
+ "derive-deftly-macros 0.10.4",
+ "heck 0.4.1",
 ]
 
 [[package]]
@@ -110,7 +110,7 @@ dependencies = [
 
 [[package]]
 name = "derive-deftly-macros"
-version = "0.10.3"
+version = "0.10.4"
 dependencies = [
  "heck 0.5.0",
  "indexmap",
@@ -128,14 +128,14 @@ dependencies = [
 name = "derive-deftly-stderr-test"
 version = "0.0.1"
 dependencies = [
- "derive-deftly 0.10.3",
+ "derive-deftly 0.10.4",
 ]
 
 [[package]]
 name = "derive-deftly-tests"
 version = "0.0.1"
 dependencies = [
- "derive-deftly 0.10.3",
+ "derive-deftly 0.10.4",
  "easy-ext",
  "educe",
  "glob",
@@ -408,7 +408,7 @@ dependencies = [
 name = "pub-a"
 version = "0.0.1"
 dependencies = [
- "derive-deftly 0.10.3",
+ "derive-deftly 0.10.4",
 ]
 
 [[package]]
