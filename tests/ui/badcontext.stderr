@@ -15,6 +15,12 @@ error: macro expansion ignores token `0` and any following
    |
    = note: the usage of `::derive_deftly::derive_deftly_engine!` is likely invalid in item context
 
+error: must be within a field (so, in a repeat group)
+  --> ui/badcontext.rs:22:15
+   |
+22 |     ${ignore $fname}
+   |               ^^^^^
+
 error: cannot find macro `derive_deftly_template_FieldNames` in this scope
   --> ui/badcontext.rs:10:17
    |

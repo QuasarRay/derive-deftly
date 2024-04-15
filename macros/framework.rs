@@ -321,7 +321,19 @@ pub trait ExpansionOutput: SubstParseContext {
         })
     }
 
+    /// Make a new empty expansion output, introduced at `kw_span`
+    ///
+    /// Normally, call sites use an inherent constructor method.
+    /// This one is used for special cases, eg `${ignore ...}`
+    fn new_with_span(kw_span: Span) -> Self;
+
     fn default_subst_meta_as() -> meta::SubstAs<Self>;
+
+    /// Implement the core of the `ignore` keyword
+    ///
+    /// If there was an error, returns it.
+    /// Otherwise, discards everything.
+    fn ignore_impl(self) -> syn::Result<()>;
 
     /// Implement the `dbg` keyword
     ///
@@ -504,8 +516,16 @@ impl ExpansionOutput for TokenAccumulator {
         }
     }
 
+    fn new_with_span(_kw_span: Span) -> Self {
+        Self::new()
+    }
+
     fn default_subst_meta_as() -> meta::SubstAs<Self> {
         meta::SubstAs::tokens((), ())
+    }
+
+    fn ignore_impl(self) -> syn::Result<()> {
+        self.0.map(|_: TokenStream| ())
     }
 
     fn dbg_expand(

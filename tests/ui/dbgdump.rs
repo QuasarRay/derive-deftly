@@ -19,11 +19,11 @@ define_derive_deftly! {
 define_derive_deftly! {
     Contexts =
 
-    ${if approx_equal({
+    ${ignore
         $( ${dbg { $vname }} )
         $( ${dbg "noted vtype" { $vtype }} )
         $( ${dbg "noted fname" { $fname }} )
-    }, {}) {}}
+    }
 }
 
 define_derive_deftly! {

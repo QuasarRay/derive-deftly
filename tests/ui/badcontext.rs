@@ -17,4 +17,9 @@ derive_deftly_adhoc! {
     ${for fields { 1 + }} 0
 }
 
+derive_deftly_adhoc! {
+    DataType expect items:
+    ${ignore $fname}
+}
+
 fn main() {}

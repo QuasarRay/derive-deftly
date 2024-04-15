@@ -1123,6 +1123,7 @@ impl<O: SubstParseContext> FindRecogMetas for SubstDetails<O> {
 
             For(v, _) => v.find_recog_metas(acc),
             If(v, _) | select1(v, _) => v.find_recog_metas(acc),
+            ignore(v, _) => v.find_recog_metas(acc),
             dbg(v) => v.content_parsed.find_recog_metas(acc),
 
             tname(_)
