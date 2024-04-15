@@ -90,6 +90,20 @@ fn check_for_misplaced_atrs(data: &syn::Data) -> syn::Result<()> {
     }
 }
 
+/// Returns the template macro name, for a given template name (as a path)
+fn templ_mac_name(mut templ_path: syn::Path) -> syn::Result<syn::Path> {
+    if templ_path.segments.is_empty() {
+        return Err(templ_path
+            .leading_colon
+            .as_ref()
+            .expect("path with no tokens!")
+            .error("cannot derive_deftly the empty path!"));
+    }
+    let last = templ_path.segments.last_mut().expect("became empty!");
+    last.ident = format_ident!("derive_deftly_template_{}", last.ident);
+    Ok(templ_path)
+}
+
 /// This is #[derive(Deftly)]
 pub fn derive_deftly(
     driver_stream: TokenStream,
@@ -231,58 +245,15 @@ pub fn derive_deftly(
         meta_recog_check = Some(vec![]);
     }
 
-    for (mut templ_path, aoptions) in precanned_paths {
-        if templ_path.segments.is_empty() {
-            return Err(templ_path
-                .leading_colon
-                .as_ref()
-                .expect("path with no tokens!")
-                .error("cannot derive_deftly the empty path!"));
-        }
-        let last = templ_path.segments.last_mut().expect("became empty!");
-        last.ident = format_ident!("derive_deftly_template_{}", last.ident);
+    for (templ_path, aoptions) in precanned_paths {
+        let templ_path = templ_mac_name(templ_path)?;
 
-        // Previously we conditionally output the driver-specified
-        // application options, since
-        // maybe the template engine we were speaking to is old,
-        // so if there aren't any we leave the whole clause out.
-        //
-        // If future things like this were to appear, we would need to
-        // emit the necessary prefix of them, to avoid parsing ambiguity.
-        // Hence this, which leaves off "blank" trailing clauses.
-        // The outer syntax means none of these these clauses are allowed
-        // to start with a curly bracket.
-        //
-        // Currently there aren't any, so `Blank` is _'d out.
-        enum Extra {
-            #[allow(dead_code)]
-            Blank(TokenStream),
-            Required(TokenStream),
-        }
-        impl ToTokens for Extra {
-            fn to_tokens(&self, out: &mut TokenStream) {
-                match self {
-                    Extra::Required(v) => v.to_tokens(out),
-                    Extra::Blank(v) => v.to_tokens(out),
-                }
-            }
-        }
-        let aoptions = {
-            let versions = OpCompatVersions::ours();
-            Extra::Required(quote! { [ #versions #aoptions ] })
-        };
-        let mut extras = vec![
-            aoptions,
-            //
-        ];
-        while matches!(extras.last(), Some(Extra::Blank(_))) {
-            extras.pop();
-        }
+        let ao_versions = OpCompatVersions::ours();
 
         output.extend(quote! {
             #templ_path !{
                 { #driver }
-                #( #extras )*
+                [ #ao_versions #aoptions ]
                 { }
             }
         });

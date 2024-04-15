@@ -16,7 +16,7 @@ pub struct EngineAccumInput {
 #[derive(Debug)]
 struct Accumulated {
     /// `Err` if we encountered an `error` part
-    recog_metas: Result<meta::Recognised, ()>,
+    recog_metas: Option<meta::Recognised>,
 }
 
 impl ParseAdviseable for EngineAccumInput {
@@ -40,7 +40,7 @@ impl ParseAdviseable for EngineAccumInput {
 
 impl Parse for Accumulated {
     fn parse(input: ParseStream) -> syn::Result<Self> {
-        let mut recog_metas = Ok(meta::Recognised::default());
+        let mut recog_metas = Some(meta::Recognised::default());
 
         while !input.is_empty() {
             let kind: syn::Ident = input.parse()?;
@@ -48,7 +48,7 @@ impl Parse for Accumulated {
             let _brackets = bracketed!(content in input);
             let input = content;
             if kind == "_meta" {
-                if let Ok(rm) = &mut recog_metas {
+                if let Some(rm) = &mut recog_metas {
                     while !input.is_empty() {
                         use meta::RecogAllow as RA;
                         let allow = match input.parse()? {
@@ -58,9 +58,11 @@ impl Parse for Accumulated {
                         let desig = input.parse()?;
                         rm.update(desig, allow);
                     }
+                } else {
+                    let _: TokenStream = input.parse()?;
                 }
             } else if kind == "error" {
-                recog_metas = Err(())
+                recog_metas = None;
             } else if kind.to_string().starts_with('_') {
                 let _: TokenStream = input.parse()?;
             } else {
@@ -128,11 +130,11 @@ impl engine::EngineInput for EngineAccumInput {
         let mut out = TokenStream::new();
 
         match self.accum.recog_metas {
-            Ok(recog) => {
+            Some(recog) => {
                 let r = check_meta_recog(&self.driver, recog, &mut errors);
                 errors.handle(r);
             }
-            Err(()) => {}
+            None => {}
         }
 
         match errors.finish() {
