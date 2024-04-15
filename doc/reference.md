@@ -23,6 +23,7 @@
       * [`$crate` -- root of template crate](#crate--root-of-template-crate)
       * [`$tdefkwd` -- keyword introducing the new data structure](#tdefkwd--keyword-introducing-the-new-data-structure)
       * [`$tdefvariants`, `$vdefbody`, `$fdefine` -- tools for defining types](#tdefvariants-vdefbody-fdefine--tools-for-defining-types)
+      * [`${ignore ..}` -- Expand but then discard](#ignore---expand-but-then-discard)
       * [`${dbg ..}`, `$dbg_all_keywords` -- Debugging output](#dbg--dbg_all_keywords--debugging-output)
       * [`${define ...}`, `${defcond ...}` -- user-defined expansions and conditions](#define--defcond---user-defined-expansions-and-conditions)
       * [`${error "message"}` -- explicitly throw a compile error](#error-message--explicitly-throw-a-compile-error)
@@ -670,6 +671,18 @@ pub enum EnumCopy<'a, 'l: 'a, T: Display = usize, const C: usize = 1,> {
     NamedVariantCopy { field_copy: &'l &'a T, ... }
 }
 ```
+
+### `${ignore ..}` -- Expand but then discard
+
+`${ignore CONTENT}` expands `CONTENT`, and then discards it.
+The `${ignore ..}` therefore expands to nothing.
+
+All side-effects of `CONTENT` *do* occur.  So:
+if expanding `CONTENT` causes an error,
+`${ignore }` *does* reports that error;
+the content of `${ignore }` *can* affect
+the repetition scope of its surroundings.
+`${ignore }` is permitted in `${paste }` and case changing.
 
 ### `${dbg ..}`, `$dbg_all_keywords` -- Debugging output
 
