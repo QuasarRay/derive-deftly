@@ -153,9 +153,16 @@ pub enum PreprocessedValue {
 
 /// Node in tree structure found in driver `#[deftly(some(thing))]`
 #[derive(Debug)]
-pub enum FoundNode<'l> {
-    Unit(Span),
-    Lit { path_span: Span, lit: &'l syn::Lit },
+pub struct FoundNode<'l> {
+    kind: FoundNodeKind<'l>,
+    path_span: Span,
+}
+
+/// Node in tree structure found in driver `#[deftly(some(thing))]`
+#[derive(Debug)]
+pub enum FoundNodeKind<'l> {
+    Unit,
+    Lit(&'l syn::Lit),
 }
 
 /// Information about a nearby meta node we found
@@ -181,7 +188,7 @@ pub enum FoundNearbyNodeKind {
 }
 
 pub use FoundNearbyNodeKind as FNNK;
-pub use FoundNode as FN;
+pub use FoundNodeKind as FNK;
 
 //---------- meta attr enumeration and checking ----------
 
@@ -386,11 +393,14 @@ impl Label {
         };
 
         match (deeper, &ptree.value) {
-            (None, PV::Unit) => f(FN::Unit(path_span))?,
-            (None, PV::List(_)) => nearby(FNNK::List)?,
-            (None, PV::Value { value, .. }) => f(FN::Lit {
+            (None, PV::Unit) => f(FoundNode {
                 path_span,
-                lit: value,
+                kind: FNK::Unit,
+            })?,
+            (None, PV::List(_)) => nearby(FNNK::List)?,
+            (None, PV::Value { value, .. }) => f(FoundNode {
+                path_span,
+                kind: FNK::Lit(value),
             })?,
             (Some(_), PV::Value { .. }) => nearby(FNNK::Lit)?,
             (Some(_), PV::Unit) => nearby(FNNK::Unit)?,
@@ -755,11 +765,9 @@ where
 }
 
 impl FoundNode<'_> {
+    // XXXX remove this method
     fn path_span(&self) -> Span {
-        match self {
-            FN::Unit(span) => *span,
-            FN::Lit { path_span, .. } => *path_span,
-        }
+        self.path_span
     }
 }
 
@@ -775,11 +783,11 @@ impl<'l> FoundNode<'l> {
     {
         let spans = |vspan| metavalue_spans(tspan, vspan);
 
-        let lit = match self {
-            FN::Unit(vspan) => return Err(spans(*vspan).error(
+        let lit = match self.kind {
+            FNK::Unit => return Err(spans(self.path_span).error(
  "tried to expand attribute which is just a unit, not a literal"
             )),
-            FN::Lit { lit, .. } => lit,
+            FNK::Lit(lit) => lit,
         };
 
         use SubstAs as SA;
