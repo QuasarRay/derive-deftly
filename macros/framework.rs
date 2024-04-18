@@ -24,7 +24,7 @@ pub struct Context<'c> {
     pub top: &'c syn::DeriveInput,
     pub template_crate: &'c syn::Path,
     pub template_name: Option<&'c syn::Path>,
-    pub tmetas: &'c meta::PreprocessedMetas,
+    pub pmetas: &'c meta::PreprocessedMetas,
     pub variant: Option<&'c WithinVariant<'c>>,
     pub field: Option<&'c WithinField<'c>>,
     pub pvariants: &'c [PreprocessedVariant<'c>],

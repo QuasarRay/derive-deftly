@@ -33,7 +33,7 @@ fn process_nodes_pmetas(
     Ok(())
 }
 fn process_nodes_ctx(ctx: &Context, nc: &mut impl NodeCall) {
-    process_nodes_pmetas(&ctx.tmetas, nc).void_unwrap();
+    process_nodes_pmetas(&ctx.pmetas, nc).void_unwrap();
 
     WithinVariant::for_each(&ctx, |ctx, wv| {
         process_nodes_pmetas(&wv.pmetas, nc)?;

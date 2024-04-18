@@ -256,7 +256,7 @@ impl<'c> Context<'c> {
             top: &driver,
             template_crate,
             template_name,
-            tmetas: &tmetas,
+            pmetas: &tmetas,
             field: None,
             variant: variant.as_ref(),
             pvariants: &pvariants,
