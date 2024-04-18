@@ -125,7 +125,7 @@ pub struct PreprocessedValueList {
 }
 
 /// `#[deftly(...)]` helper attributes
-pub type PreprocessedMetas = Vec<PreprocessedTree>;
+pub type PreprocessedMetas = Vec<PreprocessedValueList>;
 
 /// An `#[deftly()]` attribute, or a sub-tree within one
 ///
@@ -357,19 +357,20 @@ impl Parse for Label {
 
 impl Label {
     /// Caller must note meta attrs that end up being used!
-    pub fn search<'a, A, F, G, E>(
+    pub fn search<'a, F, G, E>(
         &self,
-        pmetas: A,
+        pmetas: &'a [PreprocessedValueList],
         f: &mut F,
         g: &mut G,
     ) -> Result<(), E>
     where
         F: FnMut(FoundNode<'a>) -> Result<(), E>,
         G: FnMut(FoundNearbyNode<'a>) -> Result<(), E>,
-        A: IntoIterator<Item = &'a PreprocessedTree>,
     {
-        for pmeta in pmetas {
-            Self::search_1(&self.lpaths, pmeta, &mut *f, &mut *g)?;
+        for m in pmetas {
+            for l in &m.content {
+                Self::search_1(&self.lpaths, l, &mut *f, &mut *g)?;
+            }
         }
         Ok(())
     }
@@ -902,12 +903,14 @@ impl<'r, 'e> RecogChecker<'r, 'e> {
     /// Check one meta attribute found in a driver
     pub fn check(
         &mut self,
-        pmetas: &[PreprocessedTree],
+        pmetas: &[PreprocessedValueList],
         supplied: SuppliedScope,
     ) {
         let mut paths = vec![];
-        for pmeta in pmetas {
-            self.check_1(supplied, &mut paths, pmeta);
+        for m in pmetas {
+            for l in &m.content {
+                self.check_1(supplied, &mut paths, l);
+            }
         }
     }
 
