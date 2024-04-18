@@ -128,10 +128,15 @@ pub struct PreprocessedValueList {
 pub type PreprocessedMetas = Vec<PreprocessedTree>;
 
 /// An `#[deftly()]` attribute, or a sub-tree within one
+///
+/// Has interior mutability, for tracking whether the value is used.
+/// (So should ideally not be Clone, to help avoid aliasing bugs.)
+/// XXXX - but is is.
 #[derive(Debug, Clone)]
 pub struct PreprocessedTree {
     pub path: syn::Path,
     pub value: PreprocessedValue,
+    pub used: Cell<Option<RecogAllow>>,
 }
 
 /// Content of a meta attribute
@@ -314,7 +319,8 @@ impl Parse for PreprocessedTree {
         } else {
             return Err(la.error());
         };
-        Ok(PreprocessedTree { path, value })
+        let used = None.into(); // will be filled in later
+        Ok(PreprocessedTree { path, value, used })
     }
 }
 
@@ -350,6 +356,7 @@ impl Parse for Label {
 //---------- searching and matching ----------
 
 impl Label {
+    /// Caller must note meta attrs that end up being used!
     pub fn search<'a, A, F, G, E>(
         &self,
         pmetas: A,
@@ -430,11 +437,15 @@ impl Label {
         &self,
         pmetas: &PreprocessedMetas,
     ) -> Result<(), Found> {
+        let found = |ptree: &PreprocessedTree| {
+            ptree.update_used(RecogAllow::BoolOnly);
+            Err(Found)
+        };
         self.search(
             pmetas,
-            &mut |_av| /* got it! */ Err(Found),
+            &mut |av| /* got it! */ found(av.ptree),
             &mut |nearby| match nearby.kind {
-                FNNK::List => Err(Found), // there's more, that'll do
+                FNNK::List => found(nearby.ptree),
                 FNNK::Unit => Ok(()),
                 FNNK::Lit => Ok(()),
             },
@@ -703,6 +714,7 @@ where
             }
         })?;
 
+        found.ptree.update_used(RecogAllow::Value);
         found.expand(span_whole, &self.as_, out)?;
 
         Ok(())
@@ -853,6 +865,12 @@ impl ToTokens for Recognised {
 impl RecogAllow {
     fn max() -> Self {
         Self::iter().rev().next().unwrap()
+    }
+}
+
+impl PreprocessedTree {
+    fn update_used(&self, ra: RecogAllow) {
+        self.used.set(cmp::max(self.used.get(), Some(ra)));
     }
 }
 
