@@ -656,8 +656,8 @@ where
             pmetas,
             &mut |av: FoundNode| {
                 if let Some(first) = &found {
-                    return Err([(first.path_span(), "first occurrence"),
-                            (av.path_span(), "second occurrence"),
+                    return Err([(first.path_span, "first occurrence"),
+                            (av.path_span, "second occurrence"),
                             self_loc()].error(
  "tried to expand just attribute value, but it was specified multiple times"
                     ));
@@ -762,13 +762,6 @@ where
 
     let thing: T = syn::parse2(t)?;
     Ok(thing)
-}
-
-impl FoundNode<'_> {
-    // XXXX remove this method
-    fn path_span(&self) -> Span {
-        self.path_span
-    }
 }
 
 impl<'l> FoundNode<'l> {
