@@ -274,7 +274,7 @@ impl TryFrom<syn::Ident> for DefinitionName {
 
 impl Display for DefinitionName {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-	Display::fmt(&self.0, f)
+        Display::fmt(&self.0, f)
     }
 }
 

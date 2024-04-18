@@ -636,9 +636,9 @@ impl DefinitionName {
         ctx: &Context<'_>,
         out: &mut O,
     ) -> syn::Result<()> {
-        let (def, ctx) = ctx
-            .find_definition(self)?
-            .ok_or_else(|| self.error("user-defined expansion not found"))?;
+        let (def, ctx) = ctx.find_definition(self)?.ok_or_else(|| {
+            self.error(format!("user-defined expansion `{}` not found", self))
+        })?;
         match &def.body {
             DefinitionBody::Paste(content) => {
                 paste::expand(&ctx, def.body_span, content, out)?;
