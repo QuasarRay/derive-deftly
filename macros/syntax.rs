@@ -272,6 +272,12 @@ impl TryFrom<syn::Ident> for DefinitionName {
     }
 }
 
+impl Display for DefinitionName {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+	Display::fmt(&self.0, f)
+    }
+}
+
 impl Parse for DefinitionName {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let ident = input.call(Ident::parse_any)?;
