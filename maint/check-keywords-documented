@@ -74,7 +74,7 @@ sub grok_match ($$$$) {
 	  "multiple arms pasted together, parsing failed?";
 	push @out, $arm =~ m{ SD :: (\w+) }gmx;
     }
-    die "// ## maint/check-keywords-documented $tag ## not fund"
+    die "// ## maint/check-keywords-documented $tag ## not found"
       unless $any;
 
     grokked $tag, $note, map { lc } @out;
