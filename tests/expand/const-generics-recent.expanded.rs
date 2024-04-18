@@ -35,7 +35,15 @@ fn main() {
     let _ = Enum::Tuple([42; 2]);
     let assert = |ok: bool| {
         if !ok {
-            ::core::panicking::panic("explicit panic");
+            {
+                #[cold]
+                #[track_caller]
+                #[inline(never)]
+                const fn panic_cold_explicit() -> ! {
+                    ::core::panicking::panic_explicit()
+                }
+                panic_cold_explicit();
+            };
         }
     };
     assert(!false);

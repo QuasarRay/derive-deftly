@@ -31,6 +31,7 @@ pub struct ChannelsParamsUpdates {
 }
 #[automatically_derived]
 impl ::core::fmt::Debug for ChannelsParamsUpdates {
+    #[inline]
     fn fmt(&self, f: &mut ::core::fmt::Formatter) -> ::core::fmt::Result {
         ::core::fmt::Formatter::debug_struct_field2_finish(
             f,
@@ -63,12 +64,10 @@ impl ::core::clone::Clone for ChannelsParamsUpdates {
     }
 }
 #[automatically_derived]
-impl ::core::marker::StructuralEq for ChannelsParamsUpdates {}
-#[automatically_derived]
 impl ::core::cmp::Eq for ChannelsParamsUpdates {
     #[inline]
     #[doc(hidden)]
-    #[no_coverage]
+    #[coverage(off)]
     fn assert_receiver_is_total_eq(&self) -> () {
         let _: ::core::cmp::AssertParamIsEq<Option<bool>>;
         let _: ::core::cmp::AssertParamIsEq<Option<usize>>;

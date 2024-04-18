@@ -32,7 +32,15 @@ impl Trait for Unit {
         let tgens = false;
         let is_empty = true;
         if tgens != !is_empty {
-            ::core::panicking::panic("explicit panic");
+            {
+                #[cold]
+                #[track_caller]
+                #[inline(never)]
+                const fn panic_cold_explicit() -> ! {
+                    ::core::panicking::panic_explicit()
+                }
+                panic_cold_explicit();
+            };
         }
         tgens
     }
@@ -78,7 +86,15 @@ impl Trait for Tuple {
         let tgens = false;
         let is_empty = true;
         if tgens != !is_empty {
-            ::core::panicking::panic("explicit panic");
+            {
+                #[cold]
+                #[track_caller]
+                #[inline(never)]
+                const fn panic_cold_explicit() -> ! {
+                    ::core::panicking::panic_explicit()
+                }
+                panic_cold_explicit();
+            };
         }
         tgens
     }
@@ -129,7 +145,15 @@ impl Trait for Struct {
         let tgens = false;
         let is_empty = true;
         if tgens != !is_empty {
-            ::core::panicking::panic("explicit panic");
+            {
+                #[cold]
+                #[track_caller]
+                #[inline(never)]
+                const fn panic_cold_explicit() -> ! {
+                    ::core::panicking::panic_explicit()
+                }
+                panic_cold_explicit();
+            };
         }
         tgens
     }
@@ -187,7 +211,15 @@ impl Trait for Enum {
         let tgens = false;
         let is_empty = true;
         if tgens != !is_empty {
-            ::core::panicking::panic("explicit panic");
+            {
+                #[cold]
+                #[track_caller]
+                #[inline(never)]
+                const fn panic_cold_explicit() -> ! {
+                    ::core::panicking::panic_explicit()
+                }
+                panic_cold_explicit();
+            };
         }
         tgens
     }
@@ -244,7 +276,15 @@ impl Trait for Union {
         let tgens = false;
         let is_empty = true;
         if tgens != !is_empty {
-            ::core::panicking::panic("explicit panic");
+            {
+                #[cold]
+                #[track_caller]
+                #[inline(never)]
+                const fn panic_cold_explicit() -> ! {
+                    ::core::panicking::panic_explicit()
+                }
+                panic_cold_explicit();
+            };
         }
         tgens
     }
@@ -280,7 +320,15 @@ impl<T> Trait for Generic<T> {
         let tgens = true;
         let is_empty = false;
         if tgens != !is_empty {
-            ::core::panicking::panic("explicit panic");
+            {
+                #[cold]
+                #[track_caller]
+                #[inline(never)]
+                const fn panic_cold_explicit() -> ! {
+                    ::core::panicking::panic_explicit()
+                }
+                panic_cold_explicit();
+            };
         }
         tgens
     }
@@ -302,12 +350,28 @@ fn test(top: &str, tgens: bool, fields: &str, tmeta: bool, vmeta: bool, v: impl 
     if !(v.shape_top() == top && v.shape_fields() == fields && v.has_tgens() == tgens
         && v.has_tmeta() == tmeta && v.has_vmeta() == vmeta)
     {
-        ::core::panicking::panic("explicit panic")
+        {
+            #[cold]
+            #[track_caller]
+            #[inline(never)]
+            const fn panic_cold_explicit() -> ! {
+                ::core::panicking::panic_explicit()
+            }
+            panic_cold_explicit();
+        }
     }
 }
 fn test_get_usize(some_usize: Option<usize>, v: impl GetUsize) {
     if !(v.get_usize() == some_usize) {
-        ::core::panicking::panic("explicit panic")
+        {
+            #[cold]
+            #[track_caller]
+            #[inline(never)]
+            const fn panic_cold_explicit() -> ! {
+                ::core::panicking::panic_explicit()
+            }
+            panic_cold_explicit();
+        }
     }
 }
 fn main() {

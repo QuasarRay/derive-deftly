@@ -20,6 +20,7 @@ mod custom {
 struct PrettyVec<T>(Vec<T>);
 #[automatically_derived]
 impl<T: ::core::fmt::Debug> ::core::fmt::Debug for PrettyVec<T> {
+    #[inline]
     fn fmt(&self, f: &mut ::core::fmt::Formatter) -> ::core::fmt::Result {
         ::core::fmt::Formatter::debug_tuple_field1_finish(f, "PrettyVec", &&self.0)
     }

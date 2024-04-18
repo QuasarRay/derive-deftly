@@ -1,8 +1,8 @@
 ---------- derive-deftly expansion of BadOptionsTemplate for BadOptionsDriver (start) ----------
-broken template ;
+broken template;
 ---------- derive-deftly expansion of BadOptionsTemplate for BadOptionsDriver (end) ----------
 ---------- derive-deftly expansion, for BadOptionsDriver (start) ----------
-syntax error ;
+syntax error;
 ---------- derive-deftly expansion, for BadOptionsDriver (end) ----------
 ---------- derive-deftly dbg dump for DataType from BasicDbgs expansion (start) ----------
 fn struct_fn() {}

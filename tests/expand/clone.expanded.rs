@@ -22,6 +22,14 @@ fn main() {
     };
     let cloned_error = error.clone();
     if cloned_error.error.kind() != std::io::ErrorKind::NotFound {
-        ::core::panicking::panic("explicit panic");
+        {
+            #[cold]
+            #[track_caller]
+            #[inline(never)]
+            const fn panic_cold_explicit() -> ! {
+                ::core::panicking::panic_explicit()
+            }
+            panic_cold_explicit();
+        };
     }
 }
