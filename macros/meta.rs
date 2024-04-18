@@ -156,6 +156,7 @@ pub enum PreprocessedValue {
 pub struct FoundNode<'l> {
     kind: FoundNodeKind<'l>,
     path_span: Span,
+    ptree: &'l PreprocessedTree,
 }
 
 /// Node in tree structure found in driver `#[deftly(some(thing))]`
@@ -170,10 +171,11 @@ pub enum FoundNodeKind<'l> {
 /// "Nearby" means that the node we found is a prefix (in tree descent)
 /// of the one we were looking for, or vice versa.
 #[derive(Debug)]
-pub struct FoundNearbyNode {
+pub struct FoundNearbyNode<'l> {
     pub kind: FoundNearbyNodeKind,
     /// Span of the identifier in the actual `#[deftly]` driver attribute
     pub path_span: Span,
+    pub ptree: &'l PreprocessedTree,
 }
 
 /// How the nearby node relates to the one we were looking for
@@ -356,7 +358,7 @@ impl Label {
     ) -> Result<(), E>
     where
         F: FnMut(FoundNode<'a>) -> Result<(), E>,
-        G: FnMut(FoundNearbyNode) -> Result<(), E>,
+        G: FnMut(FoundNearbyNode<'a>) -> Result<(), E>,
         A: IntoIterator<Item = &'a PreprocessedTree>,
     {
         for pmeta in pmetas {
@@ -374,7 +376,7 @@ impl Label {
     ) -> Result<(), E>
     where
         F: FnMut(FoundNode<'a>) -> Result<(), E>,
-        G: FnMut(FoundNearbyNode) -> Result<(), E>,
+        G: FnMut(FoundNearbyNode<'a>) -> Result<(), E>,
     {
         use PreprocessedValue as PV;
 
@@ -384,7 +386,7 @@ impl Label {
 
         let path_span = ptree.path.span();
 
-        let mut nearby = |kind| g(FoundNearbyNode { kind, path_span });
+        let mut nearby = |kind| g(FoundNearbyNode { kind, path_span, ptree });
 
         let deeper = if lpaths.len() <= 1 {
             None
@@ -396,11 +398,13 @@ impl Label {
             (None, PV::Unit) => f(FoundNode {
                 path_span,
                 kind: FNK::Unit,
+                ptree,
             })?,
             (None, PV::List(_)) => nearby(FNNK::List)?,
             (None, PV::Value { value, .. }) => f(FoundNode {
                 path_span,
                 kind: FNK::Lit(value),
+                ptree,
             })?,
             (Some(_), PV::Value { .. }) => nearby(FNNK::Lit)?,
             (Some(_), PV::Unit) => nearby(FNNK::Unit)?,
