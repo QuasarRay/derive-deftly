@@ -65,18 +65,18 @@ pub trait ParseAdviseable {
 pub use AdviseableInnerResult::ErrNeedsNoAdvice as ErrNNA;
 pub use AdviseableInnerResult::Ok as AOk;
 
-/// **Parses `T`, and produces advice if necessary** (principal entrypoint)
+/// Parses with a callback, and produces advice if necessary
 ///
-/// All top-level proc_macro entrypoints that want to give advice,
-/// should ideally call this.
-/// (See the note in `advise_incompatibility`.)
-pub fn adviseable_parse2<T: ParseAdviseable>(
+/// Version of `adviseable_parse2` that takes a callback function,
+/// rather than a trait impl.
+pub fn adviseable_parse2_call<T>(
     input: TokenStream,
+    call: impl FnOnce(ParseStream) -> AdviseableResult<T>,
 ) -> syn::Result<T> {
     // If somehow our closure doesn't get called, we want to give
     // advice, so make that the default.
     let mut needs_advice = true;
-    let ar = syn::parse::Parser::parse2(
+    let ar = Parser::parse2(
         |input: ParseStream<'_>| {
             // When we're returning an error that needs no advice, we must
             // return *Err* from here, not Ok(NNA), because if we return Ok,
@@ -86,7 +86,7 @@ pub fn adviseable_parse2<T: ParseAdviseable>(
             // Encoding the advice-needed status in the error would
             // be difficult, given how opaque syn::Error is.  So
             // we smuggle a &mut bool into the closure.
-            match T::parse_adviseable(input) {
+            match call(input) {
                 Err(needs) => Err(needs),
                 Ok(ErrNNA(unadv)) => {
                     needs_advice = false;
@@ -104,6 +104,17 @@ pub fn adviseable_parse2<T: ParseAdviseable>(
             e
         }
     })
+}
+
+/// **Parses `T`, and produces advice if necessary** (principal entrypoint)
+///
+/// All top-level proc_macro entrypoints that want to give advice,
+/// should ideally call this.
+/// (See the note in `advise_incompatibility`.)
+pub fn adviseable_parse2<T: ParseAdviseable>(
+    input: TokenStream,
+) -> syn::Result<T> {
+    adviseable_parse2_call(input, T::parse_adviseable)
 }
 
 impl<T> AdviseableInnerResult<T> {
