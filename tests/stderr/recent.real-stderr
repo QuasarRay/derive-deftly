@@ -48,7 +48,7 @@ variant Struct:
         $vname       =>  Struct
         $vtype       =>  Enum :: Struct
         $vpat        =>  Enum :: Struct { field : f_field, }
-        ${vdefbody VNAME FIELDS ..} => VNAME { FIELDS .. }
+        ${vdefbody VNAME FIELDS ..} => VNAME { FIELDS .. },
         v_is_unit    =   false
         v_is_tuple   =   false
         v_is_named   =   true
@@ -214,7 +214,7 @@ F = (), > { field : & 'reference F, } impl < 'reference, F, > From < &
 ---------- derive-deftly expansion of ReferenceVersion for Struct (end) ----------
 ---------- derive-deftly expansion of ReferenceVersion for Enum (start) ----------
 #[derive(Deftly)] #[derive_deftly_adhoc] enum EnumReference < 'reference, F =
-(), > { Unit, Tuple(& 'reference F,), Struct { field : & 'reference F, } }
+(), > { Unit, Tuple(& 'reference F,), Struct { field : & 'reference F, }, }
 impl < 'reference, F, > From < & 'reference Enum :: < F > > for EnumReference
 < 'reference, F, >
 {
@@ -293,7 +293,7 @@ variant Struct:
         $vname       =>  Struct
         $vtype       =>  EnumReference :: Struct :: < 'reference, F, >
         $vpat        =>  EnumReference :: Struct { field : f_field, }
-        ${vdefbody VNAME FIELDS ..} => VNAME { FIELDS .. }
+        ${vdefbody VNAME FIELDS ..} => VNAME { FIELDS .. },
         v_is_unit    =   false
         v_is_tuple   =   false
         v_is_named   =   true

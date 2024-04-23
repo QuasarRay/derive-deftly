@@ -639,7 +639,7 @@ Specifically:
  ${vdefbody VNAME FIELDS}   for braced struct     { FIELDS }
  ${vdefbody VNAME FIELDS}   for unit variant      VNAME   FIELDS,    [*] ie  VNAME,
  ${vdefbody VNAME FIELDS}   for tuple variant     VNAME ( FIELDS ),
- ${vdefbody VNAME FIELDS}   for braced variant    VNAME { FIELDS }
+ ${vdefbody VNAME FIELDS}   for braced variant    VNAME { FIELDS },
 ```
 
 `[*]`: In the unit and unit variant cases,
@@ -668,7 +668,7 @@ struct TupleCopy<'a, 'l: 'a, T: Display = usize, const C: usize = 1,>(
 pub enum EnumCopy<'a, 'l: 'a, T: Display = usize, const C: usize = 1,> {
     UnitVariantCopy,
     TupleVariantCopy(std::iter::Once::<T>,),
-    NamedVariantCopy { field_copy: &'l &'a T, ... }
+    NamedVariantCopy { field_copy: &'l &'a T, ... },
 }
 ```
 
