@@ -119,7 +119,7 @@ pub enum PreprocessedValue {
     /// `#[deftly(foo)]`
     Unit,
     /// `#[deftly(foo = "lit")]`
-    Value { equals: token::Eq, value: syn::Lit },
+    Value { value: syn::Lit },
     /// `#[deftly(foo(...))]`
     List(PreprocessedValueList),
 }
@@ -268,9 +268,9 @@ impl Parse for PreprocessedTree {
         let path = input.call(syn::Path::parse_mod_style)?;
         let la = input.lookahead1();
         let value = if la.peek(Token![=]) {
-            let equals = input.parse()?;
+            let _: Token![=] = input.parse()?;
             let value = input.parse()?;
-            PV::Value { equals, value }
+            PV::Value { value }
         } else if la.peek(token::Paren) {
             let list = input.call(PreprocessedValueList::parse_outer)?;
             PV::List(list)

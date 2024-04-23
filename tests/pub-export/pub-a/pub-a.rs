@@ -6,6 +6,8 @@
 //!
 //! It also provides a struct exported as a derive-deftly driver.
 
+#![allow(dead_code)]
+
 // Any crate exposing a derive_deftly template must re-export derive_deftly
 // itself at the top level.  This will be used during template invocation
 // to find the right version of the template expansion machinery.
