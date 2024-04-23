@@ -874,6 +874,20 @@ You can abbreviate `${paste ...}` as `$<...>`.
   and de-emphasise `${paste ...}`.
  -->
 
+#### Pasting onto types
+
+Here's a side-note:
+You can use `${paste}` to append identifiers to a type
+(like `$ttype` or `$ftype`),
+not just an identifier.
+When you do this, `${paste}` will
+[do the right thing](crate::doc_reference#-paste---identifier-pasting)
+even if the type is generic.
+
+For example, if `$ftype` is `Vec<u8>`,
+then `${paste $ftype Builder}` will expand to
+`VecBuilder<u8>`, not `Vec<u8>Builder`.
+
 #### A note on syntax
 
 In this last section,
