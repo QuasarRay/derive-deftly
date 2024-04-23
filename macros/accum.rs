@@ -46,7 +46,12 @@ impl Parse for Accumulated {
 
         while !input.is_empty() {
             let kind: syn::Ident = input.parse()?;
-            match if kind == "_meta" {
+            match if kind == "_meta_used" {
+                // XXXX this is a stop-gap; we're going to have much more here
+                let _star: Token![*] = input.parse()?;
+                recog_metas = None;
+                continue;
+            } else if kind == "_meta" {
                 if let Some(rm) = &mut recog_metas {
                     let content;
                     let _brackets = bracketed!(content in input);
