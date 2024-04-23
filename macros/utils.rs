@@ -99,6 +99,7 @@ pub fn delimit_token_group(
 }
 
 /// Type which parses as `T`, but then discards it
+#[allow(dead_code)] // used in tests
 pub struct Discard<T>(PhantomData<T>);
 
 impl<T: Parse> Parse for Discard<T> {
@@ -109,6 +110,7 @@ impl<T: Parse> Parse for Discard<T> {
 }
 
 /// Type which parses as a concatenated series of `T`
+#[allow(dead_code)] // used in tests
 pub struct Concatenated<T>(pub Vec<T>);
 
 impl<T: Parse> Parse for Concatenated<T> {
