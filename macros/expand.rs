@@ -8,7 +8,7 @@ use super::framework::*;
 /// What would `${fname}` expand to?  As type from [`syn`].
 ///
 /// Implements [`quote::IdentFragment`] and [`ToTokens`].
-#[derive(Debug)]
+#[derive(Debug, Eq, PartialEq)]
 pub enum Fname<'r> {
     Name(&'r syn::Ident),
     Index(syn::Index),
