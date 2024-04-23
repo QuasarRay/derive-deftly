@@ -21,7 +21,7 @@ pub use proc_macro2::{Delimiter, Ident, Punct};
 pub use proc_macro2::{Span, TokenStream, TokenTree};
 pub use quote::{format_ident, quote, quote_spanned, ToTokens};
 pub use strum::IntoEnumIterator as _;
-pub use strum::{AsRefStr, Display, EnumCount};
+pub use strum::{AsRefStr, Display};
 pub use strum::{EnumIter, EnumString};
 pub use syn::ext::IdentExt;
 pub use syn::parse::{Lookahead1, Parse, ParseBuffer, ParseStream, Parser};
