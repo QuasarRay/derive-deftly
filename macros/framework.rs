@@ -205,13 +205,6 @@ pub trait SubstParseContext: Sized {
 /// The accumulating type (`Self` might be accumulating
 /// tokens ([`TokenStream`]) or strings ([`paste::Items`]).
 pub trait ExpansionOutput: SubstParseContext {
-    /// Append something according to its `Display` impl
-    ///
-    /// This could be an `str` for example.
-    /// This is *not* suitable for `TokenTree::Literal` or `syn::Lit`
-    /// because their `Display` impls produce the version with `" "`.
-    fn append_display<I: Display + Spanned + ToTokens>(&mut self, lit: &I);
-
     /// An identifier (or fragment of one)
     ///
     /// Uses the `IdentFragment` for identifier pasting,
@@ -461,9 +454,6 @@ impl SubstParseContext for TokenAccumulator {
 }
 
 impl ExpansionOutput for TokenAccumulator {
-    fn append_display<L: Display + Spanned + ToTokens>(&mut self, lit: &L) {
-        self.append(lit)
-    }
     fn append_identfrag_toks<I: IdentFrag>(
         &mut self,
         ident: &I,

@@ -729,9 +729,6 @@ impl AngleBrackets {
 }
 
 impl ExpansionOutput for Items {
-    fn append_display<S: Display + Spanned>(&mut self, plain: &S) {
-        self.append_plain(plain.span(), plain);
-    }
     fn append_identfrag_toks<I: IdentFrag>(
         &mut self,
         ident: &I,
