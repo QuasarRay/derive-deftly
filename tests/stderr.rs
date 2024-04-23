@@ -138,8 +138,8 @@ fn one_collection(coll: &str, compiles: Result<(), ()>) {
                 m{^To learn more, run the command again with --verbose} ||
  # rust-derive-deftly#32 https://github.com/rust-lang/cargo/issues/13667
  m{^warning: .*/.cargo/config\` is deprecated in favor of \`config\.toml\`$} ||
- m{^note: if you need to support cargo 1\.38 or earlier, you can symlink \`config\` to \`config\.toml\`$}
-
+ m{^note: if you need to support cargo 1\.38 or earlier, you can symlink \`config\` to \`config\.toml\`$} ||
+ m{^warning: both \`.*/config\` and \`.*/config.toml\` exist. Using \`.*/config\`$}
            ) } @l;
            while (@l && $l[$#l] !~ m/\S/) { pop @l; }
            print @l or die $!;
