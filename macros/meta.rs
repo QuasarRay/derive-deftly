@@ -915,6 +915,358 @@ impl PreprocessedTree {
     }
 }
 
+impl PreprocessedValueList {
+    fn decode_update_used(&self, input: ParseStream) -> syn::Result<()> {
+        use PreprocessedValue as PV;
+
+        for ptree in &self.content {
+            if input.is_empty() {
+                return Ok(());
+            }
+            if !input.peek(Token![,]) {
+                let path = input.call(syn::Path::parse_mod_style)?;
+                if path != ptree.path {
+                    return Err([
+                        (path.span(), "found"),
+                        (ptree.path.span(), "expected"),
+                    ].error(
+ "mismatch (desynchronised) incorporating previous expansions' used metas"
+                    ));
+                }
+                let used = if input.peek(Token![=]) {
+                    let _: Token![=] = input.parse()?;
+                    Some(RecogAllow::Value)
+                } else if input.peek(Token![?]) {
+                    let _: Token![?] = input.parse()?;
+                    Some(RecogAllow::BoolOnly)
+                } else {
+                    None
+                };
+                if let Some(used) = used {
+                    ptree.update_used(used);
+                }
+                if input.peek(token::Paren) {
+                    let inner;
+                    let paren = parenthesized!(inner in input);
+                    let sub_list = match &ptree.value {
+                        PV::Unit | PV::Value { .. } => return Err([
+                            (paren.span.open(), "found"),
+                            (ptree.path.span(), "defined"),
+                        ].error(
+ "mismatch (tree vs terminal) incorporating previous expansions' used metas"
+                        )),
+                        PV::List(l) => l,
+                    };
+                    sub_list.decode_update_used(&inner)?;
+                }
+            }
+            if input.is_empty() {
+                return Ok(());
+            }
+            let _: Token![,] = input.parse()?;
+        }
+        Ok(())
+    }
+}
+
+//---------- support for checking (TODO META tidy headings) ---------
+
+impl<'c> Context<'c> {
+    /// Returns `[::Variant .field () ...]`
+    pub fn encode_metas_used(&self) -> proc_macro2::Group {
+        let parenthesize =
+            |ts| proc_macro2::Group::new(Delimiter::Parenthesis, ts);
+        let an_empty = parenthesize(TokenStream::new());
+
+        let mut ts = TokenStream::new();
+
+        struct Preamble<'p> {
+            variant: Option<&'p syn::Variant>,
+            field: Option<&'p WithinField<'p>>,
+        }
+        impl ToTokens for Preamble<'_> {
+            fn to_tokens(&self, out: &mut TokenStream) {
+                let span = Span::call_site();
+                if let Some(v) = self.variant {
+                    Token![::](span).to_tokens(out);
+                    v.ident.to_tokens(out);
+                }
+                if let Some(f) = self.field {
+                    Token![.](span).to_tokens(out);
+                    f.fname(span).to_tokens(out);
+                }
+            }
+        }
+
+        let mut last_variant: *const syn::Variant = ptr::null();
+        let mut last_field: *const syn::Field = ptr::null();
+
+        fn ptr_of_ref<'i, InDi>(r: Option<&'i InDi>) -> *const InDi {
+            r.map(|r| r as _).unwrap_or_else(ptr::null)
+        }
+
+        let mut encode = |pmetas: &PreprocessedMetas,
+                          wv: Option<&WithinVariant>,
+                          wf: Option<&WithinField>| {
+            let now_variant: *const syn::Variant =
+                ptr_of_ref(wv.map(|wv| wv.variant).flatten());
+            let now_field: *const syn::Field =
+                ptr_of_ref(wf.map(|wf| wf.field));
+
+            let preamble = Preamble {
+                variant: (!ptr::eq(last_variant, now_variant)).then(|| {
+                    last_field = ptr::null();
+                    let v = wv.expect("had WithinVariant, now not");
+                    v.variant.expect("variant was syn::Variant, now not")
+                }),
+                field: (!ptr::eq(last_field, now_field)).then(|| {
+                    wf.expect("had WithinField (Field), now not") //
+                }),
+            };
+            let mut ot =
+                TokenOutputTrimmer::new(&mut ts, &preamble, &an_empty);
+            for m in pmetas {
+                if let Some(group) = PreprocessedTree::encode_useds(m) {
+                    ot.push_reified(group);
+                } else {
+                    ot.push_sep();
+                }
+            }
+            if ot.did_preamble().is_some() {
+                last_variant = now_variant;
+                last_field = now_field;
+            }
+
+            Ok::<_, Void>(())
+        };
+
+        encode(&self.tmetas, None, None).void_unwrap();
+        WithinVariant::for_each(self, |ctx, wv| {
+            if !wv.is_struct_toplevel_as_variant() {
+                encode(&wv.pmetas, Some(wv), None)?;
+            }
+            WithinField::for_each(ctx, |_ctx, wf| {
+                encode(&wf.pfield.pmetas, Some(wv), Some(wf))
+            })
+        })
+        .void_unwrap();
+
+        proc_macro2::Group::new(Delimiter::Bracket, ts)
+    }
+
+    pub fn decode_update_metas_used(
+        &self,
+        input: /* group content */ ParseStream,
+    ) -> syn::Result<()> {
+        #[derive(Default)]
+        struct Intended {
+            variant: Option<syn::Ident>,
+            field: Option<Either<syn::Ident, u32>>,
+            attr_i: usize,
+        }
+        let mut intended = Intended::default();
+
+        let mut visit =
+            |pmetas: &PreprocessedMetas,
+             current_variant: Option<&syn::Ident>,
+             current_field: Option<Either<&syn::Ident, &u32>>| {
+                loop {
+                    let la = input.lookahead1();
+                    if input.is_empty() {
+                        // keep visiting until we exit all the loops
+                        return Ok(());
+                    } else if la.peek(Token![::]) {
+                        let _: Token![::] = input.parse()?;
+                        intended = Intended {
+                            variant: Some(input.parse()?),
+                            field: None,
+                            attr_i: 0,
+                        };
+                    } else if la.peek(Token![.]) {
+                        let _: Token![.] = input.parse()?;
+                        intended.field = Some(match input.parse()? {
+                            syn::Member::Named(n) => Either::Left(n),
+                            syn::Member::Unnamed(i) => Either::Right(i.index),
+                        });
+                        intended.attr_i = 0;
+                    } else if {
+                        let intended_field_refish = intended
+                            .field
+                            .as_ref()
+                            .map(|some: &Either<_, _>| some.as_ref());
+
+                        !(current_variant == intended.variant.as_ref()
+                            && current_field == intended_field_refish)
+                    } {
+                        // visit subsequent things, hopefully one will match
+                        return Ok(());
+                    } else if la.peek(token::Paren) {
+                        // we're in the right place and have found a #[deftly()]
+                        let i = intended.attr_i;
+                        intended.attr_i += 1;
+                        let m = pmetas.get(i).ok_or_else(|| {
+                            input.error("more used metas, out of range!")
+                        })?;
+                        let r;
+                        let _ = parenthesized!(r in input);
+                        m.decode_update_used(&r)?;
+                    } else {
+                        return Err(la.error());
+                    }
+                }
+            };
+
+        visit(&self.tmetas, None, None)?;
+
+        WithinVariant::for_each(self, |ctx, wv| {
+            let current_variant = wv.variant.map(|wv| &wv.ident);
+
+            if !wv.is_struct_toplevel_as_variant() {
+                visit(&wv.pmetas, current_variant, None)?;
+            }
+
+            WithinField::for_each(ctx, |_ctx, wf| {
+                let current_field = if let Some(ref ident) = wf.field.ident {
+                    Either::Left(ident)
+                } else {
+                    Either::Right(&wf.index)
+                };
+
+                visit(&wf.pfield.pmetas, current_variant, Some(current_field))
+            })
+        })
+
+        // if we didn't consume all of the input, due to mismatches/
+        // misordering, then syn will give an error for us
+    }
+
+    pub(crate) fn check_metas_used(
+        &self,
+        errors: &mut ErrorAccumulator,
+    ) {
+        let mut chk_pmetas = |pmetas: &PreprocessedMetas| {
+            for a in pmetas {
+                for l in &a.content {
+                    l.check_used(errors);
+                }
+            }
+
+            Ok::<_, Void>(())
+        };
+
+        chk_pmetas(
+            &self.tmetas,
+        )
+        .void_unwrap();
+
+        WithinVariant::for_each(self, |ctx, wv| {
+            // If variant is None, this is the imaginary variant for
+            // the toplevel, and it has a copy of the ref to the metas,
+            // in which case we don't want to process it again.
+            if !wv.is_struct_toplevel_as_variant() {
+                chk_pmetas(&wv.pmetas)?;
+            }
+            WithinField::for_each(ctx, |_ctx, wf| {
+                chk_pmetas(&wf.pfield.pmetas)
+            })
+        })
+        .void_unwrap();
+    }
+}
+
+impl PreprocessedTree {
+    /// Returns `(....)`
+    fn encode_useds(
+        list: &PreprocessedValueList,
+    ) -> Option<proc_macro2::Group> {
+        let preamble = syn::parse::Nothing;
+        let sep = Token![,](Span::call_site());
+        let mut ts = TokenStream::new();
+        let mut ot = TokenOutputTrimmer::new(&mut ts, &preamble, &sep);
+        for t in &list.content {
+            t.encode_used(&mut ot);
+            ot.push_sep();
+        }
+        if ts.is_empty() {
+            None
+        } else {
+            Some(proc_macro2::Group::new(Delimiter::Parenthesis, ts))
+        }
+    }
+
+    /// Writes `path?=(...)` (or, rather, the parts of it that are needed)
+    fn encode_used(&self, out: &mut TokenOutputTrimmer) {
+        use PreprocessedValue as PV;
+
+        struct OutputTrimmerWrapper<'or, 'o, 't, 'p> {
+            // None if we have written the path already
+            path: Option<&'p syn::Path>,
+            out: &'or mut TokenOutputTrimmer<'t, 'o>,
+        }
+
+        let mut out = OutputTrimmerWrapper {
+            path: Some(&self.path),
+            out,
+        };
+
+        impl OutputTrimmerWrapper<'_, '_, '_, '_> {
+            fn push_reified(&mut self, t: &dyn ToTokens) {
+                if let Some(path) = self.path.take() {
+                    self.out.push_reified(path);
+                }
+                self.out.push_reified(t);
+            }
+        }
+
+        let tspan = Span::call_site();
+
+        if let Some(used) = self.used.get() {
+            match used {
+                RecogAllow::BoolOnly => out.push_reified(&Token![?](tspan)),
+                RecogAllow::Value => out.push_reified(&Token![=](tspan)),
+            }
+        }
+
+        match &self.value {
+            PV::Unit | PV::Value { .. } => {}
+            PV::List(l) => {
+                if let Some(group) = PreprocessedTree::encode_useds(l) {
+                    out.push_reified(&group);
+                }
+            }
+        }
+    }
+
+    fn check_used(&self, errors: &mut ErrorAccumulator) {
+        use RecogAllow as RA;
+
+        let mut err = |msg| errors.push(self.path.error(msg));
+
+        match (&self.value, self.used.get()) {
+            (PreprocessedValue::Unit, Some(_)) => {}
+            (PreprocessedValue::Value { .. }, Some(RA::Value)) => {}
+            (PreprocessedValue::List(l), _) => {
+                if l.content.is_empty() {
+                    err(
+ "empty nested list in #[deftly], is not useable by any template"
+                    );
+                }
+                for subtree in &l.content {
+                    subtree.check_used(errors);
+                }
+            }
+            (_, None) => err(
+ // XXXX we should be calling unrecognised_error
+ "meta attribute provided, but not recognised by template"
+            ),
+            (PreprocessedValue::Value { .. }, Some(RA::BoolOnly)) => err(
+ // XXXX we should be calling unrecognised_error
+ "meta attribute value provided, but is used only as a boolean"
+            ),
+        }
+    }
+}
+
 //---------- support for checking ----------
 
 pub struct RecogChecker<'r, 'e> {
