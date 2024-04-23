@@ -226,11 +226,12 @@ we return directly to the engine:
     }
 ```
 
-The accumulated parts are all of the form: `KEYWORD [DATA]`;
-`_KEYWORD [DATA]` for a part which can be safely ignored,
+The accumulated parts are all of the form: `KEYWORD DATA`;
+`_KEYWORD DATA` for a part which can be safely ignored,
 if unrecognised.
+`DATA` is a single tt.
 Each template's parts start with a `_name` part.
-There can also be `error []` parts which
+There can also be `error` parts which
 appear when the template couldn't be parsed
 (which is used to suppress "unrecognised attribute" errors).
 
