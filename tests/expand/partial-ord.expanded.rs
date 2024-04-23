@@ -59,9 +59,9 @@ where
 {
     #[inline]
     fn eq(&self, other: &Enum<F, G>) -> bool {
-        let __self_tag = ::core::intrinsics::discriminant_value(self);
-        let __arg1_tag = ::core::intrinsics::discriminant_value(other);
-        __self_tag == __arg1_tag
+        let __self_discr = ::core::intrinsics::discriminant_value(self);
+        let __arg1_discr = ::core::intrinsics::discriminant_value(other);
+        __self_discr == __arg1_discr
             && match (self, other) {
                 (Enum::Tuple(__self_0), Enum::Tuple(__arg1_0)) => *__self_0 == *__arg1_0,
                 (Enum::Struct { field: __self_0 }, Enum::Struct { field: __arg1_0 }) => {
@@ -92,7 +92,15 @@ fn main() {
 /// Without too many macros cluttering the expanded output
 fn expect(ok: bool) {
     if !ok {
-        ::core::panicking::panic("explicit panic");
+        {
+            #[cold]
+            #[track_caller]
+            #[inline(never)]
+            const fn panic_cold_explicit() -> ! {
+                ::core::panicking::panic_explicit()
+            }
+            panic_cold_explicit();
+        };
     }
 }
 fn expect_none<T: PartialOrd>(a: T, b: T) {

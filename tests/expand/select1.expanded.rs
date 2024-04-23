@@ -24,6 +24,7 @@ impl ::core::default::Default for Both {
 }
 #[automatically_derived]
 impl ::core::fmt::Debug for Both {
+    #[inline]
     fn fmt(&self, f: &mut ::core::fmt::Formatter) -> ::core::fmt::Result {
         ::core::fmt::Formatter::debug_struct_field3_finish(
             f,
@@ -51,6 +52,7 @@ impl ::core::default::Default for Left {
 }
 #[automatically_derived]
 impl ::core::fmt::Debug for Left {
+    #[inline]
     fn fmt(&self, f: &mut ::core::fmt::Formatter) -> ::core::fmt::Result {
         ::core::fmt::Formatter::debug_struct_field1_finish(f, "Left", "a", &&self.a)
     }

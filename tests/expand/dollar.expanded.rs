@@ -14,6 +14,6 @@ struct AdhocOneDollar;
 struct TwoDollars;
 ///two $$dollars
 struct ReusedWithTwoDollars;
-///two $$dollars
+///two $ $dollars
 struct AdhocTwoDollars;
 fn main() {}

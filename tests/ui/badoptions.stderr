@@ -49,9 +49,9 @@ error: expected `!`
    |            ^^^^^
 
 error: expected one of `!` or `::`, found `error`
- --> $OUT_DIR[derive-deftly-macros]/derive-deftly~expansions~/dd-cddab81806d14ed578d5674b.rs
+ --> $OUT_DIR[derive-deftly-macros]/derive-deftly~expansions~/dd-6af46d698f4b6716c94ce06a.rs
   |
-  | syntax error ;
+  | syntax error;
   |        ^^^^^ expected one of `!` or `::`
 
 error: contradictory values for expected driver kind (in `for` option) (first)
