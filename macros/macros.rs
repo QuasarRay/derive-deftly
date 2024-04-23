@@ -89,6 +89,25 @@ impl DdOptValDescribable for check::Target {
 
 //========== actual macro entrypoints ==========
 
+/// Wraps an actual macro implementation function that uses a proc_macro2
+/// implementation to expose a proc_macro implementation instead.
+//
+// Clippy gives false positives for converting between proc_macro[2]::TokenStream.
+#[allow(clippy::useless_conversion)]
+fn wrap_macro_func<F>(
+    func: F,
+    input: proc_macro::TokenStream,
+) -> proc_macro::TokenStream
+where
+    F: FnOnce(
+        proc_macro2::TokenStream,
+    ) -> Result<proc_macro2::TokenStream, syn::Error>,
+{
+    let input = proc_macro2::TokenStream::from(input);
+    let output = func(input).unwrap_or_else(|e| e.into_compile_error());
+    proc_macro::TokenStream::from(output)
+}
+
 /// Template expansion engine, internal
 ///
 /// Normally you do not need to mention this macro.
@@ -106,10 +125,7 @@ impl DdOptValDescribable for check::Target {
 pub fn derive_deftly_engine(
     input: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
-    let input: proc_macro2::TokenStream = input.into();
-    let output = engine::derive_deftly_engine_func_macro(input)
-        .unwrap_or_else(|e| e.into_compile_error());
-    output.into()
+    wrap_macro_func(engine::derive_deftly_engine_func_macro, input)
 }
 
 /// Expand an ad-hoc template, on a data structure decorated `#[derive_deftly_adhoc]`
@@ -158,10 +174,7 @@ pub fn derive_deftly_engine(
 pub fn derive_deftly_adhoc(
     input: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
-    let input = TokenStream::from(input);
-    let output = adhoc::derive_deftly_adhoc(input)
-        .unwrap_or_else(|e| e.into_compile_error());
-    output.into()
+    wrap_macro_func(adhoc::derive_deftly_adhoc, input)
 }
 
 /// Define a reuseable template
@@ -277,10 +290,7 @@ pub fn derive_deftly_adhoc(
 pub fn define_derive_deftly(
     input: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
-    let input = TokenStream::from(input);
-    let output = define::define_derive_deftly_func_macro(input)
-        .unwrap_or_else(|e| e.into_compile_error());
-    output.into()
+    wrap_macro_func(define::define_derive_deftly_func_macro, input)
 }
 
 /// Perform ad-hoc templating driven by a data structure
@@ -430,10 +440,7 @@ pub fn define_derive_deftly(
 pub fn derive_deftly(
     input: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
-    let input = TokenStream::from(input);
-    let output = derive::derive_deftly(input)
-        .unwrap_or_else(|e| e.into_compile_error());
-    output.into()
+    wrap_macro_func(derive::derive_deftly, input)
 }
 
 /// Check semver compatibility, for a crate which exports macros
@@ -482,8 +489,5 @@ pub fn derive_deftly(
 pub fn pub_template_semver_check(
     input: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
-    let input = TokenStream::from(input);
-    let output = semver::pub_template_semver_check_func_macro(input)
-        .unwrap_or_else(|e| e.into_compile_error());
-    output.into()
+    wrap_macro_func(semver::pub_template_semver_check_func_macro, input)
 }
