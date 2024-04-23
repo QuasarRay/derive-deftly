@@ -58,6 +58,7 @@ struct SimpleStruct {
 
 #[derive(Deftly)]
 #[derive_deftly(ListFields)]
+#[allow(dead_code)]
 struct TupleStruct(u8, u16, String);
 
 #[derive(Deftly)]
