@@ -763,6 +763,10 @@ each time according
 to the values and definitions prevailing
 in the dynamic context where `NAME` is used.
 
+(Therefore, you can `$define`/`$defcond` an identifier
+at a point where its contents are not in scope,
+and expand it later when they are.)
+
 `${NAME}` may only be used
 inside pasting and case changing
 if `BODY` was precisely an invocation of `${paste }` or `$<...>`.
@@ -781,6 +785,8 @@ they won't interfere.
 
 ```rust,ignore
 ${define T_FIELDS ${paste $tname Fields}}
+// Note that fvis is not in scope here; that's okay,
+// but we can only _use_ F_ENABLE when fvis _is_ in scope.
 ${defcond F_ENABLE all(fvis, v_is_named)}
 $tvis struct $T_FIELDS { $(
     ${when F_ENABLE} $fvis $fname: bool,
