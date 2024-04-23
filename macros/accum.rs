@@ -42,9 +42,11 @@ impl Parse for Accumulated {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let mut recog_metas = Some(meta::Recognised::default());
 
+        struct Ignore;
+
         while !input.is_empty() {
             let kind: syn::Ident = input.parse()?;
-            if kind == "_meta" {
+            match if kind == "_meta" {
                 if let Some(rm) = &mut recog_metas {
                     let content;
                     let _brackets = bracketed!(content in input);
@@ -58,18 +60,23 @@ impl Parse for Accumulated {
                         let desig = input.parse()?;
                         rm.update(desig, allow);
                     }
+                    continue;
                 } else {
-                    let _: TokenTree = input.parse()?;
+                    Ignore
                 }
             } else if kind == "error" {
                 recog_metas = None;
-                let _: TokenTree = input.parse()?;
+                Ignore
             } else if kind.to_string().starts_with('_') {
-                let _: TokenTree = input.parse()?;
+                Ignore
             } else {
                 return Err(
                     kind.error("unrecognised mandatory accumulation kind")
                 );
+            } {
+                Ignore => {
+                    let _: TokenTree = input.parse()?;
+                }
             }
         }
         Ok(Accumulated { recog_metas })
