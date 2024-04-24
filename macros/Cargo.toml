@@ -1,6 +1,6 @@
 [package]
 name = "derive-deftly-macros"
-version = "0.10.4"
+version = "0.10.5"
 edition = "2021"
 readme = "README.md"
 authors=["Ian Jackson <ijackson@chiark.greenend.org.uk>",
