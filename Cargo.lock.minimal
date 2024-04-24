@@ -87,6 +87,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "derive-deftly-book-tests"
+version = "0.1.0"
+dependencies = [
+ "derive-deftly",
+]
+
+[[package]]
 name = "derive-deftly-macros"
 version = "0.11.0"
 dependencies = [

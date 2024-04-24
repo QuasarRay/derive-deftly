@@ -87,14 +87,21 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d84d814854b09cb91bfae46872fadba3d010d74d0dc219cb3aec0eadd6fd3ceb"
 dependencies = [
  "derive-deftly-macros 0.11.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "heck 0.4.1",
+ "heck 0.5.0",
+]
+
+[[package]]
+name = "derive-deftly-book-tests"
+version = "0.1.0"
+dependencies = [
+ "derive-deftly",
 ]
 
 [[package]]
 name = "derive-deftly-macros"
 version = "0.11.0"
 dependencies = [
- "heck 0.4.1",
+ "heck 0.5.0",
  "indexmap",
  "itertools",
  "proc-macro-crate",
