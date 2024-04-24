@@ -25,6 +25,7 @@ members = [
 	"tests/compat/edrv-new-b",
 	"tests/compat/edrv-old-b",
 	"tests/stderr",
+	"book/book_tests",
 ]
 
 # After editing this file, you will probably need to run

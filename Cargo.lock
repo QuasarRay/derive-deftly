@@ -54,6 +54,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "book_tests"
+version = "0.1.0"
+dependencies = [
+ "derive-deftly 0.10.5",
+]
+
+[[package]]
 name = "cpufeatures"
 version = "0.2.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
