@@ -23,6 +23,20 @@ We expect to increase it cautiously and only with good reason.
 
 ## Changelog
 
+### 0.10.5
+
+#### Breaking (minor)
+
+ * Fixed `$vdefbody` to always include precisely a comma after enum
+   variants.  The previous wrong behaviour was shown in the example output,
+   but wasn't usable in the documented/intended manner.  \#63, !325.
+
+#### Improved
+
+ * Improved some error messages.
+ * Docs clarifications and fixes.
+ * Testing fixes and robustness improvements.
+
 ### 0.10.4
 
 #### Added
