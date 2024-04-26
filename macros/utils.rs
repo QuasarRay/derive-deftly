@@ -123,6 +123,13 @@ impl<T: Parse> Parse for Concatenated<T> {
     }
 }
 
+pub fn dummy_path() -> syn::Path {
+    syn::Path {
+        leading_colon: None,
+        segments: Punctuated::default(),
+    }
+}
+
 //---------- MakeError ----------
 
 /// Provides `.error()` on `impl Spanned` and `[`[`ErrorLoc`]`]`

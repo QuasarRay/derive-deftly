@@ -38,7 +38,7 @@ pub use super::framework::TokenAccumulator;
 pub use super::paste::TokenPastesAsIdent;
 pub use super::utils::ErrorAccumulator;
 pub use super::utils::ToTokensPunctComposable;
-pub use super::utils::{braced_group, delimit_token_group};
+pub use super::utils::{braced_group, delimit_token_group, dummy_path};
 pub use super::utils::{engine_macro_name, spans_join};
 pub use super::utils::{ErrorLoc, IdentAny, MakeError};
 pub(super) use super::{accum, adviseable, check};
