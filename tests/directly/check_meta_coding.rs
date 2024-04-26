@@ -1,0 +1,218 @@
+//! Test used meta node encoding/decoding
+
+use super::*;
+use macros::meta::*;
+
+use PreprocessedValue as PV;
+use RecogAllow as RA;
+
+//---------- ctx and pmetas and ptrees walker ----------
+
+trait NodeCall: FnMut(&PreprocessedTree) {}
+impl<F> NodeCall for F where F: FnMut(&PreprocessedTree) {}
+
+fn process_nodes_ptree(ptree: &PreprocessedTree, nc: &mut impl NodeCall) {
+    nc(ptree);
+    match &ptree.value {
+        PV::List(l) => process_nodes_pvl(l, nc),
+        PV::Unit | PV::Value { .. } => {}
+    }
+}
+fn process_nodes_pvl(pvl: &PreprocessedValueList, nc: &mut impl NodeCall) {
+    for ptree in &pvl.content {
+        process_nodes_ptree(ptree, nc);
+    }
+}
+fn process_nodes_pmetas(
+    pmetas: &[PreprocessedValueList],
+    nc: &mut impl NodeCall,
+) -> Result<(), Void> {
+    for pvl in pmetas {
+        process_nodes_pvl(pvl, nc);
+    }
+    Ok(())
+}
+fn process_nodes_ctx(ctx: &Context, nc: &mut impl NodeCall) {
+    process_nodes_pmetas(&ctx.tmetas, nc).void_unwrap();
+
+    WithinVariant::for_each(&ctx, |ctx, wv| {
+        if wv.variant.is_some() {
+            process_nodes_pmetas(&wv.pmetas, nc)?;
+        }
+        WithinField::for_each(ctx, |_ctx, wf| {
+            process_nodes_pmetas(&wf.pfield.pmetas, nc)
+        })
+    })
+    .void_unwrap();
+}
+fn process_nodes_top<T>(
+    top: &syn::DeriveInput,
+    scenario: &[(&syn::Path, Option<RecogAllow>)],
+    start: impl FnOnce(&Context),
+    mut nc: impl FnMut(&PreprocessedTree, Option<RecogAllow>),
+    finish: impl FnOnce(Context) -> T,
+) -> T {
+    Context::call(&top, &dummy_path(), None, |ctx| {
+        start(&ctx);
+        let mut rs = scenario.iter();
+        process_nodes_ctx(&ctx, &mut |ptree: &PreprocessedTree| {
+            let (node_path, node_allow) = *rs.next().unwrap();
+            assert_eq!(ptree.path, *node_path);
+            nc(ptree, node_allow);
+        });
+        assert!(rs.next().is_none());
+        Ok(finish(ctx))
+    })
+    .unwrap()
+}
+
+//---------- core algorithm ----------
+
+type NodeInScenario<'n> = (&'n syn::Path, Option<RecogAllow>);
+
+fn roundtrip_scenario(
+    top: &syn::DeriveInput,
+    scenario: &[NodeInScenario],
+) {
+    let encoded = process_nodes_top(
+        &top,
+        scenario,
+        |_ctx| {},
+        |ptree, allow| ptree.used.set(allow),
+        |ctx| ctx.encode_metas_used().stream(),
+    );
+
+    process_nodes_top(
+        &top,
+        scenario,
+        |ctx| {
+            Parser::parse2(
+                |input: ParseStream| ctx.decode_update_metas_used(input),
+                encoded,
+            )
+            .unwrap();
+        },
+        |ptree, allow| assert_eq!(ptree.used.get(), allow),
+        |_ctx| {},
+    );
+}
+
+//---------- test matrix generation ----------
+
+fn check_matching_for(topkind: &str, variants: &[&str], fields: &[&str]) {
+    let mk_ident = |s: &_| syn::Ident::new(s, Span::call_site());
+
+    let mut vs_toks = TokenStream::new();
+    let mut cell_paths: Vec<syn::Path> = vec![];
+
+    let mut add_metas = |forwhat, full| {
+        let mut metas = TokenStream::new();
+        for bi in [0, 1] {
+            let mut bmetas = Punctuated::<_, Token![,]>::new();
+            for mi in [0, 1] {
+                // trim test matrix:
+                // one meta node only if we haven't got n^5 already
+                // (ideally, we'd do some kind of two-pass thing where
+                // we prioritise things at the end, but that'd be a pain)
+                let full = full && cell_paths.len() < 6;
+                if !full && [bi, mi] != [0, 0] {
+                    continue;
+                }
+                let name = mk_ident(&format!("{}{}{}", forwhat, bi, mi));
+                cell_paths.push(name.clone().into());
+                bmetas.push(name);
+            }
+            if bmetas.len() != 0 {
+                metas.extend(quote!(#[deftly(#bmetas)]));
+            }
+        }
+        metas
+    };
+
+    // trim test matrix:
+    // multiple meta nodes for toplevel only if there's only 1 variant
+    let tmetas = add_metas("t", variants.len() <= 1);
+
+    for (vindex, &vname) in variants.iter().enumerate() {
+        let mut fs_toks = TokenStream::new();
+        let vinfo = if vname != "" {
+            let vident = mk_ident(vname);
+            // trim test matrix:
+            // multiple meta nodes only for the last variant
+            let vmetas = add_metas("v", vindex == variants.len() - 1);
+            Some((vident, vmetas))
+        } else {
+            None
+        };
+        for &fname in fields {
+            let fident = mk_ident(fname);
+            let fmetas = add_metas("f", true);
+            fs_toks.extend(quote!(
+                #fmetas
+                #fident: (),
+            ));
+        }
+        if let Some((vident, vmetas)) = &vinfo {
+            fs_toks = quote!(
+                #vmetas
+                #vident { #fs_toks },
+            )
+        }
+        vs_toks.extend(fs_toks);
+    }
+    let topkind: TokenTree = syn::parse_str(topkind).unwrap();
+    let top_toks = quote!(
+        #tmetas
+        #topkind Data { #vs_toks }
+    );
+    eprintln!("{}", top_toks);
+
+    let top: syn::DeriveInput = syn::parse2(top_toks.clone()).unwrap();
+
+    // trim test matrix:
+    // test both values and booleans only if we're short
+    let allows = if cell_paths.len() <= 4 {
+        const A: &[RA] = &[RA::BoolOnly, RA::Value];
+        A
+    } else {
+        const A: &[RA] = &[RA::BoolOnly];
+        A
+    };
+
+    for scenario in cell_paths
+        .iter()
+        .map(|path| {
+            chain!(
+                [None], //
+                allows.into_iter().copied().map(Some),
+            )
+            .map(move |ra| (path, ra))
+        })
+        .multi_cartesian_product()
+    {
+        roundtrip_scenario(&top, &scenario);
+    }
+}
+
+#[test]
+fn check_matching() {
+    for topkind in ["struct", "enum"] {
+        for variants in if topkind == "struct" {
+            const VS: &[&[&str]] = &[&[""]];
+            VS
+        } else {
+            const VS: &[&[&str]] = &[&[], &["V1"], &["V1", "V2"]];
+            VS
+        } {
+            for fields in if variants.is_empty() {
+                const FS: &[&[&str]] = &[&[]];
+                FS
+            } else {
+                const FS: &[&[&str]] = &[&[], &["f1"], &["f1", "f2"]];
+                FS
+            } {
+                check_matching_for(topkind, variants, fields);
+            }
+        }
+    }
+}

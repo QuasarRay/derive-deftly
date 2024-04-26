@@ -19,6 +19,8 @@ use syn::parse_quote;
 #[path = "../macros/macros.rs"]
 pub(super) mod macros;
 
+mod check_meta_coding;
+
 #[cfg(all(
     feature = "recent", // examples may not work with old compiler
     feature = "case",
