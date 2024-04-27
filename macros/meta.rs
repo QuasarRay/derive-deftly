@@ -823,7 +823,6 @@ impl RecogAllow {
 
 pub struct RecogChecker<'r, 'e> {
     /// The actual set of recognised meta attributes
-    #[allow(dead_code)] // XXXX
     recog_real: &'r Recognised,
     /// "Working" set of recognised meta attributes
     ///
