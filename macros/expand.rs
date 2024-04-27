@@ -749,6 +749,7 @@ impl<O: ExpansionOutput> RepeatedTemplate<O> {
     }
 }
 
+// TODO META move this to repeat.rs
 impl<'w> WithinField<'w> {
     /// What would `${fname}` expand to?
     pub fn fname(&self, tspan: Span) -> Fname {
