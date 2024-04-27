@@ -269,7 +269,7 @@ pub fn derive_deftly(
                 #first! {
                     [ #( #rest, )* #engine_macro, ]
                     [ ]
-                    /* should be [ 1 0 AOPTIONS ] here XXXX */
+                    /* should be [ 1 0 AOPTIONS ] here ? */
                     { #driver }
                 }
             });

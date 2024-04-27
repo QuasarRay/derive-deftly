@@ -22,7 +22,8 @@ use super::prelude::*;
 /// A `Result` whose error might, or might not, need compat advice
 ///
 ///  * `Err(raw)`: unexpected error, probably mismatched
-///    derive-deftly versions.  `XXXX` will return the error
+///    derive-deftly versions.
+///    [`adviseable_parse2`] will return the error
 ///    but with compat advice for the user added.
 ///  * `Ok(ErrNeedsNoAdvice(cooked))`: "expected" error, fully reported for
 ///    the user's benefit.  Returned as-is by `parse_advised`.

@@ -27,8 +27,8 @@ check1 () {
     rcs+="$? "
     set -e
 }
-check1 git --no-pager grep -i '\bfixme\b'
-check1 git --no-pager grep '(?<!'"$version_re"')\bXXX*\b'
+check1 git --no-pager grep -P -i '\bfixme\b'
+check1 git --no-pager grep -P '(?<!'"$version_re"' )\bXXX*\b'
 
 case "$rcs" in
     " 1 1 ")
