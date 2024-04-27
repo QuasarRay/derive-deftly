@@ -69,6 +69,7 @@ pub fn derive_deftly_adhoc(
             { #template }
             { ($) }
             ( crate; [#options] ; )
+            [] []
         }
     };
 

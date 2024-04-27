@@ -8,19 +8,22 @@ use adviseable::*;
 /// We don't reify the whole input;
 /// instead, we accumulate directly in the `Parse` impl.
 #[derive(Debug)]
-pub struct EngineAccumInput {
-    accum: Accumulated,
+pub struct EngineFinalInput {
     driver: syn::DeriveInput,
+    accum: Accumulated,
 }
 
 #[derive(Debug)]
-struct Accumulated {
-    /// `Err` if we encountered an `error` part
+pub struct Accumulated {
+    /// `None` if we should not do any checking
     recog_metas: Option<meta::Recognised>,
 }
 
-impl ParseAdviseable for EngineAccumInput {
-    fn parse_adviseable(input: ParseStream) -> AdviseableResult<Self> {
+impl EngineFinalInput {
+    pub fn parse_adviseable_remainder(
+        driver: syn::DeriveInput,
+        input: ParseStream,
+    ) -> AdviseableResult<Self> {
         let _empty_next_brackets_contents;
         let _ = bracketed!(_empty_next_brackets_contents in input);
 
@@ -28,13 +31,9 @@ impl ParseAdviseable for EngineAccumInput {
         let _ = bracketed!(accum in input);
         let accum = accum.parse()?;
 
-        let driver;
-        let _ = braced!(driver in input);
-        let driver = driver.parse()?;
-
         let _: TokenStream = input.parse()?;
 
-        Ok(AOk(EngineAccumInput { accum, driver }))
+        Ok(AOk(EngineFinalInput { driver, accum }))
     }
 }
 
@@ -137,7 +136,7 @@ fn check_meta_recog(
     Ok(())
 }
 
-impl engine::EngineInput for EngineAccumInput {
+impl engine::EngineInput for EngineFinalInput {
     fn process(self: Box<Self>) -> syn::Result<TokenStream> {
         let mut errors = ErrorAccumulator::default();
         let mut out = TokenStream::new();

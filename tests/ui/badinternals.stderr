@@ -30,7 +30,7 @@ error: bad input to derive_deftly_engine inner template expansion proc macro; mi
    |
    = note: this error originates in the macro `derive_deftly::derive_deftly_engine` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error: expected curly braces or square brackets
+error: expected curly braces
   --> ui/badinternals.rs:19:40
    |
 19 | derive_deftly::derive_deftly_engine! { GARBAGE -> INNARDS }

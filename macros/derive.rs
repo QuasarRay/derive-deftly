@@ -108,6 +108,8 @@ fn templ_mac_name(mut templ_path: syn::Path) -> syn::Result<syn::Path> {
 pub fn derive_deftly(
     driver_stream: TokenStream,
 ) -> Result<TokenStream, syn::Error> {
+    use engine::ChainNext;
+
     let driver: syn::DeriveInput = syn::parse2(driver_stream.clone())?;
 
     dprint_block!(&driver_stream, "#[derive(Deftly)] input");
@@ -202,10 +204,10 @@ pub fn derive_deftly(
 
     let mut output = TokenStream::new();
 
-    let mut meta_recog_check;
+    let mut accum_start = TokenStream::new();
 
     if let Some(adhoc) = adhoc {
-        meta_recog_check = None;
+        accum_start.extend(quote!( _meta_used * ));
 
         let macro_export = adhoc
             .pub_
@@ -241,40 +243,47 @@ pub fn derive_deftly(
                 };
             }
         });
-    } else {
-        meta_recog_check = Some(vec![]);
     }
 
-    for (templ_path, aoptions) in precanned_paths {
-        let templ_path = templ_mac_name(templ_path)?;
-
-        let ao_versions = OpCompatVersions::ours();
-
-        output.extend(quote! {
-            #templ_path !{
-                { #driver }
-                [ #ao_versions #aoptions ]
-                ( )
+    let (chain_next, chain_rest);
+    {
+        let mut errs = ErrorAccumulator::default();
+        let mut chain = chain!(
+            precanned_paths
+                .into_iter()
+                .map(|(templ_path, aoptions)| {
+                    let call = templ_mac_name(templ_path)?.to_token_stream();
+                    let ao_versions = OpCompatVersions::ours();
+                    let after_driver = quote!( [ #ao_versions #aoptions ] () );
+                    Ok(ChainNext { call, after_driver })
+                })
+                .filter_map(|r| errs.handle(r)),
+            [ChainNext {
+                call: engine_macro.clone(),
+                after_driver: quote!( . () ),
+            }],
+        );
+        chain_next = chain.next().expect("should have been nonempty!");
+        chain_rest = {
+            let mut rest = TokenStream::new();
+            for c in chain {
+                c.to_tokens(&mut rest);
             }
-        });
+            rest
+        };
 
-        if let Some(meta_recog_check) = &mut meta_recog_check {
-            meta_recog_check.push(templ_path);
-        }
+        errs.finish()?;
     }
+    let ChainNext { call, after_driver } = chain_next;
 
-    if let Some(meta_recog_check) = meta_recog_check {
-        if let Some((first, rest)) = meta_recog_check.split_first() {
-            output.extend(quote! {
-                #first! {
-                    [ #( #rest, )* #engine_macro, ]
-                    [ ]
-                    /* should be [ 1 0 AOPTIONS ] here ? */
-                    { #driver }
-                }
-            });
+    output.extend(quote! {
+        #call !{
+            { #driver }
+            #after_driver
+            [ #chain_rest ]
+            [ #accum_start ]
         }
-    }
+    });
 
     dprint_block!(&output, "#[derive(Deftly)] output for {}", &driver.ident);
 

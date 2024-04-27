@@ -15,6 +15,23 @@ struct EngineExpandInput {
     template: Template<TokenAccumulator>,
     template_crate: syn::Path,
     template_name: Option<syn::Path>,
+    chain_next: Option<ChainNext>,
+    chain_after: TokenStream,
+    accum: TokenStream,
+}
+
+#[derive(Debug)]
+pub struct ChainNext {
+    pub call: TokenStream,
+    pub after_driver: TokenStream,
+}
+
+enum EngineContext {
+    Expand {
+        opcontext_template: OpContext,
+        options: DdOptions,
+    },
+    Final {},
 }
 
 /// Input to an invocation of `derive_deftly_engine!`
@@ -25,7 +42,7 @@ struct EngineExpandInput {
 ///
 /// Having this as a trait avoids having to have an enum,
 /// with a lot of repeated code.
-pub trait EngineInput: ParseAdviseable + Debug + 'static {
+pub trait EngineInput: Debug + 'static {
     /// Process this input
     ///
     /// Commented-out debugging printing of the *input* has been done.
@@ -36,21 +53,37 @@ pub trait EngineInput: ParseAdviseable + Debug + 'static {
     fn process(self: Box<Self>) -> syn::Result<TokenStream>;
 }
 
-impl ParseAdviseable for EngineExpandInput {
-    fn parse_adviseable(input: ParseStream) -> AdviseableResult<Self> {
-        let mut options = DdOptions::default();
+impl Parse for ChainNext {
+    fn parse(input: ParseStream) -> syn::Result<Self> {
+        let call = input.parse::<syn::Path>()?.to_token_stream();
+        let after_driver;
+        let _ = parenthesized!(after_driver in input);
+        let after_driver = after_driver.parse()?;
+        Ok(ChainNext { call, after_driver })
+    }
+}
 
+impl ToTokens for ChainNext {
+    fn to_tokens(&self, out: &mut TokenStream) {
+        let ChainNext { call, after_driver } = self;
+        quote!( #call (#after_driver) ).to_tokens(out);
+    }
+}
+
+impl ParseAdviseable for Box<dyn EngineInput> {
+    fn parse_adviseable(input: ParseStream) -> AdviseableResult<Self> {
         let driver;
         let _ = braced!(driver in input);
         let driver = driver.parse()?;
 
-        let opcontext_template;
+        let engine_context;
         if input.peek(syn::token::Bracket) {
             // AOPTIONS appears iff we're being invoked for a precanned
             // template, rather than an adhoc one; it's from the
             // `#[derive()` application.
-            opcontext_template = OpContext::TemplateDefinition;
             let tokens;
+            let mut options = DdOptions::default();
+
             let _ = bracketed!(tokens in input);
             parse_unadvised! {
                 tokens => || {
@@ -58,14 +91,53 @@ impl ParseAdviseable for EngineExpandInput {
                     options .parse_update(&tokens, oc)
                 }
             }
+            engine_context = EngineContext::Expand {
+                opcontext_template: OpContext::TemplateDefinition,
+                options,
+            };
+        } else if input.peek(Token![.]) {
+            let _indicator: Token![.] = input.parse()?;
+            engine_context = EngineContext::Final {};
         } else {
-            opcontext_template = OpContext::TemplateAdhoc;
+            engine_context = EngineContext::Expand {
+                opcontext_template: OpContext::TemplateAdhoc,
+                options: DdOptions::default(),
+            };
         }
 
         let future_ignored;
         let _ = parenthesized!(future_ignored in input);
         let _: TokenStream = future_ignored.parse()?;
 
+        let r = match engine_context {
+            EngineContext::Expand {
+                opcontext_template,
+                options,
+            } => EngineExpandInput::parse_adviseable_remainder(
+                driver,
+                options,
+                input,
+                opcontext_template,
+            )?
+            .map(|y| Box::new(y) as _),
+            EngineContext::Final {} => {
+                accum::EngineFinalInput::parse_adviseable_remainder(
+                    driver, input,
+                )?
+                .map(|y| Box::new(y) as _)
+            }
+        };
+        Ok(r)
+    }
+}
+
+impl EngineExpandInput {
+    fn parse_adviseable_remainder(
+        driver: syn::DeriveInput,
+        mut options: DdOptions,
+        input: ParseStream,
+        opcontext_template: OpContext,
+    ) -> AdviseableResult<Self> {
         let template;
         let _ = braced!(template in input);
 
@@ -97,6 +169,23 @@ impl ParseAdviseable for EngineExpandInput {
             let _: TokenStream = input.parse()?;
         }
 
+        let (chain_next, chain_after);
+        {
+            let chain;
+            let _ = bracketed!(chain in input);
+            let input = chain;
+            chain_next = if !input.is_empty() {
+                Some(input.parse()?)
+            } else {
+                None
+            };
+            chain_after = input.parse()?;
+        }
+
+        let accum;
+        let _ = bracketed!(accum in input);
+        let accum = accum.parse()?;
+
         let _: TokenStream = input.parse()?;
 
         let template = parse_unadvised! { template };
@@ -107,6 +196,9 @@ impl ParseAdviseable for EngineExpandInput {
             template,
             template_crate,
             template_name,
+            chain_next,
+            chain_after,
+            accum,
         }))
     }
 }
@@ -220,7 +312,7 @@ impl EngineInput for EngineExpandInput {
             }
         }
 
-        Context::call(
+        let expanded = Context::call(
             &self.driver,
             &self.template_crate,
             self.template_name.as_ref(),
@@ -254,27 +346,45 @@ impl EngineInput for EngineExpandInput {
 
                 Ok(output)
             },
-        )
-    }
-}
+        );
 
-impl ParseAdviseable for Box<dyn EngineInput> {
-    fn parse_adviseable(input: ParseStream) -> AdviseableResult<Self> {
-        fn parse_as<T: EngineInput>(
-            input: ParseStream,
-        ) -> AdviseableResult<Box<dyn EngineInput>> {
-            let parsed = T::parse_adviseable(input)?;
-            Ok(parsed.map(|parsed| Box::new(parsed) as _))
-        }
+        let chain_call;
 
-        let la = input.lookahead1();
-        if la.peek(token::Brace) {
-            parse_as::<EngineExpandInput>(input)
-        } else if la.peek(token::Bracket) {
-            parse_as::<accum::EngineAccumInput>(input)
+        if let Some(ChainNext { call, after_driver }) = &self.chain_next {
+            let driver = &self.driver;
+            let chain_after = &self.chain_after;
+
+            let mut accum = self.accum.to_token_stream();
+            if let Some(name) = &self.template_name {
+                accum.extend(quote!( _name [#name] ));
+            }
+            match &expanded {
+                Ok(_) => {
+                    use meta::FindRecogMetas as _;
+                    let mut meta_recog = meta::Recognised::default();
+                    self.template.find_recog_metas(&mut meta_recog);
+                    accum.extend(quote!( _meta [#meta_recog] ));
+                }
+                Err(_) => {
+                    accum.extend(quote!( _error [] ));
+                }
+            }
+
+            chain_call = quote! {
+                #call! {
+                    { #driver }
+                    #after_driver
+                    [ #chain_after ]
+                    [ #accum ]
+                }
+            }
         } else {
-            Err(la.error())
-        }
+            chain_call = TokenStream::new();
+        };
+
+        let mut out = expanded.unwrap_or_else(|e| e.into_compile_error());
+        out.extend(chain_call);
+        Ok(out)
     }
 }
 
