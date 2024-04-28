@@ -114,16 +114,6 @@ Expands to
             ( $crate; [TOPTIONS..] Template; )
             $($tpassthrough)*
         }
-    }; {
-        [ $chain0:path, $($chains:path,)* ]
-        [ $($accum:tt)* ]
-        $($passthrough:tt)*
-    } => {
-        $chain0 ! {
-            [ $($chains,)* ]
-            [ $($accum)* _name [Template] _meta [ fmeta(foo) ?tmeta(bar) ] ]
-            $($passthrough)*
-        }
     } }
 ```
 
@@ -140,11 +130,6 @@ the template expansion engine treats `$orig_dollar` as just a single `$`.
 
 (The extra `( )` parts after the driver and template
 include space for future expansion.)
-
-The second arm of the macro is used for meta attribute checking.
-The template is parsed and distilled into the list of
-meta attributes that it recognises,
-and baked into the macro definition.
 
 ### 2. `#[derive_deftly(Template)]`, implemented in `#[derive(Deftly)]`
 
@@ -165,13 +150,11 @@ Generates:
         { #[derive_deftly(..)] struct StructName { .. } }
         [ 1 0 AOPTIONS ]
         ( )
-    }
-    derive_deftly_template_Template2! { .. }
-    derive_deftly_template_Template! { // first template in derive()
-        [ derive_deftly_template_Template2, derive_deftly_expand, ]
-        [ ]
-        /* no AOPTIONS; we don't try to accumulate them */
-        { #[derive_adhoc(Template, Template2)] struct StructName { .. } }
+        [
+          derive_deftly_template_Template2 ( [1 0 AOPTIONS2] () )
+          derive_deftly_engine ( . () )
+        ]
+        [] // (nothing accumulated yet)
     }
 ```
 
@@ -188,30 +171,59 @@ resulting in a call to `derive_deftly_engine`:
         ( )
         { TEMPLATE.. }
         ( $crate; [TOPTIONS..] Template; )
+        [
+          derive_deftly_template_Template2 ( [1 0 AOPTIONS2] () )
+          derive_deftly_engine ( . () )
+        ]
+        [] // ACCUM
     }
 ```
 
 Implemented in `engine.rs::derive_deftly_engine_func_macro`,
 this performs the actual template expansion.
 
-### Accumulation expansion
+### 4. Chaining to the next macro
 
-The second call matches the 2nd arm in the template macro.
-Each template's arm takes the next macro from `$chain0`,
-adds its recognised meta attributes to the list in `$accum`,
-and then chains to `$chain0!`
-passing the subsequent template(s) in `$chains`.
-Eventually, the result is passed to the engine
-which also receives, in the `$passthrough`,
-the `AOPTIONS` and the driver:
+`derive_deftly_engine!`
+then invokes the next template.
+
+In the above example, it outputs:
 
 ```rust,ignore
-derive_deftly_engine! {
-	[ ]
-	[ _name [Template] _meta [ fmeta(foo) ?tmeta(bar) ] ]
-    { #[derive_adhoc(Template, Template2)] struct StructName { .. } }
-}
+    derive_deftly_template_Template2! {
+        { #[derive_deftly(..)] pub struct StructName { .. } }
+        [ 1 0 AOPTIONS2 ]
+        ( ) // threaded through from the call site
+        [ derive_deftly_engine ( . () ) ]
+        [_name Template _meta [ fmeta(foo) ?tmeta(bar) ] ] // ACCUM
+    }
+```
 
+`ACCUM` accumulates information from successive expansions,
+and is actually parsed only in the next step:
+
+It is used for meta attribute checking.
+The template is scanned for
+meta attributes that it recognises,
+and these are added to ACCUM,
+by each successive template.
+
+### 5. Reporting unrecognised meta attributes
+
+At the end of the list of chained templates,
+is (the driver's version of) `derive_deftly_engine!`.
+So after all the templates have been processed,
+instead of invoking the next template,
+we return directly to the engine:
+
+```rust,ignore
+    derive_deftly_engine! {
+        { #[derive_deftly(..)] pub struct StructName { .. } }
+        .
+        ( )
+        [] // end of the chain
+        [_name Template _meta [..] _name Template2 ..] 
+    }
 ```
 
 The accumulated parts are all of the form: `KEYWORD [DATA]`;
@@ -222,11 +234,9 @@ There can also be `error []` parts which
 appear when the template couldn't be parsed
 (which is used to suppress "unrecognised attribute" errors).
 
-(Doing this with two macro calls means that
-if a template is misreferenced, the user gets two errors.
-But the alternative is threading *all* the expansions
-through this chaining, which is confusing,
-and means that the first missing template would stop all processing.)
+The actually supplied attributes are compared with
+the union of the recognised attributes,
+and errors reported for unrecognised ones.
 
 ## Implementation approach - ad-hoc macro applications
 
@@ -280,6 +290,8 @@ Expands to
        { TEMPLATE.. }
        { ($) }
        ( crate; [TOPTIONS..] /*no template name*/; )
+       []
+       [_meta_used *]
     }
 ```
 
@@ -296,6 +308,8 @@ The result of expanding the above is this:
         ( )
         { TEMPLATE.. }
         ( crate; [TOPTIONS..] /*no template name*/; )
+        []
+        [_meta_used *]
     }
 ```
 
