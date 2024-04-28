@@ -17,10 +17,10 @@ error: meta attribute value provided, but is used only as a boolean (provided, i
    |                ^^^^^^^^^
 
 error: meta attribute value provided, but is used only as a boolean (recognised, in template)
-  --> ui/unkmeta.rs:15:21
+  --> ui/unkmeta.rs:15:26
    |
-15 |         tmeta(tnest(bool_only)),
-   |                     ^^^^^^^^^
+15 |         ${if tmeta(tnest(bool_only)) {}},
+   |                          ^^^^^^^^^
 ...
 21 | #[derive(Deftly)]
    |          ------ in this derive macro expansion

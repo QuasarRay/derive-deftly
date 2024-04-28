@@ -3,19 +3,19 @@ use derive_deftly::{define_derive_deftly, Deftly};
 define_derive_deftly! {
     UseSomeAttrs =
 
-    ${define BY_VALUE {
-        ${tmeta(tnest(by_value))}
-        ${vmeta(vnest(by_value))}
-        ${fmeta(fnest(by_value))}
-        ${fmeta(vfnest(by_value))}
-        ${vmeta(vfnest(by_value))}
-    }}
+    ${for fields { ${ignore {
+        ${if tmeta(tnest(by_value)) { ${tmeta(tnest(by_value))} }}
+        ${if vmeta(vnest(by_value)) { ${vmeta(vnest(by_value))} }}
+        ${if fmeta(fnest(by_value)) { ${fmeta(fnest(by_value))} }}
+        ${if fmeta(vfnest(by_value)) { ${fmeta(vfnest(by_value))} }}
+        ${if vmeta(vfnest(by_value)) { ${vmeta(vfnest(by_value))} }}
 
-    ${defcond BOOL_ONLY all(
-        tmeta(tnest(bool_only)),
-        vmeta(vnest(bool_only)),
-        fmeta(fnest(bool_only)),
-    )}
+
+
+        ${if tmeta(tnest(bool_only)) {}},
+        ${if vmeta(vnest(bool_only)) {}},
+        ${if fmeta(fnest(bool_only)) {}},
+    }}}}
 }
 
 #[derive(Deftly)]
