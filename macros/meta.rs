@@ -1,4 +1,29 @@
 //! `#[deftly(...)]` meta attributes
+//!
+//! # Used meta checking
+//!
+//! Most of this file is concerned with generating
+//! accurate and useful messages
+//! when a driver is decorated with `#[deftly(...)]` attributes
+//! which are not used by any template.
+//!
+//! We distinguish "used" metas from "recognised" ones.
+//!
+//! "Used" ones are those actually tested, and used,
+//! during the dynamic expansion of the template.
+//! They are recorded in the [`PreprocessedMetas`],
+//! which contains a `Cell` for each supplied node.
+//!
+//! "Recognised" ones are those which appear anywhere in the template.
+//! These are represented in a data structure [``Recognised`].
+//! This is calculated by scanning the template,
+//! using the `FindRecogMetas` trait.
+//!
+//! Both of these sets are threaded through
+//! the ACCUM data in successive template expansions;
+//! in the final call (`EngineFinalInput`),
+//! they are combined together,
+//! and the driver's metas are checked against them.
 
 use super::framework::*;
 
@@ -160,6 +185,7 @@ pub use FoundNode as FN;
 
 //---------- meta attr enumeration and checking ----------
 
+// TODO META give this a better name, it's not just recog
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, Eq, PartialEq)] //
 #[derive(EnumIter)]
 pub enum RecogAllow {

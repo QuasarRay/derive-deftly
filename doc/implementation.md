@@ -195,20 +195,74 @@ In the above example, it outputs:
         [ 1 0 AOPTIONS2 ]
         ( ) // threaded through from the call site
         [ derive_deftly_engine ( . () ) ]
-        [_name Template _meta [ fmeta(foo) ?tmeta(bar) ] ] // ACCUM
+        [_name Template _meta_used [..] _meta_recog [..]] // ACCUM
     }
 ```
 
 `ACCUM` accumulates information from successive expansions,
-and is actually parsed only in the next step:
+and is actually parsed only in the next step.
 
-It is used for meta attribute checking.
-The template is scanned for
-meta attributes that it recognises,
-and these are added to ACCUM,
-by each successive template.
+#### Used meta attribute syntax
 
-### 5. Reporting unrecognised meta attributes
+`_meta_used` introduces the meta attributes from the driver,
+which were used by this template,
+in the following syntax:
+```text
+  ::VARIANT // entries until next :: are for this variant
+  .field    // entries until next :: or . are for this field
+  ( // each (..) corresponds to one #[deftly()], and matches its tree
+    somemeta(
+      value_used =, // value was used
+      bool_tested ?, // boolean was tested
+      , // skip a node (subtree) not used at all
+      .. // trailing skipped notes are omitted
+    )
+  ) // empty trailing groups are omitted
+```
+
+So for example this
+
+```rust,ignore
+struct S {
+  #[adhoc(foo(bar, baz))]
+  #[adhoc(wombat, zoo = "Berlin")]
+  f: T,
+}
+```
+
+might correspond to this
+
+```text
+_meta [
+    // nothing (don't need field name even)
+    .f () (, zoo?)
+    .f () (wombat?, zoo=)
+    .f (foo=(bar?, baz?)) (wombat?, zoo?)
+]
+```
+
+This representation helps minimise the amount of text
+which needs to be passed through all the macro chains,
+when only a few attributes are used by each template,
+while
+still being unambiguous and detecting desynchronisation.
+
+Instead of a `[..]` list, `_meta_used` can also be `*`,
+meaning that no checking should be done.
+
+### Recognised meta attribute syntax
+
+`_meta_recog` introduces the meta attributes which
+might conceivably be recognised by this template.
+This is determined statically, by scanning the template.
+
+The information is used only if there are unused attributes,
+to assist with producing good error messages.
+
+`_meta_recog` takes a `[ ]` list containing items like `fmeta(foo(bar))`,
+or ``fmeta(foo(bar))?` when recognised only as a boolean.
+
+### 5. Reporting unused meta attributes
 
 At the end of the list of chained templates,
 is (the driver's version of) `derive_deftly_engine!`.
@@ -222,7 +276,7 @@ we return directly to the engine:
         .
         ( )
         [] // end of the chain
-        [_name Template _meta [..] _name Template2 ..] 
+        [_name Template _meta_used [..] _meta_recog [..] _name Template2 ..] 
     }
 ```
 
@@ -236,8 +290,8 @@ appear when the template couldn't be parsed
 (which is used to suppress "unrecognised attribute" errors).
 
 The actually supplied attributes are compared with
-the union of the recognised attributes,
-and errors reported for unrecognised ones.
+the union of the used attributes,
+and errors are reported for unused ones.
 
 ## Implementation approach - ad-hoc macro applications
 
