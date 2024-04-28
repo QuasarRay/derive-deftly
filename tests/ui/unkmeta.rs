@@ -35,6 +35,12 @@ define_derive_deftly! {
 #[deftly(fnest(by_value = "t"))] // ERROR (wrong scope)
 #[deftly(vfnest(by_value = "t"))] // ok (struct counts as V)
 struct Struct {
+
+
+
+
+
+
     #[deftly(tnest(bool_only))] // ERROR (wrong scope)
     #[deftly(vnest(bool_only))] // ERROR (wrong scope)
     #[deftly(fnest(bool_only))] // ok
@@ -55,6 +61,15 @@ struct Struct {
 #[deftly(fnest(by_value = "t"))] // ERROR (wrong scope)
 #[deftly(vfnest(by_value = "t"))] // ERROR (should be per-field or -variant)
 enum Enum {
+
+
+
+
+
+
+
+
+
     #[deftly(tnest(bool_only))] // ERROR (wrong scope)
     #[deftly(vnest(bool_only))] // ok
     #[deftly(fnest(bool_only))] // ERROR (wrong scope)
@@ -62,6 +77,14 @@ enum Enum {
     #[deftly(vnest(by_value = "v"))] // ok
     #[deftly(fnest(by_value = "v"))] // ERROR (wrong scope)
     Variant {
+
+
+
+
+
+
+
+
         #[deftly(tnest(bool_only))] // ERROR (wrong scope)
         #[deftly(vnest(bool_only))] // ERROR (wrong scope)
         #[deftly(fnest(bool_only))] // ok
