@@ -34,8 +34,8 @@ pub struct Context<'c> {
 }
 
 #[derive(Debug, Clone)]
-pub struct PreprocessedVariant<'f> {
-    pub fields: &'f syn::Fields,
+pub struct PreprocessedVariant<'c> {
+    pub fields: &'c syn::Fields,
     pub pmetas: meta::PreprocessedMetas,
     pub pfields: Vec<PreprocessedField>,
 }
