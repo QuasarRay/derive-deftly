@@ -624,7 +624,7 @@ where
                             (av.path_span(), "second occurrence"),
                             self_loc()].error(
  "tried to expand just attribute value, but it was specified multiple times"
-                ));
+                    ));
                 }
                 found = Some(av);
                 Ok(())
