@@ -61,7 +61,7 @@ struct StructField {
 #[deftly(fnest(by_value = "t"))] // ERROR (wrong scope)
 #[deftly(vfnest(by_value = "t"))] // ERROR (should be per-field or -variant)
 enum EnumTop {
-
+    #[deftly(fnest(bool_only))] // ERROR (wrong scope, duplicate)
     Variant {
         field: usize, //
     },

@@ -111,6 +111,12 @@ error: meta attribute provided for enum, but recognised by template only for str
 62 | #[deftly(vfnest(by_value = "t"))] // ERROR (should be per-field or -variant)
    |                 ^^^^^^^^
 
+error: meta attribute provided for variant, but recognised by template only for field (fmeta)
+  --> ui/unkmeta.rs:64:20
+   |
+64 |     #[deftly(fnest(bool_only))] // ERROR (wrong scope, duplicate)
+   |                    ^^^^^^^^^
+
 error: meta attribute provided for variant, but recognised by template only for struct/enum (tmeta)
   --> ui/unkmeta.rs:73:20
    |
