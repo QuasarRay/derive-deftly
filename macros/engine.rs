@@ -204,7 +204,7 @@ impl<'c> Context<'c> {
         let tmetas = preprocess_attrs(&driver.attrs)?;
 
         let pvariants_one = |fields| {
-            let pmetas = tmetas.clone(); // TODO Cow maybe?
+            let pmetas = &tmetas;
             let pfields = preprocess_fields(fields)?;
             let pvariant = PreprocessedVariant {
                 fields,
@@ -215,6 +215,7 @@ impl<'c> Context<'c> {
         };
 
         let union_fields;
+        let variants_pmetas: Vec<_>;
 
         let (variant, pvariants) = match &driver.data {
             syn::Data::Struct(ds) => pvariants_one(&ds.fields)?,
@@ -222,13 +223,15 @@ impl<'c> Context<'c> {
                 union_fields = syn::Fields::Named(du.fields.clone());
                 pvariants_one(&union_fields)?
             }
-            syn::Data::Enum(de) => (
-                None,
-                de.variants
+            syn::Data::Enum(de) => (None, {
+                variants_pmetas = de
+                    .variants
                     .iter()
-                    .map(|variant| {
+                    .map(|variant| preprocess_attrs(&variant.attrs))
+                    .try_collect()?;
+                izip!(&de.variants, &variants_pmetas)
+                    .map(|(variant, pmetas)| {
                         let fields = &variant.fields;
-                        let pmetas = preprocess_attrs(&variant.attrs)?;
                         let pfields = preprocess_fields(&variant.fields)?;
                         Ok(PreprocessedVariant {
                             fields,
@@ -236,8 +239,8 @@ impl<'c> Context<'c> {
                             pfields,
                         })
                     })
-                    .collect::<Result<Vec<_>, syn::Error>>()?,
-            ),
+                    .collect::<Result<Vec<_>, syn::Error>>()?
+            }),
         };
 
         // `variant` is None in enums; otherwise it's Some(())
