@@ -142,6 +142,7 @@ use educe::Educe;
 use itertools::Itertools;
 use paste::paste;
 use regex::Regex;
+use static_assertions::assert_not_impl_any;
 
 pub mod tutils;
 pub use tutils::*;

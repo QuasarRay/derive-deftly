@@ -119,7 +119,7 @@ pub enum SubstAs<O: SubstParseContext> {
 //---------- meta attrs in a driver ----------
 
 /// A part like `(foo,bar(baz),zonk="value")`
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct PreprocessedValueList {
     pub content: Punctuated<PreprocessedTree, token::Comma>,
 }
@@ -131,8 +131,7 @@ pub type PreprocessedMetas = Vec<PreprocessedValueList>;
 ///
 /// Has interior mutability, for tracking whether the value is used.
 /// (So should ideally not be Clone, to help avoid aliasing bugs.)
-/// XXXX - but is is.
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct PreprocessedTree {
     pub path: syn::Path,
     pub value: PreprocessedValue,
@@ -144,7 +143,7 @@ pub struct PreprocessedTree {
 /// Examples in doc comments are for
 /// `PreprocessedMeta.path` of `foo`,
 /// ie the examples are for `#[deftly(foo ..)]`.
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum PreprocessedValue {
     /// `#[deftly(foo)]`
     Unit,
