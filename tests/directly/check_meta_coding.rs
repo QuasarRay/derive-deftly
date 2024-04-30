@@ -67,6 +67,7 @@ fn process_nodes_top<T>(
 //---------- core algorithm ----------
 
 type NodeInScenario<'n> = (&'n syn::Path, Option<RecogAllow>);
+struct ScenarioDebug<'a>(&'a [NodeInScenario<'a>]);
 
 fn roundtrip_scenario(
     top: &syn::DeriveInput,
@@ -91,13 +92,37 @@ fn roundtrip_scenario(
         |ctx| {
             Parser::parse2(
                 |input: ParseStream| ctx.decode_update_metas_used(input),
-                encoded,
+                encoded.clone(),
             )
             .unwrap();
         },
-        |ptree, allow| assert_eq!(ptree.used.get(), allow),
+        |ptree, allow| {
+            assert_eq!(
+                ptree.used.get(), allow,
+     "mismatch; at ptree.path={}; encoded {}; scenario I={:?} O={:?}",
+                &encoded,
+                ptree.path.to_token_stream(),
+                ScenarioDebug(input_scenario),
+                ScenarioDebug(output_scenario),
+            )
+        },
         |_ctx| {},
     );
+}
+
+impl Debug for ScenarioDebug<'_> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "[ ")?;
+        for (p, a) in self.0 {
+            let a = match a {
+                None => '-',
+                Some(RA::BoolOnly) => '?',
+                Some(RA::Value) => '=',
+            };
+            write!(f, "{}{}", p.to_token_stream(), a)?;
+        }
+        write!(f, "]")
+    }
 }
 
 //---------- test matrix generation ----------
