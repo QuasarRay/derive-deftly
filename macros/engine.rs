@@ -34,23 +34,10 @@ enum EngineContext {
     Final {},
 }
 
-/// Input to an invocation of `derive_deftly_engine!`
-///
-/// The trait impl includes knowledge of how to
-/// parse it (via of the [`ParseAdviseable`] supertrait bound)
-/// and process it.
-///
-/// Having this as a trait avoids having to have an enum,
-/// with a lot of repeated code.
-pub trait EngineInput: Debug + 'static {
-    /// Process this input
-    ///
-    /// Commented-out debugging printing of the *input* has been done.
-    ///
-    /// Debugging printing of the *output* is to be done by this  function,
-    /// since for `EngineExpandInput` it is the `dbg` d-d option,
-    /// but for others is commented out raw eprintln.
-    fn process(self: Box<Self>) -> syn::Result<TokenStream>;
+#[derive(Debug)]
+enum EngineInput {
+    Expand(EngineExpandInput),
+    Final(accum::EngineFinalInput),
 }
 
 impl Parse for ChainNext {
@@ -70,7 +57,7 @@ impl ToTokens for ChainNext {
     }
 }
 
-impl ParseAdviseable for Box<dyn EngineInput> {
+impl ParseAdviseable for EngineInput {
     fn parse_adviseable(input: ParseStream) -> AdviseableResult<Self> {
         let driver;
         let _ = braced!(driver in input);
@@ -119,12 +106,12 @@ impl ParseAdviseable for Box<dyn EngineInput> {
                 input,
                 opcontext_template,
             )?
-            .map(|y| Box::new(y) as _),
+            .map(EngineInput::Expand),
             EngineContext::Final {} => {
                 accum::EngineFinalInput::parse_adviseable_remainder(
                     driver, input,
                 )?
-                .map(|y| Box::new(y) as _)
+                .map(EngineInput::Final)
             }
         };
         Ok(r)
@@ -279,8 +266,8 @@ impl<'c> Context<'c> {
     }
 }
 
-impl EngineInput for EngineExpandInput {
-    fn process(self: Box<Self>) -> syn::Result<TokenStream> {
+impl EngineExpandInput {
+    fn process(self) -> syn::Result<TokenStream> {
         dprintln!("derive_deftly_engine! crate = {:?}", &self.template_crate);
 
         let DdOptions {
@@ -399,6 +386,9 @@ pub fn derive_deftly_engine_func_macro(
     input: TokenStream,
 ) -> syn::Result<TokenStream> {
     dprint_block!(&input, "derive_deftly_engine! input");
-    let input: Box<dyn EngineInput> = adviseable_parse2(input)?;
-    input.process()
+    let input: EngineInput = adviseable_parse2(input)?;
+    match input {
+        EngineInput::Expand(i) => i.process(),
+        EngineInput::Final(i) => i.process(),
+    }
 }

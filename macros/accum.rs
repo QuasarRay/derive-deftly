@@ -136,8 +136,8 @@ fn check_meta_recog(
     Ok(())
 }
 
-impl engine::EngineInput for EngineFinalInput {
-    fn process(self: Box<Self>) -> syn::Result<TokenStream> {
+impl EngineFinalInput {
+    pub fn process(self) -> syn::Result<TokenStream> {
         let mut errors = ErrorAccumulator::default();
         let mut out = TokenStream::new();
 
