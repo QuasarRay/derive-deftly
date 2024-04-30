@@ -36,9 +36,7 @@ fn process_nodes_ctx(ctx: &Context, nc: &mut impl NodeCall) {
     process_nodes_pmetas(&ctx.tmetas, nc).void_unwrap();
 
     WithinVariant::for_each(&ctx, |ctx, wv| {
-        if wv.variant.is_some() {
-            process_nodes_pmetas(&wv.pmetas, nc)?;
-        }
+        process_nodes_pmetas(&wv.pmetas, nc)?;
         WithinField::for_each(ctx, |_ctx, wf| {
             process_nodes_pmetas(&wf.pfield.pmetas, nc)
         })
@@ -72,19 +70,24 @@ type NodeInScenario<'n> = (&'n syn::Path, Option<RecogAllow>);
 
 fn roundtrip_scenario(
     top: &syn::DeriveInput,
-    scenario: &[NodeInScenario],
+    input_scenario: &[NodeInScenario],
+    output_scenario: &[NodeInScenario],
 ) {
     let encoded = process_nodes_top(
         &top,
-        scenario,
+        input_scenario,
         |_ctx| {},
-        |ptree, allow| ptree.used.set(allow),
+        |ptree, allow| {
+            if let Some(allow) = allow {
+                ptree.update_used(allow);
+            }
+        },
         |ctx| ctx.encode_metas_used().stream(),
     );
 
     process_nodes_top(
         &top,
-        scenario,
+        output_scenario,
         |ctx| {
             Parser::parse2(
                 |input: ParseStream| ctx.decode_update_metas_used(input),
@@ -103,10 +106,12 @@ fn check_matching_for(topkind: &str, variants: &[&str], fields: &[&str]) {
     let mk_ident = |s: &_| syn::Ident::new(s, Span::call_site());
 
     let mut vs_toks = TokenStream::new();
-    let mut cell_paths: Vec<syn::Path> = vec![];
+    let cell_paths: Vec<syn::Path> = vec![];
+    let cell_paths = RefCell::new(cell_paths);
 
-    let mut add_metas = |forwhat, full| {
+    let add_metas = |forwhat, full| {
         let mut metas = TokenStream::new();
+        let mut cell_paths = cell_paths.borrow_mut();
         for bi in [0, 1] {
             let mut bmetas = Punctuated::<_, Token![,]>::new();
             for mi in [0, 1] {
@@ -132,6 +137,22 @@ fn check_matching_for(topkind: &str, variants: &[&str], fields: &[&str]) {
     // trim test matrix:
     // multiple meta nodes for toplevel only if there's only 1 variant
     let tmetas = add_metas("t", variants.len() <= 1);
+
+    let aliased = if topkind == "struct" {
+        // The toplevel attributes on a struct can be seen by a template in
+        // two ways: via tmeta, or via vmeta.  We test both.
+        // We *dnn't* filter out the synthetic struct toplevel variant,
+        // in process_nodes_top.  Which means, we will go through these
+        // toplevel attributes twice.
+        // (A development version of the meta used handling
+        // had a bug relating to this aliasing of the struct toplevel.)
+        let mut cell_paths = cell_paths.borrow_mut();
+        let aliased = cell_paths.len();
+        cell_paths.extend_from_within(..);
+        aliased
+    } else {
+        0
+    };
 
     for (vindex, &vname) in variants.iter().enumerate() {
         let mut fs_toks = TokenStream::new();
@@ -169,6 +190,8 @@ fn check_matching_for(topkind: &str, variants: &[&str], fields: &[&str]) {
 
     let top: syn::DeriveInput = syn::parse2(top_toks.clone()).unwrap();
 
+    let cell_paths = cell_paths.into_inner();
+
     // trim test matrix:
     // test both values and booleans only if we're short
     let allows = if cell_paths.len() <= 4 {
@@ -190,7 +213,20 @@ fn check_matching_for(topkind: &str, variants: &[&str], fields: &[&str]) {
         })
         .multi_cartesian_product()
     {
-        roundtrip_scenario(&top, &scenario);
+        let mut output_scenario;
+        let output_scenario = if aliased == 0 {
+            &scenario
+        } else {
+            output_scenario = scenario.clone();
+            let (a, b) = output_scenario[0..aliased * 2].split_at_mut(aliased);
+            for (a, b) in izip!(a, b) {
+                let u: Option<RecogAllow> = cmp::max(a.1, b.1);
+                a.1 = u;
+                b.1 = u;
+            }
+            &output_scenario
+        };
+        roundtrip_scenario(&top, &scenario, output_scenario);
     }
 }
 

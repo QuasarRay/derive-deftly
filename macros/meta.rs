@@ -910,7 +910,7 @@ impl RecogAllow {
 }
 
 impl PreprocessedTree {
-    fn update_used(&self, ra: RecogAllow) {
+    pub fn update_used(&self, ra: RecogAllow) {
         self.used.set(cmp::max(self.used.get(), Some(ra)));
     }
 }
