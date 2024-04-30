@@ -386,7 +386,13 @@ impl Label {
 
         let path_span = ptree.path.span();
 
-        let mut nearby = |kind| g(FoundNearbyNode { kind, path_span, ptree });
+        let mut nearby = |kind| {
+            g(FoundNearbyNode {
+                kind,
+                path_span,
+                ptree,
+            })
+        };
 
         let deeper = if lpaths.len() <= 1 {
             None
