@@ -954,6 +954,12 @@ The `ARG`s are in derive-deftly's usual
 
 ### `false`, `true`, `not(CONDITION)`, `any(COND1,COND2,...)`, `all(COND1,COND2,...)` -- boolean logic
 
+`any()` and `all()` short circuit:
+as soon as they have established they answer,
+they don't test the remaining conditions.
+(This affects error handling,
+and meta attribute use checking.)
+
 ### `dbg(...)` -- Debug dump of condition value
 
 `dbg(CONDITION)` evaluates `CONDITION`,
