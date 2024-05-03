@@ -209,8 +209,5 @@ We'll write a mode useful template,
 and have it apply to more types.
 
 
-
 [`stringify!`]: (https://doc.rust-lang.org/std/macro.stringify.html)
-
-
 

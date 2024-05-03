@@ -57,7 +57,7 @@ dependencies = [
 name = "book_tests"
 version = "0.1.0"
 dependencies = [
- "derive-deftly 0.10.5",
+ "derive-deftly",
 ]
 
 [[package]]
