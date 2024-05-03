@@ -1307,11 +1307,11 @@ impl PreprocessedTree {
 
 //---------- support for checking ----------
 
-// TODO META review the names of these arguments; maybe add docs comment?
+// TODO META make this a method on UsedChecker
 fn unrecognised_error(
-    recog_real: &Recognised,
-    supplied: SuppliedScope,
-    supplied_want_usage: Usage,
+    recog: &Recognised,
+    supplied_scope: SuppliedScope,
+    supplied_usage: Usage,
     used_usage: Option<Usage>,
     supplied_span: Span,
     lpaths: &[&syn::Path],
@@ -1322,10 +1322,10 @@ fn unrecognised_error(
     // Maybe this would have been recognised in other circumstances.
     // If so, report that.
     try_case((|| {
-        let recog_allow = supplied
+        let recog_allow = supplied_scope
             .recog_search()
             .map(|scope| {
-                recog_real
+                recog
                     .map
                     .get(&BorrowedDesig { scope, lpaths })
                     .copied()
@@ -1333,7 +1333,7 @@ fn unrecognised_error(
             .max()
             .unwrap_or_default()?;
 
-        if recog_allow < supplied_want_usage {
+        if recog_allow < supplied_usage {
             // We've supplied more than would ever be recognised
             return None;
         }
@@ -1357,7 +1357,7 @@ fn unrecognised_error(
     // Maybe it's just that a value was supplied by mistake
     try_case((|| {
         //
-        match (supplied_want_usage, used_usage) {
+        match (supplied_usage, used_usage) {
             (U::Value, Some(U::BoolOnly)) => some_err(&format_args!(
                 "meta attribute value provided, but is used only as a boolean",
             )),
@@ -1373,7 +1373,7 @@ fn unrecognised_error(
     try_case((|| {
         let y_scopes = Scope::iter()
             .filter(|&scope| {
-                recog_real
+                recog
                     .map
                     .contains_key(&BorrowedDesig { scope, lpaths })
             })
@@ -1389,7 +1389,7 @@ fn unrecognised_error(
         let y_scopes = y_scopes.iter().map(|s| s.as_ref()).join("/");
         some_err(&format_args!(
  "meta attribute provided for {}, but recognised by template only for {} ({})",
-            supplied,
+            supplied_scope,
             y_ss,
             y_scopes,
         ))
@@ -1398,12 +1398,12 @@ fn unrecognised_error(
     // Look to see if user supplied `#[deftly(foo(bar))]`
     // when the template wanted `#[deftly(foo = "bar")]`.
     try_case((|| {
-        let (upper, recog) = supplied.recog_search().find_map(|scope| {
+        let (upper, recog) = supplied_scope.recog_search().find_map(|scope| {
             let upper = BorrowedDesig {
                 scope,
                 lpaths: lpaths.split_last()?.1,
             };
-            let recog = recog_real.map.get(&upper)?;
+            let recog = recog.map.get(&upper)?;
             Some((upper, recog))
         })?;
         if *recog != U::Value {
@@ -1421,7 +1421,7 @@ fn unrecognised_error(
     // Look to see if the specified attribute is a prefix of
     // a recognised one
     try_case((|| {
-        recog_real.map.keys().find_map(|desig| {
+        recog.map.keys().find_map(|desig| {
             // deliberately ignore scope
             if !itertools::equal(
                 lpaths.iter().copied(),
