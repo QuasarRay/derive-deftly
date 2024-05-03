@@ -178,6 +178,7 @@ pub fn define_derive_deftly_func_macro(
         (template, parsed)
     };
 
+    let _: Result<Template<_>, ()> = parsed_template;
     let template = escape_dollars(template);
 
     let templ_mac_name =
@@ -208,20 +209,6 @@ To use it, write: `#[derive(Deftly)] #[derive_deftly({})]`."#,
         }
     }
 
-    let recog_metas = match &parsed_template {
-        Ok(parsed) => {
-            use meta::FindRecogMetas as _;
-            let mut recog = meta::Recognised::default();
-            parsed.find_recog_metas(&mut recog);
-            quote! { _meta [ #recog ] }
-        }
-        Err(()) => {
-            // This avoids potential complains about meta attrs
-            // that would be recognised if the templates were OK.
-            quote! { error [] }
-        }
-    };
-
     // the macro must recent a dollar as its first argument because
     // it is hard to find a dollar otherwise!
     output.extend(quote! {
@@ -232,29 +219,16 @@ To use it, write: `#[derive(Deftly)] #[derive_deftly({})]`."#,
             {
                 { $($driver:tt)* }
                 [ $($aoptions:tt)* ]
-                { $($future:tt)* }
+                ( $($future:tt)* )
                 $($tpassthrough:tt)*
             } => {
                 #engine_macro! {
                     { $( $driver )* }
                     [ $($aoptions)* ]
-                    { $($tpassthrough)* }
+                    ()
                     { # template }
-                    { $crate; [#options] #templ_name; }
-                }
-            };
-            {
-                [ $chain0:path, $($chains:path,)* ]
-                [ $($accum:tt)* ]
-                $($passthrough:tt)*
-            } => {
-                $chain0 ! {
-                    [ $($chains,)* ]
-                    [ $($accum)*
-                      _name [ #templ_name ]
-                      #recog_metas
-                    ]
-                    $($passthrough)*
+                    ( $crate; [#options] #templ_name; )
+                    $($tpassthrough)*
                 }
             };
             { $($wrong:tt)* } => {

@@ -3,19 +3,19 @@ use derive_deftly::{define_derive_deftly, Deftly};
 define_derive_deftly! {
     UseSomeAttrs =
 
-    ${define BY_VALUE {
-        ${tmeta(tnest(by_value))}
-        ${vmeta(vnest(by_value))}
-        ${fmeta(fnest(by_value))}
-        ${fmeta(vfnest(by_value))}
-        ${vmeta(vfnest(by_value))}
-    }}
+    ${for fields { ${ignore {
+        ${if tmeta(tnest(by_value)) { ${tmeta(tnest(by_value))} }}
+        ${if vmeta(vnest(by_value)) { ${vmeta(vnest(by_value))} }}
+        ${if fmeta(fnest(by_value)) { ${fmeta(fnest(by_value))} }}
+        ${if fmeta(vfnest(by_value)) { ${fmeta(vfnest(by_value))} }}
+        ${if vmeta(vfnest(by_value)) { ${vmeta(vfnest(by_value))} }}
 
-    ${defcond BOOL_ONLY all(
-        tmeta(tnest(bool_only)),
-        vmeta(vnest(bool_only)),
-        fmeta(fnest(bool_only)),
-    )}
+
+
+        ${if tmeta(tnest(bool_only)) {}},
+        ${if vmeta(vnest(bool_only)) {}},
+        ${if fmeta(fnest(bool_only)) {}},
+    }}}}
 }
 
 #[derive(Deftly)]
@@ -34,7 +34,13 @@ define_derive_deftly! {
 #[deftly(vnest(by_value = "t"))] // ok
 #[deftly(fnest(by_value = "t"))] // ERROR (wrong scope)
 #[deftly(vfnest(by_value = "t"))] // ok (struct counts as V)
-struct Struct {
+struct StructTop {
+    field: usize, //
+}
+
+#[derive(Deftly)]
+#[derive_deftly(UseSomeAttrs)]
+struct StructField {
     #[deftly(tnest(bool_only))] // ERROR (wrong scope)
     #[deftly(vnest(bool_only))] // ERROR (wrong scope)
     #[deftly(fnest(bool_only))] // ok
@@ -54,13 +60,30 @@ struct Struct {
 #[deftly(vnest(by_value = "t"))] // ERROR (wrong scope)
 #[deftly(fnest(by_value = "t"))] // ERROR (wrong scope)
 #[deftly(vfnest(by_value = "t"))] // ERROR (should be per-field or -variant)
-enum Enum {
+enum EnumTop {
+    #[deftly(fnest(bool_only))] // ERROR (wrong scope, duplicate)
+    Variant {
+        field: usize, //
+    },
+}
+
+#[derive(Deftly)]
+#[derive_deftly(UseSomeAttrs)]
+enum EnumVariant {
     #[deftly(tnest(bool_only))] // ERROR (wrong scope)
     #[deftly(vnest(bool_only))] // ok
     #[deftly(fnest(bool_only))] // ERROR (wrong scope)
     #[deftly(tnest(by_value = "v"))] // ERROR (wrong scope)
     #[deftly(vnest(by_value = "v"))] // ok
     #[deftly(fnest(by_value = "v"))] // ERROR (wrong scope)
+    Variant {
+        field: usize, //
+    },
+}
+
+#[derive(Deftly)]
+#[derive_deftly(UseSomeAttrs)]
+enum EnumField {
     Variant {
         #[deftly(tnest(bool_only))] // ERROR (wrong scope)
         #[deftly(vnest(bool_only))] // ERROR (wrong scope)

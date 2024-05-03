@@ -13,7 +13,4 @@ fn multi_hi_pfx() {}
 fn just_suffix_sfx() {}
 fn mixed_no() {}
 fn mixed_yes() {}
-#[deftly("forbidden")]
-#[deftly(value = wrong)]
-struct MetasNotCheckedIfNoTemplatesExpanded;
 fn main() {}

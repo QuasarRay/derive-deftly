@@ -5,7 +5,9 @@ use adviseable::*;
 
 /// Input to `derive_deftly_engine!`, principal form (template expansion)
 ///
-/// See `implementation.md`.
+/// See `implementation.md`,
+/// especially
+/// "Overall input syntax for `derive_deftly_engine!` and templates".
 #[derive(Debug)]
 struct EngineExpandInput {
     driver: syn::DeriveInput,
@@ -13,42 +15,62 @@ struct EngineExpandInput {
     template: Template<TokenAccumulator>,
     template_crate: syn::Path,
     template_name: Option<syn::Path>,
+    chain_next: Option<ChainNext>,
+    chain_after: TokenStream,
+    accum: TokenStream,
 }
 
-/// Input to an invocation of `derive_deftly_engine!`
-///
-/// The trait impl includes knowledge of how to
-/// parse it (via of the [`ParseAdviseable`] supertrait bound)
-/// and process it.
-///
-/// Having this as a trait avoids having to have an enum,
-/// with a lot of repeated code.
-pub trait EngineInput: ParseAdviseable + Debug + 'static {
-    /// Process this input
-    ///
-    /// Commented-out debugging printing of the *input* has been done.
-    ///
-    /// Debugging printing of the *output* is to be done by this  function,
-    /// since for `EngineExpandInput` it is the `dbg` d-d option,
-    /// but for others is commented out raw eprintln.
-    fn process(self: Box<Self>) -> syn::Result<TokenStream>;
+#[derive(Debug)]
+pub struct ChainNext {
+    pub call: TokenStream,
+    pub after_driver: TokenStream,
 }
 
-impl ParseAdviseable for EngineExpandInput {
+enum EngineContext {
+    Expand {
+        opcontext_template: OpContext,
+        options: DdOptions,
+    },
+    Final {},
+}
+
+#[derive(Debug)]
+enum EngineInput {
+    Expand(EngineExpandInput),
+    Final(accum::EngineFinalInput),
+}
+
+impl Parse for ChainNext {
+    fn parse(input: ParseStream) -> syn::Result<Self> {
+        let call = input.parse::<syn::Path>()?.to_token_stream();
+        let after_driver;
+        let _ = parenthesized!(after_driver in input);
+        let after_driver = after_driver.parse()?;
+        Ok(ChainNext { call, after_driver })
+    }
+}
+
+impl ToTokens for ChainNext {
+    fn to_tokens(&self, out: &mut TokenStream) {
+        let ChainNext { call, after_driver } = self;
+        quote!( #call (#after_driver) ).to_tokens(out);
+    }
+}
+
+impl ParseAdviseable for EngineInput {
     fn parse_adviseable(input: ParseStream) -> AdviseableResult<Self> {
-        let mut options = DdOptions::default();
-
         let driver;
         let _ = braced!(driver in input);
         let driver = driver.parse()?;
 
-        let opcontext_template;
+        let engine_context;
         if input.peek(syn::token::Bracket) {
             // AOPTIONS appears iff we're being invoked for a precanned
             // template, rather than an adhoc one; it's from the
             // `#[derive()` application.
-            opcontext_template = OpContext::TemplateDefinition;
             let tokens;
+            let mut options = DdOptions::default();
+
             let _ = bracketed!(tokens in input);
             parse_unadvised! {
                 tokens => || {
@@ -56,14 +78,53 @@ impl ParseAdviseable for EngineExpandInput {
                     options .parse_update(&tokens, oc)
                 }
             }
+            engine_context = EngineContext::Expand {
+                opcontext_template: OpContext::TemplateDefinition,
+                options,
+            };
+        } else if input.peek(Token![.]) {
+            let _indicator: Token![.] = input.parse()?;
+            engine_context = EngineContext::Final {};
         } else {
-            opcontext_template = OpContext::TemplateAdhoc;
+            engine_context = EngineContext::Expand {
+                opcontext_template: OpContext::TemplateAdhoc,
+                options: DdOptions::default(),
+            };
         }
 
-        let through_template;
-        let _ = braced!(through_template in input);
-        let _: TokenStream = through_template.parse()?;
+        let future_ignored;
+        let _ = parenthesized!(future_ignored in input);
+        let _: TokenStream = future_ignored.parse()?;
 
+        let r = match engine_context {
+            EngineContext::Expand {
+                opcontext_template,
+                options,
+            } => EngineExpandInput::parse_adviseable_remainder(
+                driver,
+                options,
+                input,
+                opcontext_template,
+            )?
+            .map(EngineInput::Expand),
+            EngineContext::Final {} => {
+                accum::EngineFinalInput::parse_adviseable_remainder(
+                    driver, input,
+                )?
+                .map(EngineInput::Final)
+            }
+        };
+        Ok(r)
+    }
+}
+
+impl EngineExpandInput {
+    fn parse_adviseable_remainder(
+        driver: syn::DeriveInput,
+        mut options: DdOptions,
+        input: ParseStream,
+        opcontext_template: OpContext,
+    ) -> AdviseableResult<Self> {
         let template;
         let _ = braced!(template in input);
 
@@ -71,7 +132,7 @@ impl ParseAdviseable for EngineExpandInput {
         let template_name;
         {
             let through_driver;
-            let _ = braced!(through_driver in input);
+            let _ = parenthesized!(through_driver in input);
             let input = through_driver;
 
             template_crate = input.parse()?;
@@ -95,6 +156,23 @@ impl ParseAdviseable for EngineExpandInput {
             let _: TokenStream = input.parse()?;
         }
 
+        let (chain_next, chain_after);
+        {
+            let chain;
+            let _ = bracketed!(chain in input);
+            let input = chain;
+            chain_next = if !input.is_empty() {
+                Some(input.parse()?)
+            } else {
+                None
+            };
+            chain_after = input.parse()?;
+        }
+
+        let accum;
+        let _ = bracketed!(accum in input);
+        let accum = accum.parse()?;
+
         let _: TokenStream = input.parse()?;
 
         let template = parse_unadvised! { template };
@@ -105,6 +183,9 @@ impl ParseAdviseable for EngineExpandInput {
             template,
             template_crate,
             template_name,
+            chain_next,
+            chain_after,
+            accum,
         }))
     }
 }
@@ -123,7 +204,7 @@ impl<'c> Context<'c> {
         let tmetas = preprocess_attrs(&driver.attrs)?;
 
         let pvariants_one = |fields| {
-            let pmetas = tmetas.clone(); // TODO Cow maybe?
+            let pmetas = &tmetas;
             let pfields = preprocess_fields(fields)?;
             let pvariant = PreprocessedVariant {
                 fields,
@@ -134,6 +215,7 @@ impl<'c> Context<'c> {
         };
 
         let union_fields;
+        let variants_pmetas: Vec<_>;
 
         let (variant, pvariants) = match &driver.data {
             syn::Data::Struct(ds) => pvariants_one(&ds.fields)?,
@@ -141,13 +223,15 @@ impl<'c> Context<'c> {
                 union_fields = syn::Fields::Named(du.fields.clone());
                 pvariants_one(&union_fields)?
             }
-            syn::Data::Enum(de) => (
-                None,
-                de.variants
+            syn::Data::Enum(de) => (None, {
+                variants_pmetas = de
+                    .variants
                     .iter()
-                    .map(|variant| {
+                    .map(|variant| preprocess_attrs(&variant.attrs))
+                    .try_collect()?;
+                izip!(&de.variants, &variants_pmetas)
+                    .map(|(variant, pmetas)| {
                         let fields = &variant.fields;
-                        let pmetas = preprocess_attrs(&variant.attrs)?;
                         let pfields = preprocess_fields(&variant.fields)?;
                         Ok(PreprocessedVariant {
                             fields,
@@ -155,8 +239,8 @@ impl<'c> Context<'c> {
                             pfields,
                         })
                     })
-                    .collect::<Result<Vec<_>, syn::Error>>()?,
-            ),
+                    .collect::<Result<Vec<_>, syn::Error>>()?
+            }),
         };
 
         // `variant` is None in enums; otherwise it's Some(())
@@ -185,8 +269,8 @@ impl<'c> Context<'c> {
     }
 }
 
-impl EngineInput for EngineExpandInput {
-    fn process(self: Box<Self>) -> syn::Result<TokenStream> {
+impl EngineExpandInput {
+    fn process(self) -> syn::Result<TokenStream> {
         dprintln!("derive_deftly_engine! crate = {:?}", &self.template_crate);
 
         let DdOptions {
@@ -218,7 +302,7 @@ impl EngineInput for EngineExpandInput {
             }
         }
 
-        Context::call(
+        let outcome = Context::call(
             &self.driver,
             &self.template_crate,
             self.template_name.as_ref(),
@@ -250,29 +334,56 @@ impl EngineInput for EngineExpandInput {
                     );
                 }
 
-                Ok(output)
+                let metas_used = ctx.encode_metas_used();
+
+                Ok((output, metas_used))
             },
-        )
-    }
-}
+        );
 
-impl ParseAdviseable for Box<dyn EngineInput> {
-    fn parse_adviseable(input: ParseStream) -> AdviseableResult<Self> {
-        fn parse_as<T: EngineInput>(
-            input: ParseStream,
-        ) -> AdviseableResult<Box<dyn EngineInput>> {
-            let parsed = T::parse_adviseable(input)?;
-            Ok(parsed.map(|parsed| Box::new(parsed) as _))
-        }
+        let (expanded, metas_used) = match outcome {
+            Ok((expanded, metas_used)) => (Ok(expanded), Ok(metas_used)),
+            Err(e) => (Err(e), Err(())),
+        };
 
-        let la = input.lookahead1();
-        if la.peek(token::Brace) {
-            parse_as::<EngineExpandInput>(input)
-        } else if la.peek(token::Bracket) {
-            parse_as::<accum::EngineAccumInput>(input)
+        let chain_call;
+
+        if let Some(ChainNext { call, after_driver }) = &self.chain_next {
+            let driver = &self.driver;
+            let chain_after = &self.chain_after;
+
+            let mut accum = self.accum.to_token_stream();
+            if let Some(name) = &self.template_name {
+                accum.extend(quote!( _name [#name] ));
+            }
+            match &metas_used {
+                Ok(metas_used) => {
+                    accum.extend(quote!( _meta_used #metas_used ));
+
+                    use meta::FindRecogMetas as _;
+                    let mut meta_recog = meta::Recognised::default();
+                    self.template.find_recog_metas(&mut meta_recog);
+                    accum.extend(quote!( _meta_recog [#meta_recog] ));
+                }
+                Err(()) => {
+                    accum.extend(quote!( _error [] ));
+                }
+            }
+
+            chain_call = quote! {
+                #call! {
+                    { #driver }
+                    #after_driver
+                    [ #chain_after ]
+                    [ #accum ]
+                }
+            }
         } else {
-            Err(la.error())
-        }
+            chain_call = TokenStream::new();
+        };
+
+        let mut out = expanded.unwrap_or_else(|e| e.into_compile_error());
+        out.extend(chain_call);
+        Ok(out)
     }
 }
 
@@ -287,6 +398,9 @@ pub fn derive_deftly_engine_func_macro(
     input: TokenStream,
 ) -> syn::Result<TokenStream> {
     dprint_block!(&input, "derive_deftly_engine! input");
-    let input: Box<dyn EngineInput> = adviseable_parse2(input)?;
-    input.process()
+    let input: EngineInput = adviseable_parse2(input)?;
+    match input {
+        EngineInput::Expand(i) => i.process(),
+        EngineInput::Final(i) => i.process(),
+    }
 }

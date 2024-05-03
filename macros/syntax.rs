@@ -1184,11 +1184,8 @@ pub fn preprocess_attrs(
             Some(attr)
         })
         .map(|attr| {
-            let attr =
-                attr.call_in_parens(meta::PreprocessedValueList::parse_inner)?;
-            Ok(attr.content)
+            attr.call_in_parens(meta::PreprocessedValueList::parse_inner)
         })
-        .flatten_ok()
         .collect()
 }
 

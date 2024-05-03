@@ -8,7 +8,7 @@ use super::framework::*;
 /// What would `${fname}` expand to?  As type from [`syn`].
 ///
 /// Implements [`quote::IdentFragment`] and [`ToTokens`].
-#[derive(Debug)]
+#[derive(Debug, Eq, PartialEq)]
 pub enum Fname<'r> {
     Name(&'r syn::Ident),
     Index(syn::Index),
@@ -749,6 +749,7 @@ impl<O: ExpansionOutput> RepeatedTemplate<O> {
     }
 }
 
+// TODO META move this to repeat.rs
 impl<'w> WithinField<'w> {
     /// What would `${fname}` expand to?
     pub fn fname(&self, tspan: Span) -> Fname {

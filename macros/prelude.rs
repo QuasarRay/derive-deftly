@@ -3,9 +3,9 @@
 //! Should be included with `use super::prelude::*`, not `crate::`,
 //! so that it works with `tests/directly.rs` too.
 
-pub use std::borrow::Cow;
-pub use std::cell::RefCell;
+pub use std::cell::Cell;
 pub use std::cmp::{self, Ordering};
+pub use std::collections::HashSet;
 pub use std::convert::{TryFrom, TryInto};
 pub use std::default::Default;
 pub use std::fmt::{self, Debug, Display, Write as _};
@@ -13,6 +13,7 @@ pub use std::iter;
 pub use std::marker::PhantomData;
 pub use std::mem;
 pub use std::ops::Deref;
+pub use std::ptr;
 pub use std::str::FromStr;
 pub use std::thread::panicking;
 
@@ -37,15 +38,18 @@ pub use super::define::escape_dollars;
 pub use super::framework::TokenAccumulator;
 pub use super::paste::TokenPastesAsIdent;
 pub use super::utils::ErrorAccumulator;
-pub use super::utils::ToTokensPunctComposable;
-pub use super::utils::{braced_group, delimit_token_group};
+pub use super::utils::{braced_group, delimit_token_group, dummy_path};
 pub use super::utils::{engine_macro_name, spans_join};
 pub use super::utils::{ErrorLoc, IdentAny, MakeError};
+pub use super::utils::{ToTokensPunctComposable, TokenOutputTrimmer};
 pub(super) use super::{accum, adviseable, check};
 pub(super) use super::{dbg_allkw, engine, framework, meta};
 
 #[allow(unused_imports)] // used in tests
 pub use super::utils::{Concatenated, Discard};
+
+#[allow(non_camel_case_types)] // convenience alias for enum
+pub use meta::CheckUsed as mCU;
 
 // this is used by the dprintln! macro, which can't just use crate
 // but which doesn't use the import if it's not enabled

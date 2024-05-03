@@ -33,14 +33,14 @@ pub struct Context<'c> {
     pub nesting_parent: Option<(&'c Context<'c>, &'c DefinitionName)>,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct PreprocessedVariant<'c> {
     pub fields: &'c syn::Fields,
-    pub pmetas: meta::PreprocessedMetas,
+    pub pmetas: &'c meta::PreprocessedMetas,
     pub pfields: Vec<PreprocessedField>,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct PreprocessedField {
     pub pmetas: meta::PreprocessedMetas,
 }

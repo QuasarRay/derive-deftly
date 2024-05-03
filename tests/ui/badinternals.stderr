@@ -30,36 +30,36 @@ error: bad input to derive_deftly_engine inner template expansion proc macro; mi
    |
    = note: this error originates in the macro `derive_deftly::derive_deftly_engine` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error: expected curly braces or square brackets
+error: expected curly braces
   --> ui/badinternals.rs:19:40
    |
 19 | derive_deftly::derive_deftly_engine! { GARBAGE -> INNARDS }
    |                                        ^^^^^^^
 
 error: bad input to derive_deftly_engine inner template expansion proc macro; might be due to incompatible derive-deftly versions(s)
-  --> ui/badinternals.rs:40:1
+  --> ui/badinternals.rs:44:1
    |
-40 | / derive_deftly::derive_deftly_engine! {
-41 | |     { pub struct StructName {} }
-42 | |     [200 0]
-43 | |     { }
-44 | |     { OUGHT NOT TO BE EXPANDED; }
-45 | |     { crate; [] Template; }
-46 | | }
+44 | / derive_deftly::derive_deftly_engine! {
+45 | |     { pub struct StructName {} }
+46 | |     [200 0]
+47 | |     ( )
+...  |
+51 | |     RANDOM STUFF
+52 | | }
    | |_^
    |
    = note: this error originates in the macro `derive_deftly::derive_deftly_engine` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: Incompatible major version for AOPTIONS (driver 200, template/engine 1)
-  --> ui/badinternals.rs:40:1
+  --> ui/badinternals.rs:44:1
    |
-40 | / derive_deftly::derive_deftly_engine! {
-41 | |     { pub struct StructName {} }
-42 | |     [200 0]
-43 | |     { }
-44 | |     { OUGHT NOT TO BE EXPANDED; }
-45 | |     { crate; [] Template; }
-46 | | }
+44 | / derive_deftly::derive_deftly_engine! {
+45 | |     { pub struct StructName {} }
+46 | |     [200 0]
+47 | |     ( )
+...  |
+51 | |     RANDOM STUFF
+52 | | }
    | |_^
    |
    = note: this error originates in the macro `derive_deftly::derive_deftly_engine` (in Nightly builds, run with -Z macro-backtrace for more info)

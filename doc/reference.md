@@ -431,6 +431,8 @@ and reject inappropriate combinations of attributes.
 
 These checks are disabled by `#[derive_deftly_adhoc]`.
 
+<!-- TODO META document the new behaviour -->
+
 #### Examples
 
  * `${tmeta(simple)}`: `String`

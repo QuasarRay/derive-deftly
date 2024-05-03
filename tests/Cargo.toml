@@ -30,6 +30,7 @@ educe = ">=0.4.6, <0.6"
 glob = "0.3"
 paste = "1"
 regex = "1"
+static_assertions = "1"
 toml = ">=0.5.0, <0.9"
 
 indexmap = ">=1.8, <3"
@@ -39,7 +40,7 @@ proc-macro2 = "1.0.53"
 quote = "1"
 sha3 = "0.10"
 strum = { version = ">=0.24, <0.27", features = ["derive"] }
-syn = { version = "2.0.1", features = ["extra-traits", "full"] }
+syn = { version = "2.0.53", features = ["extra-traits", "full"] }
 void = "1"
 
 heck = ">=0.4, <0.6"

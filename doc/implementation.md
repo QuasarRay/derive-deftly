@@ -30,6 +30,63 @@ to what is conceptually the first macro's output.
 
 ## Implementation approach - reusable template macros
 
+### Expansion chaining
+
+When a `#[derive(Deftly)]` call site invokes multiple templates,
+we don't emit separate macro calls for each template.
+Instead, we generate a macro call for the first template,
+and pass it the names of subsequent templates.
+Each template expansion is responsible for invoking the next.
+
+This allows output from the expansion to be
+threaded through the chain,
+collecting additional information as we go,
+and eventually analysed after *all* the expansions are done.
+(This is done by putting`derive_deftly_engine`
+as the final entry
+in the list of macros to chain to.)
+
+Currently, this data collection is used for
+detecting unused meta attributes.
+
+This does mean that specifying a completely unknown template
+(for example, one that's misspelled or not in scope)
+will prevent error reports from subsequent templates,
+which is a shame.
+
+### Overall input syntax for `derive_deftly_engine!` and templates
+
+Because of expansion chaining, calls to the engine,
+and to templates, overlap.
+
+```rust,ignore
+    macro! {
+        { DRIVER.. }
+        [ 1 0 AOPTIONS.. ] // not present for d_d_dengine expanding ad-hoc
+                           // replaced with just "." at end of chain
+    // always present, but always immediately ignored:
+        ( .... )
+    // these parts passed to d_d_engine only, and not in last call:
+        { TEMPLATE.. }
+        ( CRATE; [TOPTIONS..] 
+          TEMPLATE_NAME /* omitted if not available */;
+          .... )
+    // always present:
+        // after here is simply passed through by templates:
+        [
+          // usually one or more of these; none at end, or ad-hoc
+          CHAIN_TO ( CHAIN_PASS_AFTER_DRIVER .... )
+          ..
+        ]
+        [ACCUM..]
+        ....
+    }
+```
+
+(We use the notation `....` for room we are leaving
+for future expansion;
+these are currently empty.)
+
 ### 1. `define_derive_deftly!` macro for defining a reuseable template
 
 Implemented in `define.rs::define_derive_deftly_func_macro`.
@@ -46,25 +103,16 @@ Expands to
     macro_rules! derive_deftly_template_Template { {
         { $($driver:tt)* }
         [ $($aoptions:tt)* ]
-        { $($future:tt)* }
+        ( $($future:tt)* )
         $($tpassthrough:tt)*
     } => {
         derive_deftly_engine! {
             { $($driver)* }
             [ $(aoptions)* ]
-            { $($tpassthrough)* }
+            ( )
             { TEMPLATE.. }
-            { $crate; [TOPTIONS..] Template; }
-        }
-    }; {
-        [ $chain0:path, $($chains:path,)* ]
-        [ $($accum:tt)* ]
-        $($passthrough:tt)*
-    } => {
-        $chain0 ! {
-            [ $($chains,)* ]
-            [ $($accum)* _name [Template] _meta [ fmeta(foo) ?tmeta(bar) ] ]
-            $($passthrough)*
+            ( $crate; [TOPTIONS..] Template; )
+            $($tpassthrough)*
         }
     } }
 ```
@@ -80,13 +128,8 @@ feature, `$$` does this.)
 (as it does with all unrecognised variables), and
 the template expansion engine treats `$orig_dollar` as just a single `$`.
 
-(The extra `{ }` parts after the driver and template
+(The extra `( )` parts after the driver and template
 include space for future expansion.)
-
-The second arm of the macro is used for meta attribute checking.
-The template is parsed and distilled into the list of
-meta attributes that it recognises,
-and baked into the macro definition.
 
 ### 2. `#[derive_deftly(Template)]`, implemented in `#[derive(Deftly)]`
 
@@ -106,14 +149,12 @@ Generates:
     derive_deftly_template_Template! {
         { #[derive_deftly(..)] struct StructName { .. } }
         [ 1 0 AOPTIONS ]
-        { }
-    }
-    derive_deftly_template_Template2! { .. }
-    derive_deftly_template_Template! { // first template in derive()
-        [ derive_deftly_template_Template2, derive_deftly_expand, ]
-        [ ]
-        /* no AOPTIONS; we don't try to accumulate them */
-        { #[derive_adhoc(Template, Template2)] struct StructName { .. } }
+        ( )
+        [
+          derive_deftly_template_Template2 ( [1 0 AOPTIONS2] () )
+          derive_deftly_engine ( . () )
+        ]
+        [] // (nothing accumulated yet)
     }
 ```
 
@@ -127,48 +168,130 @@ resulting in a call to `derive_deftly_engine`:
     derive_deftly_engine! {
         { #[derive_deftly(..)] pub struct StructName { .. } }
         [ 1 0 AOPTIONS ]
-        { }
+        ( )
         { TEMPLATE.. }
-        { $crate; [TOPTIONS..] Template; }
+        ( $crate; [TOPTIONS..] Template; )
+        [
+          derive_deftly_template_Template2 ( [1 0 AOPTIONS2] () )
+          derive_deftly_engine ( . () )
+        ]
+        [] // ACCUM
     }
 ```
 
 Implemented in `engine.rs::derive_deftly_engine_func_macro`,
 this performs the actual template expansion.
 
-### Accumulation expansion
+### 4. Chaining to the next macro
 
-The second call matches the 2nd arm in the template macro.
-Each template's arm takes the next macro from `$chain0`,
-adds its recognised meta attributes to the list in `$accum`,
-and then chains to `$chain0!`
-passing the subsequent template(s) in `$chains`.
-Eventually, the result is passed to the engine
-which also receives, in the `$passthrough`,
-the `AOPTIONS` and the driver:
+`derive_deftly_engine!`
+then invokes the next template.
+
+In the above example, it outputs:
 
 ```rust,ignore
-derive_deftly_engine! {
-	[ ]
-	[ _name [Template] _meta [ fmeta(foo) ?tmeta(bar) ] ]
-    { #[derive_adhoc(Template, Template2)] struct StructName { .. } }
-}
-
+    derive_deftly_template_Template2! {
+        { #[derive_deftly(..)] pub struct StructName { .. } }
+        [ 1 0 AOPTIONS2 ]
+        ( ) // threaded through from the call site
+        [ derive_deftly_engine ( . () ) ]
+        [_name Template _meta_used [..] _meta_recog [..]] // ACCUM
+    }
 ```
 
-The accumulated parts are all of the form: `KEYWORD [DATA]`;
-`_KEYWORD [DATA]` for a part which can be safely ignored,
+`ACCUM` accumulates information from successive expansions,
+and is actually parsed only in the next step.
+
+#### Used meta attribute syntax
+
+`_meta_used` introduces the meta attributes from the driver,
+which were used by this template,
+in the following syntax:
+```text
+  ::VARIANT // entries until next :: are for this variant
+  .field    // entries until next :: or . are for this field
+  ( // each (..) corresponds to one #[deftly()], and matches its tree
+    somemeta(
+      value_used =, // value was used
+      bool_tested ?, // boolean was tested
+      , // skip a node (subtree) not used at all
+      .. // trailing skipped notes are omitted
+    )
+  ) // empty trailing groups are omitted
+```
+
+So for example this
+
+```rust,ignore
+struct S {
+  #[adhoc(foo(bar, baz))]
+  #[adhoc(wombat, zoo = "Berlin")]
+  f: T,
+}
+```
+
+might correspond to this
+
+```text
+_meta [
+    // nothing (don't need field name even)
+    .f () (, zoo?)
+    .f () (wombat?, zoo=)
+    .f (foo=(bar?, baz?)) (wombat?, zoo?)
+]
+```
+
+This representation helps minimise the amount of text
+which needs to be passed through all the macro chains,
+when only a few attributes are used by each template,
+while
+still being unambiguous and detecting desynchronisation.
+
+Instead of a `[..]` list, `_meta_used` can also be `*`,
+meaning that no checking should be done.
+
+### Recognised meta attribute syntax
+
+`_meta_recog` introduces the meta attributes which
+might conceivably be recognised by this template.
+This is determined statically, by scanning the template.
+
+The information is used only if there are unused attributes,
+to assist with producing good error messages.
+
+`_meta_recog` takes a `[ ]` list containing items like `fmeta(foo(bar))`,
+or ``fmeta(foo(bar))?` when recognised only as a boolean.
+
+### 5. Reporting unused meta attributes
+
+At the end of the list of chained templates,
+is (the driver's version of) `derive_deftly_engine!`.
+So after all the templates have been processed,
+instead of invoking the next template,
+we return directly to the engine:
+
+```rust,ignore
+    derive_deftly_engine! {
+        { #[derive_deftly(..)] pub struct StructName { .. } }
+        .
+        ( )
+        [] // end of the chain
+        [_name Template _meta_used [..] _meta_recog [..] _name Template2 ..] 
+    }
+```
+
+The accumulated parts are all of the form: `KEYWORD DATA`;
+`_KEYWORD DATA` for a part which can be safely ignored,
 if unrecognised.
+`DATA` is a single tt.
 Each template's parts start with a `_name` part.
-There can also be `error []` parts which
+There can also be `error` parts which
 appear when the template couldn't be parsed
 (which is used to suppress "unrecognised attribute" errors).
 
-(Doing this with two macro calls means that
-if a template is misreferenced, the user gets two errors.
-But the alternative is threading *all* the expansions
-through this chaining, which is confusing,
-and means that the first missing template would stop all processing.)
+The actually supplied attributes are compared with
+the union of the used attributes,
+and errors are reported for unused ones.
 
 ## Implementation approach - ad-hoc macro applications
 
@@ -189,9 +312,9 @@ generates this
         derive_deftly_engine!{
             { pub struct StructName { /* original struct definition */ } }
             /* no AOPTIONS since there's no derive() application */
-            { }
+            ( )
             { $($template)* }
-            { $($dpassthrough)* }
+            $($dpassthrough)*
         }
     } }
 ```
@@ -221,7 +344,9 @@ Expands to
     derive_deftly_driver_StructName! {
        { TEMPLATE.. }
        { ($) }
-       crate; [TOPTIONS..] /*no template name*/;
+       ( crate; [TOPTIONS..] /*no template name*/; )
+       []
+       [_meta_used *]
     }
 ```
 
@@ -235,9 +360,11 @@ The result of expanding the above is this:
 ```rust,ignore
     derive_deftly_engine!{
         { pub struct StructName { /* original struct definition */ } }
-        { }
+        ( )
         { TEMPLATE.. }
-        { crate; [TOPTIONS..] /*no template name*/; }
+        ( crate; [TOPTIONS..] /*no template name*/; )
+        []
+        [_meta_used *]
     }
 ```
 

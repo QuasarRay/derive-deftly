@@ -1,4 +1,29 @@
 //! `#[deftly(...)]` meta attributes
+//!
+//! # Used meta checking
+//!
+//! Most of this file is concerned with generating
+//! accurate and useful messages
+//! when a driver is decorated with `#[deftly(...)]` attributes
+//! which are not used by any template.
+//!
+//! We distinguish "used" metas from "recognised" ones.
+//!
+//! "Used" ones are those actually tested, and used,
+//! during the dynamic expansion of the template.
+//! They are recorded in the [`PreprocessedMetas`],
+//! which contains a `Cell` for each supplied node.
+//!
+//! "Recognised" ones are those which appear anywhere in the template.
+//! These are represented in a data structure [``Recognised`].
+//! This is calculated by scanning the template,
+//! using the `FindRecogMetas` trait.
+//!
+//! Both of these sets are threaded through
+//! the ACCUM data in successive template expansions;
+//! in the final call (`EngineFinalInput`),
+//! they are combined together,
+//! and the driver's metas are checked against them.
 
 use super::framework::*;
 
@@ -43,10 +68,6 @@ impl SuppliedScope {
         }
         .iter()
         .copied()
-    }
-
-    fn widest(self) -> Scope {
-        self.recog_search().next().unwrap()
     }
 }
 
@@ -94,19 +115,23 @@ pub enum SubstAs<O: SubstParseContext> {
 //---------- meta attrs in a driver ----------
 
 /// A part like `(foo,bar(baz),zonk="value")`
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct PreprocessedValueList {
     pub content: Punctuated<PreprocessedTree, token::Comma>,
 }
 
 /// `#[deftly(...)]` helper attributes
-pub type PreprocessedMetas = Vec<PreprocessedTree>;
+pub type PreprocessedMetas = Vec<PreprocessedValueList>;
 
 /// An `#[deftly()]` attribute, or a sub-tree within one
-#[derive(Debug, Clone)]
+///
+/// Has interior mutability, for tracking whether the value is used.
+/// (So should ideally not be Clone, to help avoid aliasing bugs.)
+#[derive(Debug)]
 pub struct PreprocessedTree {
     pub path: syn::Path,
     pub value: PreprocessedValue,
+    pub used: Cell<Option<RecogAllow>>,
 }
 
 /// Content of a meta attribute
@@ -114,7 +139,7 @@ pub struct PreprocessedTree {
 /// Examples in doc comments are for
 /// `PreprocessedMeta.path` of `foo`,
 /// ie the examples are for `#[deftly(foo ..)]`.
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum PreprocessedValue {
     /// `#[deftly(foo)]`
     Unit,
@@ -128,9 +153,17 @@ pub enum PreprocessedValue {
 
 /// Node in tree structure found in driver `#[deftly(some(thing))]`
 #[derive(Debug)]
-pub enum FoundNode<'l> {
-    Unit(Span),
-    Lit { path_span: Span, lit: &'l syn::Lit },
+pub struct FoundNode<'l> {
+    kind: FoundNodeKind<'l>,
+    path_span: Span,
+    ptree: &'l PreprocessedTree,
+}
+
+/// Node in tree structure found in driver `#[deftly(some(thing))]`
+#[derive(Debug)]
+pub enum FoundNodeKind<'l> {
+    Unit,
+    Lit(&'l syn::Lit),
 }
 
 /// Information about a nearby meta node we found
@@ -138,10 +171,11 @@ pub enum FoundNode<'l> {
 /// "Nearby" means that the node we found is a prefix (in tree descent)
 /// of the one we were looking for, or vice versa.
 #[derive(Debug)]
-pub struct FoundNearbyNode {
+pub struct FoundNearbyNode<'l> {
     pub kind: FoundNearbyNodeKind,
     /// Span of the identifier in the actual `#[deftly]` driver attribute
     pub path_span: Span,
+    pub ptree: &'l PreprocessedTree,
 }
 
 /// How the nearby node relates to the one we were looking for
@@ -156,15 +190,38 @@ pub enum FoundNearbyNodeKind {
 }
 
 pub use FoundNearbyNodeKind as FNNK;
-pub use FoundNode as FN;
+pub use FoundNodeKind as FNK;
 
 //---------- meta attr enumeration and checking ----------
 
+// TODO META give this a better name, it's not just recog
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, Eq, PartialEq)] //
 #[derive(EnumIter)]
 pub enum RecogAllow {
     BoolOnly,
     Value,
+}
+
+/// One lot of used metas in accumulation - argument to a `_meta_used` accum
+#[derive(Debug)]
+pub struct UsedGroup {
+    pub content: TokenStream,
+}
+
+/// Something representing possibly checking that meta attributes are used
+#[derive(Debug, Clone)]
+pub enum CheckUsed<T> {
+    /// Yes, check them, by/with/from/to `T`
+    Check(T),
+    /// No, don't check them.
+    Unchecked,
+}
+
+/// Information for meta checking, found in accumulation
+#[derive(Debug, Default)]
+pub struct Accum {
+    pub recog: Recognised,
+    pub used: Vec<UsedGroup>,
 }
 
 #[derive(Default, Debug, Clone)]
@@ -279,7 +336,8 @@ impl Parse for PreprocessedTree {
         } else {
             return Err(la.error());
         };
-        Ok(PreprocessedTree { path, value })
+        let used = None.into(); // will be filled in later
+        Ok(PreprocessedTree { path, value, used })
     }
 }
 
@@ -315,19 +373,21 @@ impl Parse for Label {
 //---------- searching and matching ----------
 
 impl Label {
-    pub fn search<'a, A, F, G, E>(
+    /// Caller must note meta attrs that end up being used!
+    pub fn search<'a, F, G, E>(
         &self,
-        pmetas: A,
+        pmetas: &'a [PreprocessedValueList],
         f: &mut F,
         g: &mut G,
     ) -> Result<(), E>
     where
         F: FnMut(FoundNode<'a>) -> Result<(), E>,
-        G: FnMut(FoundNearbyNode) -> Result<(), E>,
-        A: IntoIterator<Item = &'a PreprocessedTree>,
+        G: FnMut(FoundNearbyNode<'a>) -> Result<(), E>,
     {
-        for pmeta in pmetas {
-            Self::search_1(&self.lpaths, pmeta, &mut *f, &mut *g)?;
+        for m in pmetas {
+            for l in &m.content {
+                Self::search_1(&self.lpaths, l, &mut *f, &mut *g)?;
+            }
         }
         Ok(())
     }
@@ -341,7 +401,7 @@ impl Label {
     ) -> Result<(), E>
     where
         F: FnMut(FoundNode<'a>) -> Result<(), E>,
-        G: FnMut(FoundNearbyNode) -> Result<(), E>,
+        G: FnMut(FoundNearbyNode<'a>) -> Result<(), E>,
     {
         use PreprocessedValue as PV;
 
@@ -351,7 +411,13 @@ impl Label {
 
         let path_span = ptree.path.span();
 
-        let mut nearby = |kind| g(FoundNearbyNode { kind, path_span });
+        let mut nearby = |kind| {
+            g(FoundNearbyNode {
+                kind,
+                path_span,
+                ptree,
+            })
+        };
 
         let deeper = if lpaths.len() <= 1 {
             None
@@ -360,11 +426,16 @@ impl Label {
         };
 
         match (deeper, &ptree.value) {
-            (None, PV::Unit) => f(FN::Unit(path_span))?,
-            (None, PV::List(_)) => nearby(FNNK::List)?,
-            (None, PV::Value { value, .. }) => f(FN::Lit {
+            (None, PV::Unit) => f(FoundNode {
                 path_span,
-                lit: value,
+                kind: FNK::Unit,
+                ptree,
+            })?,
+            (None, PV::List(_)) => nearby(FNNK::List)?,
+            (None, PV::Value { value, .. }) => f(FoundNode {
+                path_span,
+                kind: FNK::Lit(value),
+                ptree,
             })?,
             (Some(_), PV::Value { .. }) => nearby(FNNK::Lit)?,
             (Some(_), PV::Unit) => nearby(FNNK::Unit)?,
@@ -384,11 +455,15 @@ impl Label {
         &self,
         pmetas: &PreprocessedMetas,
     ) -> Result<(), Found> {
+        let found = |ptree: &PreprocessedTree| {
+            ptree.update_used(RecogAllow::BoolOnly);
+            Err(Found)
+        };
         self.search(
             pmetas,
-            &mut |_av| /* got it! */ Err(Found),
+            &mut |av| /* got it! */ found(av.ptree),
             &mut |nearby| match nearby.kind {
-                FNNK::List => Err(Found), // there's more, that'll do
+                FNNK::List => found(nearby.ptree),
                 FNNK::Unit => Ok(()),
                 FNNK::Lit => Ok(()),
             },
@@ -620,8 +695,8 @@ where
             pmetas,
             &mut |av: FoundNode| {
                 if let Some(first) = &found {
-                    return Err([(first.path_span(), "first occurrence"),
-                            (av.path_span(), "second occurrence"),
+                    return Err([(first.path_span, "first occurrence"),
+                            (av.path_span, "second occurrence"),
                             self_loc()].error(
  "tried to expand just attribute value, but it was specified multiple times"
                     ));
@@ -657,6 +732,7 @@ where
             }
         })?;
 
+        found.ptree.update_used(RecogAllow::Value);
         found.expand(span_whole, &self.as_, out)?;
 
         Ok(())
@@ -728,15 +804,6 @@ where
     Ok(thing)
 }
 
-impl FoundNode<'_> {
-    fn path_span(&self) -> Span {
-        match self {
-            FN::Unit(span) => *span,
-            FN::Lit { path_span, .. } => *path_span,
-        }
-    }
-}
-
 impl<'l> FoundNode<'l> {
     fn expand<O>(
         &self,
@@ -749,11 +816,11 @@ impl<'l> FoundNode<'l> {
     {
         let spans = |vspan| metavalue_spans(tspan, vspan);
 
-        let lit = match self {
-            FN::Unit(vspan) => return Err(spans(*vspan).error(
+        let lit = match self.kind {
+            FNK::Unit => return Err(spans(self.path_span).error(
  "tried to expand attribute which is just a unit, not a literal"
             )),
-            FN::Lit { lit, .. } => lit,
+            FNK::Lit(lit) => lit,
         };
 
         use SubstAs as SA;
@@ -789,6 +856,24 @@ impl<'l> FoundNode<'l> {
     }
 }
 
+//---------- impl RecogGroup ----------
+
+impl Parse for CheckUsed<UsedGroup> {
+    fn parse(input: ParseStream) -> syn::Result<Self> {
+        let la = input.lookahead1();
+        Ok(if la.peek(Token![*]) {
+            let _star: Token![*] = input.parse()?;
+            mCU::Unchecked
+        } else if la.peek(token::Bracket) {
+            let group: proc_macro2::Group = input.parse()?;
+            let content = group.stream();
+            mCU::Check(UsedGroup { content })
+        } else {
+            return Err(la.error());
+        })
+    }
+}
+
 //---------- impl Recognised etc. ----------
 
 impl Recognised {
@@ -813,150 +898,421 @@ impl ToTokens for Recognised {
     }
 }
 
-impl RecogAllow {
-    fn max() -> Self {
-        Self::iter().rev().next().unwrap()
+impl PreprocessedTree {
+    pub fn update_used(&self, ra: RecogAllow) {
+        self.used.set(cmp::max(self.used.get(), Some(ra)));
+    }
+}
+
+impl PreprocessedValueList {
+    fn decode_update_used(&self, input: ParseStream) -> syn::Result<()> {
+        use PreprocessedValue as PV;
+
+        for ptree in &self.content {
+            if input.is_empty() {
+                return Ok(());
+            }
+            if !input.peek(Token![,]) {
+                let path = input.call(syn::Path::parse_mod_style)?;
+                if path != ptree.path {
+                    return Err([
+                        (path.span(), "found"),
+                        (ptree.path.span(), "expected"),
+                    ].error(
+ "mismatch (desynchronised) incorporating previous expansions' used metas"
+                    ));
+                }
+                let used = if input.peek(Token![=]) {
+                    let _: Token![=] = input.parse()?;
+                    Some(RecogAllow::Value)
+                } else if input.peek(Token![?]) {
+                    let _: Token![?] = input.parse()?;
+                    Some(RecogAllow::BoolOnly)
+                } else {
+                    None
+                };
+                if let Some(used) = used {
+                    ptree.update_used(used);
+                }
+                if input.peek(token::Paren) {
+                    let inner;
+                    let paren = parenthesized!(inner in input);
+                    let sub_list = match &ptree.value {
+                        PV::Unit | PV::Value { .. } => return Err([
+                            (paren.span.open(), "found"),
+                            (ptree.path.span(), "defined"),
+                        ].error(
+ "mismatch (tree vs terminal) incorporating previous expansions' used metas"
+                        )),
+                        PV::List(l) => l,
+                    };
+                    sub_list.decode_update_used(&inner)?;
+                }
+            }
+            if input.is_empty() {
+                return Ok(());
+            }
+            let _: Token![,] = input.parse()?;
+        }
+        Ok(())
+    }
+}
+
+//---------- support for checking (TODO META tidy headings) ---------
+
+// TODO META review the names of these fields; maybe add docs comments?
+struct UsedChecker<'c, 'e> {
+    current: Vec<&'c syn::Path>,
+    reported: &'e mut HashSet<Label>,
+    recog: &'c Recognised,
+    supplied_scope: SuppliedScope,
+    errors: &'e mut ErrorAccumulator,
+}
+
+impl<'c> Context<'c> {
+    /// Returns `[::Variant .field () ...]`
+    pub fn encode_metas_used(&self) -> proc_macro2::Group {
+        let parenthesize =
+            |ts| proc_macro2::Group::new(Delimiter::Parenthesis, ts);
+        let an_empty = parenthesize(TokenStream::new());
+
+        let mut ts = TokenStream::new();
+
+        struct Preamble<'p> {
+            variant: Option<&'p syn::Variant>,
+            field: Option<&'p WithinField<'p>>,
+        }
+        impl ToTokens for Preamble<'_> {
+            fn to_tokens(&self, out: &mut TokenStream) {
+                let span = Span::call_site();
+                if let Some(v) = self.variant {
+                    Token![::](span).to_tokens(out);
+                    v.ident.to_tokens(out);
+                }
+                if let Some(f) = self.field {
+                    Token![.](span).to_tokens(out);
+                    f.fname(span).to_tokens(out);
+                }
+            }
+        }
+
+        let mut last_variant: *const syn::Variant = ptr::null();
+        let mut last_field: *const syn::Field = ptr::null();
+
+        fn ptr_of_ref<'i, InDi>(r: Option<&'i InDi>) -> *const InDi {
+            r.map(|r| r as _).unwrap_or_else(ptr::null)
+        }
+
+        let mut encode = |pmetas: &PreprocessedMetas,
+                          wv: Option<&WithinVariant>,
+                          wf: Option<&WithinField>| {
+            let now_variant: *const syn::Variant =
+                ptr_of_ref(wv.map(|wv| wv.variant).flatten());
+            let now_field: *const syn::Field =
+                ptr_of_ref(wf.map(|wf| wf.field));
+
+            let preamble = Preamble {
+                variant: (!ptr::eq(last_variant, now_variant)).then(|| {
+                    last_field = ptr::null();
+                    let v = wv.expect("had WithinVariant, now not");
+                    v.variant.expect("variant was syn::Variant, now not")
+                }),
+                field: (!ptr::eq(last_field, now_field)).then(|| {
+                    wf.expect("had WithinField (Field), now not") //
+                }),
+            };
+            let mut ot =
+                TokenOutputTrimmer::new(&mut ts, &preamble, &an_empty);
+            for m in pmetas {
+                if let Some(group) = PreprocessedTree::encode_useds(m) {
+                    ot.push_reified(group);
+                } else {
+                    ot.push_sep();
+                }
+            }
+            if ot.did_preamble().is_some() {
+                last_variant = now_variant;
+                last_field = now_field;
+            }
+
+            Ok::<_, Void>(())
+        };
+
+        encode(&self.tmetas, None, None).void_unwrap();
+        WithinVariant::for_each(self, |ctx, wv| {
+            if !wv.is_struct_toplevel_as_variant() {
+                encode(&wv.pmetas, Some(wv), None)?;
+            }
+            WithinField::for_each(ctx, |_ctx, wf| {
+                encode(&wf.pfield.pmetas, Some(wv), Some(wf))
+            })
+        })
+        .void_unwrap();
+
+        proc_macro2::Group::new(Delimiter::Bracket, ts)
+    }
+
+    pub fn decode_update_metas_used(
+        &self,
+        input: /* group content */ ParseStream,
+    ) -> syn::Result<()> {
+        #[derive(Default)]
+        struct Intended {
+            variant: Option<syn::Ident>,
+            field: Option<Either<syn::Ident, u32>>,
+            attr_i: usize,
+        }
+        let mut intended = Intended::default();
+
+        let mut visit =
+            |pmetas: &PreprocessedMetas,
+             current_variant: Option<&syn::Ident>,
+             current_field: Option<Either<&syn::Ident, &u32>>| {
+                loop {
+                    let la = input.lookahead1();
+                    if input.is_empty() {
+                        // keep visiting until we exit all the loops
+                        return Ok(());
+                    } else if la.peek(Token![::]) {
+                        let _: Token![::] = input.parse()?;
+                        intended = Intended {
+                            variant: Some(input.parse()?),
+                            field: None,
+                            attr_i: 0,
+                        };
+                    } else if la.peek(Token![.]) {
+                        let _: Token![.] = input.parse()?;
+                        intended.field = Some(match input.parse()? {
+                            syn::Member::Named(n) => Either::Left(n),
+                            syn::Member::Unnamed(i) => Either::Right(i.index),
+                        });
+                        intended.attr_i = 0;
+                    } else if {
+                        let intended_field_refish = intended
+                            .field
+                            .as_ref()
+                            .map(|some: &Either<_, _>| some.as_ref());
+
+                        !(current_variant == intended.variant.as_ref()
+                            && current_field == intended_field_refish)
+                    } {
+                        // visit subsequent things, hopefully one will match
+                        return Ok(());
+                    } else if la.peek(token::Paren) {
+                        // we're in the right place and have found a #[deftly()]
+                        let i = intended.attr_i;
+                        intended.attr_i += 1;
+                        let m = pmetas.get(i).ok_or_else(|| {
+                            input.error("more used metas, out of range!")
+                        })?;
+                        let r;
+                        let _ = parenthesized!(r in input);
+                        m.decode_update_used(&r)?;
+                    } else {
+                        return Err(la.error());
+                    }
+                }
+            };
+
+        visit(&self.tmetas, None, None)?;
+
+        WithinVariant::for_each(self, |ctx, wv| {
+            let current_variant = wv.variant.map(|wv| &wv.ident);
+
+            if !wv.is_struct_toplevel_as_variant() {
+                visit(&wv.pmetas, current_variant, None)?;
+            }
+
+            WithinField::for_each(ctx, |_ctx, wf| {
+                let current_field = if let Some(ref ident) = wf.field.ident {
+                    Either::Left(ident)
+                } else {
+                    Either::Right(&wf.index)
+                };
+
+                visit(&wf.pfield.pmetas, current_variant, Some(current_field))
+            })
+        })
+
+        // if we didn't consume all of the input, due to mismatches/
+        // misordering, then syn will give an error for us
+    }
+
+    pub(crate) fn check_metas_used(
+        &self,
+        errors: &mut ErrorAccumulator,
+        recog: &Recognised,
+    ) {
+        use SuppliedScope as SS;
+
+        let mut reported = HashSet::new();
+
+        let mut chk_pmetas = |supplied_scope, pmetas: &PreprocessedMetas| {
+            let mut checker = UsedChecker {
+                reported: &mut reported,
+                current: vec![],
+                recog,
+                errors,
+                supplied_scope,
+            };
+
+            for a in pmetas {
+                for l in &a.content {
+                    l.check_used(&mut checker);
+                }
+            }
+
+            Ok::<_, Void>(())
+        };
+
+        chk_pmetas(
+            match &self.top.data {
+                syn::Data::Struct(_) | syn::Data::Union(_) => SS::Struct,
+                syn::Data::Enum(_) => SS::Enum,
+            },
+            &self.tmetas,
+        )
+        .void_unwrap();
+
+        WithinVariant::for_each(self, |ctx, wv| {
+            // If variant is None, this is the imaginary variant for
+            // the toplevel, and it has a copy of the ref to the metas,
+            // in which case we don't want to process it again.
+            if !wv.is_struct_toplevel_as_variant() {
+                chk_pmetas(SS::Variant, &wv.pmetas)?;
+            }
+            WithinField::for_each(ctx, |_ctx, wf| {
+                chk_pmetas(SS::Field, &wf.pfield.pmetas)
+            })
+        })
+        .void_unwrap();
+    }
+}
+
+impl PreprocessedTree {
+    /// Returns `(....)`
+    fn encode_useds(
+        list: &PreprocessedValueList,
+    ) -> Option<proc_macro2::Group> {
+        let preamble = syn::parse::Nothing;
+        let sep = Token![,](Span::call_site());
+        let mut ts = TokenStream::new();
+        let mut ot = TokenOutputTrimmer::new(&mut ts, &preamble, &sep);
+        for t in &list.content {
+            t.encode_used(&mut ot);
+            ot.push_sep();
+        }
+        if ts.is_empty() {
+            None
+        } else {
+            Some(proc_macro2::Group::new(Delimiter::Parenthesis, ts))
+        }
+    }
+
+    /// Writes `path?=(...)` (or, rather, the parts of it that are needed)
+    fn encode_used(&self, out: &mut TokenOutputTrimmer) {
+        use PreprocessedValue as PV;
+
+        struct OutputTrimmerWrapper<'or, 'o, 't, 'p> {
+            // None if we have written the path already
+            path: Option<&'p syn::Path>,
+            out: &'or mut TokenOutputTrimmer<'t, 'o>,
+        }
+
+        let mut out = OutputTrimmerWrapper {
+            path: Some(&self.path),
+            out,
+        };
+
+        impl OutputTrimmerWrapper<'_, '_, '_, '_> {
+            fn push_reified(&mut self, t: &dyn ToTokens) {
+                if let Some(path) = self.path.take() {
+                    self.out.push_reified(path);
+                }
+                self.out.push_reified(t);
+            }
+        }
+
+        let tspan = Span::call_site();
+
+        if let Some(used) = self.used.get() {
+            match used {
+                RecogAllow::BoolOnly => out.push_reified(&Token![?](tspan)),
+                RecogAllow::Value => out.push_reified(&Token![=](tspan)),
+            }
+        }
+
+        match &self.value {
+            PV::Unit | PV::Value { .. } => {}
+            PV::List(l) => {
+                if let Some(group) = PreprocessedTree::encode_useds(l) {
+                    out.push_reified(&group);
+                }
+            }
+        }
+    }
+
+    fn check_used<'c>(&'c self, checker: &mut UsedChecker<'c, '_>) {
+        use RecogAllow as RA;
+
+        checker.current.push(&self.path);
+
+        let mut err = |err| {
+            let lpaths = checker.current.iter().copied().cloned().collect();
+            if checker.reported.insert(Label { lpaths }) {
+                checker.errors.push(err);
+            }
+        };
+
+        let ur_err = |supplied_want_allow, used_allow| {
+            unrecognised_error(
+                checker.recog,
+                checker.supplied_scope,
+                supplied_want_allow,
+                used_allow,
+                self.path.span(),
+                &checker.current,
+            )
+            .void_unwrap_err()
+        };
+
+        match (&self.value, self.used.get()) {
+            (PreprocessedValue::Unit, Some(_)) => {}
+            (PreprocessedValue::Value { .. }, Some(RA::Value)) => {}
+            (PreprocessedValue::List(l), _) => {
+                if l.content.is_empty() {
+                    err(self.path.error(
+ "empty nested list in #[deftly], is not useable by any template"
+                    ));
+                }
+                for subtree in &l.content {
+                    subtree.check_used(checker);
+                }
+            }
+            (PreprocessedValue::Value { .. }, u @ Some(RA::BoolOnly))
+            | (PreprocessedValue::Value { .. }, u @ None) => {
+                err(ur_err(RA::Value, u));
+            }
+            (PreprocessedValue::Unit, u @ None) => {
+                err(ur_err(RA::BoolOnly, u));
+            }
+        }
+
+        checker
+            .current
+            .pop()
+            .expect("pushed earlier, but can't pop?");
     }
 }
 
 //---------- support for checking ----------
 
-pub struct RecogChecker<'r, 'e> {
-    /// The actual set of recognised meta attributes
-    recog_real: &'r Recognised,
-    /// "Working" set of recognised meta attributes
-    ///
-    /// We add things to this to suppress duplicate error messages,
-    /// but that means it has synthetic entries.
-    recog_work: Cow<'r, Recognised>,
-    errors: &'e mut ErrorAccumulator,
-}
-
-impl<'r, 'e> RecogChecker<'r, 'e> {
-    pub fn new(
-        recog: &'r Recognised,
-        errors: &'e mut ErrorAccumulator,
-    ) -> Self {
-        RecogChecker {
-            errors,
-            recog_real: recog,
-            recog_work: Cow::Borrowed(recog),
-        }
-    }
-
-    /// Check one meta attribute found in a driver
-    pub fn check(
-        &mut self,
-        pmetas: &[PreprocessedTree],
-        supplied: SuppliedScope,
-    ) {
-        let mut paths = vec![];
-        for pmeta in pmetas {
-            self.check_1(supplied, &mut paths, pmeta);
-        }
-    }
-
-    fn check_1<'p>(
-        &mut self,
-        supplied: SuppliedScope,
-        lpaths: &mut Vec<&'p syn::Path>,
-        ptree: &'p PreprocessedTree,
-    ) {
-        use PreprocessedValue as PV;
-        use RecogAllow as RA;
-
-        lpaths.push(&ptree.path);
-        // closure stops us forgetting to pop again via an early exit
-        (|| {
-            let want = match &ptree.value {
-                PV::Unit => RA::BoolOnly,
-                PV::Value { .. } => RA::Value,
-                PV::List(l) if l.content.is_empty() => RA::BoolOnly,
-                PV::List(l) => {
-                    for ptree in &l.content {
-                        self.check_1(supplied, lpaths, ptree);
-                    }
-                    // don't care about *this* path, care about deeper ones
-                    return;
-                }
-            };
-
-            struct Nearest {
-                allow: RecogAllow,
-                scope: Scope,
-                span: Span,
-            }
-
-            let mut nearest: Option<Nearest> = None;
-            for scope in supplied.recog_search() {
-                let test = BorrowedDesig { scope, lpaths };
-
-                if let Some((got_desig, &got)) =
-                    self.recog_work.map.get_key_value(&test)
-                {
-                    if got >= want {
-                        // found a justification - a recognised meta
-                        // that matches this provided one
-                        return;
-                    }
-
-                    let span = got_desig
-                        .label
-                        .lpaths
-                        .last()
-                        .expect("empty lpaths")
-                        .span();
-
-                    if Some(got) > nearest.as_ref().map(|n| n.allow) {
-                        let allow = got;
-                        nearest = Some(Nearest { allow, scope, span });
-                    }
-                }
-            }
-
-            let scope;
-            let error;
-
-            if let Some(found) = nearest {
-                scope = found.scope;
-                error =
-                    [(ptree.path.span(), "provided, in driver"),
-                     (found.span, "recognised, in template")].error(
-                         match (want, found.allow) {
-                             (RA::Value, RA::BoolOnly) =>
- "meta attribute value provided, but is used only as a boolean",
-                             (RA::Value, RA::Value) |
-                             (RA::BoolOnly, RA::BoolOnly) |
-                             (RA::BoolOnly, RA::Value) =>
-                                 panic!("want < found"),
-                         }
-                    );
-            } else {
-                error = unrecognised_error(
-                    &self.recog_real,
-                    supplied,
-                    ptree.path.span(),
-                    lpaths,
-                )
-                .void_unwrap_err();
-                scope = supplied.widest();
-            };
-
-            self.errors.push(error);
-
-            // avoid repeated errors, by adding this to recog
-            let lpaths = lpaths.iter().copied().cloned().collect();
-            let label = Label { lpaths };
-            let desig = Desig { scope, label };
-            self.recog_work.to_mut().update(desig, RA::max());
-        })();
-        lpaths.pop();
-    }
-}
-
+// TODO META review the names of these arguments; maybe add docs comment?
 fn unrecognised_error(
     recog_real: &Recognised,
     supplied: SuppliedScope,
+    supplied_want_allow: RecogAllow,
+    used_allow: Option<RecogAllow>,
     supplied_span: Span,
     lpaths: &[&syn::Path],
 ) -> Result<Void, syn::Error> /* return type allows (ab)use of ? */ {
@@ -964,6 +1320,54 @@ fn unrecognised_error(
 
     let try_case = |e: Option<_>| e.map(Err).unwrap_or(Ok(()));
     let some_err = |m: &dyn Display| Some(supplied_span.error(m));
+
+    // Maybe this would have been recognised in other circumstances.
+    // If so, report that.
+    try_case((|| {
+        let recog_allow = supplied
+            .recog_search()
+            .map(|scope| {
+                recog_real
+                    .map
+                    .get(&BorrowedDesig { scope, lpaths })
+                    .copied()
+            })
+            .max()
+            .unwrap_or_default()?;
+
+        if recog_allow < supplied_want_allow {
+            // We've supplied more than would ever be recognised
+            return None;
+        }
+
+        // We'd recognise this, but only conditionally, and not now
+
+        match used_allow {
+            None => some_err(&format_args!(
+ "meta attribute provided, and (conditionally) recognised; but not used in these particular circumstances"
+            )),
+            Some(RA::BoolOnly) => some_err(&format_args!(
+ "meta attribute provided with value, and (conditionally) recognised with value; but in these particular circumstances only used as a boolean"
+            )),
+            Some(RA::Value) => unreachable!(),
+        }
+    })())?;
+
+    // Now we know that even the static scan doesn't
+    // recognise this item.
+
+    // Maybe it's just that a value was supplied by mistake
+    try_case((|| {
+        //
+        match (supplied_want_allow, used_allow) {
+            (RA::Value, Some(RA::BoolOnly)) => some_err(&format_args!(
+                "meta attribute value provided, but is used only as a boolean",
+            )),
+            (_, None) => None,
+            (RA::BoolOnly, Some(_)) => unreachable!(),
+            (RA::Value, Some(RA::Value)) => unreachable!(),
+        }
+    })())?;
 
     // Look to see if it would have been recognised in
     // another scope.  That would mean the attr is
