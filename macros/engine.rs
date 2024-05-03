@@ -362,7 +362,7 @@ impl EngineExpandInput {
                     use meta::FindRecogMetas as _;
                     let mut meta_recog = meta::Recognised::default();
                     self.template.find_recog_metas(&mut meta_recog);
-                    accum.extend(quote!( _meta [#meta_recog] ));
+                    accum.extend(quote!( _meta_recog [#meta_recog] ));
                 }
                 Err(()) => {
                     accum.extend(quote!( _error [] ));

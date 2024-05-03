@@ -56,7 +56,7 @@ impl Parse for Accumulated {
                 } else {
                     Ignore
                 }
-            } else if kind == "_meta" {
+            } else if kind == "_meta_recog" {
                 if let mCU::Check(m) = &mut metas {
                     let content;
                     let _brackets = bracketed!(content in input);
