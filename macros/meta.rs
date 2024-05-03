@@ -29,6 +29,8 @@ use super::framework::*;
 
 use indexmap::IndexMap;
 
+use Usage as U;
+
 //---------- common definitions ----------
 
 /// Indicates one of `fmeta`, `vmeta` or `tmeta`
@@ -131,7 +133,7 @@ pub type PreprocessedMetas = Vec<PreprocessedValueList>;
 pub struct PreprocessedTree {
     pub path: syn::Path,
     pub value: PreprocessedValue,
-    pub used: Cell<Option<RecogAllow>>,
+    pub used: Cell<Option<Usage>>,
 }
 
 /// Content of a meta attribute
@@ -194,10 +196,10 @@ pub use FoundNodeKind as FNK;
 
 //---------- meta attr enumeration and checking ----------
 
-// TODO META give this a better name, it's not just recog
+/// Whether a meta node was used (or ought to be used)
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, Eq, PartialEq)] //
 #[derive(EnumIter)]
-pub enum RecogAllow {
+pub enum Usage {
     BoolOnly,
     Value,
 }
@@ -226,7 +228,7 @@ pub struct Accum {
 
 #[derive(Default, Debug, Clone)]
 pub struct Recognised {
-    map: IndexMap<Desig, RecogAllow>,
+    map: IndexMap<Desig, Usage>,
 }
 
 pub trait FindRecogMetas {
@@ -456,7 +458,7 @@ impl Label {
         pmetas: &PreprocessedMetas,
     ) -> Result<(), Found> {
         let found = |ptree: &PreprocessedTree| {
-            ptree.update_used(RecogAllow::BoolOnly);
+            ptree.update_used(Usage::BoolOnly);
             Err(Found)
         };
         self.search(
@@ -732,7 +734,7 @@ where
             }
         })?;
 
-        found.ptree.update_used(RecogAllow::Value);
+        found.ptree.update_used(Usage::Value);
         found.expand(span_whole, &self.as_, out)?;
 
         Ok(())
@@ -878,7 +880,7 @@ impl Parse for CheckUsed<UsedGroup> {
 
 impl Recognised {
     /// Ensures that `self[k] >= v`
-    pub fn update(&mut self, k: Desig, v: RecogAllow) {
+    pub fn update(&mut self, k: Desig, v: Usage) {
         let ent = self.map.entry(k).or_insert(v);
         *ent = cmp::max(*ent, v);
     }
@@ -888,10 +890,10 @@ impl ToTokens for Recognised {
     fn to_tokens(&self, out: &mut TokenStream) {
         for (desig, allow) in &self.map {
             match allow {
-                RecogAllow::BoolOnly => {
+                U::BoolOnly => {
                     out.extend(quote! { ? });
                 }
-                RecogAllow::Value => {}
+                U::Value => {}
             }
             desig.to_tokens(Span::call_site(), out);
         }
@@ -899,7 +901,7 @@ impl ToTokens for Recognised {
 }
 
 impl PreprocessedTree {
-    pub fn update_used(&self, ra: RecogAllow) {
+    pub fn update_used(&self, ra: Usage) {
         self.used.set(cmp::max(self.used.get(), Some(ra)));
     }
 }
@@ -924,10 +926,10 @@ impl PreprocessedValueList {
                 }
                 let used = if input.peek(Token![=]) {
                     let _: Token![=] = input.parse()?;
-                    Some(RecogAllow::Value)
+                    Some(U::Value)
                 } else if input.peek(Token![?]) {
                     let _: Token![?] = input.parse()?;
-                    Some(RecogAllow::BoolOnly)
+                    Some(U::BoolOnly)
                 } else {
                     None
                 };
@@ -1237,8 +1239,8 @@ impl PreprocessedTree {
 
         if let Some(used) = self.used.get() {
             match used {
-                RecogAllow::BoolOnly => out.push_reified(&Token![?](tspan)),
-                RecogAllow::Value => out.push_reified(&Token![=](tspan)),
+                U::BoolOnly => out.push_reified(&Token![?](tspan)),
+                U::Value => out.push_reified(&Token![=](tspan)),
             }
         }
 
@@ -1253,8 +1255,6 @@ impl PreprocessedTree {
     }
 
     fn check_used<'c>(&'c self, checker: &mut UsedChecker<'c, '_>) {
-        use RecogAllow as RA;
-
         checker.current.push(&self.path);
 
         let mut err = |err| {
@@ -1278,7 +1278,7 @@ impl PreprocessedTree {
 
         match (&self.value, self.used.get()) {
             (PreprocessedValue::Unit, Some(_)) => {}
-            (PreprocessedValue::Value { .. }, Some(RA::Value)) => {}
+            (PreprocessedValue::Value { .. }, Some(U::Value)) => {}
             (PreprocessedValue::List(l), _) => {
                 if l.content.is_empty() {
                     err(self.path.error(
@@ -1289,12 +1289,12 @@ impl PreprocessedTree {
                     subtree.check_used(checker);
                 }
             }
-            (PreprocessedValue::Value { .. }, u @ Some(RA::BoolOnly))
+            (PreprocessedValue::Value { .. }, u @ Some(U::BoolOnly))
             | (PreprocessedValue::Value { .. }, u @ None) => {
-                err(ur_err(RA::Value, u));
+                err(ur_err(U::Value, u));
             }
             (PreprocessedValue::Unit, u @ None) => {
-                err(ur_err(RA::BoolOnly, u));
+                err(ur_err(U::BoolOnly, u));
             }
         }
 
@@ -1311,13 +1311,11 @@ impl PreprocessedTree {
 fn unrecognised_error(
     recog_real: &Recognised,
     supplied: SuppliedScope,
-    supplied_want_allow: RecogAllow,
-    used_allow: Option<RecogAllow>,
+    supplied_want_usage: Usage,
+    used_usage: Option<Usage>,
     supplied_span: Span,
     lpaths: &[&syn::Path],
 ) -> Result<Void, syn::Error> /* return type allows (ab)use of ? */ {
-    use RecogAllow as RA;
-
     let try_case = |e: Option<_>| e.map(Err).unwrap_or(Ok(()));
     let some_err = |m: &dyn Display| Some(supplied_span.error(m));
 
@@ -1335,21 +1333,21 @@ fn unrecognised_error(
             .max()
             .unwrap_or_default()?;
 
-        if recog_allow < supplied_want_allow {
+        if recog_allow < supplied_want_usage {
             // We've supplied more than would ever be recognised
             return None;
         }
 
         // We'd recognise this, but only conditionally, and not now
 
-        match used_allow {
+        match used_usage {
             None => some_err(&format_args!(
  "meta attribute provided, and (conditionally) recognised; but not used in these particular circumstances"
             )),
-            Some(RA::BoolOnly) => some_err(&format_args!(
+            Some(U::BoolOnly) => some_err(&format_args!(
  "meta attribute provided with value, and (conditionally) recognised with value; but in these particular circumstances only used as a boolean"
             )),
-            Some(RA::Value) => unreachable!(),
+            Some(U::Value) => unreachable!(),
         }
     })())?;
 
@@ -1359,13 +1357,13 @@ fn unrecognised_error(
     // Maybe it's just that a value was supplied by mistake
     try_case((|| {
         //
-        match (supplied_want_allow, used_allow) {
-            (RA::Value, Some(RA::BoolOnly)) => some_err(&format_args!(
+        match (supplied_want_usage, used_usage) {
+            (U::Value, Some(U::BoolOnly)) => some_err(&format_args!(
                 "meta attribute value provided, but is used only as a boolean",
             )),
             (_, None) => None,
-            (RA::BoolOnly, Some(_)) => unreachable!(),
-            (RA::Value, Some(RA::Value)) => unreachable!(),
+            (U::BoolOnly, Some(_)) => unreachable!(),
+            (U::Value, Some(U::Value)) => unreachable!(),
         }
     })())?;
 
@@ -1408,7 +1406,7 @@ fn unrecognised_error(
             let recog = recog_real.map.get(&upper)?;
             Some((upper, recog))
         })?;
-        if *recog != RA::Value {
+        if *recog != U::Value {
             return None;
         }
         some_err(&format_args!(
@@ -1563,8 +1561,8 @@ impl<O: SubstParseContext> FindRecogMetas for SubstDetails<O> {
 
 impl<O: SubstParseContext> FindRecogMetas for SubstMeta<O> {
     fn find_recog_metas(&self, acc: &mut Recognised) {
-        let allow = O::meta_recog_allow();
-        acc.update(self.desig.clone(), allow);
+        let recog = O::meta_recog_usage();
+        acc.update(self.desig.clone(), recog);
     }
 }
 

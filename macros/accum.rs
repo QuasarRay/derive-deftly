@@ -62,10 +62,10 @@ impl Parse for Accumulated {
                     let _brackets = bracketed!(content in input);
                     let input = content;
                     while !input.is_empty() {
-                        use meta::RecogAllow as RA;
+                        use meta::Usage as mU;
                         let allow = match input.parse()? {
-                            Some::<Token![?]>(_) => RA::BoolOnly,
-                            None => RA::Value,
+                            Some::<Token![?]>(_) => mU::BoolOnly,
+                            None => mU::Value,
                         };
                         let desig = input.parse()?;
                         m.recog.update(desig, allow);

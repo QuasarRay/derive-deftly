@@ -31,8 +31,8 @@ impl SubstParseContext for BooleanContext {
     fn bool_only(_: &impl Spanned) -> syn::Result<()> {
         Ok(())
     }
-    fn meta_recog_allow() -> meta::RecogAllow {
-        meta::RecogAllow::BoolOnly
+    fn meta_recog_usage() -> meta::Usage {
+        meta::Usage::BoolOnly
     }
 
     fn not_in_bool(span: &impl Spanned) -> syn::Result<Void> {
