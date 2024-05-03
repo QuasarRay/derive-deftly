@@ -1,0 +1,5 @@
+error: XXXX this currently produces no other errors
+  --> ui/unkmeta2.rs:46:1
+   |
+46 | compile_error!("XXXX this currently produces no other errors");
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
