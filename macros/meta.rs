@@ -69,10 +69,6 @@ impl SuppliedScope {
         .iter()
         .copied()
     }
-
-    fn widest(self) -> Scope {
-        self.recog_search().next().unwrap()
-    }
 }
 
 /// `(foo(bar))` in eg `fmeta(foo(bar))`
@@ -899,12 +895,6 @@ impl ToTokens for Recognised {
             }
             desig.to_tokens(Span::call_site(), out);
         }
-    }
-}
-
-impl RecogAllow {
-    fn max() -> Self {
-        Self::iter().rev().next().unwrap()
     }
 }
 
