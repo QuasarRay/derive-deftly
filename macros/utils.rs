@@ -324,6 +324,65 @@ impl<T: AsRef<str> + ?Sized> PartialEq<T> for IdentAny {
     }
 }
 
+//---------- OutputTrimmer ----------
+
+/// For making an output TokenStream, but eliding an unnecessary tail
+///
+/// This construction will write, to an output [`TokenStream`],
+///
+///  * `preamble`
+///  * zero or more optional `impl ToTokens`, called "reified"
+///  * interleaved with zero or more optional separators `sep`
+///
+/// But it will avoid writing trailing unnecessary content:
+/// that is, trailing calls to `push_sep` are ignored,
+/// and if `push_reified` is never called,
+/// the preamble is also omitted.
+pub struct TokenOutputTrimmer<'t, 'o> {
+    preamble: Option<&'t dyn ToTokens>,
+    sep: &'t dyn ToTokens,
+    sep_count: usize,
+    out: &'o mut TokenStream,
+}
+
+impl<'t, 'o> TokenOutputTrimmer<'t, 'o> {
+    pub fn new(
+        out: &'o mut TokenStream,
+        preamble: &'t dyn ToTokens,
+        sep: &'t dyn ToTokens,
+    ) -> Self {
+        TokenOutputTrimmer {
+            preamble: Some(preamble),
+            sep,
+            sep_count: 0,
+            out,
+        }
+    }
+    pub fn push_sep(&mut self) {
+        self.sep_count += 1;
+    }
+    fn reify(&mut self) {
+        if let Some(preamble) = self.preamble.take() {
+            preamble.to_tokens(&mut self.out);
+        }
+        for _ in 0..mem::take(&mut self.sep_count) {
+            self.sep.to_tokens(&mut self.out);
+        }
+    }
+    pub fn push_reified(&mut self, t: impl ToTokens) {
+        self.reify();
+        t.to_tokens(&mut self.out);
+    }
+    /// Did we output the preamble at all?
+    pub fn did_preamble(self) -> Option<()> {
+        if self.preamble.is_some() {
+            None
+        } else {
+            Some(())
+        }
+    }
+}
+
 //---------- engine_macro_name ----------
 
 /// Return a full path to the location of `derive_deftly_engine`.
