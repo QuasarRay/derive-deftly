@@ -962,7 +962,6 @@ impl PreprocessedValueList {
 
 //---------- support for checking (TODO META tidy headings) ---------
 
-// TODO META review the names of these fields; maybe add docs comments?
 struct UsedChecker<'c, 'e> {
     current: Vec<&'c syn::Path>,
     reported: &'e mut HashSet<Label>,
