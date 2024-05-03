@@ -1325,10 +1325,7 @@ fn unrecognised_error(
         let recog_allow = supplied_scope
             .recog_search()
             .map(|scope| {
-                recog
-                    .map
-                    .get(&BorrowedDesig { scope, lpaths })
-                    .copied()
+                recog.map.get(&BorrowedDesig { scope, lpaths }).copied()
             })
             .max()
             .unwrap_or_default()?;
@@ -1373,9 +1370,7 @@ fn unrecognised_error(
     try_case((|| {
         let y_scopes = Scope::iter()
             .filter(|&scope| {
-                recog
-                    .map
-                    .contains_key(&BorrowedDesig { scope, lpaths })
+                recog.map.contains_key(&BorrowedDesig { scope, lpaths })
             })
             .collect_vec();
 
@@ -1398,14 +1393,15 @@ fn unrecognised_error(
     // Look to see if user supplied `#[deftly(foo(bar))]`
     // when the template wanted `#[deftly(foo = "bar")]`.
     try_case((|| {
-        let (upper, recog) = supplied_scope.recog_search().find_map(|scope| {
-            let upper = BorrowedDesig {
-                scope,
-                lpaths: lpaths.split_last()?.1,
-            };
-            let recog = recog.map.get(&upper)?;
-            Some((upper, recog))
-        })?;
+        let (upper, recog) =
+            supplied_scope.recog_search().find_map(|scope| {
+                let upper = BorrowedDesig {
+                    scope,
+                    lpaths: lpaths.split_last()?.1,
+                };
+                let recog = recog.map.get(&upper)?;
+                Some((upper, recog))
+            })?;
         if *recog != U::Value {
             return None;
         }
