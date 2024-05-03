@@ -75,11 +75,11 @@ Search for section titles containing "pub template semver"."#,
     };
 
     match (version.major, version.minor) {
-        (0, 0..=9) => return too_old(),
+        (0, 0..=10) => return too_old(),
         // We tolerate "too new" within the same minor version,
         // since otherwise updating the minor version is too tedious.
         // There are tests to catch failure to update this.
-        (0, 10..) => {}
+        (0, 11..) => {}
         (1.., _) => return too_new(),
     }
 
