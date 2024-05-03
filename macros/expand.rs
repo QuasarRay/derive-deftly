@@ -513,14 +513,15 @@ where
                     SF::Named(..) => Some(Delimiter::Brace),
                 };
                 do_maybe_delimited_group(out, np, delim, content)?;
-                match (variant.fields, struct_variant) {
-                    // struct {} at top-level: no terminator.
-                    (SF::Named(_), true) => {}
+                if !struct_variant {
                     // Any enum variant: terminate with a comma.
-                    (_, false) => out.append_tokens(np, Token![,](kw_span))?,
+                    out.append_tokens(np, Token![,](kw_span))?;
+                } else if matches!(variant.fields, SF::Named(_)) {
+                    // struct {} at top-level: no terminator.
+                } else {
                     // Unit or tuple struct: Terminate with a semicolon.
-                    (_, true) => out.append_tokens(np, Token![;](kw_span))?,
-                };
+                    out.append_tokens(np, Token![;](kw_span))?;
+                }
             }
             SD::Crate(np, ..) => out.append_tokens(np, &ctx.template_crate)?,
 
