@@ -42,5 +42,3 @@ struct Data {
 }
 
 fn main() {}
-
-compile_error!("XXXX this currently produces no other errors");

@@ -9,9 +9,3 @@ error: meta attribute provided, but not recognised by template
    |
 37 |     #[deftly(short_circuit)] // ERROR, not reached in the all()
    |              ^^^^^^^^^^^^^
-
-error: XXXX this currently produces no other errors
-  --> ui/unkmeta2.rs:46:1
-   |
-46 | compile_error!("XXXX this currently produces no other errors");
-   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
