@@ -207,6 +207,21 @@ pub enum RecogAllow {
     Value,
 }
 
+/// Something representing possibly checking that meta attributes are used
+#[derive(Debug, Clone)]
+pub enum CheckUsed<T> {
+    /// Yes, check them, by/with/from/to `T`
+    Check(T),
+    /// No, don't check them.
+    Unchecked,
+}
+
+/// Information for meta checking, found in accumulation
+#[derive(Debug, Default)]
+pub struct Accum {
+    pub recog: Recognised,
+}
+
 #[derive(Default, Debug, Clone)]
 pub struct Recognised {
     map: IndexMap<Desig, RecogAllow>,

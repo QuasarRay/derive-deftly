@@ -15,8 +15,7 @@ pub struct EngineFinalInput {
 
 #[derive(Debug)]
 pub struct Accumulated {
-    /// `None` if we should not do any checking
-    recog_metas: Option<meta::Recognised>,
+    metas: meta::CheckUsed<meta::Accum>,
 }
 
 impl EngineFinalInput {
@@ -39,7 +38,9 @@ impl EngineFinalInput {
 
 impl Parse for Accumulated {
     fn parse(input: ParseStream) -> syn::Result<Self> {
-        let mut recog_metas = Some(meta::Recognised::default());
+        use meta::CheckUsed as mCU;
+
+        let mut metas = mCU::Check(meta::Accum::default());
 
         struct Ignore;
 
@@ -48,10 +49,10 @@ impl Parse for Accumulated {
             match if kind == "_meta_used" {
                 // XXXX this is a stop-gap; we're going to have much more here
                 let _star: Token![*] = input.parse()?;
-                recog_metas = None;
+                metas = mCU::Unchecked;
                 continue;
             } else if kind == "_meta" {
-                if let Some(rm) = &mut recog_metas {
+                if let mCU::Check(m) = &mut metas {
                     let content;
                     let _brackets = bracketed!(content in input);
                     let input = content;
@@ -62,14 +63,14 @@ impl Parse for Accumulated {
                             None => RA::Value,
                         };
                         let desig = input.parse()?;
-                        rm.update(desig, allow);
+                        m.recog.update(desig, allow);
                     }
                     continue;
                 } else {
                     Ignore
                 }
             } else if kind == "error" {
-                recog_metas = None;
+                metas = mCU::Unchecked;
                 Ignore
             } else if kind.to_string().starts_with('_') {
                 Ignore
@@ -83,7 +84,7 @@ impl Parse for Accumulated {
                 }
             }
         }
-        Ok(Accumulated { recog_metas })
+        Ok(Accumulated { metas })
     }
 }
 
@@ -138,15 +139,17 @@ fn check_meta_recog(
 
 impl EngineFinalInput {
     pub fn process(self) -> syn::Result<TokenStream> {
+        use meta::CheckUsed as mCU;
+
         let mut errors = ErrorAccumulator::default();
         let mut out = TokenStream::new();
 
-        match self.accum.recog_metas {
-            Some(recog) => {
-                let r = check_meta_recog(&self.driver, recog, &mut errors);
+        match self.accum.metas {
+            mCU::Check(m) => {
+                let r = check_meta_recog(&self.driver, m.recog, &mut errors);
                 errors.handle(r);
             }
-            None => {}
+            mCU::Unchecked => {}
         }
 
         match errors.finish() {
