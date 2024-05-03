@@ -424,14 +424,10 @@ must correspond to a `${Xmeta...}` expansion
 (or `fmeta(...)` boolean test, as applicable)
 in the template(s) applied to that driver.
 
-Any appropriate `Xmeta` reference in the template counts -
-even if that part of the template is not expanded.
-So complex templates may need to explicitly detect
-and reject inappropriate combinations of attributes.
+The `Xmeta` reference must have been actually espanded (or tested),
+so parts of the template that weren't expanded don't count.
 
 These checks are disabled by `#[derive_deftly_adhoc]`.
-
-<!-- TODO META document the new behaviour -->
 
 #### Examples
 
@@ -957,6 +953,12 @@ The `ARG`s are in derive-deftly's usual
 [syntax for positional arguments](#named-and-positional-template-arguments-to-expansions-and-conditions).
 
 ### `false`, `true`, `not(CONDITION)`, `any(COND1,COND2,...)`, `all(COND1,COND2,...)` -- boolean logic
+
+`any()` and `all()` short circuit:
+as soon as they have established they answer,
+they don't test the remaining conditions.
+(This affects error handling,
+and meta attribute use checking.)
 
 ### `dbg(...)` -- Debug dump of condition value
 
