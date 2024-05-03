@@ -4,7 +4,6 @@
 //
 // All it exports (or can export) are the proc macros themselves.
 // Everything else that is `pub` could be written `pub(crate)`.
-#![allow(dead_code, unused_imports)] // XXXX
 
 mod prelude;
 
