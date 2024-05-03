@@ -256,7 +256,7 @@ impl<'c> Context<'c> {
             top: &driver,
             template_crate,
             template_name,
-            tmetas: &tmetas,
+            pmetas: &tmetas,
             field: None,
             variant: variant.as_ref(),
             pvariants: &pvariants,
@@ -380,6 +380,7 @@ impl EngineExpandInput {
         } else {
             chain_call = TokenStream::new();
         };
+        dprint_block!(&chain_call, "derive_deftly_engine! chain call");
 
         let mut out = expanded.unwrap_or_else(|e| e.into_compile_error());
         out.extend(chain_call);

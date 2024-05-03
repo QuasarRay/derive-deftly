@@ -5,15 +5,6 @@
 
 use super::framework::*;
 
-/// What would `${fname}` expand to?  As type from [`syn`].
-///
-/// Implements [`quote::IdentFragment`] and [`ToTokens`].
-#[derive(Debug, Eq, PartialEq)]
-pub enum Fname<'r> {
-    Name(&'r syn::Ident),
-    Index(syn::Index),
-}
-
 impl<O> Expand<O> for SubstIf<O>
 where
     Template<O>: ExpandInfallible<O>,
@@ -746,50 +737,5 @@ impl<O: ExpansionOutput> RepeatedTemplate<O> {
             }
         }
         self.template.expand(ctx, out)
-    }
-}
-
-// TODO META move this to repeat.rs
-impl<'w> WithinField<'w> {
-    /// What would `${fname}` expand to?
-    pub fn fname(&self, tspan: Span) -> Fname {
-        if let Some(fname) = &self.field.ident {
-            // todo is this the right span to emit?
-            Fname::Name(fname)
-        } else {
-            Fname::Index(syn::Index {
-                index: self.index,
-                span: tspan,
-            })
-        }
-    }
-}
-
-impl IdentFrag for Fname<'_> {
-    type BadIdent = IdentFragInfallible;
-    fn frag_to_tokens(
-        &self,
-        out: &mut TokenStream,
-    ) -> Result<(), IdentFragInfallible> {
-        Ok(self.to_tokens(out))
-    }
-    fn fragment(&self) -> String {
-        self.to_string()
-    }
-}
-impl Display for Fname<'_> {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            Fname::Name(v) => quote::IdentFragment::fmt(v, f),
-            Fname::Index(v) => quote::IdentFragment::fmt(v, f),
-        }
-    }
-}
-impl ToTokens for Fname<'_> {
-    fn to_tokens(&self, out: &mut TokenStream) {
-        match self {
-            Fname::Name(v) => v.to_tokens(out),
-            Fname::Index(v) => v.to_tokens(out),
-        }
     }
 }

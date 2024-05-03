@@ -496,7 +496,7 @@ where
         kw_span: Span,
     ) -> syn::Result<&'c PreprocessedMetas> {
         Ok(match self.desig.scope {
-            Scope::T => &ctx.tmetas,
+            Scope::T => &ctx.pmetas,
             Scope::V => &ctx.variant(&kw_span)?.pmetas,
             Scope::F => &ctx.field(&kw_span)?.pfield.pmetas,
         })
@@ -1038,7 +1038,7 @@ impl<'c> Context<'c> {
             Ok::<_, Void>(())
         };
 
-        encode(&self.tmetas, None, None).void_unwrap();
+        encode(&self.pmetas, None, None).void_unwrap();
         WithinVariant::for_each(self, |ctx, wv| {
             if !wv.is_struct_toplevel_as_variant() {
                 encode(&wv.pmetas, Some(wv), None)?;
@@ -1114,7 +1114,7 @@ impl<'c> Context<'c> {
                 }
             };
 
-        visit(&self.tmetas, None, None)?;
+        visit(&self.pmetas, None, None)?;
 
         WithinVariant::for_each(self, |ctx, wv| {
             let current_variant = wv.variant.map(|wv| &wv.ident);
@@ -1170,7 +1170,7 @@ impl<'c> Context<'c> {
                 syn::Data::Struct(_) | syn::Data::Union(_) => SS::Struct,
                 syn::Data::Enum(_) => SS::Enum,
             },
-            &self.tmetas,
+            &self.pmetas,
         )
         .void_unwrap();
 
