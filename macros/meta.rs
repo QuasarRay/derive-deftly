@@ -1267,11 +1267,23 @@ impl PreprocessedTree {
 
         checker.current.push(&self.path);
 
-        let mut err = |msg| {
+        let mut err = |err| {
             let lpaths = checker.current.iter().copied().cloned().collect();
             if checker.reported.insert(Label { lpaths }) {
-                checker.errors.push(self.path.error(msg));
+                checker.errors.push(err);
             }
+        };
+
+        let ur_err = |supplied_want_allow, used_allow| {
+            unrecognised_error(
+                checker.recog,
+                checker.supplied_scope,
+                supplied_want_allow,
+                used_allow,
+                self.path.span(),
+                &checker.current,
+            )
+            .void_unwrap_err()
         };
 
         match (&self.value, self.used.get()) {
@@ -1279,22 +1291,21 @@ impl PreprocessedTree {
             (PreprocessedValue::Value { .. }, Some(RA::Value)) => {}
             (PreprocessedValue::List(l), _) => {
                 if l.content.is_empty() {
-                    err(
+                    err(self.path.error(
  "empty nested list in #[deftly], is not useable by any template"
-                    );
+                    ));
                 }
                 for subtree in &l.content {
                     subtree.check_used(checker);
                 }
             }
-            (_, None) => err(
- // XXXX we should be calling unrecognised_error
- "meta attribute provided, but not recognised by template"
-            ),
-            (PreprocessedValue::Value { .. }, Some(RA::BoolOnly)) => err(
- // XXXX we should be calling unrecognised_error
- "meta attribute value provided, but is used only as a boolean"
-            ),
+            (PreprocessedValue::Value { .. }, u @ Some(RA::BoolOnly))
+            | (PreprocessedValue::Value { .. }, u @ None) => {
+                err(ur_err(RA::Value, u));
+            }
+            (PreprocessedValue::Unit, u @ None) => {
+                err(ur_err(RA::BoolOnly, u));
+            }
         }
 
         checker

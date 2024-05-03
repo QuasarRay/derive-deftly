@@ -4,7 +4,7 @@ error: meta attribute value provided, but is used only as a boolean
 28 |     #[deftly(value = "ignored")] // ERROR, tested only as bool by ShortCircuit
    |              ^^^^^
 
-error: meta attribute provided, but not recognised by template
+error: meta attribute provided for field, but recognised by template only for field (fmeta)
   --> ui/unkmeta2.rs:37:14
    |
 37 |     #[deftly(short_circuit)] // ERROR, not reached in the all()
