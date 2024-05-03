@@ -144,7 +144,32 @@ fn check_meta_recog(
 
 impl EngineFinalInput {
     pub fn process(self) -> syn::Result<TokenStream> {
-        use meta::CheckUsed as mCU;
+        let r = Context::call(
+            &self.driver,
+            &dummy_path(), // template_crate, not used by our f
+            None,          // template_name
+            |ctx| {
+                if let mCU::Check(m) = &self.accum.metas {
+                    for group in &m.used {
+                        adviseable_parse2_call(
+                            group.content.clone(),
+                            |input| {
+                                ctx.decode_update_metas_used(input)?;
+                                Ok(AOk(()))
+                            },
+                        )?
+                    }
+                }
+
+                let mut errors = ErrorAccumulator::default();
+
+                if let mCU::Check(_) = &self.accum.metas {
+                    ctx.check_metas_used(&mut errors);
+                }
+                errors.finish()
+            },
+        );
+        let _xxxx = r;
 
         let mut errors = ErrorAccumulator::default();
         let mut out = TokenStream::new();
