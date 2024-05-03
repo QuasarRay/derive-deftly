@@ -4,7 +4,7 @@ use super::*;
 use macros::meta::*;
 
 use PreprocessedValue as PV;
-use RecogAllow as RA;
+use Usage as U;
 
 //---------- ctx and pmetas and ptrees walker ----------
 
@@ -45,9 +45,9 @@ fn process_nodes_ctx(ctx: &Context, nc: &mut impl NodeCall) {
 }
 fn process_nodes_top<T>(
     top: &syn::DeriveInput,
-    scenario: &[(&syn::Path, Option<RecogAllow>)],
+    scenario: &[(&syn::Path, Option<Usage>)],
     start: impl FnOnce(&Context),
-    mut nc: impl FnMut(&PreprocessedTree, Option<RecogAllow>),
+    mut nc: impl FnMut(&PreprocessedTree, Option<Usage>),
     finish: impl FnOnce(Context) -> T,
 ) -> T {
     Context::call(&top, &dummy_path(), None, |ctx| {
@@ -66,7 +66,7 @@ fn process_nodes_top<T>(
 
 //---------- core algorithm ----------
 
-type NodeInScenario<'n> = (&'n syn::Path, Option<RecogAllow>);
+type NodeInScenario<'n> = (&'n syn::Path, Option<Usage>);
 struct ScenarioDebug<'a>(&'a [NodeInScenario<'a>]);
 
 fn roundtrip_scenario(
@@ -116,8 +116,8 @@ impl Debug for ScenarioDebug<'_> {
         for (p, a) in self.0 {
             let a = match a {
                 None => '-',
-                Some(RA::BoolOnly) => '?',
-                Some(RA::Value) => '=',
+                Some(U::BoolOnly) => '?',
+                Some(U::Value) => '=',
             };
             write!(f, "{}{}", p.to_token_stream(), a)?;
         }
@@ -220,10 +220,10 @@ fn check_matching_for(topkind: &str, variants: &[&str], fields: &[&str]) {
     // trim test matrix:
     // test both values and booleans only if we're short
     let allows = if cell_paths.len() <= 4 {
-        const A: &[RA] = &[RA::BoolOnly, RA::Value];
+        const A: &[U] = &[U::BoolOnly, U::Value];
         A
     } else {
-        const A: &[RA] = &[RA::BoolOnly];
+        const A: &[U] = &[U::BoolOnly];
         A
     };
 
@@ -245,7 +245,7 @@ fn check_matching_for(topkind: &str, variants: &[&str], fields: &[&str]) {
             output_scenario = scenario.clone();
             let (a, b) = output_scenario[0..aliased * 2].split_at_mut(aliased);
             for (a, b) in izip!(a, b) {
-                let u: Option<RecogAllow> = cmp::max(a.1, b.1);
+                let u: Option<Usage> = cmp::max(a.1, b.1);
                 a.1 = u;
                 b.1 = u;
             }
