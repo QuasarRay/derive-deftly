@@ -207,6 +207,12 @@ pub enum RecogAllow {
     Value,
 }
 
+/// One lot of used metas in accumulation - argument to a `_meta_used` accum
+#[derive(Debug)]
+pub struct UsedGroup {
+    pub content: TokenStream,
+}
+
 /// Something representing possibly checking that meta attributes are used
 #[derive(Debug, Clone)]
 pub enum CheckUsed<T> {
@@ -220,6 +226,7 @@ pub enum CheckUsed<T> {
 #[derive(Debug, Default)]
 pub struct Accum {
     pub recog: Recognised,
+    pub used: Vec<UsedGroup>,
 }
 
 #[derive(Default, Debug, Clone)]
@@ -851,6 +858,24 @@ impl<'l> FoundNode<'l> {
             }
         }
         Ok(())
+    }
+}
+
+//---------- impl RecogGroup ----------
+
+impl Parse for CheckUsed<UsedGroup> {
+    fn parse(input: ParseStream) -> syn::Result<Self> {
+        let la = input.lookahead1();
+        Ok(if la.peek(Token![*]) {
+            let _star: Token![*] = input.parse()?;
+            mCU::Unchecked
+        } else if la.peek(token::Bracket) {
+            let group: proc_macro2::Group = input.parse()?;
+            let content = group.stream();
+            mCU::Check(UsedGroup { content })
+        } else {
+            return Err(la.error());
+        })
     }
 }
 

@@ -47,10 +47,15 @@ impl Parse for Accumulated {
         while !input.is_empty() {
             let kind: syn::Ident = input.parse()?;
             match if kind == "_meta_used" {
-                // XXXX this is a stop-gap; we're going to have much more here
-                let _star: Token![*] = input.parse()?;
-                metas = mCU::Unchecked;
-                continue;
+                if let mCU::Check(m) = &mut metas {
+                    match input.parse()? {
+                        mCU::Check(y) => m.used.push(y),
+                        mCU::Unchecked => metas = mCU::Unchecked,
+                    }
+                    continue;
+                } else {
+                    Ignore
+                }
             } else if kind == "_meta" {
                 if let mCU::Check(m) = &mut metas {
                     let content;
