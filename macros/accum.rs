@@ -114,8 +114,8 @@ impl EngineFinalInput {
 
                 let mut errors = ErrorAccumulator::default();
 
-                if let mCU::Check(_) = &self.accum.metas {
-                    ctx.check_metas_used(&mut errors);
+                if let mCU::Check(m) = &self.accum.metas {
+                    ctx.check_metas_used(&mut errors, &m.recog);
                 }
                 errors.finish()
             },

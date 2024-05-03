@@ -970,9 +970,12 @@ impl PreprocessedValueList {
 
 //---------- support for checking (TODO META tidy headings) ---------
 
+// TODO META review the names of these fields; maybe add docs comments?
 struct UsedChecker<'c, 'e> {
     current: Vec<&'c syn::Path>,
     reported: &'e mut HashSet<Label>,
+    recog: &'c Recognised,
+    supplied_scope: SuppliedScope,
     errors: &'e mut ErrorAccumulator,
 }
 
@@ -1148,14 +1151,19 @@ impl<'c> Context<'c> {
     pub(crate) fn check_metas_used(
         &self,
         errors: &mut ErrorAccumulator,
+        recog: &Recognised,
     ) {
+        use SuppliedScope as SS;
+
         let mut reported = HashSet::new();
 
-        let mut chk_pmetas = |pmetas: &PreprocessedMetas| {
+        let mut chk_pmetas = |supplied_scope, pmetas: &PreprocessedMetas| {
             let mut checker = UsedChecker {
                 reported: &mut reported,
                 current: vec![],
+                recog,
                 errors,
+                supplied_scope,
             };
 
             for a in pmetas {
@@ -1168,6 +1176,10 @@ impl<'c> Context<'c> {
         };
 
         chk_pmetas(
+            match &self.top.data {
+                syn::Data::Struct(_) | syn::Data::Union(_) => SS::Struct,
+                syn::Data::Enum(_) => SS::Enum,
+            },
             &self.tmetas,
         )
         .void_unwrap();
@@ -1177,10 +1189,10 @@ impl<'c> Context<'c> {
             // the toplevel, and it has a copy of the ref to the metas,
             // in which case we don't want to process it again.
             if !wv.is_struct_toplevel_as_variant() {
-                chk_pmetas(&wv.pmetas)?;
+                chk_pmetas(SS::Variant, &wv.pmetas)?;
             }
             WithinField::for_each(ctx, |_ctx, wf| {
-                chk_pmetas(&wf.pfield.pmetas)
+                chk_pmetas(SS::Field, &wf.pfield.pmetas)
             })
         })
         .void_unwrap();
@@ -1294,6 +1306,7 @@ impl PreprocessedTree {
 
 //---------- support for checking ----------
 
+// TODO META review the names of these arguments; maybe add docs comment?
 fn unrecognised_error(
     recog_real: &Recognised,
     supplied: SuppliedScope,
