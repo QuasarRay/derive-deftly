@@ -460,7 +460,6 @@ impl ToTokens for Fname<'_> {
 //---------- useful impl ----------
 
 impl<'w> WithinVariant<'w> {
-    // TODO META check for places we could call this instead of open-coding
     pub fn is_struct_toplevel_as_variant(&self) -> bool {
         self.variant.is_none()
     }
