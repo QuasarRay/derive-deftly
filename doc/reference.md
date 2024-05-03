@@ -424,14 +424,10 @@ must correspond to a `${Xmeta...}` expansion
 (or `fmeta(...)` boolean test, as applicable)
 in the template(s) applied to that driver.
 
-Any appropriate `Xmeta` reference in the template counts -
-even if that part of the template is not expanded.
-So complex templates may need to explicitly detect
-and reject inappropriate combinations of attributes.
+The `Xmeta` reference must have been actually espanded (or tested),
+so parts of the template that weren't expanded don't count.
 
 These checks are disabled by `#[derive_deftly_adhoc]`.
-
-<!-- TODO META document the new behaviour -->
 
 #### Examples
 
