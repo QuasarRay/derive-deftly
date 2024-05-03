@@ -951,31 +951,21 @@ impl<'r, 'e> RecogChecker<'r, 'e> {
                 }
             }
 
-            let scope;
-            let error;
-
-            if let Some(found) = nearest {
-                scope = found.scope;
-                error =
-                    [(ptree.path.span(), "provided, in driver"),
-                     (found.span, "recognised, in template")].error(
-                         match (want, found.allow) {
-                             (RA::Value, RA::BoolOnly) =>
- "meta attribute value provided, but is used only as a boolean",
-                             (RA::Value, RA::Value) |
-                             (RA::BoolOnly, RA::BoolOnly) |
-                             (RA::BoolOnly, RA::Value) =>
-                                 panic!("want < found"),
-                         }
-                    );
-            } else {
-                error = unrecognised_error(
+            let error = unrecognised_error(
                     &self.recog_real,
                     supplied,
+                    want,
+                    nearest.as_ref().map(|n| n.allow),
                     ptree.path.span(),
                     lpaths,
                 )
-                .void_unwrap_err();
+                .void_unwrap_err()
+            ;
+
+            let scope;
+            if let Some(found) = nearest {
+                scope = found.scope;
+            } else {
                 scope = supplied.widest();
             };
 
@@ -994,6 +984,8 @@ impl<'r, 'e> RecogChecker<'r, 'e> {
 fn unrecognised_error(
     recog_real: &Recognised,
     supplied: SuppliedScope,
+    supplied_want_allow: RecogAllow,
+    used_allow: Option<RecogAllow>,
     supplied_span: Span,
     lpaths: &[&syn::Path],
 ) -> Result<Void, syn::Error> /* return type allows (ab)use of ? */ {
@@ -1001,6 +993,19 @@ fn unrecognised_error(
 
     let try_case = |e: Option<_>| e.map(Err).unwrap_or(Ok(()));
     let some_err = |m: &dyn Display| Some(supplied_span.error(m));
+
+    // Maybe it's just that a value was supplied by mistake
+    try_case((|| {
+        //
+        match (supplied_want_allow, used_allow) {
+            (RA::Value, Some(RA::BoolOnly)) => some_err(&format_args!(
+                "meta attribute value provided, but is used only as a boolean",
+            )),
+            (_, None) => None,
+            (RA::BoolOnly, Some(_)) => unreachable!(),
+            (RA::Value, Some(RA::Value)) => unreachable!(),
+        }
+    })())?;
 
     // Look to see if it would have been recognised in
     // another scope.  That would mean the attr is

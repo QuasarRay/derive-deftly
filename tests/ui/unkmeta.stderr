@@ -10,22 +10,11 @@ error: meta attribute provided, but not recognised; template only uses it as a c
 24 | #[deftly(tnest)] // ERROR (is only a container)
    |          ^^^^^
 
-error: meta attribute value provided, but is used only as a boolean (provided, in driver)
+error: meta attribute value provided, but is used only as a boolean
   --> ui/unkmeta.rs:27:16
    |
 27 | #[deftly(tnest(bool_only = 42))] // ERROR (only recognised as boolean)
    |                ^^^^^^^^^
-
-error: meta attribute value provided, but is used only as a boolean (recognised, in template)
-  --> ui/unkmeta.rs:15:26
-   |
-15 |         ${if tmeta(tnest(bool_only)) {}},
-   |                          ^^^^^^^^^
-...
-21 | #[derive(Deftly)]
-   |          ------ in this derive macro expansion
-   |
-   = note: this error originates in the macro `derive_deftly_template_UseSomeAttrs` which comes from the expansion of the derive macro `Deftly` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: meta attribute provided, but not recognised by template
   --> ui/unkmeta.rs:28:26
