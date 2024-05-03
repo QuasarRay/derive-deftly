@@ -254,6 +254,12 @@ error: expected identifier
    |
 52 | #[deftly("forbidden")]
    |          ^^^^^^^^^^^
+
+error: expected identifier
+  --> ui/badmeta.rs:52:10
+   |
+52 | #[deftly("forbidden")]
+   |          ^^^^^^^^^^^
 53 | struct TopLevelMetaLitForbidden;
 54 | derive_deftly_adhoc! { TopLevelMetaLitForbidden: }
    | -------------------------------------------------- in this macro invocation
@@ -265,11 +271,29 @@ error: expected literal
    |
 58 | #[deftly(value = wrong)]
    |                  ^^^^^
+
+error: expected literal
+  --> ui/badmeta.rs:58:18
+   |
+58 | #[deftly(value = wrong)]
+   |                  ^^^^^
 59 | struct MetaValueMustBeLit;
 60 | derive_deftly_adhoc! { MetaValueMustBeLit: }
    | -------------------------------------------- in this macro invocation
    |
    = note: this error originates in the macro `derive_deftly_driver_MetaValueMustBeLit` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: expected identifier
+  --> ui/badmeta.rs:64:18
+   |
+64 | #[deftly(barelit("42"))]
+   |                  ^^^^
+
+error: expected identifier
+  --> ui/badmeta.rs:69:16
+   |
+69 | #[deftly(multi("1", "2"))]
+   |                ^^^
 
 error: expected identifier
   --> ui/badmeta.rs:64:18

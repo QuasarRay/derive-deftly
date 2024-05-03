@@ -169,20 +169,10 @@ impl EngineFinalInput {
                 errors.finish()
             },
         );
-        let _xxxx = r;
 
-        let mut errors = ErrorAccumulator::default();
         let mut out = TokenStream::new();
 
-        match self.accum.metas {
-            mCU::Check(m) => {
-                let r = check_meta_recog(&self.driver, m.recog, &mut errors);
-                errors.handle(r);
-            }
-            mCU::Unchecked => {}
-        }
-
-        match errors.finish() {
+        match r {
             Ok(()) => {}
             Err(e) => e.into_compile_error().to_tokens(&mut out),
         }

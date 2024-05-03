@@ -1,3 +1,15 @@
+error: meta attribute value provided, but is used only as a boolean
+  --> ui/unkmeta2.rs:28:14
+   |
+28 |     #[deftly(value = "ignored")] // ERROR, tested only as bool by ShortCircuit
+   |              ^^^^^
+
+error: meta attribute provided, but not recognised by template
+  --> ui/unkmeta2.rs:37:14
+   |
+37 |     #[deftly(short_circuit)] // ERROR, not reached in the all()
+   |              ^^^^^^^^^^^^^
+
 error: XXXX this currently produces no other errors
   --> ui/unkmeta2.rs:46:1
    |

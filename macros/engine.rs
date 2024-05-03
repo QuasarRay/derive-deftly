@@ -302,7 +302,7 @@ impl EngineExpandInput {
             }
         }
 
-        let expanded = Context::call(
+        let outcome = Context::call(
             &self.driver,
             &self.template_crate,
             self.template_name.as_ref(),
@@ -334,9 +334,16 @@ impl EngineExpandInput {
                     );
                 }
 
-                Ok(output)
+                let metas_used = ctx.encode_metas_used();
+
+                Ok((output, metas_used))
             },
         );
+
+        let (expanded, metas_used) = match outcome {
+            Ok((expanded, metas_used)) => (Ok(expanded), Ok(metas_used)),
+            Err(e) => (Err(e), Err(())),
+        };
 
         let chain_call;
 
@@ -348,14 +355,16 @@ impl EngineExpandInput {
             if let Some(name) = &self.template_name {
                 accum.extend(quote!( _name [#name] ));
             }
-            match &expanded {
-                Ok(_) => {
+            match &metas_used {
+                Ok(metas_used) => {
+                    accum.extend(quote!( _meta_used #metas_used ));
+
                     use meta::FindRecogMetas as _;
                     let mut meta_recog = meta::Recognised::default();
                     self.template.find_recog_metas(&mut meta_recog);
                     accum.extend(quote!( _meta [#meta_recog] ));
                 }
-                Err(_) => {
+                Err(()) => {
                     accum.extend(quote!( _error [] ));
                 }
             }
