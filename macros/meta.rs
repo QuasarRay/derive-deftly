@@ -952,15 +952,14 @@ impl<'r, 'e> RecogChecker<'r, 'e> {
             }
 
             let error = unrecognised_error(
-                    &self.recog_real,
-                    supplied,
-                    want,
-                    nearest.as_ref().map(|n| n.allow),
-                    ptree.path.span(),
-                    lpaths,
-                )
-                .void_unwrap_err()
-            ;
+                &self.recog_real,
+                supplied,
+                want,
+                nearest.as_ref().map(|n| n.allow),
+                ptree.path.span(),
+                lpaths,
+            )
+            .void_unwrap_err();
 
             let scope;
             if let Some(found) = nearest {
