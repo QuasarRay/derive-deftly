@@ -1331,6 +1331,41 @@ fn unrecognised_error(
     let try_case = |e: Option<_>| e.map(Err).unwrap_or(Ok(()));
     let some_err = |m: &dyn Display| Some(supplied_span.error(m));
 
+    // Maybe this would have been recognised in other circumstances.
+    // If so, report that.
+    try_case((|| {
+        let recog_allow = supplied
+            .recog_search()
+            .map(|scope| {
+                recog_real
+                    .map
+                    .get(&BorrowedDesig { scope, lpaths })
+                    .copied()
+            })
+            .max()
+            .unwrap_or_default()?;
+
+        if recog_allow < supplied_want_allow {
+            // We've supplied more than would ever be recognised
+            return None;
+        }
+
+        // We'd recognise this, but only conditionally, and not now
+
+        match used_allow {
+            None => some_err(&format_args!(
+ "meta attribute provided, and (conditionally) recognised; but not used in these particular circumstances"
+            )),
+            Some(RA::BoolOnly) => some_err(&format_args!(
+ "meta attribute provided with value, and (conditionally) recognised with value; but in these particular circumstances only used as a boolean"
+            )),
+            Some(RA::Value) => unreachable!(),
+        }
+    })())?;
+
+    // Now we know that even the static scan doesn't
+    // recognise this item.
+
     // Maybe it's just that a value was supplied by mistake
     try_case((|| {
         //
