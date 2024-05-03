@@ -93,55 +93,6 @@ impl Parse for Accumulated {
     }
 }
 
-fn check_meta_recog(
-    driver: &syn::DeriveInput,
-    recog: meta::Recognised,
-    errors: &mut ErrorAccumulator,
-) -> syn::Result<()> {
-    use meta::*;
-    use SuppliedScope as SS;
-
-    let c = RefCell::new(RecogChecker::new(&recog, errors));
-
-    let chk_attrs = |attrs: &_, levels| {
-        c.borrow_mut().check(&preprocess_attrs(attrs)?, levels);
-        Ok::<_, syn::Error>(())
-    };
-
-    let chk_punct = |p: &Punctuated<syn::Field, _>| {
-        for f in p {
-            chk_attrs(&f.attrs, SS::Field)?;
-        }
-        Ok::<_, syn::Error>(())
-    };
-
-    let chk_fields = |f: &_| match f {
-        syn::Fields::Named(n) => chk_punct(&n.named),
-        syn::Fields::Unnamed(n) => chk_punct(&n.unnamed),
-        syn::Fields::Unit => Ok(()),
-    };
-
-    match &driver.data {
-        syn::Data::Struct(ds) => {
-            chk_attrs(&driver.attrs, SS::Struct)?;
-            chk_fields(&ds.fields)?;
-        }
-        syn::Data::Union(du) => {
-            chk_attrs(&driver.attrs, SS::Struct)?;
-            chk_punct(&du.fields.named)?;
-        }
-        syn::Data::Enum(de) => {
-            chk_attrs(&driver.attrs, SS::Enum)?;
-            for v in &de.variants {
-                chk_attrs(&v.attrs, SS::Variant)?;
-                chk_fields(&v.fields)?;
-            }
-        }
-    }
-
-    Ok(())
-}
-
 impl EngineFinalInput {
     pub fn process(self) -> syn::Result<TokenStream> {
         let r = Context::call(
