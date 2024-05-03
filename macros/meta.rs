@@ -1269,8 +1269,8 @@ impl PreprocessedTree {
                 checker.recog,
                 checker.supplied_scope,
                 supplied_want_allow,
-                used_allow,
                 self.path.span(),
+                used_allow,
                 &checker.current,
             )
             .void_unwrap_err()
@@ -1307,15 +1307,17 @@ impl PreprocessedTree {
 
 //---------- support for checking ----------
 
-// TODO META make this a method on UsedChecker
 fn unrecognised_error(
     recog: &Recognised,
     supplied_scope: SuppliedScope,
     supplied_usage: Usage,
-    used_usage: Option<Usage>,
     supplied_span: Span,
+    used_usage: Option<Usage>,
     lpaths: &[&syn::Path],
 ) -> Result<Void, syn::Error> /* return type allows (ab)use of ? */ {
+    // This could have been a method on UsedChecker, but that runs into
+    // borrowck trouble.
+
     let try_case = |e: Option<_>| e.map(Err).unwrap_or(Ok(()));
     let some_err = |m: &dyn Display| Some(supplied_span.error(m));
 
