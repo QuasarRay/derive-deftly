@@ -23,6 +23,17 @@ We expect to increase it cautiously and only with good reason.
 
 ## Changelog
 
+### 0.11.0
+
+#### pub template semver
+
+Updating to derive-deftly 0.11.0 is a breaking change
+to the API of a crate which exports templates:
+
+The scheme for collating information about meta attributes,
+across multiple template invocations, has been completely changed.
+So the calling convention for the template macro is quite incompatible.
+
 ### 0.10.5
 
 #### Breaking (minor)
