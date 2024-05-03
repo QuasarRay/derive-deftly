@@ -1,6 +1,6 @@
 [package]
 name = "derive-deftly"
-version = "0.10.5"
+version = "0.11.0"
 edition = "2021"
 license="MIT"
 authors=["Ian Jackson <ijackson@chiark.greenend.org.uk>",
@@ -45,6 +45,6 @@ case = ["derive-deftly-macros/case", "heck"]
 expect = ["derive-deftly-macros/expect"]
 
 [dependencies]
-derive-deftly-macros = { path = "macros", version = "=0.10.5", default-features = false }
+derive-deftly-macros = { path = "macros", version = "=0.11.0", default-features = false }
 # This dependency is *here* only for the link to `heck` in the docs.
 heck = { version = ">=0.4, <0.6", optional = true }
