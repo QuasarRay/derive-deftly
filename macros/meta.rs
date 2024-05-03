@@ -971,6 +971,12 @@ impl PreprocessedValueList {
 
 //---------- support for checking (TODO META tidy headings) ---------
 
+struct UsedChecker<'c, 'e> {
+    current: Vec<&'c syn::Path>,
+    reported: &'e mut HashSet<Label>,
+    errors: &'e mut ErrorAccumulator,
+}
+
 impl<'c> Context<'c> {
     /// Returns `[::Variant .field () ...]`
     pub fn encode_metas_used(&self) -> proc_macro2::Group {
@@ -1144,10 +1150,18 @@ impl<'c> Context<'c> {
         &self,
         errors: &mut ErrorAccumulator,
     ) {
+        let mut reported = HashSet::new();
+
         let mut chk_pmetas = |pmetas: &PreprocessedMetas| {
+            let mut checker = UsedChecker {
+                reported: &mut reported,
+                current: vec![],
+                errors,
+            };
+
             for a in pmetas {
                 for l in &a.content {
-                    l.check_used(errors);
+                    l.check_used(&mut checker);
                 }
             }
 
@@ -1237,10 +1251,17 @@ impl PreprocessedTree {
         }
     }
 
-    fn check_used(&self, errors: &mut ErrorAccumulator) {
+    fn check_used<'c>(&'c self, checker: &mut UsedChecker<'c, '_>) {
         use RecogAllow as RA;
 
-        let mut err = |msg| errors.push(self.path.error(msg));
+        checker.current.push(&self.path);
+
+        let mut err = |msg| {
+            let lpaths = checker.current.iter().copied().cloned().collect();
+            if checker.reported.insert(Label { lpaths }) {
+                checker.errors.push(self.path.error(msg));
+            }
+        };
 
         match (&self.value, self.used.get()) {
             (PreprocessedValue::Unit, Some(_)) => {}
@@ -1252,7 +1273,7 @@ impl PreprocessedTree {
                     );
                 }
                 for subtree in &l.content {
-                    subtree.check_used(errors);
+                    subtree.check_used(checker);
                 }
             }
             (_, None) => err(
@@ -1264,6 +1285,11 @@ impl PreprocessedTree {
  "meta attribute value provided, but is used only as a boolean"
             ),
         }
+
+        checker
+            .current
+            .pop()
+            .expect("pushed earlier, but can't pop?");
     }
 }
 

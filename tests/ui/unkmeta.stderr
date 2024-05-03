@@ -10,18 +10,6 @@ error: meta attribute provided, but not recognised by template
 24 | #[deftly(tnest)] // ERROR (is only a container)
    |          ^^^^^
 
-error: meta attribute provided, but not recognised by template
-  --> ui/unkmeta.rs:25:10
-   |
-25 | #[deftly(tnest = '1')] // (error, but suppressed)
-   |          ^^^^^
-
-error: empty nested list in #[deftly], is not useable by any template
-  --> ui/unkmeta.rs:26:10
-   |
-26 | #[deftly(tnest())] // ok
-   |          ^^^^^
-
 error: meta attribute value provided, but is used only as a boolean
   --> ui/unkmeta.rs:27:16
    |
@@ -39,12 +27,6 @@ error: meta attribute provided, but not recognised by template
    |
 29 | #[deftly(tnest(by_value(deeper)))] // ERROR (too deep, wanted value instead)
    |                         ^^^^^^
-
-error: meta attribute provided, but not recognised by template
-  --> ui/unkmeta.rs:30:16
-   |
-30 | #[deftly(tnest(bool_only))] // ok
-   |                ^^^^^^^^^
 
 error: meta attribute provided, but not recognised by template
   --> ui/unkmeta.rs:32:16
@@ -117,12 +99,6 @@ error: meta attribute provided, but not recognised by template
    |
 62 | #[deftly(vfnest(by_value = "t"))] // ERROR (should be per-field or -variant)
    |                 ^^^^^^^^
-
-error: meta attribute provided, but not recognised by template
-  --> ui/unkmeta.rs:64:20
-   |
-64 |     #[deftly(fnest(bool_only))] // ERROR (wrong scope, duplicate)
-   |                    ^^^^^^^^^
 
 error: meta attribute provided, but not recognised by template
   --> ui/unkmeta.rs:73:20
