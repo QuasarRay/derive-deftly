@@ -348,17 +348,11 @@ error: expected path segment after `::`
    |
    = note: this error originates in the macro `derive_deftly_driver_WithFunkyPath` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error: unexpected end of input, expected parentheses
-   --> ui/badmeta.rs:101:1
+error: missing parameters to tmeta (NB: argument must be within { })
+   --> ui/badmeta.rs:104:6
     |
-101 | / define_derive_deftly! {
-102 | |     EofInBadRequestSyntax =
-103 | |
-104 | |     $tmeta(something)
-105 | | }
-    | |_^
-    |
-    = note: this error originates in the macro `define_derive_deftly` (in Nightly builds, run with -Z macro-backtrace for more info)
+104 |     $tmeta(something)
+    |      ^^^^^
 
 warning: unused macro definition: `derive_deftly_template_EofInBadRequestSyntax`
    --> ui/badmeta.rs:102:5

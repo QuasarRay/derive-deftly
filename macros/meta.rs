@@ -284,6 +284,13 @@ impl<O: SubstParseContext> SubstMeta<O> {
         kw_span: Span,
         scope: Scope,
     ) -> syn::Result<Self> {
+        if input.is_empty() {
+            return Err(kw_span.error(format_args!(
+                "missing parameters to {} (NB: argument must be within {{ }})",
+                scope.as_ref(),
+            )));
+        }
+
         let label: Label = input.parse()?;
 
         let as_;
