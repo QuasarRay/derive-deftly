@@ -279,7 +279,11 @@ impl<O: SubstParseContext> SubstAs<O> {
 }
 
 impl<O: SubstParseContext> SubstMeta<O> {
-    pub fn parse(input: ParseStream, scope: Scope) -> syn::Result<Self> {
+    pub fn parse(
+        input: ParseStream,
+        kw_span: Span,
+        scope: Scope,
+    ) -> syn::Result<Self> {
         let label: Label = input.parse()?;
 
         let as_;

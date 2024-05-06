@@ -775,7 +775,7 @@ impl<O: SubstParseContext> Parse for Subst<O> {
         };
 
         let parse_meta =
-            |input, scope| meta::SubstMeta::parse(input, scope);
+            |input, scope| meta::SubstMeta::parse(input, kw.span(), scope);
 
         keyword! { tname(not_in_bool()?) }
         keyword! { ttype(not_in_bool()?) }
