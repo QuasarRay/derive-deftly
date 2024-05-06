@@ -348,11 +348,17 @@ error: expected path segment after `::`
    |
    = note: this error originates in the macro `derive_deftly_driver_WithFunkyPath` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error: missing parameters to tmeta (NB: argument must be within { })
+error: missing parameters to expansion keyword (NB: argument must be within { })
    --> ui/badmeta.rs:104:6
     |
 104 |     $tmeta(something)
     |      ^^^^^
+
+error: missing parameters to condition
+   --> ui/badmeta.rs:106:10
+    |
+106 |     ${if tmeta}
+    |          ^^^^^
 
 warning: unused macro definition: `derive_deftly_template_EofInBadRequestSyntax`
    --> ui/badmeta.rs:102:5

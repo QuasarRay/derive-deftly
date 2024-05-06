@@ -42,6 +42,10 @@ impl SubstParseContext for BooleanContext {
     }
 
     type SpecialParseContext = ();
+
+    fn missing_keyword_arguments(kw_span: Span) -> syn::Result<Void> {
+        Err(kw_span.error("missing parameters to condition"))
+    }
 }
 
 impl Subst<BooleanContext> {
