@@ -774,6 +774,9 @@ impl<O: SubstParseContext> Parse for Subst<O> {
             Template::parse(input)
         };
 
+        let parse_meta =
+            |input, scope| meta::SubstMeta::parse(input, kw.span(), scope);
+
         keyword! { tname(not_in_bool()?) }
         keyword! { ttype(not_in_bool()?) }
         keyword! { tdeftype(not_in_bool()?) }
@@ -800,9 +803,9 @@ impl<O: SubstParseContext> Parse for Subst<O> {
         keyword! { twheres(not_in_paste()?, not_in_bool()?) }
 
         use meta::Scope as MS;
-        keyword! { "tmeta": Xmeta(meta::SubstMeta::parse(input, MS::T)?) }
-        keyword! { "vmeta": Xmeta(meta::SubstMeta::parse(input, MS::V)?) }
-        keyword! { "fmeta": Xmeta(meta::SubstMeta::parse(input, MS::F)?) }
+        keyword! { "tmeta": Xmeta(parse_meta(input, MS::T)?) }
+        keyword! { "vmeta": Xmeta(parse_meta(input, MS::V)?) }
+        keyword! { "fmeta": Xmeta(parse_meta(input, MS::F)?) }
 
         keyword! { tattrs(input.parse()?, not_in_paste()?, not_in_bool()?) }
         keyword! { vattrs(input.parse()?, not_in_paste()?, not_in_bool()?) }

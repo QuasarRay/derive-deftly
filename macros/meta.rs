@@ -281,7 +281,18 @@ impl<O: SubstParseContext> SubstAs<O> {
 }
 
 impl<O: SubstParseContext> SubstMeta<O> {
-    pub fn parse(input: ParseStream, scope: Scope) -> syn::Result<Self> {
+    pub fn parse(
+        input: ParseStream,
+        kw_span: Span,
+        scope: Scope,
+    ) -> syn::Result<Self> {
+        if input.is_empty() {
+            return Err(kw_span.error(format_args!(
+                "missing parameters to {} (NB: argument must be within {{ }})",
+                scope.as_ref(),
+            )));
+        }
+
         let label: Label = input.parse()?;
 
         let as_;

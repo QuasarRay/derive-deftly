@@ -98,4 +98,10 @@ derive_deftly_adhoc! {
 #[derive_deftly(TestFunkyPath)]
 struct WithoutfunkyPath;
 
+define_derive_deftly! {
+    EofInBadRequestSyntax =
+
+    $tmeta(something)
+}
+
 fn main() {}
