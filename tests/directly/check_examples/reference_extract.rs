@@ -316,6 +316,7 @@ fn parse_bullet(
                 limit.clone(),
                 all_must_match,
                 output,
+                ExpectedOutputNoneGrouping::Explicit,
             )?);
         })
     };
@@ -674,6 +675,7 @@ fn extract_possibilites_blockquotes(
                     limit,
                     all_must_match,
                     Ok(&output),
+                    ExpectedOutputNoneGrouping::Flatten,
                 )
             })() {
                 Ok(example) => examples_out.push(example),
