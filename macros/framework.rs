@@ -180,7 +180,7 @@ pub trait SubstParseContext: Sized {
         }
     }
 
-    /// Parse maybe a comma (comma in boolean context, not otherwise)
+    /// Parse maybe a comma (comma in boolean contegxt, not otherwise)
     ///
     /// Useful for parsing the arguments to an argument-taking keyword
     /// which takes an "equivalent" syntax in both contexts.
@@ -189,6 +189,16 @@ pub trait SubstParseContext: Sized {
             let _: Token![,] = input.parse()?;
         }
         Ok(())
+    }
+
+    /// Return an error suitable for reporting missing arguments
+    ///
+    /// Helper for handling missing arguments to an argument-taking keyword
+    /// which takes an "equivalent" syntax in both contexts.
+    fn missing_keyword_arguments(kw_span: Span) -> syn::Result<Void> {
+        Err(kw_span.error(format_args!(
+ "missing parameters to expansion keyword (NB: argument must be within {{ }})",
+        )))
     }
 }
 

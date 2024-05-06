@@ -287,10 +287,7 @@ impl<O: SubstParseContext> SubstMeta<O> {
         scope: Scope,
     ) -> syn::Result<Self> {
         if input.is_empty() {
-            return Err(kw_span.error(format_args!(
-                "missing parameters to {} (NB: argument must be within {{ }})",
-                scope.as_ref(),
-            )));
+            O::missing_keyword_arguments(kw_span)?;
         }
 
         let label: Label = input.parse()?;
