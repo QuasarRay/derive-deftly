@@ -99,11 +99,13 @@ derive_deftly_adhoc! {
 struct WithoutfunkyPath;
 
 define_derive_deftly! {
-    EofInBadRequestSyntax =
+    WrongRequestSyntax =
 
     $tmeta(something)
-
     ${if tmeta}
+
+    ${tmeta(something) unknown_option}
+    ${if tmeta(something) unknown_option {}}
 }
 
 fn main() {}
