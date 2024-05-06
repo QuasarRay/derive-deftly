@@ -102,6 +102,8 @@ define_derive_deftly! {
     EofInBadRequestSyntax =
 
     $tmeta(something)
+
+    ${if tmeta}
 }
 
 fn main() {}

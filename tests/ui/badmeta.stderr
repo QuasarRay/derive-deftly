@@ -354,6 +354,12 @@ error: missing parameters to tmeta (NB: argument must be within { })
 104 |     $tmeta(something)
     |      ^^^^^
 
+error: missing parameters to tmeta (NB: argument must be within { })
+   --> ui/badmeta.rs:106:10
+    |
+106 |     ${if tmeta}
+    |          ^^^^^
+
 warning: unused macro definition: `derive_deftly_template_EofInBadRequestSyntax`
    --> ui/badmeta.rs:102:5
     |
