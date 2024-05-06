@@ -695,13 +695,14 @@ where
         out: &mut O,
         pmetas: &PreprocessedMetas,
     ) -> syn::Result<()> {
+        let SubstMeta { desig, as_ } = self;
         let mut found = None::<FoundNode>;
         let mut hint = None::<FoundNearbyNode>;
         let span_whole = self.span_whole(kw_span);
         let self_loc = || (span_whole, "expansion");
         let error_loc = || [ctx.error_loc(), self_loc()];
 
-        self.desig.label.search(
+        desig.label.search(
             pmetas,
             &mut |av: FoundNode| {
                 if let Some(first) = &found {
@@ -743,7 +744,7 @@ where
         })?;
 
         found.ptree.update_used(Usage::Value);
-        found.expand(span_whole, &self.as_, out)?;
+        found.expand(span_whole, as_, out)?;
 
         Ok(())
     }
