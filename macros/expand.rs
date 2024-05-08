@@ -503,8 +503,8 @@ where
             SD::vdefbody(vname, content, np, ..) => {
                 use syn::Fields as SF;
                 let variant = ctx.variant(&kw_span)?;
-                let enum_variant: Option<&syn::Variant> = variant.variant;
-                if enum_variant.is_some() {
+                let struct_variant = variant.is_struct_toplevel_as_variant();
+                if !struct_variant {
                     vname.expand(ctx, out);
                 }
                 let delim = match variant.fields {
@@ -513,14 +513,15 @@ where
                     SF::Named(..) => Some(Delimiter::Brace),
                 };
                 do_maybe_delimited_group(out, np, delim, content)?;
-                match (variant.fields, enum_variant.is_some()) {
-                    // struct {} at top-level: no terminator.
-                    (SF::Named(_), false) => {}
+                if !struct_variant {
                     // Any enum variant: terminate with a comma.
-                    (_, true) => out.append_tokens(np, Token![,](kw_span))?,
+                    out.append_tokens(np, Token![,](kw_span))?;
+                } else if matches!(variant.fields, SF::Named(_)) {
+                    // struct {} at top-level: no terminator.
+                } else {
                     // Unit or tuple struct: Terminate with a semicolon.
-                    (_, false) => out.append_tokens(np, Token![;](kw_span))?,
-                };
+                    out.append_tokens(np, Token![;](kw_span))?;
+                }
             }
             SD::Crate(np, ..) => out.append_tokens(np, &ctx.template_crate)?,
 
