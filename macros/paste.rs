@@ -300,6 +300,18 @@ impl IdentFrag for Pasted {
 /// pasting.
 type Piece<'i> = (&'i str, Option<Span>);
 
+enum AssemblyInstruction {
+    Plain(Pasted),
+    Complex {
+        tspan: Span,
+        pre: TokenStream,
+        ident: Pasted,
+        post: TokenStream,
+    },
+}
+
+use AssemblyInstruction as AI;
+
 /// Make a leaf identifier out of pieces
 ///
 /// Actually pastes together the pieces.
@@ -556,10 +568,10 @@ impl Items {
             change_case,
             self.atoms,
         )? {
-            Either::Left(ident) => out.append_identfrag_toks(
+            AI::Plain(ident) => out.append_identfrag_toks(
                 &ident, //
             )?,
-            Either::Right((tspan, pre, ident, post)) => out.append_idpath(
+            AI::Complex { tspan, pre, ident, post } => out.append_idpath(
                 tspan,
                 |ta| ta.append(pre),
                 &ident,
@@ -584,7 +596,7 @@ impl Items {
         items: Vec<Item>,
         change_case: Option<ChangeCase>,
         atoms: Vec<AtomForReport>,
-    ) -> syn::Result<Either<Pasted, (Span, TokenStream, Pasted, TokenStream)>>
+    ) -> syn::Result<AssemblyInstruction>
     {
         // We must always use a similar span when we emit identifiers
         // that are going to be used to bind variables, or the hygiene
@@ -655,17 +667,17 @@ impl Items {
                     post,
                     te_span,
                 } => {
-                    return Ok(Either::Right((
+                    return Ok(AI::Complex {
                         tspan,
-                        mem::take(pre),
-                        mk_ident_nt((text, Some(*te_span)), atoms),
-                        mem::take(post),
-                    )))
+                        pre: mem::take(pre),
+                        ident: mk_ident_nt((text, Some(*te_span)), atoms),
+                        post: mem::take(post),
+                    })
                 }
                 Item::Plain { .. } => panic!("trivial nontrivial"),
             }
         } else {
-            return Ok(Either::Left(
+            return Ok(AI::Plain(
                 mk_ident(out_span, change_case, plain_strs(&items), atoms), //
             ));
         }
