@@ -37,11 +37,16 @@ enum Item {
         span: Option<Span>,
     },
     Complex {
-        pre: TokenStream,
+        surround: Surround,
         text: String,
-        post: TokenStream,
         te_span: Span,
     },
+}
+
+#[derive(Default, Debug)]
+struct Surround {
+    pre: TokenStream,
+    post: TokenStream,
 }
 
 //---------- IdentFrag ----------
@@ -304,9 +309,8 @@ enum AssemblyInstruction {
     Plain(Pasted),
     Complex {
         tspan: Span,
-        pre: TokenStream,
+        surround: Surround,
         ident: Pasted,
-        post: TokenStream,
     },
 }
 
@@ -571,11 +575,11 @@ impl Items {
             AI::Plain(ident) => out.append_identfrag_toks(
                 &ident, //
             )?,
-            AI::Complex { tspan, pre, ident, post } => out.append_idpath(
+            AI::Complex { tspan, surround, ident } => out.append_idpath(
                 tspan,
-                |ta| ta.append(pre),
+                |ta| ta.append(surround.pre),
                 &ident,
-                |ta| ta.append(post),
+                |ta| ta.append(surround.post),
             )?,
         }
 
@@ -662,16 +666,14 @@ impl Items {
 
             match nontrivial {
                 Item::Complex {
-                    pre,
+                    surround,
                     text,
-                    post,
                     te_span,
                 } => {
                     return Ok(AI::Complex {
                         tspan,
-                        pre: mem::take(pre),
+                        surround: mem::take(surround),
                         ident: mk_ident_nt((text, Some(*te_span)), atoms),
-                        post: mem::take(post),
                     })
                 }
                 Item::Plain { .. } => panic!("trivial nontrivial"),
@@ -775,9 +777,9 @@ impl ExpansionOutput for Items {
         let pre = handle_err(pre);
         let post = handle_err(post);
         ident.note_atoms(&mut self.atoms);
+        let surround = Surround { pre, post };
         self.append_item_raw(Item::Complex {
-            pre,
-            post,
+            surround,
             text,
             te_span,
         });
@@ -808,10 +810,10 @@ impl ExpansionOutput for Items {
                     let mut post = TokenStream::new();
                     arguments.to_tokens(&mut post);
                     last_punct.to_tokens(&mut post);
+                    let surround = Surround { pre, post };
                     let item = Item::Complex {
-                        pre,
+                        surround,
                         text,
-                        post,
                         te_span,
                     };
                     self.append_atom(item)
@@ -892,14 +894,14 @@ impl ExpansionOutput for Items {
                 match i {
                     Item::Plain { text, .. } => write!(msg, "{:?}", text)?,
                     Item::Complex {
-                        pre, text, post, ..
+                        surround, text, ..
                     } => {
                         write!(
                             msg,
                             "{:?}+{:?}+{:?}",
-                            pre.to_string(),
+                            surround.pre.to_string(),
                             text,
-                            post.to_string(),
+                            surround.post.to_string(),
                         )?;
                     }
                 }
