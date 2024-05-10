@@ -646,10 +646,18 @@ impl Items {
         }
 
         if let Some(nontrivial) = nontrivial {
+            // We decompose `items` into `items_before`, `items_after`,
+            // and `items_nontrivial`.  There's a bit of shuffling
+            // to avoid reallocating the array while still providing
+            // an owned `items_nontrivial` that we can move out of.
             let mut items = items;
             let (items, items_after) = items.split_at_mut(nontrivial + 1);
             let (items_before, items) = items.split_at_mut(nontrivial);
-            let nontrivial = &mut items[0];
+            let dummy_item = Item::Plain {
+                text: String::new(),
+                span: None,
+            };
+            let item_nontrivial = mem::replace(&mut items[0], dummy_item);
 
             let mk_ident_nt = |(text, txspan): Piece, atoms| {
                 mk_ident(
@@ -664,7 +672,7 @@ impl Items {
                 )
             };
 
-            match nontrivial {
+            match item_nontrivial {
                 Item::Complex {
                     surround,
                     text,
@@ -672,8 +680,8 @@ impl Items {
                 } => {
                     return Ok(AI::Complex {
                         tspan,
-                        surround: mem::take(surround),
-                        ident: mk_ident_nt((text, Some(*te_span)), atoms),
+                        surround,
+                        ident: mk_ident_nt((&text, Some(te_span)), atoms),
                     })
                 }
                 Item::Plain { .. } => panic!("trivial nontrivial"),
