@@ -53,6 +53,8 @@ struct TypePrecedenceDyn {
     parens: (dyn Display + 'static),
 }
 fn main() {
+    let product = (2) * (3 + 4) * 1;
+    assert(product == 14);
     let product = 2 * 3 + 4 * 1;
     assert(product == 10);
     let product = 2 * (3 + 4);

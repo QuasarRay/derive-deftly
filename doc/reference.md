@@ -392,6 +392,11 @@ Accesses macro parameters passed via `#[deftly(...)]` attributes.
      `VALUE` is parsed as a type,
      possibly with generics etc. (`syn::Type`).
 
+    * **`expr`**:
+     `VALUE` is parsed as an aexpression.
+     When expanded, it is surrounded with `( )`
+     to ensure correct precedence.
+
     * **`tokens`**:
      `VALUE` is parsed as an arbtitrary sequence of tokens
      (`TokenStream`).
