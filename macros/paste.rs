@@ -37,11 +37,16 @@ enum Item {
         span: Option<Span>,
     },
     Complex {
-        pre: TokenStream,
+        surround: Surround,
         text: String,
-        post: TokenStream,
         te_span: Span,
     },
+}
+
+#[derive(Debug)]
+struct Surround {
+    pre: TokenStream,
+    post: TokenStream,
 }
 
 //---------- IdentFrag ----------
@@ -300,6 +305,17 @@ impl IdentFrag for Pasted {
 /// pasting.
 type Piece<'i> = (&'i str, Option<Span>);
 
+enum AssemblyInstruction {
+    Plain(Pasted),
+    Complex {
+        tspan: Span,
+        surround: Surround,
+        ident: Pasted,
+    },
+}
+
+use AssemblyInstruction as AI;
+
 /// Make a leaf identifier out of pieces
 ///
 /// Actually pastes together the pieces.
@@ -556,14 +572,18 @@ impl Items {
             change_case,
             self.atoms,
         )? {
-            Either::Left(ident) => out.append_identfrag_toks(
+            AI::Plain(ident) => out.append_identfrag_toks(
                 &ident, //
             )?,
-            Either::Right((tspan, pre, ident, post)) => out.append_idpath(
+            AI::Complex {
                 tspan,
-                |ta| ta.append(pre),
+                surround,
+                ident,
+            } => out.append_idpath(
+                tspan,
+                |ta| ta.append(surround.pre),
                 &ident,
-                |ta| ta.append(post),
+                |ta| ta.append(surround.post),
             )?,
         }
 
@@ -584,8 +604,7 @@ impl Items {
         items: Vec<Item>,
         change_case: Option<ChangeCase>,
         atoms: Vec<AtomForReport>,
-    ) -> syn::Result<Either<Pasted, (Span, TokenStream, Pasted, TokenStream)>>
-    {
+    ) -> syn::Result<AssemblyInstruction> {
         // We must always use a similar span when we emit identifiers
         // that are going to be used to bind variables, or the hygiene
         // system doesn't think they're the same identifier.
@@ -630,10 +649,20 @@ impl Items {
         }
 
         if let Some(nontrivial) = nontrivial {
+            // We decompose `items` into `items_before`, `items_after`,
+            // and `items_nontrivial`.  There's a bit of shuffling
+            // to avoid reallocating the array while still providing
+            // an owned `items_nontrivial` that we can move out of.
             let mut items = items;
-            let (items, items_after) = items.split_at_mut(nontrivial + 1);
-            let (items_before, items) = items.split_at_mut(nontrivial);
-            let nontrivial = &mut items[0];
+            let item_nontrivial = {
+                let dummy_item = Item::Plain {
+                    text: String::new(),
+                    span: None,
+                };
+                mem::replace(&mut items[nontrivial], dummy_item)
+            };
+            let items_before = &items[0..nontrivial];
+            let items_after = &items[nontrivial + 1..];
 
             let mk_ident_nt = |(text, txspan): Piece, atoms| {
                 mk_ident(
@@ -648,24 +677,22 @@ impl Items {
                 )
             };
 
-            match nontrivial {
+            match item_nontrivial {
                 Item::Complex {
-                    pre,
+                    surround,
                     text,
-                    post,
                     te_span,
                 } => {
-                    return Ok(Either::Right((
+                    return Ok(AI::Complex {
                         tspan,
-                        mem::take(pre),
-                        mk_ident_nt((text, Some(*te_span)), atoms),
-                        mem::take(post),
-                    )))
+                        surround,
+                        ident: mk_ident_nt((&text, Some(te_span)), atoms),
+                    })
                 }
                 Item::Plain { .. } => panic!("trivial nontrivial"),
             }
         } else {
-            return Ok(Either::Left(
+            return Ok(AI::Plain(
                 mk_ident(out_span, change_case, plain_strs(&items), atoms), //
             ));
         }
@@ -763,9 +790,9 @@ impl ExpansionOutput for Items {
         let pre = handle_err(pre);
         let post = handle_err(post);
         ident.note_atoms(&mut self.atoms);
+        let surround = Surround { pre, post };
         self.append_item_raw(Item::Complex {
-            pre,
-            post,
+            surround,
             text,
             te_span,
         });
@@ -796,10 +823,10 @@ impl ExpansionOutput for Items {
                     let mut post = TokenStream::new();
                     arguments.to_tokens(&mut post);
                     last_punct.to_tokens(&mut post);
+                    let surround = Surround { pre, post };
                     let item = Item::Complex {
-                        pre,
+                        surround,
                         text,
-                        post,
                         te_span,
                     };
                     self.append_atom(item)
@@ -879,15 +906,13 @@ impl ExpansionOutput for Items {
                 write!(msg, "{}", sep)?;
                 match i {
                     Item::Plain { text, .. } => write!(msg, "{:?}", text)?,
-                    Item::Complex {
-                        pre, text, post, ..
-                    } => {
+                    Item::Complex { surround, text, .. } => {
                         write!(
                             msg,
                             "{:?}+{:?}+{:?}",
-                            pre.to_string(),
+                            surround.pre.to_string(),
                             text,
-                            post.to_string(),
+                            surround.post.to_string(),
                         )?;
                     }
                 }
