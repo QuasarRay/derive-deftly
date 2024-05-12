@@ -932,6 +932,15 @@ even if the Rust compiler would accept one and reject the other;
 and, expansions migtht count as equal
 even if macros could tell the difference.
 
+Also,
+`None`-delimited groups,
+which are used by macros (including derive-deftly and `macro_rules!`)
+for preventing precedence surprises,
+are flattened - the wrapping by an invisible group is ignored.
+This means that two expressions with different values,
+due to different evaluation orders,
+can compare equal!
+
 If both inputs are valid Rust types,
 they will only compare equal if they are syntactically the same.
 (Note that different ways of writing the same type
