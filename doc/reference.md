@@ -42,6 +42,8 @@
       * [`for struct`, `for enum`, `for union` -- Insist on a particular driver kind](#for-struct-for-enum-for-union--insist-on-a-particular-driver-kind)
       * [`dbg` -- Print the expansion to stderr, for debugging](#dbg--print-the-expansion-to-stderr-for-debugging)
       * [Expansion options example](#expansion-options-example)
+   * [Precedence considerations](#precedence-considerations)
+      * [`None`-delimited groups](#none-delimited-groups)
    * [Structs used in examples](#structs-used-in-examples)
 
 **Reference documentation for the actual proc macros** is in
@@ -746,6 +748,8 @@ derive-deftly's built-in functionality.
 
 `BODY` is in the
 [standard syntax for positional arguments](#named-and-positional-template-arguments-to-expansions-and-conditions).
+When generating Rust code, be careful about operator precedence:
+see [Precedence considerations](#precedence-considerations).
 
 `CONDITION` is in the standard syntax for a condition.
 
@@ -1118,6 +1122,45 @@ so it does indeed expand to zero items.)
 Then it applies that to template to `struct Unit`,
 restating the requirement that the expansion should be item(s).
 and dumping the expansion to stderr during compilation.
+
+## Precedence considerations
+
+When using
+`${Xmeta as tokens}`,
+and user-defined expansions,
+it can be necessary to add `{ }` or `( )`
+to avoid surprising expansions due to operator precedence.
+
+```
+# use derive_deftly::{Deftly, derive_deftly_adhoc};
+#[derive(Deftly)]
+#[derive_deftly_adhoc]
+struct S(u32, u32);
+
+let product = derive_deftly_adhoc!(
+    S:
+    ${define F_PLUS_TWO {$fname + 2}}
+    ${for fields { $F_PLUS_TWO * }} 1
+    // (0 + 2) * (1 + 2) * 1 = 2 * 3 * 1 = 6
+    // but this is 
+    // 0 + 2 * 1 + 2 * 1 = 0 + (2 * 1) + (2 * 1) = 4
+);
+
+assert_eq!(product, 4);
+```
+
+Rust demands that *types* are expressed unambiguously,
+so precedence problems, and lack of `( )` (or `< >`),
+are detected by the compiler, and rejected.
+
+### `None`-delimited groups
+
+In theory Rust has a feature that would help with this:
+syntactic groups
+[can be surrounded by invisible delimiters](https://doc.rust-lang.org/proc_macro/enum.Delimiter.html#variant.None).
+
+However, as of May 2024 this feature does not work (and has never worked).
+See [rust-lang/rust#67062](https://github.com/rust-lang/rust/issues/67062).
 
 ## Structs used in examples
 
