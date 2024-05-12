@@ -312,7 +312,7 @@ They use derive-deftly's usual
 
 #### Examples
 
- * `$ftype`: `std::iter::Once::<T>`
+ * `$ftype`: `« std::iter::Once::<T> »`
  * `$vtype` for struct: `Tuple::<'a, 'l, T, C>`
  * `$vtype` for enum variant: `Enum::TupleVariant::<'a, 'l, T, C>`
  * `$ttype`: `Enum::<'a, 'l, T, C>`
@@ -533,7 +533,7 @@ and the path prefix and generics reproduced unaltered.
 #### Examples
 
  * `$<Zingy $ftype Builder>` for `TupleVariant`:
-    `std::iter::ZingyOnceBuilder::<T>`
+    `« std::iter::ZingyOnceBuilder::<T> »`
  * `${paste x_ $fname}` for tuple: `x_0`
  * `${paste $fname _x}` for tuple: error, ``constructed identifier "0_x" is invalid``
 
@@ -1161,6 +1161,14 @@ syntactic groups
 
 However, as of May 2024 this feature does not work (and has never worked).
 See [rust-lang/rust#67062](https://github.com/rust-lang/rust/issues/67062).
+
+Nevertheless, derive-deftly surrounds certain expansions with
+None-delimited groups.
+These are shown in the example outputs, in this reference,
+surrounded by guillemets `« »`.
+
+This is done for
+ * `$ftype`
 
 ## Structs used in examples
 

@@ -409,7 +409,7 @@ where
             SD::ftype(_) => {
                 let f = ctx.field(&kw_span)?;
                 out.append_syn_type(kw_span, &f.field.ty,
-                                    Grouping::new_todo_xxxx());
+                                    Grouping::Invisible);
             }
             SD::fpatname(_) => {
                 let f = ctx.field(&kw_span)?;
