@@ -575,7 +575,11 @@ impl Items {
             AI::Plain(ident) => out.append_identfrag_toks(
                 &ident, //
             )?,
-            AI::Complex { tspan, surround, ident } => out.append_idpath(
+            AI::Complex {
+                tspan,
+                surround,
+                ident,
+            } => out.append_idpath(
                 tspan,
                 |ta| ta.append(surround.pre),
                 &ident,
@@ -600,8 +604,7 @@ impl Items {
         items: Vec<Item>,
         change_case: Option<ChangeCase>,
         atoms: Vec<AtomForReport>,
-    ) -> syn::Result<AssemblyInstruction>
-    {
+    ) -> syn::Result<AssemblyInstruction> {
         // We must always use a similar span when we emit identifiers
         // that are going to be used to bind variables, or the hygiene
         // system doesn't think they're the same identifier.
@@ -659,7 +662,7 @@ impl Items {
                 mem::replace(&mut items[nontrivial], dummy_item)
             };
             let items_before = &items[0..nontrivial];
-            let items_after = &items[nontrivial+1..];
+            let items_after = &items[nontrivial + 1..];
 
             let mk_ident_nt = |(text, txspan): Piece, atoms| {
                 mk_ident(
@@ -903,9 +906,7 @@ impl ExpansionOutput for Items {
                 write!(msg, "{}", sep)?;
                 match i {
                     Item::Plain { text, .. } => write!(msg, "{:?}", text)?,
-                    Item::Complex {
-                        surround, text, ..
-                    } => {
+                    Item::Complex { surround, text, .. } => {
                         write!(
                             msg,
                             "{:?}+{:?}+{:?}",
