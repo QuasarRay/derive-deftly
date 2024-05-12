@@ -1,9 +1,11 @@
 ### Simple templates: fields and repetition
 
-Let's imagine we had to write Clone from scratch for a simple structure
-like this:
+Let's start by imagining that
+we didn't have `derive-deftly`,
+and we had to write Clone from scratch
+for a simple structure like this:
 
-```
+```rust
 struct GiftBasket {
    n_apples: u8,
    n_oranges: u8,
@@ -12,8 +14,9 @@ struct GiftBasket {
 }
 ```
 
-We'd probably write something like this:
-```
+We would probably write something like this:
+
+```rust
 # struct GiftBasket {
 #   n_apples: u8,
 #   n_oranges: u8,
@@ -33,15 +36,15 @@ impl Clone for GiftBasket {
 }
 ```
 
-(In reality,
-since `n_apples` and `n_oranges` both implement `Copy`,
-you wouldn't actually call `clone()` on them.
-But since the compiler knows their types,
-it should be smart enough to
-optimize the Clone away for you.)
+> (In reality,
+> since `n_apples` and `n_oranges` both implement `Copy`,
+> you wouldn't actually call `clone()` on them.
+> But since the compiler knows their types,
+> it should be smart enough to
+> optimize the Clone away for you.)
 
 If you imagine generalizing this
-to any simple struct struct with named fields,
+to any simple struct with named fields,
 you might come up with a pseudocode template
 like this one:
 
@@ -57,10 +60,10 @@ impl Clone for ⟪Your struct⟫ {
 ```
 
 And here's how that pseudocode translates into
-a `derive_deftly` template:
+a `derive-deftly` template:
 
-```
-use derive_deftly::define_derive_deftly;
+```rust
+use derive_deftly::{define_derive_deftly, Deftly};
 
 define_derive_deftly! {
     MyClone =
@@ -73,40 +76,60 @@ define_derive_deftly! {
         }
     }
 }
+
+#[derive(Deftly)]
+#[derive_deftly(MyClone)]
+struct GiftBasket {
+    // ...
+}
 ```
 
-Let's look at that template.  You've already seen `$ttype`: it expands
+Let's look at that template piece by piece.
+
+As in our ["hello world" example](./hello-world.md),
+`define_derive_deftly!` creates a template that we later apply
+with `#[derive(Deftly)]`.
+When applied, the template expands to its contents—that is,
+everything after `MyClone =`.
+Certain marked "expansion keywords" in the contents
+(those marked with `$`)
+are replaced with a value that depends on the struct
+that the template is beling applied to.
+
+You've already seen `$ttype`: it expands
 to the type on which you are applying the macro.  There are two new
 pieces of syntax here, though:
-[`$( ... )`](crate::doc_reference#repetition-and-nesting)
+[`$( ... )`][ref:repetition-and-nesting]
 and
-[`$fname`](crate::doc_reference#fname-vname-tname--names).
+[`$fname`][ref:fname-vname-tname--names]
 
-
-In `derive_deftly` templates, `$( ... )`  denotes repetition:
+The `$( ... )` syntax denotes repetition:
 it repeats what is inside it
 an "appropriate" number of times.
-(We'll give a definition of "appropriate" later on.)
+(This syntax will be familiar if you already know `macro_rules!`.)
 Since we want to clone every field in our struct,
 we are repating the `field: self.field.clone() ,`
-part of our implementation.
+part of our implementation
+once for each field.
 
 The `$fname` expansion means "the name of a field".
-Which field?
-Since `$fname` occurs inside `$( ... )`,
-we will repeat the body of the `$( ... )` once for each
-field, and expand `$fname`
-to the name of a different field each time.
+It expands to the name of a different field for each repetition
+of the `$( ... )` block.
+Since we have four fields in `GiftBasket`,
+the `$( ... )` block will repeat four times,
+and `$fname` will expand to a different field each time.
 
-(Again, more advanced repetition is possible;
-there's
-[more to come](#a-further-note-on-reptition).)
+<!-- TODO: Re-add this.
+   (Again, more advanced repetition is possible;
+   there's
+   [more to come](#a-further-note-on-reptition).)
+-->
 
 
 > ### On naming
 >
-> Many `derive_deftly` expansions'
-> [names start with](crate::doc_reference#keyword-initial-letters)
+> Many `derive-deftly` expansions'
+> names [start with][ref:keyword-initial-letters]
 > `t` for **top-level**
 > (whatever you are applying the template to),
 > `v` for **variant**
@@ -117,15 +140,16 @@ there's
 > So far, you've seen `$ttype` for "top-level type" and `$fname` for
 > "field name".
 >
-> (We say "top-level" instead of "struct":
-> later on, we'll be showing you how to apply
-> derive_deftly to `enums`.)
->
-> Many `derive_deftly` expansions end with
+> After this character,
+> many `derive_deftly` expansions end with
 > a short identifier for what they contain.
-> For example, `$tname` is the name of a top-level type,
-> `$vname` is the name of a variant,
-> and `$fname` is the name of a field.
-> Whenever possible, we have tried to use the same
-> identifier for the `t`, `v`, and `f` cases,
-> whenever it is logical.
+> For example, `$tname` is the _name_ of a top-level type,
+> `$vname` is the _name_ of a variant,
+> and `$fname` is the _name_ of a field.
+> Whenever it is logical,
+> we have tried to use the same
+> identifier for the `t`, `v`, and `f` cases.
+
+[ref:repetition-and-nesting]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#repetition-and-nesting
+[ref:fname-vname-tname--names]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#fname-vname-tname--names
+[ref:keyword-initial-letters] keyword-initial-letters#keyword-initial-letters
