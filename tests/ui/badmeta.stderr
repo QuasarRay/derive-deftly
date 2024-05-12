@@ -355,15 +355,27 @@ error: missing parameters to expansion keyword (NB: argument must be within { })
     |      ^^^^^
 
 error: missing parameters to condition
-   --> ui/badmeta.rs:106:10
+   --> ui/badmeta.rs:105:10
     |
-106 |     ${if tmeta}
+105 |     ${if tmeta}
     |          ^^^^^
 
-warning: unused macro definition: `derive_deftly_template_EofInBadRequestSyntax`
+error: unexpected arguments to expansion keyword
+   --> ui/badmeta.rs:107:24
+    |
+107 |     ${tmeta(something) unknown_option}
+    |                        ^^^^^^^^^^^^^^
+
+error: expected curly braces
+   --> ui/badmeta.rs:108:27
+    |
+108 |     ${if tmeta(something) unknown_option {}}
+    |                           ^^^^^^^^^^^^^^
+
+warning: unused macro definition: `derive_deftly_template_WrongRequestSyntax`
    --> ui/badmeta.rs:102:5
     |
-102 |     EofInBadRequestSyntax =
-    |     ^^^^^^^^^^^^^^^^^^^^^
+102 |     WrongRequestSyntax =
+    |     ^^^^^^^^^^^^^^^^^^
     |
     = note: `#[warn(unused_macros)]` on by default
