@@ -43,7 +43,7 @@ enum Item {
     },
 }
 
-#[derive(Default, Debug)]
+#[derive(Debug)]
 struct Surround {
     pre: TokenStream,
     post: TokenStream,
@@ -651,13 +651,15 @@ impl Items {
             // to avoid reallocating the array while still providing
             // an owned `items_nontrivial` that we can move out of.
             let mut items = items;
-            let (items, items_after) = items.split_at_mut(nontrivial + 1);
-            let (items_before, items) = items.split_at_mut(nontrivial);
-            let dummy_item = Item::Plain {
-                text: String::new(),
-                span: None,
+            let item_nontrivial = {
+                let dummy_item = Item::Plain {
+                    text: String::new(),
+                    span: None,
+                };
+                mem::replace(&mut items[nontrivial], dummy_item)
             };
-            let item_nontrivial = mem::replace(&mut items[0], dummy_item);
+            let items_before = &items[0..nontrivial];
+            let items_after = &items[nontrivial+1..];
 
             let mk_ident_nt = |(text, txspan): Piece, atoms| {
                 mk_ident(
