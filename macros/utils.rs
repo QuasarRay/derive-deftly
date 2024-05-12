@@ -296,19 +296,12 @@ impl Drop for ErrorAccumulator {
 
 /// Whether an expansion should be surrounded by a `None`-delimited `Group`
 #[derive(Debug, Copy, Clone)]
-#[allow(dead_code)] // XXXX
 pub enum Grouping {
     Ungrouped,
     Invisible,
 }
 
 impl Grouping {
-    // XXXX placeholder constructor
-    #[allow(dead_code)] // should go away
-    pub fn new_todo_xxxx() -> Self {
-        Self::Ungrouped
-    }
-
     pub fn surround(&self, ts: impl ToTokens) -> TokenStream {
         let ts = ts.to_token_stream();
         match self {

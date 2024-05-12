@@ -853,7 +853,7 @@ impl<'l> FoundNode<'l> {
             }
             as_ @ SA::ty(..) => {
                 out.append_syn_type(tspan, &metavalue_lit_as(lit, tspan, as_)?,
-                                    Grouping::new_todo_xxxx())
+                                    Grouping::Invisible)
             }
             SA::str(..) => {
                 let s = metavalue_litstr(

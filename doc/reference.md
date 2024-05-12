@@ -434,10 +434,10 @@ These checks are disabled by `#[derive_deftly_adhoc]`.
 #### Examples
 
  * `${tmeta(simple)}`: `String`
- * `${tmeta(simple) as ty}`: `String`
+ * `${tmeta(simple) as ty}`: `« String »`
  * `${tmeta(simple) as str}`: `"String"`
  * `${tmeta(gentype)}`: `Vec<i32>`
- * `${tmeta(gentype) as ty}`: `Vec<i32>`
+ * `${tmeta(gentype) as ty}`: `« Vec<i32> »`
  * `${tmeta(gentype) as str}`: `"Vec<i32>"`
  * `${vmeta(value)}`: `unit-toplevel`, `enum-variant`
  * `${fmeta(nested(inner))}` for `field` in `Struct`: `42`
@@ -447,8 +447,8 @@ These checks are disabled by `#[derive_deftly_adhoc]`.
 
  * `$<Small ${tmeta(simple)}>`: `SmallString`
  * `$<Small ${tmeta(simple) as str}>`: `SmallString`
- * `$<Small ${tmeta(simple) as ty}>`: `SmallString`
- * `$<Small ${tmeta(gentype) as ty}>`: `SmallVec<i32>`
+ * `$<Small ${tmeta(simple) as ty}>`: `« SmallString »`
+ * `$<Small ${tmeta(gentype) as ty}>`: `« SmallVec<i32> »`
  * `$<$ttype ${tmeta(simple) as str}>`: `UnitString::<C>`
  * `$<$ttype ${tmeta(simple) as ty}>`: error, ``multiple nontrivial entries``
 
@@ -1169,6 +1169,7 @@ surrounded by guillemets `« »`.
 
 This is done for
  * `$ftype`
+ * `$Xmeta as ty`
 
 ## Structs used in examples
 
