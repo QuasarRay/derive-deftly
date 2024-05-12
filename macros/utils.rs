@@ -294,6 +294,27 @@ impl Drop for ErrorAccumulator {
 
 //---------- Grouping ----------
 
+/// Whether an expansion should be surrounded by a `None`-delimited `Group`
+#[derive(Debug, Copy, Clone)]
+#[allow(dead_code)] // XXXX
+pub enum Grouping {
+    Ungrouped,
+    Invisible,
+}
+
+impl Grouping {
+    #[allow(dead_code)] // XXXX
+    pub fn surround(&self, ts: impl ToTokens) -> TokenStream {
+        let ts = ts.to_token_stream();
+        match self {
+            Grouping::Ungrouped => ts,
+            Grouping::Invisible => {
+                proc_macro2::Group::new(Delimiter::None, ts).to_token_stream()
+            }
+        }
+    }
+}
+
 /// Return the input, but with `None`-delimited `Group`s flattened away
 ///
 /// Loses some span information.
