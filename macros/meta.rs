@@ -852,7 +852,8 @@ impl<'l> FoundNode<'l> {
                 out.append_tokens(np, tokens)?;
             }
             as_ @ SA::ty(..) => {
-                out.append_syn_type(tspan, &metavalue_lit_as(lit, tspan, as_)?)
+                out.append_syn_type(tspan, &metavalue_lit_as(lit, tspan, as_)?,
+                                    Grouping::new_todo_xxxx())
             }
             SA::str(..) => {
                 let s = metavalue_litstr(

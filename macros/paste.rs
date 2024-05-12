@@ -47,6 +47,7 @@ enum Item {
 struct Surround {
     pre: TokenStream,
     post: TokenStream,
+    grouping: Grouping,
 }
 
 //---------- IdentFrag ----------
@@ -584,6 +585,7 @@ impl Items {
                 |ta| ta.append(surround.pre),
                 &ident,
                 |ta| ta.append(surround.post),
+                surround.grouping,
             )?,
         }
 
@@ -770,6 +772,7 @@ impl ExpansionOutput for Items {
         pre_: A,
         ident: &I,
         post_: B,
+        grouping: Grouping,
     ) -> Result<(), I::BadIdent>
     where
         A: FnOnce(&mut TokenAccumulator),
@@ -790,7 +793,7 @@ impl ExpansionOutput for Items {
         let pre = handle_err(pre);
         let post = handle_err(post);
         ident.note_atoms(&mut self.atoms);
-        let surround = Surround { pre, post };
+        let surround = Surround { pre, post, grouping };
         self.append_item_raw(Item::Complex {
             surround,
             text,
@@ -801,7 +804,7 @@ impl ExpansionOutput for Items {
     fn append_syn_litstr(&mut self, lit: &syn::LitStr) {
         self.append_plain(lit.span(), lit.value());
     }
-    fn append_syn_type(&mut self, te_span: Span, ty: &syn::Type) {
+    fn append_syn_type(&mut self, te_span: Span, ty: &syn::Type, grouping: Grouping) {
         (|| {
             match ty {
                 syn::Type::Path(path) => {
@@ -823,7 +826,7 @@ impl ExpansionOutput for Items {
                     let mut post = TokenStream::new();
                     arguments.to_tokens(&mut post);
                     last_punct.to_tokens(&mut post);
-                    let surround = Surround { pre, post };
+                    let surround = Surround { pre, post, grouping };
                     let item = Item::Complex {
                         surround,
                         text,

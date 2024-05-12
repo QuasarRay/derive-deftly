@@ -303,7 +303,12 @@ pub enum Grouping {
 }
 
 impl Grouping {
-    #[allow(dead_code)] // XXXX
+    // XXXX placeholder constructor
+    #[allow(dead_code)] // should go away
+    pub fn new_todo_xxxx() -> Self {
+        Self::Ungrouped
+    }
+
     pub fn surround(&self, ts: impl ToTokens) -> TokenStream {
         let ts = ts.to_token_stream();
         match self {
