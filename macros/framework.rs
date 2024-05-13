@@ -262,7 +262,12 @@ pub trait ExpansionOutput: SubstParseContext {
     /// This is a "more complex" expansion,
     /// in the terminology of the template reference:
     /// If a paste contains more than one, it is an error.
-    fn append_syn_type(&mut self, te_span: Span, v: &syn::Type, grouping: Grouping);
+    fn append_syn_type(
+        &mut self,
+        te_span: Span,
+        v: &syn::Type,
+        grouping: Grouping,
+    );
 
     /// Append using a function which generates tokens
     ///
@@ -508,7 +513,12 @@ impl ExpansionOutput for TokenAccumulator {
     fn append_syn_litstr(&mut self, lit: &syn::LitStr) {
         self.append(lit);
     }
-    fn append_syn_type(&mut self, _te_span: Span, ty: &syn::Type, grouping: Grouping) {
+    fn append_syn_type(
+        &mut self,
+        _te_span: Span,
+        ty: &syn::Type,
+        grouping: Grouping,
+    ) {
         self.append(grouping.surround(ty));
     }
     fn append_tokens_with(

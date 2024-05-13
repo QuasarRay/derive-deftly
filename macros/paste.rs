@@ -793,7 +793,11 @@ impl ExpansionOutput for Items {
         let pre = handle_err(pre);
         let post = handle_err(post);
         ident.note_atoms(&mut self.atoms);
-        let surround = Surround { pre, post, grouping };
+        let surround = Surround {
+            pre,
+            post,
+            grouping,
+        };
         self.append_item_raw(Item::Complex {
             surround,
             text,
@@ -804,7 +808,12 @@ impl ExpansionOutput for Items {
     fn append_syn_litstr(&mut self, lit: &syn::LitStr) {
         self.append_plain(lit.span(), lit.value());
     }
-    fn append_syn_type(&mut self, te_span: Span, ty: &syn::Type, grouping: Grouping) {
+    fn append_syn_type(
+        &mut self,
+        te_span: Span,
+        ty: &syn::Type,
+        grouping: Grouping,
+    ) {
         (|| {
             match ty {
                 syn::Type::Path(path) => {
