@@ -299,6 +299,7 @@ impl Drop for ErrorAccumulator {
 pub enum Grouping {
     Ungrouped,
     Invisible,
+    Parens,
 }
 
 impl Grouping {
@@ -308,6 +309,10 @@ impl Grouping {
             Grouping::Ungrouped => ts,
             Grouping::Invisible => {
                 proc_macro2::Group::new(Delimiter::None, ts).to_token_stream()
+            }
+            Grouping::Parens => {
+                proc_macro2::Group::new(Delimiter::Parenthesis, ts)
+                    .to_token_stream()
             }
         }
     }
