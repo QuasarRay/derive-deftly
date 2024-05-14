@@ -217,6 +217,19 @@ impl DefinitionName {
 ///
 /// I think a function which treats `< <` and `<<` as equal is more useful
 /// than one that doesn't, because it will DTRT for types.
+///
+/// ### `None`-delimited `Group`s
+///
+/// We flatten these
+///
+/// This is necessary, because otherwise
+/// apparently-identical pieces of code count as different.
+///
+/// This does mean that two things which are `approx_equal`
+/// can be expressions with different values!
+///
+/// But, the Rust grammar for types doesn't permit ambiguity,
+/// so the type equality guarantee of `approx_equal` is preserved.
 //
 // Comparing for equality has to be done by steam.
 // And a lot of stringification.
@@ -246,6 +259,9 @@ pub fn tokens_cmp(a: TokenStream, b: TokenStream) -> cmp::Ordering {
             .cmp(&delim(&b))
             .then_with(|| tokens_cmp(a.stream(), b.stream()))
     }
+
+    let a = flatten_none_groups(a);
+    let b = flatten_none_groups(b);
 
     for ab in a.into_iter().zip_longest(b) {
         let (a, b) = match ab {

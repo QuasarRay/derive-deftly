@@ -42,6 +42,8 @@
       * [`for struct`, `for enum`, `for union` -- Insist on a particular driver kind](#for-struct-for-enum-for-union--insist-on-a-particular-driver-kind)
       * [`dbg` -- Print the expansion to stderr, for debugging](#dbg--print-the-expansion-to-stderr-for-debugging)
       * [Expansion options example](#expansion-options-example)
+   * [Precedence considerations](#precedence-considerations)
+      * [`None`-delimited groups](#none-delimited-groups)
    * [Structs used in examples](#structs-used-in-examples)
 
 **Reference documentation for the actual proc macros** is in
@@ -310,7 +312,7 @@ They use derive-deftly's usual
 
 #### Examples
 
- * `$ftype`: `std::iter::Once::<T>`
+ * `$ftype`: `« std::iter::Once::<T> »`
  * `$vtype` for struct: `Tuple::<'a, 'l, T, C>`
  * `$vtype` for enum variant: `Enum::TupleVariant::<'a, 'l, T, C>`
  * `$ttype`: `Enum::<'a, 'l, T, C>`
@@ -432,10 +434,10 @@ These checks are disabled by `#[derive_deftly_adhoc]`.
 #### Examples
 
  * `${tmeta(simple)}`: `String`
- * `${tmeta(simple) as ty}`: `String`
+ * `${tmeta(simple) as ty}`: `« String »`
  * `${tmeta(simple) as str}`: `"String"`
  * `${tmeta(gentype)}`: `Vec<i32>`
- * `${tmeta(gentype) as ty}`: `Vec<i32>`
+ * `${tmeta(gentype) as ty}`: `« Vec<i32> »`
  * `${tmeta(gentype) as str}`: `"Vec<i32>"`
  * `${vmeta(value)}`: `unit-toplevel`, `enum-variant`
  * `${fmeta(nested(inner))}` for `field` in `Struct`: `42`
@@ -445,8 +447,8 @@ These checks are disabled by `#[derive_deftly_adhoc]`.
 
  * `$<Small ${tmeta(simple)}>`: `SmallString`
  * `$<Small ${tmeta(simple) as str}>`: `SmallString`
- * `$<Small ${tmeta(simple) as ty}>`: `SmallString`
- * `$<Small ${tmeta(gentype) as ty}>`: `SmallVec<i32>`
+ * `$<Small ${tmeta(simple) as ty}>`: `« SmallString »`
+ * `$<Small ${tmeta(gentype) as ty}>`: `« SmallVec<i32> »`
  * `$<$ttype ${tmeta(simple) as str}>`: `UnitString::<C>`
  * `$<$ttype ${tmeta(simple) as ty}>`: error, ``multiple nontrivial entries``
 
@@ -531,7 +533,7 @@ and the path prefix and generics reproduced unaltered.
 #### Examples
 
  * `$<Zingy $ftype Builder>` for `TupleVariant`:
-    `std::iter::ZingyOnceBuilder::<T>`
+    `« std::iter::ZingyOnceBuilder::<T> »`
  * `${paste x_ $fname}` for tuple: `x_0`
  * `${paste $fname _x}` for tuple: error, ``constructed identifier "0_x" is invalid``
 
@@ -746,6 +748,8 @@ derive-deftly's built-in functionality.
 
 `BODY` is in the
 [standard syntax for positional arguments](#named-and-positional-template-arguments-to-expansions-and-conditions).
+When generating Rust code, be careful about operator precedence:
+see [Precedence considerations](#precedence-considerations).
 
 `CONDITION` is in the standard syntax for a condition.
 
@@ -932,6 +936,15 @@ even if the Rust compiler would accept one and reject the other;
 and, expansions migtht count as equal
 even if macros could tell the difference.
 
+Also,
+`None`-delimited groups,
+which are used by macros (including derive-deftly and `macro_rules!`)
+for preventing precedence surprises,
+are flattened - the wrapping by an invisible group is ignored.
+This means that two expressions with different values,
+due to different evaluation orders,
+can compare equal!
+
 If both inputs are valid Rust types,
 they will only compare equal if they are syntactically the same.
 (Note that different ways of writing the same type
@@ -1109,6 +1122,54 @@ so it does indeed expand to zero items.)
 Then it applies that to template to `struct Unit`,
 restating the requirement that the expansion should be item(s).
 and dumping the expansion to stderr during compilation.
+
+## Precedence considerations
+
+When using
+`${Xmeta as tokens}`,
+and user-defined expansions,
+it can be necessary to add `{ }` or `( )`
+to avoid surprising expansions due to operator precedence.
+
+```
+# use derive_deftly::{Deftly, derive_deftly_adhoc};
+#[derive(Deftly)]
+#[derive_deftly_adhoc]
+struct S(u32, u32);
+
+let product = derive_deftly_adhoc!(
+    S:
+    ${define F_PLUS_TWO {$fname + 2}}
+    ${for fields { $F_PLUS_TWO * }} 1
+    // (0 + 2) * (1 + 2) * 1 = 2 * 3 * 1 = 6
+    // but this is 
+    // 0 + 2 * 1 + 2 * 1 = 0 + (2 * 1) + (2 * 1) = 4
+);
+
+assert_eq!(product, 4);
+```
+
+Rust demands that *types* are expressed unambiguously,
+so precedence problems, and lack of `( )` (or `< >`),
+are detected by the compiler, and rejected.
+
+### `None`-delimited groups
+
+In theory Rust has a feature that would help with this:
+syntactic groups
+[can be surrounded by invisible delimiters](https://doc.rust-lang.org/proc_macro/enum.Delimiter.html#variant.None).
+
+However, as of May 2024 this feature does not work (and has never worked).
+See [rust-lang/rust#67062](https://github.com/rust-lang/rust/issues/67062).
+
+Nevertheless, derive-deftly surrounds certain expansions with
+None-delimited groups.
+These are shown in the example outputs, in this reference,
+surrounded by guillemets `« »`.
+
+This is done for
+ * `$ftype`
+ * `$Xmeta as ty`
 
 ## Structs used in examples
 

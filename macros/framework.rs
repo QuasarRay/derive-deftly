@@ -243,6 +243,7 @@ pub trait ExpansionOutput: SubstParseContext {
         pre: A,
         ident: &I,
         post: B,
+        grouping: Grouping,
     ) -> Result<(), I::BadIdent>
     where
         A: FnOnce(&mut TokenAccumulator),
@@ -261,7 +262,12 @@ pub trait ExpansionOutput: SubstParseContext {
     /// This is a "more complex" expansion,
     /// in the terminology of the template reference:
     /// If a paste contains more than one, it is an error.
-    fn append_syn_type(&mut self, te_span: Span, v: &syn::Type);
+    fn append_syn_type(
+        &mut self,
+        te_span: Span,
+        v: &syn::Type,
+        grouping: Grouping,
+    );
 
     /// Append using a function which generates tokens
     ///
@@ -479,22 +485,41 @@ impl ExpansionOutput for TokenAccumulator {
         pre: A,
         ident: &I,
         post: B,
+        grouping: Grouping,
     ) -> Result<(), I::BadIdent>
     where
         A: FnOnce(&mut TokenAccumulator),
         B: FnOnce(&mut TokenAccumulator),
         I: IdentFrag,
     {
-        pre(self);
-        self.append_identfrag_toks(ident)?;
-        post(self);
+        let inner = match self.with_tokens(|_outer| {
+            let mut inner = TokenAccumulator::new();
+            pre(&mut inner);
+            inner.append_identfrag_toks(ident)?;
+            post(&mut inner);
+            Ok(inner)
+        }) {
+            None => return Ok(()), // earlier errors, didn't process
+            Some(Err(e)) => return Err(e),
+            Some(Ok(ta)) => ta,
+        };
+
+        match inner.tokens() {
+            Ok(ts) => self.append(grouping.surround(ts)),
+            Err(e) => self.record_error(e),
+        }
         Ok(())
     }
     fn append_syn_litstr(&mut self, lit: &syn::LitStr) {
         self.append(lit);
     }
-    fn append_syn_type(&mut self, _te_span: Span, ty: &syn::Type) {
-        self.append(ty);
+    fn append_syn_type(
+        &mut self,
+        _te_span: Span,
+        ty: &syn::Type,
+        grouping: Grouping,
+    ) {
+        self.append(grouping.surround(ty));
     }
     fn append_tokens_with(
         &mut self,

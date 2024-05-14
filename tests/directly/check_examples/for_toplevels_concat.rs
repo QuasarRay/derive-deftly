@@ -54,6 +54,8 @@ impl Example for ForToplevelsConcatExample {
             }
         };
 
+        let got = flatten_none_groups(got);
+
         let err = match check_expected_actual_similar_tokens(&exp, &got) {
             Err(e) => e,
             Ok(()) => return,

@@ -18,6 +18,13 @@ pub struct PossibilitiesExample {
     output: Result<TokenStream, String>,
     /// Are *all* the possibilities (subject to `limit`) supposed to match?
     all_must_match: bool,
+    /// Does the `output` faithfully represent `None`-delimited `Group`s?
+    grouping: ExpectedOutputNoneGrouping,
+}
+
+pub enum ExpectedOutputNoneGrouping {
+    Explicit,
+    Flatten,
 }
 
 struct Tracker {
@@ -142,6 +149,7 @@ impl PossibilitiesExample {
         limit: Limit,
         all_must_match: bool,
         output: Result<&str, &str>,
+        grouping: ExpectedOutputNoneGrouping,
     ) -> Result<Box<PossibilitiesExample>, String> {
         let parse = |s, what| {
             syn::parse_str(s).map_err(|e| {
@@ -150,7 +158,23 @@ impl PossibilitiesExample {
         };
         let input = parse(input, "input")?;
         let output = match output {
-            Ok(exp) => Ok(parse(exp, "output")?),
+            Ok(exp) => Ok({
+                if let Some(inner) = (|| {
+                    let exp = exp.strip_prefix("«")?;
+                    let exp = exp.strip_suffix("»")?;
+                    Some(exp.trim())
+                })() {
+                    assert!(matches!(
+                        grouping,
+                        ExpectedOutputNoneGrouping::Explicit,
+                    ));
+                    let inner = parse(inner, "output (inner group)")?;
+                    proc_macro2::Group::new(Delimiter::None, inner)
+                        .to_token_stream()
+                } else {
+                    parse(exp, "output")?
+                }
+            }),
             Err(msg) => Err(msg.to_string()),
         };
         Ok(Box::new(PossibilitiesExample {
@@ -159,6 +183,7 @@ impl PossibilitiesExample {
             limit,
             all_must_match,
             output,
+            grouping,
         }))
     }
 
@@ -216,6 +241,12 @@ impl PossibilitiesExample {
             match &self.output {
                 Ok(exp) => {
                     let got = got.map_err(handle_syn_error)?;
+                    let got = match self.grouping {
+                        ExpectedOutputNoneGrouping::Explicit => got,
+                        ExpectedOutputNoneGrouping::Flatten => {
+                            flatten_none_groups(got)
+                        }
+                    };
                     check_expected_actual_similar_tokens(
                         &exp, &got, //
                     )
@@ -274,6 +305,7 @@ fn poc() {
         input: input,
         limit: limit,
         output: Ok(output),
+        grouping: ExpectedOutputNoneGrouping::Flatten,
     }
     .check(&mut Errors::new(), &[driver]);
 }

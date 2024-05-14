@@ -371,6 +371,7 @@ where
                     do_some_gens(out, false);
                     out.append(gens.gt_token);
                 },
+                Grouping::Ungrouped,
             )
             .unwrap_or_else(|e| e.unreachable())
         };
@@ -407,7 +408,7 @@ where
             }
             SD::ftype(_) => {
                 let f = ctx.field(&kw_span)?;
-                out.append_syn_type(kw_span, &f.field.ty);
+                out.append_syn_type(kw_span, &f.field.ty, Grouping::Invisible);
             }
             SD::fpatname(_) => {
                 let f = ctx.field(&kw_span)?;

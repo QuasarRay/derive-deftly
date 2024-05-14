@@ -75,7 +75,7 @@ mod reference_extract;
 use conditions::ConditionExample;
 use contexts::{for_every_example_context, ContextExt as _, Limit};
 use for_toplevels_concat::ForToplevelsConcatExample;
-use possibilities::PossibilitiesExample;
+use possibilities::{ExpectedOutputNoneGrouping, PossibilitiesExample};
 
 const INPUT_FILE: &str = "doc/reference.md";
 
@@ -233,6 +233,8 @@ fn check_expected_actual_similar_tokens(
                     let () = r?;
                     continue;
                 }
+                (TT::Group(_), _) => return mk_err(quote!(LH_GROUPED_HERE)),
+                (_, TT::Group(_)) => return mk_err(quote!(RH_GROUPED_HERE)),
                 (a, b) => a.to_string() == b.to_string(),
             } {
                 return mk_err(quote!(FOUND_DIFFERENCE_HERE));

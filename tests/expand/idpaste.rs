@@ -15,6 +15,11 @@ struct TypeNames {
     /// identifier pasting with a whole path.  The macro `TypeNames`
     /// will generate a field with type `RChunksMut.
     error: std::slice::Chunks<'static, ()>,
+    //
+    // Test `${paste }` of a `(...)`-grouped ty
+    // TODO #77 does not work yet
+    // "error: complex type provided"
+    // parens: (std::slice::Chunks<'static, ()>),
 }
 
 derive_deftly_adhoc! {

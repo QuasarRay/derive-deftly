@@ -292,6 +292,57 @@ impl Drop for ErrorAccumulator {
     }
 }
 
+//---------- Grouping ----------
+
+/// Whether an expansion should be surrounded by a `None`-delimited `Group`
+#[derive(Debug, Copy, Clone)]
+pub enum Grouping {
+    Ungrouped,
+    Invisible,
+}
+
+impl Grouping {
+    pub fn surround(&self, ts: impl ToTokens) -> TokenStream {
+        let ts = ts.to_token_stream();
+        match self {
+            Grouping::Ungrouped => ts,
+            Grouping::Invisible => {
+                proc_macro2::Group::new(Delimiter::None, ts).to_token_stream()
+            }
+        }
+    }
+}
+
+/// Return the input, but with `None`-delimited `Group`s flattened away
+///
+/// Loses some span information.
+pub fn flatten_none_groups(ts: TokenStream) -> TokenStream {
+    fn recurse(out: &mut TokenStream, input: TokenStream) {
+        for tt in input {
+            match tt {
+                TT::Group(g) if g.delimiter() == Delimiter::None => {
+                    recurse(out, g.stream());
+                }
+                TT::Group(g) => {
+                    let span = g.span();
+                    let mut g = proc_macro2::Group::new(
+                        g.delimiter(),
+                        flatten_none_groups(g.stream()),
+                    );
+                    // We lose some span information here.
+                    g.set_span(span);
+                    out.extend([TT::Group(g)]);
+                }
+                _ => out.extend([tt]),
+            }
+        }
+    }
+
+    let mut out = TokenStream::new();
+    recurse(&mut out, ts);
+    out
+}
+
 //---------- IdentAny ----------
 
 /// Like `syn::Ident` but parses using `parse_any`, accepting keywords
