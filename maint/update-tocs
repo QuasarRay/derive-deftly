@@ -1,6 +1,8 @@
 #!/bin/bash
 #
-# Update the embedded Table of Contents in the following files:
+# usage: maint/update-tocs [--check]
+#
+# Updates the embedded Table of Contents in the following files:
 process_files () {
     process_file doc/reference.md
     process_file doc/introduction.md
