@@ -80,10 +80,10 @@ impl Subst<BooleanContext> {
                 use meta::SubstAs as MSA;
                 if let Some(as_) = as_ {
                     match as_ {
-                        MSA::str(nb)
-                        | MSA::tokens(nb, ..)
-                        | MSA::expr(nb, ..)
+                        MSA::expr(nb, ..)
                         | MSA::ident(nb, ..)
+                        | MSA::str(nb)
+                        | MSA::tokens(nb, ..)
                         | MSA::ty(nb) => void::unreachable(*nb),
                     }
                 };

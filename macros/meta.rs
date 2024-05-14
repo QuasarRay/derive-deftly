@@ -109,11 +109,11 @@ pub struct SubstMeta<O: SubstParseContext> {
 #[derive(Debug, Clone, AsRefStr, Display)]
 #[allow(non_camel_case_types)] // clearer to use the exact ident
 pub enum SubstAs<O: SubstParseContext> {
-    tokens(O::NotInBool, O::NotInPaste),
-    ty(O::NotInBool),
-    str(O::NotInBool),
     expr(O::NotInBool, O::NotInPaste),
     ident(O::NotInBool),
+    str(O::NotInBool),
+    tokens(O::NotInBool, O::NotInPaste),
+    ty(O::NotInBool),
 }
 
 //---------- meta attrs in a driver ----------
@@ -274,11 +274,11 @@ impl<O: SubstParseContext> SubstAs<O> {
 
         let not_in_paste = || O::not_in_paste(&kw);
 
+        keyword! { expr(nb, not_in_paste()?) }
+        keyword! { ident(nb) }
         keyword! { str(nb) }
         keyword! { tokens(nb, not_in_paste()?) }
         keyword! { ty(nb) }
-        keyword! { expr(nb, not_in_paste()?) }
-        keyword! { ident(nb) }
 
         Err(kw.error("unknown derive-deftly 'as' syntax type keyword"))
     }
@@ -850,16 +850,6 @@ impl<'l> FoundNode<'l> {
         };
 
         match as_ {
-            SA::tokens(_, np) => {
-                let tokens: TokenStream =
-                    metavalue_lit_as(lit, tspan, &"tokens")?;
-                out.append_tokens(np, tokens)?;
-            }
-            as_ @ SA::ty(..) => out.append_syn_type(
-                tspan,
-                &metavalue_lit_as(lit, tspan, as_)?,
-                Grouping::Invisible,
-            ),
             as_ @ SA::expr(.., np) => {
                 let expr: syn::Expr = metavalue_lit_as(lit, tspan, as_)?;
                 out.append_tokens(np, Grouping::Parens.surround(expr))?;
@@ -875,6 +865,16 @@ impl<'l> FoundNode<'l> {
                     format_args!("expected string literal, for meta value",),
                 )?;
                 out.append_syn_litstr(s);
+            }
+            as_ @ SA::ty(..) => out.append_syn_type(
+                tspan,
+                &metavalue_lit_as(lit, tspan, as_)?,
+                Grouping::Invisible,
+            ),
+            SA::tokens(_, np) => {
+                let tokens: TokenStream =
+                    metavalue_lit_as(lit, tspan, &"tokens")?;
+                out.append_tokens(np, tokens)?;
             }
         }
         Ok(())
