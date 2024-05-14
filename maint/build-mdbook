@@ -1,0 +1,13 @@
+#!/bin/bash
+#
+# Build our mdbook output
+
+set -e
+set -o pipefail
+
+BOOK_DIR=$(dirname "$0")/../book
+
+cd "$BOOK_DIR"
+
+mdbook build
+

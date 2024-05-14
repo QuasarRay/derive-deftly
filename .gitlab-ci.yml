@@ -2,6 +2,7 @@
 stages:
   - test
   - comprehensive
+  - deploy-book
 
 default:
   before_script:
@@ -193,3 +194,22 @@ cargo-test-dprint:
   script:
     - RUSTFLAGS="--cfg derive_deftly_dprint" DERIVE_DEFTLY_DPRINT=1 maint/cargo-test-locked --workspace --all-features -- run_pass_expand 3>&2 2>&1 1>&3 3>&- | tee dprint-output
     - grep -m1 'define_derive_deftly! input start' dprint-output
+
+mdbook-tests:
+  stage: comprehensive
+  script:
+    - ./maint/via-cargo-install-in-ci mdbook --locked
+    - ./maint/build-mdbook
+
+pages:
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+  stage: deploy-book
+  script:
+    - ./maint/via-cargo-install-in-ci mdbook --locked
+    - ./maint/build-mdbook
+    - mv book/book/ public/
+  artifacts:
+    paths:
+      - public
+
