@@ -868,7 +868,7 @@ impl<'l> FoundNode<'l> {
             }
             as_ @ SA::ty(..) => out.append_syn_type(
                 tspan,
-                &metavalue_lit_as(lit, tspan, as_)?,
+                metavalue_lit_as(lit, tspan, as_)?,
                 Grouping::Invisible,
             ),
             SA::tokens(_, np) => {

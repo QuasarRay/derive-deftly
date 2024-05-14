@@ -265,16 +265,16 @@ pub trait ExpansionOutput: SubstParseContext {
     fn append_syn_type(
         &mut self,
         te_span: Span,
-        mut v: &syn::Type,
+        mut v: syn::Type,
         mut grouping: Grouping,
     ) {
         loop {
             let (inner, add_grouping) = match v {
-                syn::Type::Paren(inner) => (&inner.elem, Grouping::Parens),
-                syn::Type::Group(inner) => (&inner.elem, Grouping::Invisible),
+                syn::Type::Paren(inner) => (inner.elem, Grouping::Parens),
+                syn::Type::Group(inner) => (inner.elem, Grouping::Invisible),
                 _ => break,
             };
-            v = &*inner;
+            v = *inner;
             grouping = cmp::max(grouping, add_grouping);
         }
         self.append_syn_type_inner(te_span, v, grouping)
@@ -284,7 +284,7 @@ pub trait ExpansionOutput: SubstParseContext {
     fn append_syn_type_inner(
         &mut self,
         te_span: Span,
-        v: &syn::Type,
+        v: syn::Type,
         grouping: Grouping,
     );
 
@@ -535,7 +535,7 @@ impl ExpansionOutput for TokenAccumulator {
     fn append_syn_type_inner(
         &mut self,
         _te_span: Span,
-        ty: &syn::Type,
+        ty: syn::Type,
         grouping: Grouping,
     ) {
         self.append(grouping.surround(ty));
