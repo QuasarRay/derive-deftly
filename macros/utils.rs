@@ -295,7 +295,9 @@ impl Drop for ErrorAccumulator {
 //---------- Grouping ----------
 
 /// Whether an expansion should be surrounded by a `None`-delimited `Group`
-#[derive(Debug, Copy, Clone)]
+///
+/// `Ord` is valid for composition with `cmp::max`
+#[derive(Debug, Copy, Clone, Ord, PartialOrd, Eq, PartialEq)]
 pub enum Grouping {
     Ungrouped,
     Invisible,

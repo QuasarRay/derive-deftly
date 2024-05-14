@@ -10,9 +10,12 @@ struct TypeNames {
     /// identifier pasting with a whole path.  The macro `TypeNames`
     /// will generate a field with type `RChunksMut.
     error: std::slice::Chunks<'static, ()>,
+    #[allow(unused_parens)]
+    parens: (std::slice::Chunks<'static, ()>),
 }
 struct PreTypeNamesPost {
     error: std::slice::RChunksMut<'static, ()>,
+    parens: (std::slice::RChunksMut<'static, ()>),
 }
 #[derive_deftly_adhoc]
 struct TopName<F> {

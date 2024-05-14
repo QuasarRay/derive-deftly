@@ -808,7 +808,7 @@ impl ExpansionOutput for Items {
     fn append_syn_litstr(&mut self, lit: &syn::LitStr) {
         self.append_plain(lit.span(), lit.value());
     }
-    fn append_syn_type(
+    fn append_syn_type_inner(
         &mut self,
         te_span: Span,
         ty: &syn::Type,

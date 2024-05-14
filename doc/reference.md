@@ -536,9 +536,9 @@ as well as conditionals and repetitions.
 The contents can contain at most one occurrence of
 a more complex type expansion `${Xtype}`
 (or `${Xmeta as ty)`),
-which must refer to a path (perhaps with generics).
+which must refer to a path (perhaps with generics, and/or surrounding `( )`).
 Then the pasting will be applied to the final path element identifier,
-and the path prefix and generics reproduced unaltered.
+and the surroundings reproduced unaltered.
 
 #### Examples
 
