@@ -9,7 +9,7 @@ description="pub testing crates - part A"
 publish = false
 
 [dependencies]
-derive-deftly = { path = "../../..", version = "=0.11.0" }
+derive-deftly = { path = "../../..", version = "*" }
 
 [lib]
 path = "pub-a.rs"
