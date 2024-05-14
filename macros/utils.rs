@@ -369,9 +369,9 @@ impl Deref for IdentAny {
         &self.0
     }
 }
-impl Spanned for IdentAny {
-    fn span(&self) -> Span {
-        self.0.span()
+impl ToTokens for IdentAny {
+    fn to_tokens(&self, out: &mut TokenStream) {
+        self.0.to_tokens(out)
     }
 }
 impl<T: AsRef<str> + ?Sized> PartialEq<T> for IdentAny {
