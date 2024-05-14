@@ -56,6 +56,12 @@ struct ExpandName {
     f: FieldType,
 
     k: String,
+
+    #[deftly(prefix_i = "pub", suffix = "await")]
+    p: u32,
+
+    #[deftly(prefix_i = "r#pub", suffix = "")]
+    r: u32,
 }
 
 derive_deftly_adhoc! {
@@ -65,6 +71,7 @@ derive_deftly_adhoc! {
         $(
             ${paste
               ${if fmeta(prefix) { ${fmeta(prefix)} _ } }
+              ${if fmeta(prefix_i) { ${fmeta(prefix_i) as ident} _ } }
               $fname
               ${if fmeta(suffix) { _ ${fmeta(suffix) as str} } }
             }: $ftype,

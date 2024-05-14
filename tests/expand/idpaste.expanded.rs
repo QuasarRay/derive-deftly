@@ -28,10 +28,16 @@ struct ExpandName {
     #[deftly(prefix = "attr", suffix = "24")]
     f: FieldType,
     k: String,
+    #[deftly(prefix_i = "pub", suffix = "await")]
+    p: u32,
+    #[deftly(prefix_i = "r#pub", suffix = "")]
+    r: u32,
 }
 struct PreExpandNamePost {
     attr_f_24: FieldType,
     k: String,
+    pub_p_await: u32,
+    pub_r_: u32,
 }
 struct WomExpandNameBat;
 #[derive_deftly_adhoc]

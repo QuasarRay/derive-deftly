@@ -113,6 +113,7 @@ pub enum SubstAs<O: SubstParseContext> {
     ty(O::NotInBool),
     str(O::NotInBool),
     expr(O::NotInBool, O::NotInPaste),
+    ident(O::NotInBool),
 }
 
 //---------- meta attrs in a driver ----------
@@ -277,6 +278,7 @@ impl<O: SubstParseContext> SubstAs<O> {
         keyword! { tokens(nb, not_in_paste()?) }
         keyword! { ty(nb) }
         keyword! { expr(nb, not_in_paste()?) }
+        keyword! { ident(nb) }
 
         Err(kw.error("unknown derive-deftly 'as' syntax type keyword"))
     }
@@ -861,6 +863,10 @@ impl<'l> FoundNode<'l> {
             as_ @ SA::expr(.., np) => {
                 let expr: syn::Expr = metavalue_lit_as(lit, tspan, as_)?;
                 out.append_tokens(np, Grouping::Parens.surround(expr))?;
+            }
+            as_ @ SA::ident(..) => {
+                let ident: IdentAny = metavalue_lit_as(lit, tspan, as_)?;
+                out.append_identfrag_toks(&*ident)?;
             }
             SA::str(..) => {
                 let s = metavalue_litstr(
