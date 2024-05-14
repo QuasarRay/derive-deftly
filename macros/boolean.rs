@@ -77,12 +77,14 @@ impl Subst<BooleanContext> {
                     desig: meta::Desig { label, scope: _ },
                     as_,
                 } = sm;
-                use meta::SubstAs as MSA;
+                use meta::SubstAs as mSA;
                 if let Some(as_) = as_ {
                     match as_ {
-                        MSA::str(nb) | MSA::tokens(nb, ..) | MSA::ty(nb) => {
-                            void::unreachable(*nb)
-                        }
+                        mSA::expr(nb, ..)
+                        | mSA::ident(nb, ..)
+                        | mSA::str(nb)
+                        | mSA::tokens(nb, ..)
+                        | mSA::ty(nb) => void::unreachable(*nb),
                     }
                 };
                 is_found(label.search_eval_bool(sm.pmetas(ctx, kw_span)?))

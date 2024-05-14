@@ -77,9 +77,7 @@ struct TypePrecedenceDyn {
 
 fn main() {
     // Test that `... as expr` gets precedence right.
-    /* BUT we can't do that right now, because
-     * it uses as-yet-unimplemented ${Xmeta as expr} - TODO #76
-    let _product = derive_deftly_adhoc!(
+    let product = derive_deftly_adhoc!(
         OperatorPrecedence:
 
         $(
@@ -87,7 +85,6 @@ fn main() {
         ) 1
     );
     assert(product == 14);
-     */
 
     // Test that just `${Xmeta()}` gets precedence right for an expression.
     /* BUT it doesn't right now, because
