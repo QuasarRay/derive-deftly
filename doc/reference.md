@@ -312,7 +312,7 @@ They use derive-deftly's usual
 
 #### Examples
 
- * `$ftype`: `« std::iter::Once::<T> »`, `« Option<i32> »`
+ * `$ftype`: `« std::iter::Once::<T> »`, `« Option::<i32> »`
  * `$vtype` for struct: `Tuple::<'a, 'l, T, C>`
  * `$vtype` for enum variant: `Enum::TupleVariant::<'a, 'l, T, C>`
  * `$ttype`: `Enum::<'a, 'l, T, C>`
@@ -391,6 +391,9 @@ Accesses macro parameters passed via `#[deftly(...)]` attributes.
     * **`ty`**:
      `VALUE` is parsed as a type,
      possibly with generics etc. (`syn::Type`).
+     When expanded, generic arguments have any missing `::` inserted,
+     so that the expansion is suitable for use in any context,
+     (such as invoking an inherent or trait method).
 
     * **`expr`**:
      `VALUE` is parsed as an aexpression.
@@ -447,7 +450,7 @@ These checks are disabled by `#[derive_deftly_adhoc]`.
  * `${tmeta(simple) as ty}`: `« String »`
  * `${tmeta(simple) as str}`: `"String"`
  * `${tmeta(gentype)}`: `Vec<i32>`
- * `${tmeta(gentype) as ty}`: `« Vec<i32> »`
+ * `${tmeta(gentype) as ty}`: `« Vec::<i32> »`
  * `${tmeta(gentype) as str}`: `"Vec<i32>"`
  * `${vmeta(value)}`: `unit-toplevel`, `enum-variant`
  * `${fmeta(nested(inner))}` for `field` in `Struct`: `42`
@@ -458,7 +461,7 @@ These checks are disabled by `#[derive_deftly_adhoc]`.
  * `$<Small ${tmeta(simple)}>`: `SmallString`
  * `$<Small ${tmeta(simple) as str}>`: `SmallString`
  * `$<Small ${tmeta(simple) as ty}>`: `« SmallString »`
- * `$<Small ${tmeta(gentype) as ty}>`: `« SmallVec<i32> »`
+ * `$<Small ${tmeta(gentype) as ty}>`: `« SmallVec::<i32> »`
  * `$<$ttype ${tmeta(simple) as str}>`: `UnitString::<C>`
  * `$<$ttype ${tmeta(simple) as ty}>`: error, ``multiple nontrivial entries``
 

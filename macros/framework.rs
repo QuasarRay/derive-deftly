@@ -277,6 +277,9 @@ pub trait ExpansionOutput: SubstParseContext {
             v = *inner;
             grouping = cmp::max(grouping, add_grouping);
         }
+        if let syn::Type::Path(tp) = &mut v {
+            typepath_add_missing_argument_colons(tp, te_span);
+        }
         self.append_syn_type_inner(te_span, v, grouping)
     }
 
