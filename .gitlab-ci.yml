@@ -1,5 +1,6 @@
 
 stages:
+  - XXXX
   - test
   - comprehensive
 
@@ -105,7 +106,7 @@ check-doc-examples:
 # or the cargo expand version.  Workaround: I believe doing that as
 # the only commit in an MR will still work.
 every-commit:
-  stage: comprehensive
+  stage: XXXX
   image: rustlang/rust@sha256:02a6b6deed8307c39fbd3124bd2f3806c9420f92031bc84f6035045458f876f1
   script:
     - ./maint/via-cargo-install-in-ci cargo-expand --locked --version=1.0.67 --features=prettyplease
