@@ -4,7 +4,7 @@
 # in any case.  The word is not matched if there are word-characters
 # abutted to it.
 
-set -e
+set -ex
 set -o pipefail
 
 ORIGIN=origin
