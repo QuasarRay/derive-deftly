@@ -158,7 +158,7 @@ derive-deftly treats them as having a single (unnamed) variant.
 For [example enum `Enum`](#structs-used-in-examples):
 
  * `$($vname,)`: `UnitVariant, TupleVariant, NamedVariant,`
- * `$($fname)`: `0 field field_b field_e`
+ * `$($fname)`: `0 field field_b field_e field_o`
  * `${for fields { hello }}`: `hello hello hello hello`
 
 ## Expansions
@@ -312,7 +312,7 @@ They use derive-deftly's usual
 
 #### Examples
 
- * `$ftype`: `« std::iter::Once::<T> »`
+ * `$ftype`: `« std::iter::Once::<T> »`, `« Option<i32> »`
  * `$vtype` for struct: `Tuple::<'a, 'l, T, C>`
  * `$vtype` for enum variant: `Enum::TupleVariant::<'a, 'l, T, C>`
  * `$ttype`: `Enum::<'a, 'l, T, C>`
@@ -1231,6 +1231,7 @@ where T: 'l, T: TryInto<u8>
         field: &'l &'a T,
         field_b: String,
         field_e: <T as TryInto<u8>>::Error,
+        field_o: Option<i32>,
      },
 }
 ```
