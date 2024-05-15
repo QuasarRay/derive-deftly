@@ -109,6 +109,7 @@ every-commit:
   stage: XXXX
   image: rustlang/rust@sha256:02a6b6deed8307c39fbd3124bd2f3806c9420f92031bc84f6035045458f876f1
   script:
+    - printenv | sort
     - ./maint/via-cargo-install-in-ci cargo-expand --locked --version=1.0.67 --features=prettyplease
     - maint/for-every-commit maint/cargo-test-locked --workspace --verbose --all-features -- --skip directly::check_examples
   cache:
