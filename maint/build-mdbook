@@ -9,5 +9,13 @@ BOOK_DIR=$(dirname "$0")/../book
 
 cd "$BOOK_DIR"
 
+
+# mdbook-linkcheck is a non-obvious dependency, and the mdbook output when it's
+# not found doesn't spell out how to install it.
+if ! command -v mdbook-linkcheck; then
+    echo 'ERROR: mdbook-linkcheck not found. You should probably install it with "cargo install mdbook-linkcheck"'
+    exit 1
+fi
+
 mdbook build
 
