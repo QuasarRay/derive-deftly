@@ -123,6 +123,32 @@ impl<T: Parse> Parse for Concatenated<T> {
     }
 }
 
+/// Add any missing colons before `< >`'d generic arguments
+///
+/// ```rust,ignore
+/// std::option::Option::<>
+/// //                 ^^ these colons
+/// ```
+pub fn typepath_add_missing_argument_colons(
+    type_path: &mut syn::TypePath,
+    te_span: Span,
+) {
+    for seg in &mut type_path.path.segments {
+        match &mut seg.arguments {
+            syn::PathArguments::None => {}
+            syn::PathArguments::Parenthesized(_) => {}
+            syn::PathArguments::AngleBracketed(args) => {
+                args.colon2_token.get_or_insert_with(|| {
+                    // Use template's span in case this somehow
+                    // produces a syntax error.  The actual
+                    // names have the names' spans.
+                    Token![::](te_span)
+                });
+            }
+        }
+    }
+}
+
 pub fn dummy_path() -> syn::Path {
     syn::Path {
         leading_colon: None,
@@ -295,7 +321,9 @@ impl Drop for ErrorAccumulator {
 //---------- Grouping ----------
 
 /// Whether an expansion should be surrounded by a `None`-delimited `Group`
-#[derive(Debug, Copy, Clone)]
+///
+/// `Ord` is valid for composition with `cmp::max`
+#[derive(Debug, Copy, Clone, Ord, PartialOrd, Eq, PartialEq)]
 pub enum Grouping {
     Ungrouped,
     Invisible,

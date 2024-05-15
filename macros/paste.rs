@@ -808,16 +808,15 @@ impl ExpansionOutput for Items {
     fn append_syn_litstr(&mut self, lit: &syn::LitStr) {
         self.append_plain(lit.span(), lit.value());
     }
-    fn append_syn_type(
+    fn append_syn_type_inner(
         &mut self,
         te_span: Span,
-        ty: &syn::Type,
+        ty: syn::Type,
         grouping: Grouping,
     ) {
         (|| {
             match ty {
-                syn::Type::Path(path) => {
-                    let mut path = path.clone();
+                syn::Type::Path(mut path) => {
                     let (last_segment, last_punct) = path
                         .path
                         .segments

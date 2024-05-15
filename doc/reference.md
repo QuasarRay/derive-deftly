@@ -158,7 +158,7 @@ derive-deftly treats them as having a single (unnamed) variant.
 For [example enum `Enum`](#structs-used-in-examples):
 
  * `$($vname,)`: `UnitVariant, TupleVariant, NamedVariant,`
- * `$($fname)`: `0 field field_b field_e`
+ * `$($fname)`: `0 field field_b field_e field_o`
  * `${for fields { hello }}`: `hello hello hello hello`
 
 ## Expansions
@@ -312,7 +312,7 @@ They use derive-deftly's usual
 
 #### Examples
 
- * `$ftype`: `« std::iter::Once::<T> »`
+ * `$ftype`: `« std::iter::Once::<T> »`, `« Option::<i32> »`
  * `$vtype` for struct: `Tuple::<'a, 'l, T, C>`
  * `$vtype` for enum variant: `Enum::TupleVariant::<'a, 'l, T, C>`
  * `$ttype`: `Enum::<'a, 'l, T, C>`
@@ -391,6 +391,9 @@ Accesses macro parameters passed via `#[deftly(...)]` attributes.
     * **`ty`**:
      `VALUE` is parsed as a type,
      possibly with generics etc. (`syn::Type`).
+     When expanded, generic arguments have any missing `::` inserted,
+     so that the expansion is suitable for use in any context,
+     (such as invoking an inherent or trait method).
 
     * **`expr`**:
      `VALUE` is parsed as an aexpression.
@@ -447,7 +450,7 @@ These checks are disabled by `#[derive_deftly_adhoc]`.
  * `${tmeta(simple) as ty}`: `« String »`
  * `${tmeta(simple) as str}`: `"String"`
  * `${tmeta(gentype)}`: `Vec<i32>`
- * `${tmeta(gentype) as ty}`: `« Vec<i32> »`
+ * `${tmeta(gentype) as ty}`: `« Vec::<i32> »`
  * `${tmeta(gentype) as str}`: `"Vec<i32>"`
  * `${vmeta(value)}`: `unit-toplevel`, `enum-variant`
  * `${fmeta(nested(inner))}` for `field` in `Struct`: `42`
@@ -458,7 +461,7 @@ These checks are disabled by `#[derive_deftly_adhoc]`.
  * `$<Small ${tmeta(simple)}>`: `SmallString`
  * `$<Small ${tmeta(simple) as str}>`: `SmallString`
  * `$<Small ${tmeta(simple) as ty}>`: `« SmallString »`
- * `$<Small ${tmeta(gentype) as ty}>`: `« SmallVec<i32> »`
+ * `$<Small ${tmeta(gentype) as ty}>`: `« SmallVec::<i32> »`
  * `$<$ttype ${tmeta(simple) as str}>`: `UnitString::<C>`
  * `$<$ttype ${tmeta(simple) as ty}>`: error, ``multiple nontrivial entries``
 
@@ -536,9 +539,9 @@ as well as conditionals and repetitions.
 The contents can contain at most one occurrence of
 a more complex type expansion `${Xtype}`
 (or `${Xmeta as ty)`),
-which must refer to a path (perhaps with generics).
+which must refer to a path (perhaps with generics, and/or surrounding `( )`).
 Then the pasting will be applied to the final path element identifier,
-and the path prefix and generics reproduced unaltered.
+and the surroundings reproduced unaltered.
 
 #### Examples
 
@@ -1231,6 +1234,7 @@ where T: 'l, T: TryInto<u8>
         field: &'l &'a T,
         field_b: String,
         field_e: <T as TryInto<u8>>::Error,
+        field_o: Option<i32>,
      },
 }
 ```

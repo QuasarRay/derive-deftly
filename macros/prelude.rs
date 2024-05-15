@@ -37,6 +37,7 @@ pub use TokenTree as TT;
 pub use super::define::escape_dollars;
 pub use super::framework::TokenAccumulator;
 pub use super::paste::TokenPastesAsIdent;
+pub use super::utils::typepath_add_missing_argument_colons;
 pub use super::utils::ErrorAccumulator;
 pub use super::utils::{braced_group, delimit_token_group, dummy_path};
 pub use super::utils::{engine_macro_name, flatten_none_groups, spans_join};
