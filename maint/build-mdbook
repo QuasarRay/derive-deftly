@@ -9,7 +9,6 @@ BOOK_DIR=$(dirname "$0")/../book
 
 cd "$BOOK_DIR"
 
-
 # mdbook-linkcheck is a non-obvious dependency, and the mdbook output when it's
 # not found doesn't spell out how to install it.
 if ! command -v mdbook-linkcheck; then
@@ -17,5 +16,11 @@ if ! command -v mdbook-linkcheck; then
     exit 1
 fi
 
-mdbook build
+if ! command -v linklint; then
+    echo "ERROR: linklint not found.  You should install it according to platform instructions."
+    exit 1
+fi
 
+mdbook build
+cd ./book/
+../../maint/check-mdbook-links

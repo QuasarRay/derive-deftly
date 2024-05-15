@@ -1,0 +1,43 @@
+#!/bin/bash
+#
+# Check rustdoc HTML links and anchors
+# bin/build_html must have been run first.
+#
+# Adapted from
+#    https://gitlab.torproject.org/Diziet/rust-derive-adhoc/-/blob/main/maint/check-doc-links?ref_type=heads
+#
+# Copied from torspec:bin/check_links
+
+set -e
+set -o pipefail
+
+# nailing-cargo --no-nail --- bin/build_html
+# nailing-cargo --preclean=no --- bin/check_links
+
+chk_dir=html.link-check
+
+rm -rf html.link-check
+cp -al html $chk_dir
+
+# Fix up https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=425632
+
+# shellcheck disable=SC2016
+find $chk_dir -name \*.html -print0 |
+xargs -0r -- perl -i~ -pe '
+	s{\bid=("[^"]+")[^<>]*\>}{$&<a name=$1>}g;
+'
+
+linklint -xref -out linklint.errors -error -root $chk_dir /@
+
+cat linklint.errors
+
+set +e
+grep ERROR linklint.errors
+rc=$?
+set -e
+
+case $rc in
+0) echo >&2 '** found linkcheck errors **'; exit 1;;
+1) ;;
+*) echo >&2 "linkcheck failed $rc"; exit 1;;
+esac

@@ -198,7 +198,8 @@ cargo-test-dprint:
 mdbook-tests:
   stage: comprehensive
   script:
-    - ./maint/via-cargo-install-in-ci mdbook --locked
+    - apt-get update && apt-get install -y python3 linklint
+    - ./maint/via-cargo-install-in-ci mdbook mdbook-linkcheck --locked
     - ./maint/build-mdbook
 
 pages:
@@ -206,7 +207,8 @@ pages:
     - if: $CI_COMMIT_BRANCH == "main"
   stage: deploy-book
   script:
-    - ./maint/via-cargo-install-in-ci mdbook --locked
+    - apt-get update && apt-get install -y python3 linklint
+    - ./maint/via-cargo-install-in-ci mdbook mdbook-lincheck --locked
     - ./maint/build-mdbook
     - mv book/book/ public/
   artifacts:
