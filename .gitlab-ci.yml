@@ -19,23 +19,23 @@ image: "rust:bookworm"
 cargo-check-deps:
   stage: test
   script:
-    - cargo check --locked --verbose --all-features
+    - cargo check --locked --all-features
 
 cargo-check:
   stage: test
   script:
-    - cargo check --locked --workspace --verbose --all-features
+    - cargo check --locked --workspace --all-features
 
 cargo-check-minfeatures:
   stage: test
   script:
-    - cargo check --locked --verbose --no-default-features --features=minimal-1
+    - cargo check --locked --no-default-features --features=minimal-1
 
 cargo-fmt:
   stage: test
   script:
     - rustup component add rustfmt
-    - maint/rustfmt --verbose --check
+    - maint/rustfmt --check
 
 maint-check-bizarre:
   stage: test
@@ -83,7 +83,7 @@ cargo-test:
   image: rustlang/rust@sha256:02a6b6deed8307c39fbd3124bd2f3806c9420f92031bc84f6035045458f876f1
   script:
     - ./maint/via-cargo-install-in-ci cargo-expand --locked --version=1.0.80 --features=prettyplease
-    - maint/cargo-test-locked --workspace --verbose --all-features -- --skip directly::check_examples
+    - maint/cargo-test-locked --workspace --all-features -- --skip directly::check_examples
   cache:
     when: 'always'
     paths:
@@ -97,7 +97,7 @@ check-doc-examples:
   image: rustlang/rust@sha256:02a6b6deed8307c39fbd3124bd2f3806c9420f92031bc84f6035045458f876f1
   allow_failure: true
   script:
-    - maint/cargo-test-locked -p derive-deftly-tests --verbose --all-features -- --nocapture directly::check_examples
+    - maint/cargo-test-locked -p derive-deftly-tests --all-features -- --nocapture directly::check_examples
 
 # Test every commit
 #
@@ -109,7 +109,7 @@ every-commit:
   image: rustlang/rust@sha256:02a6b6deed8307c39fbd3124bd2f3806c9420f92031bc84f6035045458f876f1
   script:
     - ./maint/via-cargo-install-in-ci cargo-expand --locked --version=1.0.67 --features=prettyplease
-    - maint/for-every-commit maint/cargo-test-locked --workspace --verbose --all-features -- --skip directly::check_examples
+    - maint/for-every-commit maint/cargo-test-locked --workspace --all-features -- --skip directly::check_examples
   cache:
     when: 'always'
     paths:
@@ -130,7 +130,7 @@ cargo-test-minfeatures:
 stable:
   stage: comprehensive
   script:
-    - maint/cargo-test-locked --workspace --verbose --features=derive-deftly-tests/recent,derive-deftly-tests/full
+    - maint/cargo-test-locked --workspace --features=derive-deftly-tests/recent,derive-deftly-tests/full
 
 stable-minfeatures:
   stage: comprehensive
@@ -149,7 +149,7 @@ stable-user-clippy:
 cargo-doc:
   stage: comprehensive
   script:
-    - cargo doc --locked --workspace --verbose --features=full
+    - cargo doc --locked --workspace --features=full
 
 # Check that the complete docs build without any warnings
 cargo-doc-all:
@@ -158,7 +158,7 @@ cargo-doc-all:
   script:
     - apt-get update
     - apt-get -y install jq
-    - cargo doc --locked --workspace --verbose --features=full --document-private-items --message-format=json >rustdoc.json
+    - cargo doc --locked --workspace --features=full --document-private-items --message-format=json >rustdoc.json
     - jq --raw-output '. | select(.message.level) | .message.rendered' <rustdoc.json |tee rustdoc.errors
     - test ! -s rustdoc.errors
 
