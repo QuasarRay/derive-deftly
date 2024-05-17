@@ -18,8 +18,15 @@ full = ["derive-deftly/full"]
 # We can't make macrotest, ui, recent and full default features because
 # in 1.54 (which is why we want this) --no-default-features doesn't work.
 
+# *Some* of the cargo features from derive-deftly/macros
+# need to be reproduced here.  We don't need their actual consequences,
+# since the way we invoke the tests gets those via the dependency
+# on derive-deftly/full, above.
 case = []
 meta-as-items = []
+#
+# `expect` is not here because it doesn't work without a build.rs,
+# and anyway we don't test that functionality here.
 
 [dependencies]
 derive-deftly = { path = "..", version = "*", default-features = false, features = ["minimal-1"] }
