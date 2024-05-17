@@ -28,7 +28,14 @@ impl Parse for TemplateDefinition {
         let templ_name = input.parse()?;
         let options =
             UnprocessedOptions::parse(&input, OpContext::TemplateDefinition)?;
-        let _equals: syn::Token![=] = input.parse()?;
+        let la = input.lookahead1();
+        if la.peek(Token![=]) {
+            let _equals: Token![=] = input.parse()?;
+        } else if la.peek(Token![:]) {
+            let _colon: Token![=] = input.parse()?;
+        } else {
+            return Err(la.error());
+        };
         let template = input.parse()?;
         Ok(TemplateDefinition {
             doc_attrs,
