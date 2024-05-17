@@ -364,6 +364,7 @@ Accesses macro parameters passed via `#[deftly(...)]` attributes.
    `"VALUE"` must be be a string literal,
    which is parsed as an arbitrary series of tokens.
    `${Xmeta...}` expands to those tokens.
+   XXXX this is now not normally true.
 
  * **`${Xmeta(SUB(NAME))}`**:
    Looks for `#[deftly(SUB(NAME="VALUE"))]`.
@@ -375,7 +376,7 @@ Accesses macro parameters passed via `#[deftly(...)]` attributes.
 
  * **`${Xmeta(...) as SYNTYPE}`**:
    Treats the value as a `SYNTYPE`,
-   rather than an arbitrary sequence of tokens.
+   rather than an arbitrary sequence of tokens. XXXX
    `SYNTYPE`s available are:
 
     * **`str`**: Expands to a string literal
@@ -419,7 +420,8 @@ Accesses macro parameters passed via `#[deftly(...)]` attributes.
     * **`token_stream`**:
      `VALUE` is parsed as an arbtitrary sequence of tokens
      (`TokenStream`).
-     This is the default (except in pasting and case changing).
+     When using this option, be careful about operator precedence:
+     see [Precedence considerations](#precedence-considerations).
 
 When expanding `${Xmeta}`,
 it is an error if the value was not specified in the driver,

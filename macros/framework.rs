@@ -567,9 +567,8 @@ impl ExpansionOutput for TokenAccumulator {
         Self::new()
     }
 
-    fn default_subst_meta_as(_kw: Span) -> syn::Result<meta::SubstAs<Self>> {
-        // XXXX We're going to change this.
-        Ok(meta::SubstAs::token_stream((), ()))
+    fn default_subst_meta_as(kw: Span) -> syn::Result<meta::SubstAs<Self>> {
+        Err(kw.error("missing `as ...` in meta expansion"))
     }
 
     fn ignore_impl(self) -> syn::Result<()> {
