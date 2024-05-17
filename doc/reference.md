@@ -466,7 +466,7 @@ These checks are disabled by `#[derive_deftly_adhoc]`.
  * `${tmeta(gentype) as str}`: `"Vec<i32>"`
  * `${vmeta(value)}`: `unit-toplevel`, `enum-variant`
  * `${fmeta(nested(inner))}` for `field` in `Struct`: `42`
- * `${vmeta(items)}` for `TupleVariant`: `type T = i32; const K: T = 7;`
+ * `${vmeta(items) as items}` for `TupleVariant`: `type T = i32; const K: T = 7;`
  * `${fmeta(nested)}`: error, ``expected a leaf node, found a list with sub-attributes``
 
 #### Examples involving pasting
