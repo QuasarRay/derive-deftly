@@ -278,12 +278,15 @@ impl<O: SubstParseContext> SubstAs<O> {
 
         keyword! { expr(nb, not_in_paste()?) }
         keyword! { ident(nb) }
-        keyword! { items(nb, not_in_paste()?,
-                         SubstAsItemsSupported::new(&kw)?) }
         keyword! { path(nb) }
         keyword! { str(nb) }
         keyword! { tokens(nb, not_in_paste()?) }
         keyword! { ty(nb) }
+
+        keyword! { items(
+            nb, not_in_paste()?,
+            SubstAsItemsSupported::new(&kw)?)
+        }
 
         Err(kw.error("unknown derive-deftly 'as' syntax type keyword"))
     }
