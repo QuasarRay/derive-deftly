@@ -27,6 +27,42 @@ We expect to increase it cautiously and only with good reason.
 
 ### 0.11.0
 
+#### Breaking
+
+ * `${Xmeta as ...}` no longer has a default.
+   Change to `as expr`, `as ty`, etc.
+ * `${Xmeta as tokens}` is now `as token_stream`
+   (and we now document its inherent precedence hazards).
+ * `${Xmeta as ty}` and `$ftype` insert `::` before generic arguments
+   (ie, they normalise the turbofish);
+   this is generally breaking only with `${approx_equal ..}`.
+ * `None`-delimited groups are ignored by `${approx_equal ..}`.
+ * Meta attributes `#[deftly]` must actually be used in
+   an expanded `$tmeta`/`$vmeta`/`$fmeta` expansion,
+   or (as applicable),
+   tested with a `tmeta`/`vmeta`/`fmeta` condition.
+   I.e. meta attribute use checking is dynamic:
+   merely mentioning the meta somewhere in an unused part of the template
+   is not enough.
+
+#### Added
+
+ * `${Xmeta as expr/ident/path/items}`
+ * `meta-as-items` cargo feature (for `${Xmeta as items}`),
+   part of `full` and enabled by default.
+ * Parenthesised type path attributes, processed by `${Xmeta as ty}`,
+   can now be pasted with `${paste }`.
+
+#### Improved
+
+ * `${Xmeta as ty}` uses a `None`-delimited `Group`
+   (although, this is not effective with current compilers:
+   [rust-lang/rust#67062](https://github.com/rust-lang/rust/issues/67062).
+ * Precedence considerations with `${define }` and `${Xmeta }`
+   are documented in the reference.
+ * Short-circuiting behaviour of `any` and `all` conditions is documented.
+ * Improved some error messages.
+
 #### pub template semver
 
 Updating to derive-deftly 0.11.0 is a breaking change
