@@ -5,10 +5,6 @@
 set -e
 set -o pipefail
 
-BOOK_DIR=$(dirname "$0")/../book
-
-cd "$BOOK_DIR"
-
 # mdbook-linkcheck is a non-obvious dependency, and the mdbook output when it's
 # not found doesn't spell out how to install it.
 if ! command -v mdbook-linkcheck; then
@@ -21,6 +17,14 @@ if ! command -v linklint; then
     exit 1
 fi
 
-mdbook build
-cd ./book/
+if ! test -f ./book/book.toml; then
+    echo "ERROR: ./book/book.toml not found.  You need to run this from the toplevel directory."
+    exit 1
+fi
+
+: "${MDBOOK:=mdbook}"
+
+cd ./book
+$MDBOOK build
+cd ./book
 ../../maint/check-mdbook-links
