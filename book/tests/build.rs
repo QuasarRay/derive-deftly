@@ -42,8 +42,11 @@ fn main() -> anyhow::Result<()> {
     // Find all the .md files.
     let md_files = find_md_files(&summary_md_path)?;
 
-    // Tell cargo to re-run this script if the book directory, or any of
-    // the MD files we found, changes.
+    // Tell cargo to re-run this script if there is a change to:
+    //   - the script itself,
+    //   - the book directory,
+    //   - or any of the MD files we found.
+    println!("cargo::rerun-if-changed=build.rs");
     println!("cargo::rerun-if-changed={}", book_src_dir.display());
     println!("cargo::rerun-if-changed={}", summary_md_path.display());
     for fname in md_files.iter() {
