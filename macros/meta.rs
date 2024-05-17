@@ -910,7 +910,7 @@ impl<'l> FoundNode<'l> {
         let as_ = match as_ {
             Some(as_) => as_,
             None => {
-                default_buf = O::default_subst_meta_as();
+                default_buf = O::default_subst_meta_as(tspan)?;
                 &default_buf
             }
         };
