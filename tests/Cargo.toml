@@ -19,6 +19,7 @@ full = ["derive-deftly/full"]
 # in 1.54 (which is why we want this) --no-default-features doesn't work.
 
 case = []
+meta-as-items = []
 
 [dependencies]
 derive-deftly = { path = "..", version = "*", default-features = false, features = ["minimal-1"] }
