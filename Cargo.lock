@@ -40,7 +40,7 @@ version = "0.0.666"
 dependencies = [
  "heck",
  "indexmap",
- "itertools",
+ "itertools 0.13.0",
  "proc-macro-crate",
  "proc-macro2",
  "quote",
@@ -113,7 +113,7 @@ checksum = "aeb3df588a8d4adec5995808ab857dd01905a7fd9925578ca3b1c2657ae2a703"
 dependencies = [
  "heck",
  "indexmap",
- "itertools",
+ "itertools 0.12.1",
  "proc-macro-crate",
  "proc-macro2",
  "quote",
@@ -129,7 +129,7 @@ version = "0.12.1"
 dependencies = [
  "heck",
  "indexmap",
- "itertools",
+ "itertools 0.13.0",
  "proc-macro-crate",
  "proc-macro2",
  "quote",
@@ -156,7 +156,7 @@ dependencies = [
  "glob",
  "heck",
  "indexmap",
- "itertools",
+ "itertools 0.13.0",
  "macrotest",
  "paste",
  "proc-macro-crate",
@@ -304,6 +304,15 @@ name = "itertools"
 version = "0.12.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ba291022dbbd398a455acf126c1e341954079855bc60dfdda641363bd6922569"
+dependencies = [
+ "either",
+]
+
+[[package]]
+name = "itertools"
+version = "0.13.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "413ee7dfc52ee1a4949ceeb7dbc8a33f2d6c088194d9f922fb8318faf1f01186"
 dependencies = [
  "either",
 ]
