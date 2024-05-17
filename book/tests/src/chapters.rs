@@ -2,11 +2,7 @@
 //
 // Do not edit by hand.
 
-// Our modules include things like SUMMARY, so we need to allow
-// funny module names.
-#![allow(non_snake_case)]
-
 #[doc = include_str!("../../src/SUMMARY.md")]
-mod SUMMARY {}
+mod summary {}
 #[doc = include_str!("../../src/chapter_1.md")]
 mod chapter_1 {}
