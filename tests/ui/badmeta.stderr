@@ -372,6 +372,12 @@ error: expected curly braces
 108 |     ${if tmeta(something) unknown_option {}}
     |                           ^^^^^^^^^^^^^^
 
+error: missing `as ...` in meta expansion
+   --> ui/badmeta.rs:114:7
+    |
+114 |     ${tmeta(dot)} // forgot `.. as`, so `"."` not even parsed
+    |       ^^^^^^^^^
+
 warning: unused macro definition: `derive_deftly_template_WrongRequestSyntax`
    --> ui/badmeta.rs:102:5
     |

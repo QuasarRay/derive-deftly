@@ -108,4 +108,10 @@ define_derive_deftly! {
     ${if tmeta(something) unknown_option {}}
 }
 
+derive_deftly_adhoc! {
+    DataType:
+
+    ${tmeta(dot)} // forgot `.. as`, so `"."` not even parsed
+}
+
 fn main() {}
