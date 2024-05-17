@@ -123,6 +123,14 @@ impl<T: Parse> Parse for Concatenated<T> {
     }
 }
 
+impl<T: ToTokens> ToTokens for Concatenated<T> {
+    fn to_tokens(&self, out: &mut TokenStream) {
+        for item in &self.0 {
+            item.to_tokens(out);
+        }
+    }
+}
+
 /// Add any missing colons before `< >`'d generic arguments
 ///
 /// ```rust,ignore

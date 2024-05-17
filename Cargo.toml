@@ -33,7 +33,7 @@ members = [
 
 [features]
 default = ["full"]
-full = ["case", "expect", "minimal-1"]
+full = ["case", "expect", "meta-as-items", "minimal-1"]
 minimal-1 = []
 # The minimal-1 feature is mandatory.
 # This apporach will allow us to move things from "always enabled" to
@@ -43,6 +43,7 @@ minimal-1 = []
 
 case = ["derive-deftly-macros/case", "heck"]
 expect = ["derive-deftly-macros/expect"]
+meta-as-items = ["derive-deftly-macros/meta-as-items"]
 
 [dependencies]
 derive-deftly-macros = { path = "macros", version = "=0.11.0", default-features = false }

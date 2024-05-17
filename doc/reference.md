@@ -395,6 +395,13 @@ Accesses macro parameters passed via `#[deftly(...)]` attributes.
      so that the expansion is suitable for use in any context,
      (such as invoking an inherent or trait method).
 
+    * **`path`**:
+     `VALUE` is parsed as a path,
+     possibly with generics etc. (`syn::Path`).
+     Like `as ty` but non-path types are forbidden.
+     Rust uses the same path syntax for types and modules,
+     so this is suitable for accepting a module path, too.
+
     * **`expr`**:
      `VALUE` is parsed as an aexpression.
      When expanded, it is surrounded with `( )`
@@ -404,6 +411,10 @@ Accesses macro parameters passed via `#[deftly(...)]` attributes.
      `VALUE` is parsed as an identifier (or keyword).
      (Within pasting, prefer `as str`, the default;
      `as ident` rejects initial digits, and the empty string.)
+
+    * **`items`**:
+     `VALUE` is parsed as zero or more Rust Items.  (`syn::Item`)
+     Note that the driver must pass the items' source code in `"..."`.
 
     * **`tokens`**:
      `VALUE` is parsed as an arbtitrary sequence of tokens
@@ -448,12 +459,14 @@ These checks are disabled by `#[derive_deftly_adhoc]`.
 
  * `${tmeta(simple)}`: `String`
  * `${tmeta(simple) as ty}`: `« String »`
+ * `${tmeta(simple) as path}`: `« String »`
  * `${tmeta(simple) as str}`: `"String"`
  * `${tmeta(gentype)}`: `Vec<i32>`
  * `${tmeta(gentype) as ty}`: `« Vec::<i32> »`
  * `${tmeta(gentype) as str}`: `"Vec<i32>"`
  * `${vmeta(value)}`: `unit-toplevel`, `enum-variant`
  * `${fmeta(nested(inner))}` for `field` in `Struct`: `42`
+ * `${vmeta(items)}` for `TupleVariant`: `type T = i32; const K: T = 7;`
  * `${fmeta(nested)}`: error, ``expected a leaf node, found a list with sub-attributes``
 
 #### Examples involving pasting
@@ -529,7 +542,7 @@ Expands the contents and pastes it together into a single identifier.
 The contents may only contain identifer fragments, strings (`"..."`),
 and (certain) expansions.
 Supported expansions are `$ftype`, `$ttype`, `$tdeftype`, `$Xname`,
-`${Xmeta as ty}`, `${Xmeta as str}`,
+`${Xmeta as str / ty / path / ident}`,
 `$<...>`,
 `${paste ...}`,
 `${CASE_CHANGE ...}`,
@@ -1229,6 +1242,7 @@ where T: 'l, T: TryInto<u8>
 {
     #[deftly(value="enum-variant")]
     UnitVariant,
+	#[deftly(items="type T = i32; const K: T = 7;")]
     TupleVariant(std::iter::Once::<T>),
     NamedVariant { 
         field: &'l &'a T,
