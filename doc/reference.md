@@ -395,6 +395,13 @@ Accesses macro parameters passed via `#[deftly(...)]` attributes.
      so that the expansion is suitable for use in any context,
      (such as invoking an inherent or trait method).
 
+    * **`path`**:
+     `VALUE` is parsed as a path,
+     possibly with generics etc. (`syn::Path`).
+     Like `as ty` but non-path types are forbidden.
+     Rust uses the same path syntax for types and modules,
+     so this is suitable for accepting a module path, too.
+
     * **`expr`**:
      `VALUE` is parsed as an aexpression.
      When expanded, it is surrounded with `( )`
@@ -448,6 +455,7 @@ These checks are disabled by `#[derive_deftly_adhoc]`.
 
  * `${tmeta(simple)}`: `String`
  * `${tmeta(simple) as ty}`: `« String »`
+ * `${tmeta(simple) as path}`: `« String »`
  * `${tmeta(simple) as str}`: `"String"`
  * `${tmeta(gentype)}`: `Vec<i32>`
  * `${tmeta(gentype) as ty}`: `« Vec::<i32> »`
@@ -529,7 +537,7 @@ Expands the contents and pastes it together into a single identifier.
 The contents may only contain identifer fragments, strings (`"..."`),
 and (certain) expansions.
 Supported expansions are `$ftype`, `$ttype`, `$tdeftype`, `$Xname`,
-`${Xmeta as str / ty / ident}`,
+`${Xmeta as str / ty / path / ident}`,
 `$<...>`,
 `${paste ...}`,
 `${CASE_CHANGE ...}`,

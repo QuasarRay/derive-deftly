@@ -111,6 +111,7 @@ pub struct SubstMeta<O: SubstParseContext> {
 pub enum SubstAs<O: SubstParseContext> {
     expr(O::NotInBool, O::NotInPaste),
     ident(O::NotInBool),
+    path(O::NotInBool),
     str(O::NotInBool),
     tokens(O::NotInBool, O::NotInPaste),
     ty(O::NotInBool),
@@ -276,6 +277,7 @@ impl<O: SubstParseContext> SubstAs<O> {
 
         keyword! { expr(nb, not_in_paste()?) }
         keyword! { ident(nb) }
+        keyword! { path(nb) }
         keyword! { str(nb) }
         keyword! { tokens(nb, not_in_paste()?) }
         keyword! { ty(nb) }
@@ -858,6 +860,11 @@ impl<'l> FoundNode<'l> {
                 let ident: IdentAny = metavalue_lit_as(lit, tspan, as_)?;
                 out.append_identfrag_toks(&*ident)?;
             }
+            as_ @ SA::path(..) => out.append_syn_type(
+                tspan,
+                syn::Type::Path(metavalue_lit_as(lit, tspan, as_)?),
+                Grouping::Invisible,
+            ),
             SA::str(..) => {
                 let s = metavalue_litstr(
                     lit,

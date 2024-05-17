@@ -82,6 +82,7 @@ impl Subst<BooleanContext> {
                     match as_ {
                         mSA::expr(nb, ..)
                         | mSA::ident(nb, ..)
+                        | mSA::path(nb)
                         | mSA::str(nb)
                         | mSA::tokens(nb, ..)
                         | mSA::ty(nb) => void::unreachable(*nb),
