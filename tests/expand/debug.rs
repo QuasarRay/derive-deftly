@@ -32,7 +32,7 @@ define_derive_deftly! {
                 $(
                     ${if fmeta(debug(skip)) {
                     } else if fmeta(debug(call)) {
-       ${fmeta(debug(call))} (&mut ds, stringify!($fname), &self.$fname)?;
+ ${fmeta(debug(call)) as expr} (&mut ds, stringify!($fname), &self.$fname)?;
                     } else if fmeta(debug(into)) {
               ds.field(stringify!($fname),
        &< ${fmeta(debug(into)) as ty} as From<&$ftype> >::from(&self.$fname)

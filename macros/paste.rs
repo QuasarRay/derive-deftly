@@ -872,8 +872,8 @@ impl ExpansionOutput for Items {
         Self::new(kw_span)
     }
 
-    fn default_subst_meta_as() -> meta::SubstAs<Self> {
-        meta::SubstAs::str(())
+    fn default_subst_meta_as(_: Span) -> syn::Result<meta::SubstAs<Self>> {
+        Ok(meta::SubstAs::str(()))
     }
 
     fn ignore_impl(self) -> syn::Result<()> {

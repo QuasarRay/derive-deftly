@@ -358,7 +358,7 @@ pub trait ExpansionOutput: SubstParseContext {
     /// This one is used for special cases, eg `${ignore ...}`
     fn new_with_span(kw_span: Span) -> Self;
 
-    fn default_subst_meta_as() -> meta::SubstAs<Self>;
+    fn default_subst_meta_as(kw: Span) -> syn::Result<meta::SubstAs<Self>>;
 
     /// Implement the core of the `ignore` keyword
     ///
@@ -567,8 +567,8 @@ impl ExpansionOutput for TokenAccumulator {
         Self::new()
     }
 
-    fn default_subst_meta_as() -> meta::SubstAs<Self> {
-        meta::SubstAs::tokens((), ())
+    fn default_subst_meta_as(kw: Span) -> syn::Result<meta::SubstAs<Self>> {
+        Err(kw.error("missing `as ...` in meta expansion"))
     }
 
     fn ignore_impl(self) -> syn::Result<()> {

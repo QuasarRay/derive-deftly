@@ -114,7 +114,7 @@ pub enum SubstAs<O: SubstParseContext> {
     items(O::NotInBool, O::NotInPaste, SubstAsItemsSupported),
     path(O::NotInBool),
     str(O::NotInBool),
-    tokens(O::NotInBool, O::NotInPaste),
+    token_stream(O::NotInBool, O::NotInPaste),
     ty(O::NotInBool),
 }
 
@@ -280,7 +280,7 @@ impl<O: SubstParseContext> SubstAs<O> {
         keyword! { ident(nb) }
         keyword! { path(nb) }
         keyword! { str(nb) }
-        keyword! { tokens(nb, not_in_paste()?) }
+        keyword! { token_stream(nb, not_in_paste()?) }
         keyword! { ty(nb) }
 
         keyword! { items(
@@ -910,7 +910,7 @@ impl<'l> FoundNode<'l> {
         let as_ = match as_ {
             Some(as_) => as_,
             None => {
-                default_buf = O::default_subst_meta_as();
+                default_buf = O::default_subst_meta_as(tspan)?;
                 &default_buf
             }
         };
@@ -946,7 +946,7 @@ impl<'l> FoundNode<'l> {
                 metavalue_lit_as(lit, tspan, as_)?,
                 Grouping::Invisible,
             ),
-            SA::tokens(_, np) => {
+            SA::token_stream(_, np) => {
                 let tokens: TokenStream =
                     metavalue_lit_as(lit, tspan, &"tokens")?;
                 out.append_tokens(np, tokens)?;

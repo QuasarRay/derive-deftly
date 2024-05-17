@@ -5,7 +5,7 @@ define_derive_deftly! {
 
     $(
         ${if all(fmeta(value), fmeta(short_circuit))  {
-            ${ignore ${fmeta(value)}}
+            ${ignore ${fmeta(value) as str}}
         }}
     )
 }
@@ -15,7 +15,7 @@ define_derive_deftly! {
 
     $(
         ${if fmeta(require) {
-            ${ignore ${fmeta(value)}}
+            ${ignore ${fmeta(value) as str}}
         }}
     )
 }

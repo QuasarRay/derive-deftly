@@ -54,7 +54,7 @@ where
         let mut ds = f.debug_struct("DataType");
         ds.field("foo", &self.foo);
         ds.field("bar", &<PrettyVec<String> as From<&Vec<String>>>::from(&self.bar));
-        custom::fmt(&mut ds, "custom", &self.custom)?;
+        (custom::fmt)(&mut ds, "custom", &self.custom)?;
         ds.finish()
     }
 }

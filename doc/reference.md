@@ -362,8 +362,10 @@ Accesses macro parameters passed via `#[deftly(...)]` attributes.
  * **`${Xmeta(NAME)}`**:
    Looks for `#[deftly(NAME="VALUE")]`, and expands to `VALUE`.
    `"VALUE"` must be be a string literal,
-   which is parsed as an arbitrary series of tokens.
-   `${Xmeta...}` expands to those tokens.
+   which is parsed as a piece of Rust code, and then expanded.
+   Normally,
+   `.. as` must be given, to specify how `VALUE` should be parsed;
+   within `$(paste ..}`, `as str` is the default.
 
  * **`${Xmeta(SUB(NAME))}`**:
    Looks for `#[deftly(SUB(NAME="VALUE"))]`.
@@ -374,8 +376,7 @@ Accesses macro parameters passed via `#[deftly(...)]` attributes.
    The label can be arbitrarily deep, e.g.: `${Xmeta(L1(L2(L3(ATTR))))}`.
 
  * **`${Xmeta(...) as SYNTYPE}`**:
-   Treats the value as a `SYNTYPE`,
-   rather than an arbitrary sequence of tokens.
+   Treats the value as a `SYNTYPE`.
    `SYNTYPE`s available are:
 
     * **`str`**: Expands to a string literal
@@ -416,10 +417,11 @@ Accesses macro parameters passed via `#[deftly(...)]` attributes.
      `VALUE` is parsed as zero or more Rust Items.  (`syn::Item`)
      Note that the driver must pass the items' source code in `"..."`.
 
-    * **`tokens`**:
+    * **`token_stream`**:
      `VALUE` is parsed as an arbtitrary sequence of tokens
      (`TokenStream`).
-     This is the default (except in pasting and case changing).
+     When using this option, be careful about operator precedence:
+     see [Precedence considerations](#precedence-considerations).
 
 When expanding `${Xmeta}`,
 it is an error if the value was not specified in the driver,
@@ -457,15 +459,15 @@ These checks are disabled by `#[derive_deftly_adhoc]`.
 
 #### Examples
 
- * `${tmeta(simple)}`: `String`
  * `${tmeta(simple) as ty}`: `« String »`
  * `${tmeta(simple) as path}`: `« String »`
  * `${tmeta(simple) as str}`: `"String"`
- * `${tmeta(gentype)}`: `Vec<i32>`
+ * `${tmeta(simple) as token_stream}`: `String`
  * `${tmeta(gentype) as ty}`: `« Vec::<i32> »`
  * `${tmeta(gentype) as str}`: `"Vec<i32>"`
- * `${vmeta(value)}`: `unit-toplevel`, `enum-variant`
- * `${fmeta(nested(inner))}` for `field` in `Struct`: `42`
+ * `${tmeta(gentype) as token_stream}`: `Vec<i32>`
+ * `${vmeta(value) as ident}`: `unit_toplevel`, `enum_variant`
+ * `${fmeta(nested(inner)) as expr}` for `field` in `Struct`: `(42)`
  * `${vmeta(items) as items}` for `TupleVariant`: `type T = i32; const K: T = 7;`
  * `${fmeta(nested)}`: error, ``expected a leaf node, found a list with sub-attributes``
 
@@ -534,7 +536,7 @@ that come *after* the `#[derive(..., Deftly, ...)]`.
 
 ##### For `Enum`
 
- * `${vattrs deftly}` for `UnitVariant`: `#[deftly(value="enum-variant")]`
+ * `${vattrs deftly}` for `UnitVariant`: `#[deftly(value="enum_variant")]`
 
 ### `$<...>`, `${paste ...}` -- identifier pasting
 
@@ -579,7 +581,7 @@ Skips this repetition if the `CONDITION` is not true.
 
 #### Example
 
- * `$( ${when vmeta(value)} ${vmeta(value) as str} )` for `Enum`: `"enum-variant"`
+ * `$( ${when vmeta(value)} ${vmeta(value) as str} )` for `Enum`: `"enum_variant"`
 
 ### `${if COND1 { ... } else if COND2 { ... } else { ... }}` -- conditional
 
@@ -1152,7 +1154,7 @@ and dumping the expansion to stderr during compilation.
 ## Precedence considerations
 
 When using
-`${Xmeta as tokens}`,
+`${Xmeta as token_stream}`,
 and user-defined expansions,
 it can be necessary to add `{ }` or `( )`
 to avoid surprising expansions due to operator precedence.
@@ -1215,7 +1217,7 @@ struct SimpleUnit;
 #[derive(Deftly)]
 #[derive(Clone)]
 #[deftly(simple="String", gentype="Vec<i32>")]
-#[deftly(value="unit-toplevel")]
+#[deftly(value="unit_toplevel")]
 pub struct Unit<const C: usize = 1>;
 
 #[derive(Deftly, Clone)]
@@ -1240,7 +1242,7 @@ where T: 'l, T: TryInto<u8>
 pub enum Enum<'a, 'l: 'a, T: Display = usize, const C: usize = 1>
 where T: 'l, T: TryInto<u8>
 {
-    #[deftly(value="enum-variant")]
+    #[deftly(value="enum_variant")]
     UnitVariant,
 	#[deftly(items="type T = i32; const K: T = 7;")]
     TupleVariant(std::iter::Once::<T>),

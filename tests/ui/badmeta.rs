@@ -12,7 +12,7 @@ struct DataType {}
 derive_deftly_adhoc! {
     DataType:
 
-    const K: () = ${tmeta(wrong)}
+    const K: () = ${tmeta(wrong) as expr}
 }
 // Invoke derive_deftly_adhoc! a second time, because (empirically) the
 // attempt to parse "{" causes some kind of nonlocal exit:
@@ -106,6 +106,12 @@ define_derive_deftly! {
 
     ${tmeta(something) unknown_option}
     ${if tmeta(something) unknown_option {}}
+}
+
+derive_deftly_adhoc! {
+    DataType:
+
+    ${tmeta(dot)} // forgot `.. as`, so `"."` not even parsed
 }
 
 fn main() {}

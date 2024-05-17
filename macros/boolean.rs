@@ -85,7 +85,7 @@ impl Subst<BooleanContext> {
                         | mSA::items(nb, ..)
                         | mSA::path(nb)
                         | mSA::str(nb)
-                        | mSA::tokens(nb, ..)
+                        | mSA::token_stream(nb, ..)
                         | mSA::ty(nb) => void::unreachable(*nb),
                     }
                 };
