@@ -568,7 +568,8 @@ impl ExpansionOutput for TokenAccumulator {
     }
 
     fn default_subst_meta_as() -> meta::SubstAs<Self> {
-        meta::SubstAs::tokens((), ())
+        // XXXX We're going to change this.
+        meta::SubstAs::token_stream((), ())
     }
 
     fn ignore_impl(self) -> syn::Result<()> {

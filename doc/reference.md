@@ -416,7 +416,7 @@ Accesses macro parameters passed via `#[deftly(...)]` attributes.
      `VALUE` is parsed as zero or more Rust Items.  (`syn::Item`)
      Note that the driver must pass the items' source code in `"..."`.
 
-    * **`tokens`**:
+    * **`token_stream`**:
      `VALUE` is parsed as an arbtitrary sequence of tokens
      (`TokenStream`).
      This is the default (except in pasting and case changing).
@@ -1152,7 +1152,7 @@ and dumping the expansion to stderr during compilation.
 ## Precedence considerations
 
 When using
-`${Xmeta as tokens}`,
+`${Xmeta as token_stream}`,
 and user-defined expansions,
 it can be necessary to add `{ }` or `( )`
 to avoid surprising expansions due to operator precedence.

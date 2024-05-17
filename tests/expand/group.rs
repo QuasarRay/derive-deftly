@@ -105,7 +105,7 @@ fn main() {
         OperatorPrecedence:
 
         $(
-            ${fmeta(value) as tokens} *
+            ${fmeta(value) as token_stream} *
         ) 1
     );
     assert(product == 10);
