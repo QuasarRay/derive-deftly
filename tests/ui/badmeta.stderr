@@ -7,7 +7,7 @@ error: this file contains an unclosed delimiter
 12 | / derive_deftly_adhoc! {
 13 | |     DataType:
 14 | |
-15 | |     const K: () = ${tmeta(wrong)}
+15 | |     const K: () = ${tmeta(wrong) as expr}
 16 | | }
    | |_- in this macro invocation
    |
@@ -22,7 +22,7 @@ error: cannot parse string into token stream
 12 | / derive_deftly_adhoc! {
 13 | |     DataType:
 14 | |
-15 | |     const K: () = ${tmeta(wrong)}
+15 | |     const K: () = ${tmeta(wrong) as expr}
 16 | | }
    | |_- in this macro invocation
    |

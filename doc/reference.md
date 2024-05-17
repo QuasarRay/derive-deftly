@@ -457,15 +457,15 @@ These checks are disabled by `#[derive_deftly_adhoc]`.
 
 #### Examples
 
- * `${tmeta(simple)}`: `String`
  * `${tmeta(simple) as ty}`: `« String »`
  * `${tmeta(simple) as path}`: `« String »`
  * `${tmeta(simple) as str}`: `"String"`
- * `${tmeta(gentype)}`: `Vec<i32>`
+ * `${tmeta(simple) as token_stream}`: `String`
  * `${tmeta(gentype) as ty}`: `« Vec::<i32> »`
  * `${tmeta(gentype) as str}`: `"Vec<i32>"`
- * `${vmeta(value)}`: `unit-toplevel`, `enum-variant`
- * `${fmeta(nested(inner))}` for `field` in `Struct`: `42`
+ * `${tmeta(gentype) as token_stream}`: `Vec<i32>`
+ * `${vmeta(value) as ident}`: `unit_toplevel`, `enum_variant`
+ * `${fmeta(nested(inner)) as expr}` for `field` in `Struct`: `(42)`
  * `${vmeta(items) as items}` for `TupleVariant`: `type T = i32; const K: T = 7;`
  * `${fmeta(nested)}`: error, ``expected a leaf node, found a list with sub-attributes``
 
@@ -534,7 +534,7 @@ that come *after* the `#[derive(..., Deftly, ...)]`.
 
 ##### For `Enum`
 
- * `${vattrs deftly}` for `UnitVariant`: `#[deftly(value="enum-variant")]`
+ * `${vattrs deftly}` for `UnitVariant`: `#[deftly(value="enum_variant")]`
 
 ### `$<...>`, `${paste ...}` -- identifier pasting
 
@@ -579,7 +579,7 @@ Skips this repetition if the `CONDITION` is not true.
 
 #### Example
 
- * `$( ${when vmeta(value)} ${vmeta(value) as str} )` for `Enum`: `"enum-variant"`
+ * `$( ${when vmeta(value)} ${vmeta(value) as str} )` for `Enum`: `"enum_variant"`
 
 ### `${if COND1 { ... } else if COND2 { ... } else { ... }}` -- conditional
 
@@ -1215,7 +1215,7 @@ struct SimpleUnit;
 #[derive(Deftly)]
 #[derive(Clone)]
 #[deftly(simple="String", gentype="Vec<i32>")]
-#[deftly(value="unit-toplevel")]
+#[deftly(value="unit_toplevel")]
 pub struct Unit<const C: usize = 1>;
 
 #[derive(Deftly, Clone)]
@@ -1240,7 +1240,7 @@ where T: 'l, T: TryInto<u8>
 pub enum Enum<'a, 'l: 'a, T: Display = usize, const C: usize = 1>
 where T: 'l, T: TryInto<u8>
 {
-    #[deftly(value="enum-variant")]
+    #[deftly(value="enum_variant")]
     UnitVariant,
 	#[deftly(items="type T = i32; const K: T = 7;")]
     TupleVariant(std::iter::Once::<T>),

@@ -1156,7 +1156,7 @@ define_derive_deftly! {
    Constructor for struct =
 
    impl<$tgens> $ttype where $twheres {
-      pub fn ${tmeta(newfn)} // (1)
+      pub fn ${tmeta(newfn) as ident} // (1)
       ( $( $fname: $ftype , ) ) -> Self {
           Self {
               $( $fname , )

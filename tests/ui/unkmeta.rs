@@ -4,11 +4,11 @@ define_derive_deftly! {
     UseSomeAttrs =
 
     ${for fields { ${ignore {
-        ${if tmeta(tnest(by_value)) { ${tmeta(tnest(by_value))} }}
-        ${if vmeta(vnest(by_value)) { ${vmeta(vnest(by_value))} }}
-        ${if fmeta(fnest(by_value)) { ${fmeta(fnest(by_value))} }}
-        ${if fmeta(vfnest(by_value)) { ${fmeta(vfnest(by_value))} }}
-        ${if vmeta(vfnest(by_value)) { ${vmeta(vfnest(by_value))} }}
+        ${if tmeta(tnest(by_value)) { ${tmeta(tnest(by_value)) as str} }}
+        ${if vmeta(vnest(by_value)) { ${vmeta(vnest(by_value)) as str} }}
+        ${if fmeta(fnest(by_value)) { ${fmeta(fnest(by_value)) as str} }}
+        ${if fmeta(vfnest(by_value)) { ${fmeta(vfnest(by_value)) as str} }}
+        ${if vmeta(vfnest(by_value)) { ${vmeta(vfnest(by_value)) as str} }}
 
 
 

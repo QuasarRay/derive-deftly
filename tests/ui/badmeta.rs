@@ -12,7 +12,7 @@ struct DataType {}
 derive_deftly_adhoc! {
     DataType:
 
-    const K: () = ${tmeta(wrong)}
+    const K: () = ${tmeta(wrong) as expr}
 }
 // Invoke derive_deftly_adhoc! a second time, because (empirically) the
 // attempt to parse "{" causes some kind of nonlocal exit:
