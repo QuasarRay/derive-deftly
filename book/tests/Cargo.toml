@@ -7,3 +7,7 @@ publish = false
 
 [dependencies]
 derive-deftly = { version = "*", path = "../.." }
+
+[build-dependencies]
+anyhow = "1"
+regex = "1"

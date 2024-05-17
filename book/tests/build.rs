@@ -1,12 +1,9 @@
 // build script: regenerate chapters.rs
 
 use std::{
-    env,
-    ffi::OsStr,
-    fs,
-    io::{self, Write as _},
+    env, fs,
+    io::Write as _,
     path::{Path, PathBuf},
-    process,
 };
 
 const WARNING: &str = "\
@@ -20,32 +17,35 @@ fn modname(p: &Path) -> String {
     m.to_ascii_lowercase().replace("-", "_")
 }
 
-fn main() -> io::Result<()> {
+/// Return a list of the md files linked from `inp`, relative to location of `inp`.
+///
+/// Assumes that `inp` has the structure of a SUMMARY.md file, and so
+/// ignores everything but `[]()` links.
+fn find_md_files(inp: &Path) -> anyhow::Result<Vec<PathBuf>> {
+    // I would prefer to use `pulldown-cmark` here, but it doesn't
+    // work with our MSRV. :P
+    let re = regex::Regex::new(r"\]\((.*\.md)\)")?;
+    let contents = fs::read_to_string(inp)?;
+
+    Ok(re
+        .captures_iter(&contents)
+        .map(|c| PathBuf::from(c.get(1).unwrap().as_str()))
+        .collect())
+}
+
+fn main() -> anyhow::Result<()> {
     let tests_dir: PathBuf = env::var("CARGO_MANIFEST_DIR").unwrap().into();
     let book_dir = tests_dir.parent().unwrap();
     let book_src_dir = book_dir.join("src");
+    let summary_md_path = book_src_dir.join("SUMMARY.md");
 
     // Find all the .md files.
-    //
-    // DOES NOT handle recursion, since we don't have walkdir.
-    let mut md_files = Vec::new();
-    for entry in fs::read_dir(&book_src_dir)? {
-        let entry = entry?;
-        if entry.file_type()?.is_dir() {
-            println!(
-                "cargo::warning=build.rs does not handle subdirectories!"
-            );
-            process::exit(1);
-        }
-        let p = PathBuf::from(entry.file_name());
-        if p.extension().map(OsStr::to_str) == Some(Some("md")) {
-            md_files.push(p);
-        }
-    }
+    let md_files = find_md_files(&summary_md_path)?;
 
     // Tell cargo to re-run this script if the book directory, or any of
     // the MD files we found, changes.
     println!("cargo::rerun-if-changed={}", book_src_dir.display());
+    println!("cargo::rerun-if-changed={}", summary_md_path.display());
     for fname in md_files.iter() {
         println!(
             "cargo::rerun-if-changed={}",

@@ -2,7 +2,5 @@
 //
 // Do not edit by hand.
 
-#[doc = include_str!("../../src/SUMMARY.md")]
-mod summary {}
-#[doc = include_str!("../../src/chapter_1.md")]
+#[doc = include_str!("../../src/./chapter_1.md")]
 mod chapter_1 {}
