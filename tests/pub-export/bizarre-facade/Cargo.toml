@@ -19,11 +19,12 @@ autotests = false
 
 [features]
 default = ["full"]
-full = ["case", "expect", "minimal-1"]
+full = ["case", "expect", "meta-as-items", "minimal-1"]
 minimal-1 = []
 
 case = ["derive-deftly-macros/case", "heck"]
 expect = ["derive-deftly-macros/expect"]
+meta-as-items = ["derive-deftly-macros/meta-as-items"]
 
 [dependencies]
 derive-deftly-macros = { package = "bizarre-derive-deftly-macros", path = "../bizarre-macros", version = "0.0.666" }

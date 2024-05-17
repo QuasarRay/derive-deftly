@@ -111,6 +111,7 @@ pub struct SubstMeta<O: SubstParseContext> {
 pub enum SubstAs<O: SubstParseContext> {
     expr(O::NotInBool, O::NotInPaste),
     ident(O::NotInBool),
+    items(O::NotInBool, O::NotInPaste, SubstAsItemsSupported),
     path(O::NotInBool),
     str(O::NotInBool),
     tokens(O::NotInBool, O::NotInPaste),
@@ -277,6 +278,8 @@ impl<O: SubstParseContext> SubstAs<O> {
 
         keyword! { expr(nb, not_in_paste()?) }
         keyword! { ident(nb) }
+        keyword! { items(nb, not_in_paste()?,
+                         SubstAsItemsSupported::new(&kw)?) }
         keyword! { path(nb) }
         keyword! { str(nb) }
         keyword! { tokens(nb, not_in_paste()?) }
@@ -688,6 +691,64 @@ fn check_borrowed_desig() {
     }
 }
 
+//---------- conditional support for `Xmeta as items` ----------
+
+trait SubstAsItemsSupportedInterface: Debug + Clone + Sized {
+    type Parsed: Parse + ToTokens;
+    type Emit: ToTokens;
+    fn new(kw: &impl Spanned) -> syn::Result<Self>;
+    fn emit(&self, parsed: Self::Parsed) -> Self::Emit;
+}
+
+#[cfg(feature = "meta-as-items")]
+mod meta_as_items {
+    use super::*;
+
+    #[derive(Debug, Clone)]
+    pub struct SubstAsItemsSupported;
+
+    impl SubstAsItemsSupportedInterface for SubstAsItemsSupported {
+        type Parsed = Concatenated<syn::Item>;
+        type Emit = Concatenated<syn::Item>;
+
+        fn new(_kw: &impl Spanned) -> syn::Result<Self> {
+            Ok(SubstAsItemsSupported)
+        }
+        fn emit(&self, parsed: Self::Parsed) -> Self::Emit {
+            parsed
+        }
+    }
+}
+
+#[cfg(not(feature = "meta-as-items"))]
+mod meta_as_items {
+    use super::*;
+
+    #[derive(Debug, Copy, Clone)]
+    pub struct SubstAsItemsSupported(Void);
+
+    impl SubstAsItemsSupportedInterface for SubstAsItemsSupported {
+        type Parsed = TokenStream;
+        type Emit = SubstAsItemsSupported;
+
+        fn new(kw: &impl Spanned) -> syn::Result<Self> {
+            Err(kw.error(
+ "${Xmeta as items} used but cargo feature meta-as-items disabled"
+            ))
+        }
+        fn emit(&self, _: Self::Parsed) -> Self::Emit {
+            *self
+        }
+    }
+    impl ToTokens for SubstAsItemsSupported {
+        fn to_tokens(&self, _out: &mut TokenStream) {
+            void::unreachable(self.0)
+        }
+    }
+}
+
+use meta_as_items::*;
+
 //---------- template expansion ----------
 
 impl<O> SubstMeta<O>
@@ -859,6 +920,10 @@ impl<'l> FoundNode<'l> {
             as_ @ SA::ident(..) => {
                 let ident: IdentAny = metavalue_lit_as(lit, tspan, as_)?;
                 out.append_identfrag_toks(&*ident)?;
+            }
+            SA::items(_, np, supported) => {
+                let items = metavalue_lit_as(lit, tspan, &"items")?;
+                out.append_tokens(np, supported.emit(items))?;
             }
             as_ @ SA::path(..) => out.append_syn_type(
                 tspan,

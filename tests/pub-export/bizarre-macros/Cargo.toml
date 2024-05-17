@@ -20,6 +20,7 @@ bizarre = []
 default = ["bizarre"]
 case = ["heck"]
 expect = ["sha3", "syn/full"]
+meta-as-items = ["syn/full"]
 
 [dependencies]
 indexmap = ">=1.8, <3"
