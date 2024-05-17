@@ -35,6 +35,7 @@ fn find_md_files(inp: &Path) -> anyhow::Result<Vec<PathBuf>> {
 
 fn main() -> anyhow::Result<()> {
     let tests_dir: PathBuf = env::var("CARGO_MANIFEST_DIR").unwrap().into();
+    let out_dir: PathBuf = env::var_os("OUT_DIR").unwrap().into();
     let book_dir = tests_dir.parent().unwrap();
     let book_src_dir = book_dir.join("src");
     let summary_md_path = book_src_dir.join("SUMMARY.md");
@@ -57,7 +58,7 @@ fn main() -> anyhow::Result<()> {
     }
 
     // Regenerate chapters.rs.
-    let chapters_path = tests_dir.join("src/chapters.rs");
+    let chapters_path = out_dir.join("book_chapters.rs");
 
     let mut f = fs::File::create(chapters_path).unwrap();
     writeln!(f, "{}", WARNING)?;
@@ -65,7 +66,13 @@ fn main() -> anyhow::Result<()> {
     for fname in md_files {
         writeln!(
             f,
-            r#"#[doc = include_str!("../../src/{}")]"#,
+            r#"
+#[doc = include_str!(
+    concat!(
+        env!("CARGO_MANIFEST_DIR"),
+        "/../src/{}"
+    )
+ )]"#,
             fname.display()
         )?;
         writeln!(f, "mod {} {{}}", modname(fname.as_path()))?;

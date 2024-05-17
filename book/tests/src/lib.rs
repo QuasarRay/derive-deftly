@@ -17,4 +17,6 @@ mod prelude {
     pub use derive_deftly::{define_derive_deftly, Deftly};
 }
 
-mod chapters;
+mod chapters {
+    include!(concat!(env!("OUT_DIR"), "/book_chapters.rs"));
+}
