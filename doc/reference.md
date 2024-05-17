@@ -529,7 +529,7 @@ Expands the contents and pastes it together into a single identifier.
 The contents may only contain identifer fragments, strings (`"..."`),
 and (certain) expansions.
 Supported expansions are `$ftype`, `$ttype`, `$tdeftype`, `$Xname`,
-`${Xmeta as ty}`, `${Xmeta as str}`,
+`${Xmeta as ty / str}`,
 `$<...>`,
 `${paste ...}`,
 `${CASE_CHANGE ...}`,
