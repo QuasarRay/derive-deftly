@@ -452,7 +452,7 @@ must correspond to a `${Xmeta...}` expansion
 (or `fmeta(...)` boolean test, as applicable)
 in the template(s) applied to that driver.
 
-The `Xmeta` reference must have been actually espanded (or tested),
+The `Xmeta` reference must have been actually expanded (or tested),
 so parts of the template that weren't expanded don't count.
 
 These checks are disabled by `#[derive_deftly_adhoc]`.
