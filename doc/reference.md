@@ -362,9 +362,10 @@ Accesses macro parameters passed via `#[deftly(...)]` attributes.
  * **`${Xmeta(NAME)}`**:
    Looks for `#[deftly(NAME="VALUE")]`, and expands to `VALUE`.
    `"VALUE"` must be be a string literal,
-   which is parsed as an arbitrary series of tokens.
-   `${Xmeta...}` expands to those tokens.
-   XXXX this is now not normally true.
+   which is parsed as a piece of Rust code, and then expanded.
+   Normally,
+   `.. as` must be given, to specify how `VALUE` should be parsed;
+   within `$(paste ..}`, `as str` is the default.
 
  * **`${Xmeta(SUB(NAME))}`**:
    Looks for `#[deftly(SUB(NAME="VALUE"))]`.
@@ -375,8 +376,7 @@ Accesses macro parameters passed via `#[deftly(...)]` attributes.
    The label can be arbitrarily deep, e.g.: `${Xmeta(L1(L2(L3(ATTR))))}`.
 
  * **`${Xmeta(...) as SYNTYPE}`**:
-   Treats the value as a `SYNTYPE`,
-   rather than an arbitrary sequence of tokens. XXXX
+   Treats the value as a `SYNTYPE`.
    `SYNTYPE`s available are:
 
     * **`str`**: Expands to a string literal
