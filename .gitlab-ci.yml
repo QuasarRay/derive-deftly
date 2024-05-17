@@ -210,7 +210,8 @@ pages:
     - apt-get update && apt-get install -y python3 linklint
     - ./maint/via-cargo-install-in-ci mdbook mdbook-lincheck --locked
     - ./maint/build-mdbook
-    - mv book/book/ public/
+    - mkdir -p public/unreleased/
+    - mv book/book/ public/unreleased/introduction
   artifacts:
     paths:
       - public
