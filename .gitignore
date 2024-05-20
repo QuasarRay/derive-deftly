@@ -2,3 +2,4 @@
 /Cargo.lock
 /target
 /doc/*.md.new
+/book/book

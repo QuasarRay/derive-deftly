@@ -12,6 +12,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "anyhow"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a9ff2deb543832ee7b1a08060c38cc6af5816e96d3fcb6fc2e99bd15634e5c7f"
+
+[[package]]
 name = "autocfg"
 version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -84,6 +90,15 @@ checksum = "d84d814854b09cb91bfae46872fadba3d010d74d0dc219cb3aec0eadd6fd3ceb"
 dependencies = [
  "derive-deftly-macros 0.11.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "heck",
+]
+
+[[package]]
+name = "derive-deftly-book-tests"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "derive-deftly",
+ "regex",
 ]
 
 [[package]]

@@ -12,6 +12,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "anyhow"
+version = "1.0.83"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "25bdb32cbbdce2b519a9cd7df3a678443100e265d5e25ca763b7572a5104f5f3"
+
+[[package]]
 name = "basic-toml"
 version = "0.1.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -88,6 +94,15 @@ checksum = "d84d814854b09cb91bfae46872fadba3d010d74d0dc219cb3aec0eadd6fd3ceb"
 dependencies = [
  "derive-deftly-macros 0.11.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "heck 0.4.1",
+]
+
+[[package]]
+name = "derive-deftly-book-tests"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "derive-deftly",
+ "regex",
 ]
 
 [[package]]
