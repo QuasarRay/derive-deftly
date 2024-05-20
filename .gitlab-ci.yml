@@ -208,7 +208,7 @@ pages:
   stage: deploy-book
   script:
     - apt-get update && apt-get install -y python3 linklint
-    - ./maint/via-cargo-install-in-ci mdbook mdbook-lincheck --locked
+    - ./maint/via-cargo-install-in-ci mdbook mdbook-linkcheck --locked
     - ./maint/build-mdbook
     - mkdir -p public/unreleased/
     - mv book/book/ public/unreleased/introduction
