@@ -49,8 +49,9 @@ git_checkout_maybe_clean () {
 	$x git checkout -q "$1"
     then :
     else 
-	echo "Checkout failed, trying with git clean"
+	echo "Checkout failed, trying with git clean and git reset"
 	x git clean -xdff
+	x git reset --hard
 	x git checkout -q "$1"
     fi
 }
