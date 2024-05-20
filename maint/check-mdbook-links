@@ -11,9 +11,6 @@
 set -e
 set -o pipefail
 
-# nailing-cargo --no-nail --- bin/build_html
-# nailing-cargo --preclean=no --- bin/check_links
-
 chk_dir=html.link-check
 
 rm -rf html.link-check

@@ -1,6 +1,8 @@
 #!/bin/bash
 #
 # Build our mdbook output
+#
+# nailing-cargo --- maint/build-mdbook
 
 set -e
 set -o pipefail
