@@ -1,7 +1,8 @@
 #!/bin/bash
 #
 # Check rustdoc HTML links and anchors
-# bin/build_html must have been run first.
+# maint/build-mdbook must have been run first.
+# (Normally, just run maint/build-mdbook, which runs this script.)
 #
 # Adapted from
 #    https://gitlab.torproject.org/Diziet/rust-derive-adhoc/-/blob/main/maint/check-doc-links?ref_type=heads
