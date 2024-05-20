@@ -53,6 +53,24 @@ impl Parse for TemplateDefinition {
 impl Parse for TemplateName {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let ident: syn::Ident = input.parse()?;
+
+        let s = ident.to_string();
+        match s.chars().find(|&c| c != '_') {
+            None => {
+                Err("template name cannot consist entirely of underscores")
+            }
+            Some(c) => {
+                if c.is_lowercase() {
+                    Err(
+ "template name may not start with a lowercase letter (after any underscores)"
+                )
+                } else {
+                    Ok(())
+                }
+            }
+        }
+        .map_err(|emsg| ident.error(emsg))?;
+
         Ok(TemplateName(ident))
     }
 }
