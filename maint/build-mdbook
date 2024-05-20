@@ -1,6 +1,8 @@
 #!/bin/bash
 #
 # Build our mdbook output
+#
+# nailing-cargo --- maint/build-mdbook
 
 set -e
 set -o pipefail
@@ -28,3 +30,10 @@ cd ./book
 $MDBOOK build
 cd ./book
 ../../maint/check-mdbook-links
+
+cat <<END
+formatted mdbook book is here:
+  $PWD/html/index.html
+  file://$PWD/html/index.html
+
+END
