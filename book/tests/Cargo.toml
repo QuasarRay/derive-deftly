@@ -10,4 +10,4 @@ derive-deftly = { version = "*", path = "../.." }
 
 [build-dependencies]
 anyhow = "1"
-regex = "1"
+regex = "1.8"
