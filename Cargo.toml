@@ -1,6 +1,6 @@
 [package]
 name = "derive-deftly"
-version = "0.11.0"
+version = "0.10.666"
 edition = "2021"
 license="MIT"
 authors=["Ian Jackson <ijackson@chiark.greenend.org.uk>",
