@@ -37,9 +37,32 @@ easy-ext = "1"
 educe = ">=0.4.6, <0.6"
 glob = "0.3"
 paste = "1"
-regex = "1"
 static_assertions = "1"
 toml = ">=0.5.0, <0.9"
+
+# Really, this should be regex 1.8 but only if feature "recent" is enabled.
+# Some of our tests in directly.rs and sub-modules require regex 1.8.
+# However, regex 1.8 is not compatuble with our MSRV.
+# This would be fine, since those tests don't run withotu feature "recent".
+# But!  cargo can't do feature-dependent resolution.  If we write this
+# dependency sa optional, 1.8, the Cargo.lock.minimal ends up using 1.8
+# too - and there's no way to express that that's not what we want.
+# So this version requirement is too loose.
+#
+# This all works in practice because:
+#  - for the minimal versions, the Cargo.lock.minimal chooses an old
+#    regex, but we don't actually exercise the code paths that would
+#    require new regex.
+#  - for the main tests, our Cargo.lock ends up containing a recent
+#    regex anyway.  This is true of a fully regenerated lockfile too.
+# The alternative would be to use only older regex features everywhere,
+# or to have multiple lockfiles.
+#
+# If you do too much messing about with dependencies, the Cargo.lock
+# can end up in a state where we run these tests with regex < 1.8
+# and then it breaks.  See
+#   https://gitlab.torproject.org/Diziet/rust-derive-deftly/-/issues/85
+regex = "1"
 
 indexmap = ">=1.8, <3"
 itertools = ">=0.10.1, <0.13"
