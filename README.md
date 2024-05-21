@@ -67,7 +67,9 @@ assert_eq!(
 
 ## Next steps
 
-Why not have a look at our [friendly introduction](doc_introduction)?
+Why not have a look at our friendly [user guide]?
 
 It will walk you through derive-deftly's most important features,
-with a number of worked examples,
+with a number of worked examples.
+
+[user guide]: https://diziet.pages.torproject.net/rust-derive-deftly/latest/guide/

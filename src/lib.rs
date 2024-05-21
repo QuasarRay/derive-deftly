@@ -22,9 +22,6 @@ pub use derive_deftly_macros::{
 
 // We (ab)use the module system as places to hang our documentation.
 
-#[doc=include_str!("../doc/introduction.md")]
-pub mod doc_introduction {}
-
 #[doc=include_str!("../doc/reference.md")]
 pub mod doc_reference {}
 
