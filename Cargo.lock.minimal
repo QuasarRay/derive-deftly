@@ -97,7 +97,7 @@ name = "derive-deftly-book-tests"
 version = "0.1.0"
 dependencies = [
  "anyhow",
- "derive-deftly",
+ "derive-deftly 0.11.0",
  "regex",
 ]
 
