@@ -7,6 +7,37 @@
 set -e
 set -o pipefail
 
+function usage() {
+    cat <<EOF
+build-mdbook: Generate and check the derive-deftly mdbook documentation
+
+Usage:
+    build-mdbook [-h]
+
+Options:
+    -h: Print this message.
+
+Notes:
+   Must be run from the top level directory of derive-deftly.
+EOF
+}
+
+while getopts "h" opt; do
+    case $opt in
+	h) usage
+	   exit 0
+	   ;;
+	*) echo "Unknown option.  Use -h for help."
+           exit 1
+	   ;;
+    esac
+done
+
+if test $# != 0; then
+    echo "Unexpected argument.  Use -h for help."
+    exit 1
+fi
+
 # mdbook-linkcheck is a non-obvious dependency, and the mdbook output when it's
 # not found doesn't spell out how to install it.
 if ! command -v mdbook-linkcheck; then
