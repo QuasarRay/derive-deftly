@@ -83,7 +83,7 @@ cargo-test:
   # See "Using the proper Nightly Rust" in tests/tests.rs
   image: rustlang/rust@sha256:02a6b6deed8307c39fbd3124bd2f3806c9420f92031bc84f6035045458f876f1
   script:
-    - ./maint/via-cargo-install-in-ci cargo-expand --locked --version=1.0.80 --features=prettyplease
+    - ./maint/via-cargo-install-in-ci cargo-expand --version=1.0.80 --features=prettyplease
     - maint/cargo-test-locked --workspace --all-features -- --skip directly::check_examples
   cache:
     when: 'always'
@@ -109,7 +109,7 @@ every-commit:
   stage: comprehensive
   image: rustlang/rust@sha256:02a6b6deed8307c39fbd3124bd2f3806c9420f92031bc84f6035045458f876f1
   script:
-    - ./maint/via-cargo-install-in-ci cargo-expand --locked --version=1.0.67 --features=prettyplease
+    - ./maint/via-cargo-install-in-ci cargo-expand --version=1.0.67 --features=prettyplease
     - maint/for-every-commit maint/cargo-test-locked --workspace --all-features -- --skip directly::check_examples
   cache:
     when: 'always'
@@ -199,7 +199,8 @@ mdbook-tests:
   stage: comprehensive
   script:
     - apt-get update && apt-get install -y python3 linklint
-    - ./maint/via-cargo-install-in-ci mdbook mdbook-linkcheck --locked
+    - ./maint/via-cargo-install-in-ci mdbook
+    - ./maint/via-cargo-install-in-ci mdbook-linkcheck
     - ./maint/build-mdbook
 
 pages:
@@ -208,7 +209,8 @@ pages:
   stage: deploy-book
   script:
     - apt-get update && apt-get install -y python3 linklint
-    - ./maint/via-cargo-install-in-ci mdbook mdbook-linkcheck --locked
+    - ./maint/via-cargo-install-in-ci mdbook
+    - ./maint/via-cargo-install-in-ci mdbook-linkcheck
     - ./maint/build-mdbook
     - mkdir -p public/unreleased/
     - mv book/book/ public/unreleased/introduction
