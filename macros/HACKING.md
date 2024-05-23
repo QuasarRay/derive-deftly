@@ -5,6 +5,7 @@ and, especially, testing them can be complex.
 
 <!--##toc##-->
    * [Required reading](#required-reading)
+   * [User-facing documentation](#user-facing-documentation)
    * [Generated and auto-updated files in the git tree](#generated-and-auto-updated-files-in-the-git-tree)
       * [`tests/pub-export/bizarre-facade/*` etc., updated by `maint/update-bizarre`](#testspub-exportbizarre-facade-etc-updated-by-maintupdate-bizarre)
       * [`Cargo.lock`, updated by `nailing-cargo update`.](#cargolock-updated-by-nailing-cargo-update)
@@ -40,6 +41,19 @@ as `target/doc/derive_deftly_macros/_doc_hacking/index.html`.
 [`NOTES.md`](_doc_notes) has some ideas for the future,
 which we may or may not implement.
 (Comments welcome!)
+
+## User-facing documentation
+
+Our user-facing documentation is divided between our
+`rustdoc` documentation and our `mdbook` source.
+The user guide (currently only an introduction)
+lives in book/src/*.
+See the [`mdbook`](https://rust-lang.github.io/mdBook/)
+documentation for more implementation.
+
+To build the book and test its output,
+run `mdbook-build` from the top-level directory,
+and look in the directory it tells you.
 
 ## Generated and auto-updated files in the git tree
 
@@ -145,7 +159,7 @@ or
 You'll also want to add documentation to `doc/reference.md`,
 arrangements for debug printing in `macros/dbg_allkw.rs`,
 test cases in `tests/expand/` and maybe `tests/ui/`,
-and possibly discussion in `doc/introduction.md`.
+and possibly discussion in `book/src/`.
 
 ### Accessing the driver
 

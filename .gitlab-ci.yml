@@ -212,8 +212,8 @@ pages:
     - ./maint/via-cargo-install-in-ci mdbook
     - ./maint/via-cargo-install-in-ci mdbook-linkcheck
     - ./maint/build-mdbook
-    - mkdir -p public/unreleased/
-    - mv book/book/ public/unreleased/introduction
+    - mkdir -p public/latest
+    - mv book/book/ public/latest/guide
   artifacts:
     paths:
       - public
