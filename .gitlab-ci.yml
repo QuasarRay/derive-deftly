@@ -199,7 +199,8 @@ mdbook-tests:
   stage: comprehensive
   script:
     - apt-get update && apt-get install -y python3 linklint
-    - ./maint/via-cargo-install-in-ci mdbook mdbook-linkcheck --locked
+    - ./maint/via-cargo-install-in-ci mdbook --locked
+    - ./maint/via-cargo-install-in-ci mdbook-linkcheck --locked
     - ./maint/build-mdbook
 
 pages:
@@ -208,7 +209,8 @@ pages:
   stage: deploy-book
   script:
     - apt-get update && apt-get install -y python3 linklint
-    - ./maint/via-cargo-install-in-ci mdbook mdbook-linkcheck --locked
+    - ./maint/via-cargo-install-in-ci mdbook --locked
+    - ./maint/via-cargo-install-in-ci mdbook-linkcheck --locked
     - ./maint/build-mdbook
     - mkdir -p public/unreleased/
     - mv book/book/ public/unreleased/introduction
