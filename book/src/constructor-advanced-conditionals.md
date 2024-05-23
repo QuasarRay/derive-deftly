@@ -10,7 +10,7 @@ We could do this with an explicit conditional for each field:
 ```
 # use derive_deftly::define_derive_deftly;
 define_derive_deftly! {
-   Constructor =
+   Constructor:
 
    impl<$tgens> $ttype where $twheres {
      pub fn new

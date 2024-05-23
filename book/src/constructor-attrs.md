@@ -9,7 +9,7 @@ We could do this as follows:
 ```
 # use derive_deftly::define_derive_deftly;
 define_derive_deftly! {
-   Constructor for struct =
+   Constructor for struct:
 
    impl<$tgens> $ttype where $twheres {
       pub fn ${tmeta(newfn) as ident} // (1)

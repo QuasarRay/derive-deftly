@@ -12,7 +12,7 @@ pub trait NamePrinter {
 
 derive_deftly::define_derive_deftly! {
     /// Derives `NamePrinter`, providing `print_name`
-    pub NamePrinter =
+    pub NamePrinter:
     impl $crate::NamePrinter for $ttype {
         fn print_name() {
             println!("The name of this type is {}", stringify!($ttype));

@@ -16,7 +16,7 @@ to help it generate more useful error messages:
 ```
 # use derive_deftly::define_derive_deftly;
 define_derive_deftly! {
-   Constructor for struct = // (1)
+   Constructor for struct: // (1)
 
    impl<$tgens> $ttype where $twheres {
       pub fn new( $( $fname: $ftype , ) ) -> Self {

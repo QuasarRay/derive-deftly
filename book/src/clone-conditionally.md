@@ -27,7 +27,7 @@ where the _actual_ required constraints are met:
 ```
 # use derive_deftly::define_derive_deftly;
 define_derive_deftly! {
-    MyClone =
+    MyClone:
 
     impl<$tgens> Clone for $ttype
     where $twheres
