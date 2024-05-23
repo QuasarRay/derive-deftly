@@ -12,7 +12,7 @@ You can
 ```
 # use derive_deftly::{Deftly, define_derive_deftly};
 define_derive_deftly! {
-   Constructor for struct, expect items =
+   Constructor for struct, expect items:
 
    impl<$tgens> $ttype where $twheres {
       // ...
@@ -38,7 +38,7 @@ you can request this syntax check
 
 ```
 # use derive_deftly::{Deftly, define_derive_deftly};
-# define_derive_deftly! { Constructor = }
+# define_derive_deftly! { Constructor: }
 #[derive(Deftly)]
 #[derive_deftly(Constructor[expect items])]
 struct MyStruct { /* ... */ }
@@ -54,7 +54,7 @@ You can ask derive-deftly to simply
 
 ```
 # use derive_deftly::{Deftly, define_derive_deftly};
-# define_derive_deftly! { Constructor = }
+# define_derive_deftly! { Constructor: }
 #[derive(Deftly)]
 #[derive_deftly(Constructor[dbg])]
 struct MyStruct { /* ... */ }

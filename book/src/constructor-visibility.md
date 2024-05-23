@@ -11,7 +11,7 @@ the same visibility as the type itself:
 ```
 # use derive_deftly::define_derive_deftly;
 define_derive_deftly! {
-   Constructor for struct =
+   Constructor for struct:
 
    impl<$tgens> $ttype where $twheres {
       $tvis fn new( $( $fname: $ftype , ) ) -> Self {

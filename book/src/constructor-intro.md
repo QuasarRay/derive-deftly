@@ -13,7 +13,7 @@ Let's start with the following (struct-only) template:
 ```
 # use derive_deftly::define_derive_deftly;
 define_derive_deftly! {
-   Constructor =
+   Constructor:
 
    impl<$tgens> $ttype where $twheres {
       pub fn new( $( $fname: $ftype , ) ) -> Self {
@@ -30,7 +30,7 @@ When you apply the above template to a type like this:
 ```
 # use derive_deftly::define_derive_deftly;
 # define_derive_deftly! {
-#   Constructor =
+#   Constructor:
 #
 #   impl<$tgens> $ttype where $twheres {
 #       pub fn new( $( $fname: $ftype , ) ) -> Self {

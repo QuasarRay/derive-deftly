@@ -23,7 +23,7 @@ We can do that as follow
 ```
 # use derive_deftly::define_derive_deftly;
 define_derive_deftly! {
-    MyClone =
+    MyClone:
 
     impl Clone for $ttype
     {
@@ -126,7 +126,7 @@ Now let's see how it works when we try to handle generics again.
 ```
 # use derive_deftly::{Deftly, define_derive_deftly};
 define_derive_deftly! {
-    MyClone =
+    MyClone:
 
     impl<$tgens> Clone for $ttype
     where $( $ftype: Clone, )

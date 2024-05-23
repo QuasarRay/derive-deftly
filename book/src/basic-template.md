@@ -12,7 +12,7 @@ To define a template, you use
 use derive_deftly::define_derive_deftly;
 
 define_derive_deftly! {
-    NamePrinter =
+    NamePrinter:
 
     impl $ttype {
         pub fn print_name() {
@@ -38,7 +38,7 @@ as in:
 ```
 # use derive_deftly::define_derive_deftly;
 # define_derive_deftly! {
-#    NamePrinter =
+#    NamePrinter:
 #
 #    impl $ttype {
 #        pub fn print_name() {

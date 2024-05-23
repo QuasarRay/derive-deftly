@@ -19,7 +19,7 @@ You can do that like this:
 ```
 # use derive_deftly::define_derive_deftly;
 define_derive_deftly! {
-    Discriminant =
+    Discriminant:
 
     #[derive(Copy,Clone,Eq,PartialEq,Debug)]
     enum ${paste $tname Discriminant} {

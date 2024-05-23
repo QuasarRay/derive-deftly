@@ -30,7 +30,7 @@ We can expand our `MyClone` definition to look that way:
 ```
 # use derive_deftly::define_derive_deftly;
 define_derive_deftly! {
-    MyClone =
+    MyClone:
 
     impl<$tgens> Clone for $ttype
     where $twheres

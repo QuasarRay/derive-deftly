@@ -16,7 +16,7 @@ And, the macro's name is never scoped within the module.
 mod name_printer {
     use derive_deftly::define_derive_deftly;
     define_derive_deftly! {
-        NamePrinter = /* ... */
+        NamePrinter: /* ... */
     }
 }
 mod caller { // must come after mod name_printer
