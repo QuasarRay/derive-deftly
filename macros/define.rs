@@ -32,7 +32,7 @@ impl Parse for TemplateDefinition {
         if la.peek(Token![=]) {
             let _equals: Token![=] = input.parse()?;
         } else if la.peek(Token![:]) {
-            let _colon: Token![=] = input.parse()?;
+            let _colon: Token![:] = input.parse()?;
         } else {
             return Err(la.error());
         };
