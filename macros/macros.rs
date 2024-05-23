@@ -217,8 +217,9 @@ pub fn derive_deftly_adhoc(
 /// See the
 /// [documentation for `#[derive(Deftly)]`](derive.Deftly.html#scoping-and-ordering-within-the-same-crate).
 ///
-/// (The `:` which introduces the template may also be `=`,
-/// but this is deprecated and will stop being supported fairly soon.)
+/// (The `:` which introduces the template may also be `=`.
+/// This still appears in some of the in-tree documentation.
+/// But use of `=` is deprecated and will stop being supported fairly soon.)
 ///
 /// ## Exporting a template for use by other crates
 ///
