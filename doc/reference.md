@@ -49,7 +49,23 @@
 **Reference documentation for the actual proc macros** is in
 the [crate-level docs for derive-deftly](../index.html#macros).
 
+<!-- Link conventions in this document.
+
+    We use x:foo for the expansion "foo".
+
+    We use c:foo for the condition "foo".
+
+    We use t:foo for the topic "foo".
+
+    We use eo:foo for a top-level expansion option "foo".
+
+-->
+
+<div id="t:syntax">
+
 ## Template syntax overview
+
+</div>
 
 Within the macro template,
 expansions (and control structures) are introduced with `$`.
@@ -118,7 +134,13 @@ Each `ARG` must be one of:
  * `{ STUFF }`, where `STUFF` is expanded.
    (The `{ }` just for delimiting the value, and are discarded).
 
+<div id="t:repetition">
+<div id="x:for">
+
 ## Repetition and nesting
+
+</div>
+</div>
 
 The driving data structure can contain multiple variants,
 which can in turn contain multiple fields;
@@ -170,7 +192,15 @@ shown below.
 
 <!-- ## maint/check-keywords-documented expansions ## -->
 
+<div id="x:fname">
+<div id="x:vname">
+<div id="x:tname">
+
 ### `$fname`, `$vname`, `$tname` -- names
+
+</div>
+</div>
+</div>
 
 The name of the field, variant, or toplevel type.
 This is an the identifier (without any path or generics).
@@ -189,7 +219,17 @@ or `${paste ... $fname ...}` (`$<... $fname ...>`).
  * `$vname`: `UnitVariant`
  * `$tname`: `Tuple`, `Struct`, `Enum`
 
+<div id="x:fvis">
+<div id="x:tvis">
+<div id="x:fdefvis">
+<div id="t:visibility">
+
 ### `$fvis`, `$tvis`, `$fdefvis` -- visibility
+
+</div>
+</div>
+</div>
+</div>
 
 The visibility of the field, or toplevel type.
 
@@ -200,7 +240,11 @@ This looks only at the syntax in the driver definition;
 an item which is `pub` might still not be reachable,
 for example if it is in a private inner module.
 
+<div id="t:enum-visibility">
+
 #### Enums and visibility
+
+</div>
 
 In Rust,
 enum variants and fields don't have separate visibility;
@@ -230,7 +274,13 @@ Use `$fdefvis` when defining a new enum.
  * `$fdefvis` for fields in `Enum`: nothing
  * `$fdefvis` for others: nothing
 
+<div id="x:vpat">
+<div id="x:fpatname">
+
 ### `$vpat`, `$fpatname` -- pattern matching and value deconstruction
+
+</div>
+</div>
 
 `$vpat` expands to a pattern
 suitable for matching a value of the top-level type.
@@ -267,7 +317,17 @@ These use derive-deftly's usual
  * `$fpatname`: `f_0`, `f_field`
  * `${vpat self=$<$tname Reference> vname=$<Ref $vname> fprefix=other_}`: `EnumReference::RefNamedVariant { field: other_field, ... }`
 
+<div id="x:ftype">
+<div id="x:vtype">
+<div id="x:ttype">
+<div id="x:tdeftype">
+
 ### `$ftype`, `$vtype`, `$ttype`, `$tdeftype` -- types
+
+</div>
+</div>
+</div>
+</div>
 
 The type of the field, variant, or the toplevel type.
 
@@ -321,7 +381,17 @@ They use derive-deftly's usual
    for enum variant:
    `EnumReference::RefTupleVariant::<'a, 'l, T, C>`
 
+<div id="x:tgens">
+<div id="x:tgnames">
+<div id="x:twheres">
+<div id="x:tdefgens">
+
 ### `$tgens`, `$tgnames`, `$twheres`, `$tdefgens` -- generics
+
+</div>
+</div>
+</div>
+</div>
 
 Generic parameters and bounds, from the toplevel type,
 in various forms.
@@ -355,7 +425,15 @@ so for full support of generic types the template must expand both.
  * `$twheres`: `T: 'l, T: TryInto<u8>,`
  * `$tdefgens`: `'a, 'l: 'a, T: Display = usize, const C: usize = 1,`
 
+<div id="x:tmeta">
+<div id="x:vmeta">
+<div id="x:fmeta">
+
 ### `${tmeta(...)}` `${vmeta(...)}` `${fmeta(...)}` -- `#[deftly]` attributes
+
+</div>
+</div>
+</div>
 
 Accesses macro parameters passed via `#[deftly(...)]` attributes.
 
@@ -480,7 +558,15 @@ These checks are disabled by `#[derive_deftly_adhoc]`.
  * `$<$ttype ${tmeta(simple) as str}>`: `UnitString::<C>`
  * `$<$ttype ${tmeta(simple) as ty}>`: error, ``multiple nontrivial entries``
 
+<div id="x:tattrs">
+<div id="x:vattrs">
+<div id="x:fattrs">
+
 ### `${fattrs ...}` `${vattrs ...}` `${tattrs ...}` -- other attributes
+
+</div>
+</div>
+</div>
 
 Expands to attributes, including non-`#[deftly()]` ones.
 The attributes can be filtered:
@@ -538,7 +624,11 @@ that come *after* the `#[derive(..., Deftly, ...)]`.
 
  * `${vattrs deftly}` for `UnitVariant`: `#[deftly(value="enum_variant")]`
 
+<div id="x:paste">
+
 ### `$<...>`, `${paste ...}` -- identifier pasting
+
+</div>
 
 Expands the contents and pastes it together into a single identifier.
 The contents may only contain identifer fragments, strings (`"..."`),
@@ -572,7 +662,11 @@ Expands the content, and changes its case
 See [Case changing](#case-changing).
 `CASE_CHANGE` is one of the values listed there.
 
+<div id="x:when">
+
 ### `${when CONDITION}` -- filtering out repetitions by a predicate
+
+</div>
 
 Allowed only within repetitions, and only at the toplevel
 of the repetition,
@@ -583,7 +677,11 @@ Skips this repetition if the `CONDITION` is not true.
 
  * `$( ${when vmeta(value)} ${vmeta(value) as str} )` for `Enum`: `"enum_variant"`
 
+<div id="x:if">
+
 ### `${if COND1 { ... } else if COND2 { ... } else { ... }}` -- conditional
+
+</div>
 
 Conditionals.  The else clause is, of course, optional.
 The `else if` between arms is also optional,
@@ -598,7 +696,11 @@ So you can write `${if COND1 { ... } COND2 { ... } else { ... }`.
  * `$( ${if v_is_named { N } v_is_tuple { T } else { X }} )` for `Enum`: `X T N`
  * `${if v_is_unit { U } tmeta(gentype) { GT }}` for `Unit`: `U`
 
+<div id="x:select1">
+
 ### `${select1 COND1 { ... } else if COND2 { ... } else { ... }}` -- expect precisely one predicate
+
+</div>
 
 Conditionals which insist on expanding exactly one of the branches.
 Syntax is identical to that of `${if }`.
@@ -614,14 +716,24 @@ otherwise it is an error.
  * `$( ${select1 v_is_named { N } v_is_tuple { T } else { X }} )` for `Enum`: `X T N`
  * `${select1 v_is_unit { U } tmeta(gentype) { GT }}` for `Unit`: error, ``multiple conditions matched``
 
+<div id="x:for-fields">
+<div id="x:for-variants">
+
 ### `${for fields { ... }}`, `${for variants { ... }}`, `$( )` -- repetition
+
+</div>
+</div>
 
 `${for ...}` expands the contents once per field, or once per variant.
 
 `$( ... )` expands the input with an appropriate number of iterations -
 see [Repetition and nesting](#repetition-and-nesting).
 
+<div id="x:crate">
+
 ### `$crate` -- root of template crate
+
+</div>
 
 `$crate` always refers to the root of the crate 
 defining the template.
@@ -634,11 +746,23 @@ it refers to the current crate, ie simply `crate`.
 This is similar to the `$crate` builtin expansion
 in `macro_rules!`.
 
+<div id="x:tdefkwd">
+
 ### `$tdefkwd` -- keyword introducing the new data structure
+
+</div>
 
 Expands to `struct`, `enum`, or `union`.
 
+<div id="x:tdefvariants">
+<div id="x:vdefbody">
+<div id="x:fdefine">
+
 ### `$tdefvariants`, `$vdefbody`, `$fdefine` -- tools for defining types
+
+</div>
+</div>
+</div>
 
 These, used together, allow the template to expand to a
 new definition, mirroring the driver type in form.
@@ -700,7 +824,11 @@ pub enum EnumCopy<'a, 'l: 'a, T: Display = usize, const C: usize = 1,> {
 }
 ```
 
+<div id="x:ignore">
+
 ### `${ignore ..}` -- Expand but then discard
+
+</div>
 
 `${ignore CONTENT}` expands `CONTENT`, and then discards it.
 The `${ignore ..}` therefore expands to nothing.
@@ -712,7 +840,13 @@ the content of `${ignore }` *can* affect
 the repetition scope of its surroundings.
 `${ignore }` is permitted in `${paste }` and case changing.
 
+<div id="x:dbg">
+<div id="x:dbg_all_keywords">
+
 ### `${dbg ..}`, `$dbg_all_keywords` -- Debugging output
+
+</div>
+</div>
 
 `${dbg { CONTENT }}` expands to the expansion of `CONTENT`,
 but it also prints the expansion to the compiler stderr.
@@ -760,7 +894,13 @@ derive_deftly_adhoc! {
 }
 ```
 
+<div id="x:define">
+<div id="x:defcond">
+
 ### `${define ...}`, `${defcond ...}` -- user-defined expansions and conditions
+
+</div>
+</div>
 
 `${define NAME BODY}` defines a reuseable piece of template.
 Afterwards, `$NAME` (and `${NAME}`) expand `BODY`.
@@ -842,7 +982,11 @@ const ALL_STRUCT_FIELDS: StructFields = {
 };
 ```
 
+<div id="x:error">
+
 ### `${error "message"}` -- explicitly throw a compile error
+
+</div>
 
 Generates a compilation error, if expanded.
 
@@ -857,7 +1001,15 @@ They are found within `${if }`, `${when }`, and `${select1 }`.
 
 <!-- ## maint/check-keywords-documented conditions ## -->
 
+<div id="c:fvis">
+<div id="c:tvis">
+<div id="c:fdefvis">
+
 ### `fvis`, `tvis`, `fdefvis` -- test for public visibility
+
+</div>
+</div>
+</div>
 
 True iff the field, or the whole toplevel type, is `pub`.
 
@@ -880,7 +1032,15 @@ for the purposes of `fvis` and `tvis`
 And in each case, false for all others.
 (Refer to the [example structs](#structs-used-in-examples), below.)
 
+<div id="c:fmeta">
+<div id="c:vmeta">
+<div id="c:tmeta">
+
 ### `fmeta(NAME)`, `vmeta(NAME)`, `tmeta(NAME)` -- `#[deftly]` attributes
+
+</div>
+</div>
+</div>
 
 Looks for `#[deftly(NAME)]`.
 
@@ -905,7 +1065,15 @@ for information about namespacing and handling of unused attributes.
  * `vmeta(value)`: true for `Unit`, and `Enum::UnitVariant`
  * `fmeta(nested)`: true for `field` in `Struct`
 
+<div id="c:is_struct">
+<div id="c:is_enum">
+<div id="c:is_union">
+
 ### `is_struct`, `is_enum`, `is_union`
+
+</div>
+</div>
+</div>
 
 The driver data structure is a struct, enum, or union, respectively.
 
@@ -916,7 +1084,15 @@ use `match` and `$vpat` for deconstructing values,
 and `$vtype` for constructing them.
 Use `$tdefvariants` when defining a derived type.
 
+<div id="c:v_is_unit">
+<div id="c:v_is_tuple">
+<div id="c:v_is_named">
+
 ### `v_is_unit`, `v_is_tuple`, `v_is_named`
+
+</div>
+</div>
+</div>
 
 Whether and what kind of fields there are.
 
@@ -936,7 +1112,11 @@ Use `$vdefbody` and `$fdefine` when defining a derived type.
  * `v_is_tuple`: true for `struct Tuple(...);`, and `Enum::TupleVariant(...);`
  * `v_is_named`: true for `struct Struct {...}`, and `Enum::NamedVariant {...}`
 
+<div id="c:tgens">
+
 ### `tgens`
+
+</div>
 
 Whether the top-level type has generics.
 
@@ -944,7 +1124,13 @@ Whether the top-level type has generics.
 
  * `tgens`: true for `Unit`, `Tuple`, `Struct`, `Enum`
 
+<div id="c:is_empty">
+<div id="c:approx_equal">
+
 ### `is_empty(..)`, `approx_equal(ARG1, ARG2)` -- equality comparison (token comparison)
+
+</div>
+</div>
 
 `is_empty` expands the content, and is true if
 the expansion produced no tokens.
@@ -993,7 +1179,19 @@ as the fixed string in the template.
 The `ARG`s are in derive-deftly's usual
 [syntax for positional arguments](#named-and-positional-template-arguments-to-expansions-and-conditions).
 
+<div id="c:false">
+<div id="c:true">
+<div id="c:not">
+<div id="c:any">
+<div id="c:all">
+
 ### `false`, `true`, `not(CONDITION)`, `any(COND1,COND2,...)`, `all(COND1,COND2,...)` -- boolean logic
+
+</div>
+</div>
+</div>
+</div>
+</div>
 
 `any()` and `all()` short circuit:
 as soon as they have established they answer,
@@ -1001,7 +1199,11 @@ they don't test the remaining conditions.
 (This affects error handling,
 and meta attribute use checking.)
 
+<div id="c:dbg">
+
 ### `dbg(...)` -- Debug dump of condition value
+
+</div>
 
 `dbg(CONDITION)` evaluates `CONDITION`,
 but it also prints the boolean value to the compiler stderr.
@@ -1018,7 +1220,19 @@ the [`${dbg ..}` expansion](#dbg--dbg_all_keywords--debugging-output)
 and
 the [`dbg` expansion option](#dbg--print-the-expansion-to-stderr-for-debugging).
 
+<div id="x:pascal_case">
+<div id="x:upper_camel_case">
+<div id="x:snake_case">
+<div id="x:shouty_snake_case">
+<div id="x:lower_camel_case">
+
 ## Case changing
+
+</div>
+</div>
+</div>
+</div>
+</div>
 
 `${CASE_CHANGE ...}` makes an identifier
 with a different case to the input which produces it.
@@ -1081,7 +1295,11 @@ so long as they don't contradict each other.
 
 The following expansion options are recognised:
 
+<div id="eo:expect">
+
 ### `expect items`, `expect expr` -- syntax check the expansion
+
+</div>
 
 Syntax checks the expansion,
 checking that it can be parsed as items, or as an expression.
@@ -1100,7 +1318,11 @@ Note that a template defined with `define_derive_adhoc!`
 must always expand to items, anyway,
 because Rust insists that a `#[derive]` expands to items.
 
+<div id="eo:for">
+
 ### `for struct`, `for enum`, `for union` -- Insist on a particular driver kind
+
+</div>
 
 Checks the driver data structure kind
 against the `for` option value.
@@ -1117,7 +1339,11 @@ leading to confusing compiler errors.
 This option is only allowed in a template,
 not in a driver's `#[derive_deftly]` attribute.
 
+<div id="eo:dbg">
+
 ### `dbg` -- Print the expansion to stderr, for debugging
+
+</div>
 
 Prints the template's expansion to stderr, during compilation,
 for debugging purposes.
