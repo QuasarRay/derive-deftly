@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 #
 # nailing-cargo --- maint/build-docs-local
+# nailing-cargo --- maint/build-docs-local --dev
 
 import argparse
 import io
@@ -128,13 +129,13 @@ class Massager:
 
 #---------- pieces of the main program, and main itself ----------
 
-def build_rustdocs() -> None:
+def build_rustdocs(cli_rustdoc_arg: List[str]) -> None:
     shfrag = '''
         : ${CARGO:=cargo}
         set -x
         $CARGO $NAILINGCARGO_CARGO_OPTIONS doc "$@"
 '''
-    cmd = ['sh','-ec', shfrag, 'x'] + rustdoc_opts
+    cmd = ['sh','-ec', shfrag, 'x'] + rustdoc_opts + cli_rustdoc_arg
     for p in rustdoc_packages:
         cmd += ['-p', p]
     subprocess.run(cmd, check=True)
@@ -159,8 +160,8 @@ def massage_rustdocs() -> None:
         subprocess.run(['rm','-rf','--',d_o], check=True)
         os.symlink('../doc/' + d, d_o)
 
-def build_mdbook() -> None:
-    cmd = ['maint/build-mdbook']
+def build_mdbook(cli_mdbook_arg: List[str]) -> None:
+    cmd = ['maint/build-mdbook'] + cli_mdbook_arg
     subprocess.run(['sh', '-xec', '"$@"', 'x'] + cmd, check=True)
 
 def massage_mdbook() -> None:
@@ -185,9 +186,17 @@ unified docs, links adjusted for local reading, available in:''')
 
 def main() -> None:
     parser = argparse.ArgumentParser()
+    parser.add_argument('--dev', '-D',
+                        dest='rustdoc_arg', action='append_const',
+                        const='--document-private-items', default=[],
+ help='Document innards (pass --document-private-items to rustdoc)')
+    parser.add_argument('--rustdoc-arg', '-R', action='append', default=[],
+                        help='Pass an option through to cargo doc (rustdoc)')
+    parser.add_argument('--mdbook-arg', '-M', action='append', default=[],
+                        help='Pass an option through to mdbook')
     args = parser.parse_args()
-    build_rustdocs()
-    build_mdbook()
+    build_rustdocs(args.rustdoc_arg)
+    build_mdbook(args.mdbook_arg)
     massage_rustdocs()
     massage_mdbook()
     print_unified_urls()
