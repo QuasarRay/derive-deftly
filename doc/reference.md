@@ -521,7 +521,7 @@ within a namespace for that template.
 The usual convention is to accept attributes
 scoped within the snake-cased name of the template,
 as demonstrated
-[in the introduction](https://diziet.pages.torproject.net/rust-derive-deftly/latest/guide/#meta-attr-scope).
+[in the introduction](https://diziet.pages.torproject.net/rust-derive-deftly/latest/guide/constructor-attrs.html#meta-attr-scope).
 
 #### Unrecognised/unused `#[deftly(...)]` attributes
 

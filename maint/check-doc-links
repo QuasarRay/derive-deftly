@@ -5,15 +5,14 @@
 set -e
 set -o pipefail
 
-# nailing-cargo -E --- maint/check-doc-links
+# nailing-cargo --- maint/check-doc-links
 
-${CARGO-cargo ${NAILINGCARGO_TOOLCHAIN}} \
-    doc --locked  --all-features -pderive-deftly
+maint/build-docs-local
 
-chk_dir=target/doc.link-check
+chk_dir=target/doc-unified.link-check
 
-rm -rf target/doc.link-check
-cp -al target/doc $chk_dir
+rm -rf target/doc-unified.link-check
+cp -al target/doc-unified $chk_dir
 
 # Fix up https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=425632
 # And also href="#" links that rustdoc likes to put in for some reason
@@ -24,7 +23,8 @@ xargs -0r -- perl -i~ -pe '
 	s{\bhref="#"}{}g;
 '
 
-linklint -out linklint.errors -error -root $chk_dir /derive_deftly/@
+linklint -out linklint.errors -error -root $chk_dir \
+	/derive_deftly/@ /mdbook-guide/@
 
 cat linklint.errors
 
