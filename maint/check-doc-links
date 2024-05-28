@@ -7,6 +7,8 @@ set -o pipefail
 
 # nailing-cargo --- maint/check-doc-links
 
+if [ "$#" != 0 ]; then echo >&2 "$0: bad usage"; exit 12; fi
+
 maint/build-docs-local
 
 chk_dir=target/doc-unified.link-check
