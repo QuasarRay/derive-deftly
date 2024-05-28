@@ -450,7 +450,12 @@ fn examples_section<'i>(
                 }
                 ss.bq_input = Some((*loc, content));
             }
-            II::Paragraph { loc, .. } => {
+            II::Paragraph { loc, content } => {
+                if m!(content, r#"(?:<div id=\"[^"\\]+\">\n)+"#) {
+                    // ignore the <div ...> starts that occur
+                    // before each of our headings.
+                    continue;
+                }
                 errs.wrong(*loc, "unmarked text in examples section");
             }
             II::Heading { .. } => panic!("heading in subsection!"),
