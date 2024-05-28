@@ -93,7 +93,7 @@ cargo-test:
 # Warning only, since this approach may be fragile and also the 
 # testing machinery (particularly the thing that parses reference.md
 # is rather baroque and ad-hco).
-check-doc-examples:
+test-doc-examples:
   stage: comprehensive
   image: rustlang/rust@sha256:02a6b6deed8307c39fbd3124bd2f3806c9420f92031bc84f6035045458f876f1
   allow_failure: true
