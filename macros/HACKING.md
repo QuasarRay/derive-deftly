@@ -30,11 +30,13 @@ and, especially, testing them can be complex.
 derive-deftly uses types and traits from [`syn`] and [`mod@quote`],
 extensively.
 
-It will be very helpful to run
+It will be very helpful to run one of
 ```text
+maint/build-docs-local --dev
+# or
 cargo doc --document-private-items --workspace
 ```
-to get the rustdocs for the internal APIs.
+to get a local rendering including for the internal APIs.
 That will also get a **rendering of this file with working links**,
 as `target/doc/derive_deftly_macros/_doc_hacking/index.html`.
 
@@ -51,9 +53,10 @@ lives in book/src/*.
 See the [`mdbook`](https://rust-lang.github.io/mdBook/)
 documentation for more implementation.
 
-To build the book and test its output,
-run `mdbook-build` from the top-level directory,
+To build all the user-facing documentation,
+run `maint/build-docs-local` from the top-level directory,
 and look in the directory it tells you.
+To build just the guide, run `maint/build-mdbook`.
 
 ## Generated and auto-updated files in the git tree
 
