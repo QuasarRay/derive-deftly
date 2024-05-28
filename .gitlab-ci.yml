@@ -170,13 +170,17 @@ cargo-doc-all:
     - jq --raw-output '. | select(.message.level) | .message.rendered' <rustdoc.json |tee rustdoc.errors
     - test ! -s rustdoc.errors
 
-# Check that our principal crate doesn't have broken links
+# Check that our (locally-massaged) don't have broken links.
+# This also detects links brokne between rustdoc (on docs.rs)
+# and the guide (on pages.tpo).
 check-doc-links:
   stage: comprehensive
   allow_failure: true
   script:
+    - ./maint/via-cargo-install-in-ci mdbook
+    - ./maint/via-cargo-install-in-ci mdbook-linkcheck
     - apt-get update
-    - apt-get -y install linklint
+    - apt-get -y install python3 linklint
     - maint/check-doc-links
 
 # Test our MSRV and Cargo.toml minimal versions
