@@ -5,7 +5,7 @@
 set -e
 set -o pipefail
 
-# nailing-cargo -E --- maint/check-doc-links
+# nailing-cargo --- maint/check-doc-links
 
 ${CARGO-cargo ${NAILINGCARGO_TOOLCHAIN}} \
     doc --locked  --all-features -pderive-deftly
