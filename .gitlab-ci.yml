@@ -116,6 +116,13 @@ every-commit:
     paths:
       - cache/*
 
+python3-mypy:
+  stage: test
+  image: debian:bookworm-slim
+  script:
+    - apt-get update && apt-get install -y mypy
+    - mypy --strict maint/build-docs-local
+
 cargo-test-minfeatures:
   stage: comprehensive
   image: rustlang/rust@sha256:02a6b6deed8307c39fbd3124bd2f3806c9420f92031bc84f6035045458f876f1
