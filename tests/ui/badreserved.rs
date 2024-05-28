@@ -45,4 +45,20 @@ derive_deftly_adhoc! {
     $0
 }
 
+define_derive_deftly! {
+    lowercase:
+}
+
+define_derive_deftly! {
+    __lowercase:
+}
+
+define_derive_deftly! {
+    _0unused:
+}
+
+define_derive_deftly! {
+    _Unused:
+}
+
 fn main() {}
