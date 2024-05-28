@@ -41,7 +41,7 @@ pub use super::utils::typepath_add_missing_argument_colons;
 pub use super::utils::ErrorAccumulator;
 pub use super::utils::{braced_group, delimit_token_group, dummy_path};
 pub use super::utils::{engine_macro_name, flatten_none_groups, spans_join};
-pub use super::utils::{ErrorLoc, Grouping, IdentAny, MakeError};
+pub use super::utils::{ErrorLoc, Grouping, IdentAny, MakeError, TemplateName};
 pub use super::utils::{ToTokensPunctComposable, TokenOutputTrimmer};
 pub(super) use super::{accum, adviseable, check};
 pub(super) use super::{dbg_allkw, engine, framework, meta};

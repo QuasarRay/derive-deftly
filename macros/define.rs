@@ -11,15 +11,6 @@ struct TemplateDefinition {
     template: TokenStream,
 }
 
-#[derive(Debug, Clone)]
-pub struct TemplateName(syn::Ident);
-
-impl TemplateName {
-    pub fn macro_name(&self) -> syn::Ident {
-        format_ident!("derive_deftly_template_{}", &self.0)
-    }
-}
-
 impl Parse for TemplateDefinition {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         // This rejects Rust keywords, which is good because
@@ -53,54 +44,6 @@ impl Parse for TemplateDefinition {
             options,
             template,
         })
-    }
-}
-
-impl Parse for TemplateName {
-    fn parse(input: ParseStream) -> syn::Result<Self> {
-        let ident: syn::Ident = input.parse()?;
-        ident.try_into()
-    }
-}
-impl TryFrom<syn::Ident> for TemplateName {
-    type Error = syn::Error;
-    fn try_from(ident: syn::Ident) -> syn::Result<TemplateName> {
-        let s = ident.to_string();
-        match s.chars().find(|&c| c != '_') {
-            None => {
-                Err("template name cannot consist entirely of underscores")
-            }
-            Some(c) => {
-                if c.is_lowercase() {
-                    Err(
- "template name may not start with a lowercase letter (after any underscores)"
-                )
-                } else {
-                    Ok(())
-                }
-            }
-        }
-        .map_err(|emsg| ident.error(emsg))?;
-
-        Ok(TemplateName(ident))
-    }
-}
-impl ToTokens for TemplateName {
-    fn to_tokens(&self, out: &mut TokenStream) {
-        self.0.to_tokens(out)
-    }
-}
-impl Display for TemplateName {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        Display::fmt(&self.0, f)
-    }
-}
-impl quote::IdentFragment for TemplateName {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        quote::IdentFragment::fmt(&self.0, f)
-    }
-    fn span(&self) -> Option<Span> {
-        quote::IdentFragment::span(&self.0)
     }
 }
 
