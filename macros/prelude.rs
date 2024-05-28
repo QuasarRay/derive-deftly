@@ -39,11 +39,9 @@ pub use super::framework::TokenAccumulator;
 pub use super::paste::TokenPastesAsIdent;
 
 pub use super::utils::{
-    typepath_add_missing_argument_colons,
-    ErrorAccumulator,
-    braced_group, delimit_token_group, dummy_path,
-    engine_macro_name, flatten_none_groups, spans_join,
-    ErrorLoc, Grouping, IdentAny, MakeError, TemplateName,
+    braced_group, delimit_token_group, dummy_path, engine_macro_name,
+    flatten_none_groups, spans_join, typepath_add_missing_argument_colons,
+    ErrorAccumulator, ErrorLoc, Grouping, IdentAny, MakeError, TemplateName,
     ToTokensPunctComposable, TokenOutputTrimmer,
 };
 
