@@ -64,7 +64,7 @@ class Massager:
 
         `path` is a directory path relative to `out_unified`
         '''
-        url_re = re.sub(r'\W', lambda m: "\\" + m.group(0), url)
+        url_re = re.escape(url)
         i_re = r'(?<=")' + url_re + r'/*(?=["#])'
         self._replacements.append((re.compile(i_re), path + '/index.html'))
         m_re = r'(?<=")' + url_re + r'/+'
