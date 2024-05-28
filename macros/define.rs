@@ -14,6 +14,12 @@ struct TemplateDefinition {
 #[derive(Debug, Clone)]
 pub struct TemplateName(syn::Ident);
 
+impl TemplateName {
+    pub fn macro_name(&self) -> syn::Ident {
+        format_ident!("derive_deftly_template_{}", &self.0)
+    }
+}
+
 impl Parse for TemplateDefinition {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         // This rejects Rust keywords, which is good because
@@ -53,7 +59,12 @@ impl Parse for TemplateDefinition {
 impl Parse for TemplateName {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let ident: syn::Ident = input.parse()?;
-
+        ident.try_into()
+    }
+}
+impl TryFrom<syn::Ident> for TemplateName {
+    type Error = syn::Error;
+    fn try_from(ident: syn::Ident) -> syn::Result<TemplateName> {
         let s = ident.to_string();
         match s.chars().find(|&c| c != '_') {
             None => {
@@ -234,8 +245,7 @@ pub fn define_derive_deftly_func_macro(
     let _: Result<Template<_>, ()> = parsed_template;
     let template = escape_dollars(template);
 
-    let templ_mac_name =
-        format_ident!("derive_deftly_template_{}", &templ_name);
+    let templ_mac_name = templ_name.macro_name();
 
     let doc_addendum = (!doc_attrs.is_empty()).then(|| {
         let addendum = format!(

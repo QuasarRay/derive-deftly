@@ -100,7 +100,8 @@ fn templ_mac_name(mut templ_path: syn::Path) -> syn::Result<syn::Path> {
             .error("cannot derive_deftly the empty path!"));
     }
     let last = templ_path.segments.last_mut().expect("became empty!");
-    last.ident = format_ident!("derive_deftly_template_{}", last.ident);
+    let name = super::define::TemplateName::try_from(last.ident.clone())?;
+    last.ident = name.macro_name();
     Ok(templ_path)
 }
 
