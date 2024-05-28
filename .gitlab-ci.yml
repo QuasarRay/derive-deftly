@@ -173,6 +173,18 @@ cargo-doc-all:
 # Check that our (locally-massaged) don't have broken links.
 # This also detects links brokne between rustdoc (on docs.rs)
 # and the guide (on pages.tpo).
+build-local-docs:
+  stage: comprehensive
+  script:
+    - ./maint/via-cargo-install-in-ci mdbook
+    - ./maint/via-cargo-install-in-ci mdbook-linkcheck
+    - apt-get update
+    - apt-get -y install python3 linklint
+    - maint/build-docs-local --dev
+
+# Check that our (locally-massaged) don't have broken links.
+# This also detects links brokne between rustdoc (on docs.rs)
+# and the guide (on pages.tpo).
 check-doc-links:
   stage: comprehensive
   allow_failure: true
