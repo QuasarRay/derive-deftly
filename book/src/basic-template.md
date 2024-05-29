@@ -1,4 +1,4 @@
-# Getting started with `derive_deftly`. 
+# Getting started with `derive_deftly`
 
 There are two parts to using `derive_deftly`:
 specifying _templates_ that you can use to derive new features for your
