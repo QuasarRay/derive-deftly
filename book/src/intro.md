@@ -2,7 +2,7 @@
 
 **derive-deftly** is a Rust package
 that you can use to define your own `derive` macros
-without having to write procedural macros.
+without having to write low-level procedural macros.
 
 The syntax is easy to learn,
 but powerful enough to implement macros of
@@ -49,6 +49,11 @@ and potentially error-prone.
 If you had to define a large number of accessors like this,
 or do it for a bunch of types, you might want an easier way.
 
+(Of course, in this case, you could use an
+[existing crate](https://crates.io/crates/derive-getters).
+But let's suppose that there was no crate meeting your needs,
+and you had to build your own.)
+
 Here's how you could define and use
 a `derive-deftly` template to save some time and risk.
 
@@ -61,7 +66,7 @@ define_derive_deftly! {
     // Here, $ttype will expand to the toplevel type; in this case,
     // "MyStruct".
     impl $ttype {
-        // This $( ... ) block will be expanded once per field.
+        // This $( ... ) block will be repeated: in this case, once per field.
         $(
             // Here we define a "get_" function: In this definition,
             // $ftype is the type of the field,
@@ -115,7 +120,7 @@ The `derive-deftly` crate helps you do a lot of neat stuff:
 * You can _apply_ your templates to your own structs, enums, and unions.
 * You can _export_ your templates for use by other crates.
 * Your templates can _define_ new types, functions, methods, and variables:
-  nearly any kind of item that Rust allows.
+  any kind of item that Rust allows.
 * Within your templates, you can look at _nearly everything_ about
   the input type: fields, variants, attributes, types, and so on.
 * Your templates can use _complex control structure_ to
