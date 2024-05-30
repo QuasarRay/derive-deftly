@@ -62,7 +62,7 @@ use derive_deftly::{define_derive_deftly, Deftly};
 
 // Defines the template
 define_derive_deftly! {
-    Accessors =
+    Accessors:
     // Here, $ttype will expand to the toplevel type; in this case,
     // "MyStruct".
     impl $ttype {
