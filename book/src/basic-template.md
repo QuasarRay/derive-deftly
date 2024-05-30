@@ -1,4 +1,33 @@
-# Getting started with `derive_deftly`. 
+# A first example: derive_deftly(NamePrinter)
+
+Here we'll make an example project
+with a simple `derive-deftly` template.
+Our template won't do much,
+but it will get us started using the system.
+
+To begin with, we'll create a new project:
+
+> ```shell
+> $ cargo init --lib dd-hello-world
+> $ cd dd-hello-world
+> ```
+
+Next, we'll add the `derive-deftly` crate as a new dependency:
+
+> Note: You could also add the dependency
+> by adding a line like this to the `[dependencies]` section
+> in your `Cargo.toml`:
+>
+> ```toml
+> derive-deftly = "0.10"
+> ```
+>
+> (You should replace `0.10` with the real latest version.)
+
+Now we can edit `src/lib.rs` in our project
+to define and use a new template.
+
+## Writing NamePrinter
 
 There are two parts to using `derive_deftly`:
 specifying _templates_ that you can use to derive new features for your
@@ -8,7 +37,7 @@ and then _applying_ those templates to your types.
 To define a template, you use
 [`define_derive_deftly!`](https://docs.rs/derive-deftly/latest/derive_deftly//macro.define_derive_deftly.html), as in
 
-```
+```rust
 use derive_deftly::define_derive_deftly;
 
 define_derive_deftly! {

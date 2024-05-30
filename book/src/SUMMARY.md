@@ -1,4 +1,7 @@
-- [Getting started with `derive_deftly`.](basic-template.md)
+- [Introduction](intro.md)
+- [Getting started](getting-started.md)
+  - [Before you begin](before-you-begin.md)
+  - [A first example: derive_deftly(NamePrinter)](basic-template.md)
   - [Templates inside modules](templates-in-modules.md)
   - [Exporting templates](exporting-templates.md)
   - [If you're only deriving once...](adhoc.md)
