@@ -89,6 +89,15 @@ Note that exporting a template to other crates with `pub`
 doesn't affect its visibility *within your crate*.
 You may still need `#[macro_use]`.
 
+## What's next
+
+Now that we've explained how to expose a template,
+it's time to learn about more features from derive-deftly.
+In the next session, we'll start working on a `Clone` example,
+and we'll learn how to work with
+structs, enums, fields, variants, and more.
+
+
 
 [`derive_deftly::pub_template_semver_check`]: https://docs.rs/derive-deftly/latest/derive_deftly/macro.pub_template_semver_check.html
 [must-re-export]: https://docs.rs/derive-deftly/latest/derive_deftly//macro.define_derive_deftly.html#you-must-re-export-derive_deftly-semver-implications
