@@ -2,7 +2,7 @@
 
 In this section,
 we'll be using another example to demonstrate
-more of what `derive_deftly` can do.
+more of what `derive-deftly` can do.
 
 We'll be building a `Constructor` template
 to define a `new()` function for a struct,

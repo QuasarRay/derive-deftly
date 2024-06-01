@@ -29,7 +29,7 @@ to define and use a new template.
 
 ## Writing NamePrinter
 
-There are two parts to using `derive_deftly`:
+There are two parts to using derive-deftly:
 specifying _templates_ that you can use to derive new features for your
 structs and enums
 and then _applying_ those templates to your types.

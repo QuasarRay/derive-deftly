@@ -55,7 +55,7 @@ But let's suppose that there was no crate meeting your needs,
 and you had to build your own.)
 
 Here's how you could define and use
-a `derive-deftly` template to save some time and risk.
+a derive-deftly template to save some time and risk.
 
 ```rust
 use derive_deftly::{define_derive_deftly, Deftly};
@@ -127,7 +127,7 @@ The `derive-deftly` crate helps you do a lot of neat stuff:
   define configurable behavior or special cases.
 
 
-Still, there are a number of things that `derive-deftly` cannot do,
+Still, there are a number of things that derive-deftly cannot do,
 or cannot do yet:
 
 * You can't apply a `derive-deftly` template to anything
@@ -156,18 +156,18 @@ or cannot do yet:
 ## About this book
 
 In the rest of this book,
-we'll explain how to use `derive-deftly` in detail.
+we'll explain how to use derive-deftly in detail.
 We'll try to explain each of its features,
 and how to use it to make correct,
 reliable templates that handle a broad range of situations.
 
 ## Other resources
 
-There are other resources on `derive-deftly`:
+There are other resources on derive-deftly:
 
 * The [Reference] tries to provide is a terse but complete
   (and farily rigorous)
-  guide to `derive-deftly`'s behavior and features.
+  guide to derive-deftly's behavior and features.
 * The [rustdoc] describes the exposed members of the `derive-deftly` crate,
   along with other useful information.
 

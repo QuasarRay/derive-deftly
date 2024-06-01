@@ -57,7 +57,7 @@ impl Clone for ⟪Your struct⟫ {
 ```
 
 And here's how that pseudocode translates into
-a `derive_deftly` template:
+a derive-deftly template:
 
 ```
 use derive_deftly::define_derive_deftly;
@@ -83,7 +83,7 @@ and
 [`$fname`](https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#fname-vname-tname--names).
 
 
-In `derive_deftly` templates, `$( ... )`  denotes repetition:
+In derive-deftly templates, `$( ... )`  denotes repetition:
 it repeats what is inside it
 an "appropriate" number of times.
 (We'll give a definition of "appropriate" later on.)
@@ -105,7 +105,7 @@ there's
 
 > ### On naming
 >
-> Many `derive_deftly` expansions'
+> Many derive-deftly expansions'
 > [names start with](https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#keyword-initial-letters)
 > `t` for **top-level**
 > (whatever you are applying the template to),
@@ -121,7 +121,7 @@ there's
 > later on, we'll be showing you how to apply
 > derive_deftly to `enums`.)
 >
-> Many `derive_deftly` expansions end with
+> Many derive-deftly expansions end with
 > a short identifier for what they contain.
 > For example, `$tname` is the name of a top-level type,
 > `$vname` is the name of a variant,
@@ -146,7 +146,7 @@ you might expect it to fail.
 
 Surprisingly, it will still work fine!
 This isn't because of any clever trickery
-from `derive_deftly`:
+from derive-deftly:
 it's just how Rust works.
 When you use it on tuple or unit structs,
 the `MyClone` template we wrote above will expand

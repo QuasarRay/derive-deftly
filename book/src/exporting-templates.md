@@ -44,7 +44,7 @@ And you should invoke
 once,
 somewhere in your crate:
 this will tell you specially about any implications for your crate's semver, 
-when you change your `Cargo.toml` to upgrade `derive-deftly`.
+when you change your `Cargo.toml` to upgrade the `derive-deftly` crate.
 
 
 ```rust,ignore

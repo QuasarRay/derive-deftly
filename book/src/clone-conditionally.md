@@ -19,7 +19,7 @@ impl<T: Clone> Clone for Indirect<T> { ... }
 But that `T: Clone` constraint isn't necessary: `Arc<T>` always
 implements `Clone`, so your struct could be clone unconditionally.
 
-But using `derive_deftly`,
+But using derive-deftly,
 you can define a template
 that derives `Clone` only for the cases
 where the _actual_ required constraints are met:

@@ -5,7 +5,7 @@ based on existing ones,
 or to convert identifiers into strings.
 
 You _could_ use the existing [`paste`](https://docs.rs/paste/latest/paste/) crate for this,
-or you can use a native facility provided by `derive_deftly`.
+or you can use a native facility provided by derive-deftly.
 
 For example, suppose that you want
 to define a template that makes a "discriminant" type
@@ -106,7 +106,7 @@ In this last section,
 you've seen a new syntax for the first time.
 Both `${paste ident ident..}` and `${snake_case ident}`
 are special cases of the following meta-syntax,
-which `derive_deftly` uses everywhere:
+which derive-deftly uses everywhere:
 
 [`${KEYWORD ARGS.. }`](https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#named-and-positional-template-arguments-to-expansions-and-conditions)
 

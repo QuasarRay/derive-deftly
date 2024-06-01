@@ -10,7 +10,7 @@ that apply to enums as well as structs.
 But let's say that in this case,
 we want our template to be struct-only.
 
-We can tell `derive_deftly` about this restriction,
+We can tell derive-deftly about this restriction,
 to help it generate more useful error messages:
 
 ```

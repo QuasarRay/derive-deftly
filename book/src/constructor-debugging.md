@@ -2,7 +2,7 @@
 
 When writing complex templates,
 it can sometimes be hard to figure out compiler errors.
-derive-deftly has some features which can help:
+`derive-deftly` has some features which can help:
 
 #### Syntax checking the expansion
 
