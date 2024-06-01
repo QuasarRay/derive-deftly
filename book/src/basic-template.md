@@ -80,6 +80,54 @@ pub struct MyStruct;
 MyStruct::print_name();
 ```
 
+## Limitations of our template
+
+Our template won't work for every type!
+For example, suppose that we try to apply it to a generic type:
+
+```rust,ignore
+#[derive(Deftly)]
+#[derive_deftly(NamePrinter)]
+struct Pair<T> {
+    first: T,
+    second: T,
+}
+```
+
+In response, derive-deftly will try to expand our template
+to something like this:
+```rust,ignore
+impl Pair {
+    pub fn print_name() {
+        println!("The name of this type is {}", stringify!(Pair));
+    }
+}
+```
+
+But that won't work in Rust.
+Instead, we would need a template to expand to something more like this:
+```rust,ignore
+impl<T> Pair<T> {
+    ...
+}
+```
+
+We'll talk about how to make templates work for types like this
+in later chapters.
+
+
+## What's next?
+
+Next, we'll take a detour, and show how to expose our template
+so that it can be used in other modules,
+and other crates.
+
+After that,
+we'll look over a more complex example,
+and learn more features of `derive-deftly`.
+We'll write a more useful template,
+and have it apply to more types.
+
 [`$ttype`]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#x:ttype
 [`define_derive_deftly!`]: https://docs.rs/derive-deftly/latest/derive_deftly//macro.define_derive_deftly.html
 [derive-Deftly]: https://docs.rs/derive-deftly/latest/derive_deftly/derive.Deftly.html
