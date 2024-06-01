@@ -1,7 +1,7 @@
 # What you should know before you start
 
 Before you start using `derive-deftly`,
-there are a few things that this guide assumes
+there are a few things t2hat this guide assumes
 you are already familiar with.
 Don't feel bad if you don't know this stuff already;
 just make a note to come back later

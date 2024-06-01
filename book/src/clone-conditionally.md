@@ -1,4 +1,4 @@
-# Making MyClone apply conditionally 
+# Making MyClone apply conditionally
 
 Now, for the first time, we will make MyClone do something
 that Rust's `#[derive(Clone)]` does not:
@@ -19,7 +19,7 @@ impl<T: Clone> Clone for Indirect<T> { ... }
 But that `T: Clone` constraint isn't necessary: `Arc<T>` always
 implements `Clone`, so your struct could be clone unconditionally.
 
-But using `derive_deftly`,
+But using derive-deftly,
 you can define a template
 that derives `Clone` only for the cases
 where the _actual_ required constraints are met:
@@ -43,7 +43,7 @@ define_derive_deftly! {
 ```
 
 Here, we are using
-[`$ftype`](https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#ftype-vtype-ttype-tdeftype--types),
+[`$ftype`][x:ftype].
 the type of a field.
 Since we're repeating it with `$( ... )`,
 we are requiring every field to be `Clone`.
@@ -76,3 +76,5 @@ where
 > `where ,`
 > (which is also a syntax error).
 
+
+[x:ftype]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#x:ftype

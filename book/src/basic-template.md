@@ -29,13 +29,13 @@ to define and use a new template.
 
 ## Writing NamePrinter
 
-There are two parts to using `derive_deftly`:
+There are two parts to using derive-deftly:
 specifying _templates_ that you can use to derive new features for your
 structs and enums
 and then _applying_ those templates to your types.
 
 To define a template, you use
-[`define_derive_deftly!`](https://docs.rs/derive-deftly/latest/derive_deftly//macro.define_derive_deftly.html), as in
+[`define_derive_deftly!`], as in
 
 ```rust
 use derive_deftly::define_derive_deftly;
@@ -51,8 +51,7 @@ define_derive_deftly! {
 }
 ```
 
-This is a very simple template: it uses a single expansion:
-[`$ttype`](https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#ftype-vtype-ttype-tdeftype--types).
+This is a very simple template: it uses a single expansion: [`$ttype`].
 (We'll get into more expansions, and more useful examples, later on.
 For now, all you need to know
 is that `$ttype` expands to the type
@@ -60,9 +59,7 @@ on which you're applying your template.)
 
 
 Later on, you can apply `NamePrinter` to your own type,
-with
-[`#[derive(Deftly)]`](https://docs.rs/derive-deftly/latest/derive_deftly/derive.Deftly.html),
-as in:
+with [derive-Deftly] as in:
 
 ```
 # use derive_deftly::define_derive_deftly;
@@ -83,4 +80,10 @@ pub struct MyStruct;
 
 MyStruct::print_name();
 ```
+
+[`$ttype`]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#x:ttype
+[`define_derive_deftly!`]: https://docs.rs/derive-deftly/latest/derive_deftly//macro.define_derive_deftly.html
+[derive-Deftly]: https://docs.rs/derive-deftly/latest/derive_deftly/derive.Deftly.html
+
+
 

@@ -1,4 +1,4 @@
-# Marking a template's limitations 
+# Marking a template's limitations
 
 The template above doesn't work for enumerations.
 If you try to apply it to one, you'll get
@@ -10,7 +10,7 @@ that apply to enums as well as structs.
 But let's say that in this case,
 we want our template to be struct-only.
 
-We can tell `derive_deftly` about this restriction,
+We can tell derive-deftly about this restriction,
 to help it generate more useful error messages:
 
 ```
@@ -29,7 +29,7 @@ define_derive_deftly! {
 ```
 
 (Note the use of
-[`for struct`](https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#for-struct-for-enum-for-union--insist-on-a-particular-driver-kind)
+[`for struct`][eo:for]
 above at `// (1)`.)
 
 Now if we try to apply our template to an enum,
@@ -39,4 +39,8 @@ we'll get a more useful error:
 ```text,ignore
 error: template defined for struct, but applied to enum
 ```
+
+[eo:for]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#eo:for
+
+
 

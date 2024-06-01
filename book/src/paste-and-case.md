@@ -1,11 +1,11 @@
-# Transforming names and strings 
+# Transforming names and strings
 
 Often, it's useful to define new identifiers
 based on existing ones,
 or to convert identifiers into strings.
 
-You _could_ use the existing [`paste`](https://docs.rs/paste/latest/paste/) crate for this,
-or you can use a native facility provided by `derive_deftly`.
+You _could_ use the existing [`paste`] crate for this,
+or you can use a native facility provided by derive-deftly.
 
 For example, suppose that you want
 to define a template that makes a "discriminant" type
@@ -50,7 +50,7 @@ define_derive_deftly! {
 Here we see a couple of new constructs.
 
 First, we're using
-[`${paste}`](https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#-paste---identifier-pasting)
+[`${paste}`][x:paste]
 to glue several identifiers together into one.
 When we say `${paste $tname Discriminant}`,
 we are generating a new identifier from `$tname`
@@ -60,7 +60,7 @@ So if the type name is `Foo`,
 the new type will be called `FooDiscriminant`.
 
 Second, we're using
-[`${snake_case}`](https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#case-changing)
+[`${snake_case}`][case-changing]
 to transform an identifier into `snake_case`
 (that is, lowercase words separated by underscores).
 We use this to turn the name of each variant (`$vname`)
@@ -70,7 +70,7 @@ So if a variant is called `ExampleVariant`,
 and `${paste is_ ${snake_case $vname}}` will be
 `is_example_variant`.
 
-There are [other case-changers](https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#case-changing):
+There are [other case-changers][case-changing]:
   * `${pascal_case my_ident}` becomes `MyIdent`.
     You can also write this as
     `${upper_camel_case ..}`.
@@ -93,7 +93,7 @@ You can use `${paste}` to append identifiers to a type
 (like `$ttype` or `$ftype`),
 not just an identifier.
 When you do this, `${paste}` will
-[do the right thing](https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#-paste---identifier-pasting)
+[do the right thing][identifier-pasting]
 even if the type is generic.
 
 For example, if `$ftype` is `Vec<u8>`,
@@ -106,9 +106,9 @@ In this last section,
 you've seen a new syntax for the first time.
 Both `${paste ident ident..}` and `${snake_case ident}`
 are special cases of the following meta-syntax,
-which `derive_deftly` uses everywhere:
+which derive-deftly uses everywhere:
 
-[`${KEYWORD ARGS.. }`](https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#named-and-positional-template-arguments-to-expansions-and-conditions)
+[`${KEYWORD ARGS.. }`][arg-syntax]
 
 In fact, if you want,
 you can use this format
@@ -130,6 +130,14 @@ The syntax for this is:
 If you ever need to write a literal `$`
 (say, if you want to confuse yourself
 by making derive-deftly-generated pattern macros)
-you can write [`$$`](https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#dollar-dollar).
+you can write [`$$`][dollar-dollar].
+
+
+[`paste`]: https://docs.rs/paste/latest/paste/
+[dollar-dollar]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#dollar-dollar
+[x:paste]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#x:paste
+[case-changing]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#case-changing
+[identifier-pasting]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#-paste---identifier-pasting
+[arg-syntax]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#named-and-positional-template-arguments-to-expansions-and-conditions
 
 

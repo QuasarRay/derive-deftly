@@ -1,4 +1,4 @@
-# Getting started with conditionals 
+# Getting started with conditionals
 
 In the example above,
 we made it possible to rename the "new" function
@@ -29,7 +29,7 @@ define_derive_deftly! {
 Have a look at the line marked with `// (1)`.
 It introduces a new concept: _conditional expansion_.
 The
-[`${if ...}`](https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#if-cond1----else-if-cond2----else-----conditional)
+[`${if ...}`][x:if]
 keyword checks whether a given _condition_ is true.
 If it is, then it expands to one of its arguments.
 Otherwise, it expands to an "else" argument (if any).
@@ -39,11 +39,14 @@ Otherwise, it expands to an "else" argument (if any).
 > and so on!
 
 Here, the condition is
-[`tmeta(newfn)`](https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#fmetaname-vmetaname-tmetaname--deftly-attributes).
+[`tmeta(newfn)`][c:tmeta]
 That condition is true if the current type
 has an `#[deftly(newfn)]` attribute,
 and false otherwise.
 There are also `vmeta` and `fmeta` attributes
 to detect `#[deftly(..)]` attributes
 on variants and fields respectively.
+
+[x:if]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#x:if
+[c:tmeta]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#c:tmeta
 

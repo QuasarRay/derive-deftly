@@ -1,4 +1,4 @@
-# Simple templates: fields and repetition 
+# Simple templates: fields and repetition
 
 Let's imagine we had to write Clone from scratch for a simple structure
 like this:
@@ -57,7 +57,7 @@ impl Clone for ⟪Your struct⟫ {
 ```
 
 And here's how that pseudocode translates into
-a `derive_deftly` template:
+a derive-deftly template:
 
 ```
 use derive_deftly::define_derive_deftly;
@@ -78,12 +78,12 @@ define_derive_deftly! {
 Let's look at that template.  You've already seen `$ttype`: it expands
 to the type on which you are applying the macro.  There are two new
 pieces of syntax here, though:
-[`$( ... )`](https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#repetition-and-nesting)
+[`$( ... )`][t:repetition]
 and
-[`$fname`](https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#fname-vname-tname--names).
+[`$fname`][x:fname].
 
 
-In `derive_deftly` templates, `$( ... )`  denotes repetition:
+In derive-deftly templates, `$( ... )`  denotes repetition:
 it repeats what is inside it
 an "appropriate" number of times.
 (We'll give a definition of "appropriate" later on.)
@@ -105,8 +105,8 @@ there's
 
 > ### On naming
 >
-> Many `derive_deftly` expansions'
-> [names start with](https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#keyword-initial-letters)
+> Many derive-deftly expansions'
+> [names start with][keyword-initial-letters]
 > `t` for **top-level**
 > (whatever you are applying the template to),
 > `v` for **variant**
@@ -121,7 +121,7 @@ there's
 > later on, we'll be showing you how to apply
 > derive_deftly to `enums`.)
 >
-> Many `derive_deftly` expansions end with
+> Many derive-deftly expansions end with
 > a short identifier for what they contain.
 > For example, `$tname` is the name of a top-level type,
 > `$vname` is the name of a variant,
@@ -146,7 +146,7 @@ you might expect it to fail.
 
 Surprisingly, it will still work fine!
 This isn't because of any clever trickery
-from `derive_deftly`:
+from derive-deftly:
 it's just how Rust works.
 When you use it on tuple or unit structs,
 the `MyClone` template we wrote above will expand
@@ -178,3 +178,6 @@ Rust often lets you use a slightly unidiomatic syntax
 so that you can handle many different cases
 in the same way.
 
+[t:repetition]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#t:repetition
+[x:fname]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#x:fname
+[keyword-initial-letters]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#keyword-initial-letters

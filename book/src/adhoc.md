@@ -1,7 +1,7 @@
-# If you're only deriving once... 
+# If you're only deriving once...
 
 If you want, you can
-[apply a template to an existing type](https://docs.rs/derive-deftly/latest/derive_deftly/macro.derive_deftly_adhoc.html)
+[apply a template to an existing type][adhoc]
 without having to name that template.
 You might want to do this if you have a template
 that you only want to apply to a single struct,
@@ -41,5 +41,8 @@ on how to use derive_deftly's template features
 to your fullest advantage.
 If you're the kind of person who wants to skip
 straight to the reference manual,
-you can find it [over here](https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html).
+you can find it [over here][reference].
+
+[adhoc]: https://docs.rs/derive-deftly/latest/derive_deftly/macro.derive_deftly_adhoc.html
+[reference]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html
 

@@ -1,4 +1,4 @@
-# Templates inside modules 
+# Templates inside modules
 
 When you define a template, derive-deftly turns it into a definition
 of a `macro_rules!` macro.
