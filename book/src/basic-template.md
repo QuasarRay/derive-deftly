@@ -57,9 +57,8 @@ For now, all you need to know
 is that `$ttype` expands to the type
 on which you're applying your template.)
 
-
-Later on, you can apply `NamePrinter` to your own type,
-with [derive-Deftly] as in:
+Later on, you can apply `NamePrinter` to your own type
+with [`#[derive(Deftly)]`[derive-Deftly], as in:
 
 ```
 # use derive_deftly::define_derive_deftly;
