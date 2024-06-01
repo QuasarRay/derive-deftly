@@ -1,4 +1,4 @@
-# Debugging templates 
+# Debugging templates
 
 When writing complex templates,
 it can sometimes be hard to figure out compiler errors.

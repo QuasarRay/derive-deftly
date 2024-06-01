@@ -1,4 +1,4 @@
-# Marking a template's limitations 
+# Marking a template's limitations
 
 The template above doesn't work for enumerations.
 If you try to apply it to one, you'll get

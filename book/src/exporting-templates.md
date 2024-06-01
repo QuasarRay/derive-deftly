@@ -1,4 +1,4 @@
-# Exporting templates 
+# Exporting templates
 
 But now suppose that you want to expose your template,
 so that people can use it from any crate.
@@ -43,7 +43,7 @@ And you should invoke
 [`derive_deftly::pub_template_semver_check`](https://docs.rs/derive-deftly/latest/derive_deftly/macro.pub_template_semver_check.html)
 once,
 somewhere in your crate:
-this will tell you specially about any implications for your crate's semver, 
+this will tell you specially about any implications for your crate's semver,
 when you change your `Cargo.toml` to upgrade the `derive-deftly` crate.
 
 

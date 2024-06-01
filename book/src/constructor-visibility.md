@@ -1,4 +1,4 @@
-# Working with visibility 
+# Working with visibility
 
 Our `Constructor` template above doesn't really make sense
 if it's applied to a non-public type:

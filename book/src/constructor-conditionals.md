@@ -1,4 +1,4 @@
-# Getting started with conditionals 
+# Getting started with conditionals
 
 In the example above,
 we made it possible to rename the "new" function

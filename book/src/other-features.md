@@ -1,4 +1,4 @@
-# Other features 
+# Other features
 
 `derive-deftly` has many more features,
 that aren't yet explained in this tutorial.

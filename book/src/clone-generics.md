@@ -1,4 +1,4 @@
-# Making MyClone apply to generics 
+# Making MyClone apply to generics
 
 But here's a structure where our current `MyClone` implementation
 will fall flat:
@@ -20,7 +20,7 @@ impl Clone for MyItems { ... }
 
 That isn't valid!  We need to use the generic parameters, like so:
 ```rust,ignore
-impl<T:Clone, U> Clone for MyItems<T,U> 
+impl<T:Clone, U> Clone for MyItems<T,U>
     where U: Clone+Debug
 { ... }
 ```

@@ -1,4 +1,4 @@
-# Transforming names and strings 
+# Transforming names and strings
 
 Often, it's useful to define new identifiers
 based on existing ones,

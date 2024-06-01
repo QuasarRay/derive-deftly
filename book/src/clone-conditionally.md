@@ -1,4 +1,4 @@
-# Making MyClone apply conditionally 
+# Making MyClone apply conditionally
 
 Now, for the first time, we will make MyClone do something
 that Rust's `#[derive(Clone)]` does not:

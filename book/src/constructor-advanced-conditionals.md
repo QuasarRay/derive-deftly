@@ -1,4 +1,4 @@
-# More complicated conditionals 
+# More complicated conditionals
 
 Frequently, we'd like our template
 to behave in different ways different fields.

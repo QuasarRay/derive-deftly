@@ -1,4 +1,4 @@
-# Using attributes to make a template take arguments 
+# Using attributes to make a template take arguments
 
 Let's suppose we want to make our `Constructor` template
 a little more flexible:

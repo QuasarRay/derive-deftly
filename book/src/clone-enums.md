@@ -1,4 +1,4 @@
-# Deriving for enumerations 
+# Deriving for enumerations
 
 At this point, you've probably noticed
 that we've defined `MyClone` to apply to `struct`s only,
@@ -161,7 +161,7 @@ if we just have `$ftype` in a top-level repetition,
 Sometimes, if you do something subtle,
 derive-deftly may not be able to figure
 out what you're trying to repeat over.
-You can use 
+You can use
 [`${for ...}`](https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#repetition-and-nesting)
 to specifiy explicitly:
 so, above, instead, we could have written

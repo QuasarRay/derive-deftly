@@ -1,4 +1,4 @@
-# Simple templates: fields and repetition 
+# Simple templates: fields and repetition
 
 Let's imagine we had to write Clone from scratch for a simple structure
 like this:
