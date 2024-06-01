@@ -3,6 +3,8 @@
 - [Getting started](getting-started.md)
   - [Before you begin](before-you-begin.md)
   - [A first example: derive_deftly(HelloWorld)](basic-template.md)
+
+- [Using templates from other crates and modules](modularity.md)
   - [Templates inside modules](templates-in-modules.md)
   - [Exporting templates](exporting-templates.md)
   - [If you're only deriving once...](adhoc.md)
