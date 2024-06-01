@@ -4,7 +4,7 @@ But now suppose that you want to expose your template,
 so that people can use it from any crate.
 
 To do this, you use
-[`pub` before the name of your macro](https://docs.rs/derive-deftly/latest/derive_deftly//macro.define_derive_deftly.html#exporting-a-template-for-use-by-other-crates).
+[`pub` before the name of your macro][exporting-a-template]:
 ```
 pub trait NamePrinter {
     fn print_name();
@@ -33,14 +33,14 @@ so that when later we expand this template,
 it can find the right template.
 
 We've also added a
-[doc comment](https://docs.rs/derive-deftly/latest/derive_deftly//macro.define_derive_deftly.html#docs-in-define),
+[doc comment],
 which will appear in the public API documentation for our crate.
 
 Additionally,
-[we need to re-export `derive_deftly`](https://docs.rs/derive-deftly/latest/derive_deftly//macro.define_derive_deftly.html#you-must-re-export-derive_deftly-semver-implications)
+[we need to re-export `derive_deftly`][must-re-export]
 from our crate, so that users get the correct version.
 And you should invoke
-[`derive_deftly::pub_template_semver_check`](https://docs.rs/derive-deftly/latest/derive_deftly/macro.pub_template_semver_check.html)
+[`derive_deftly::pub_template_semver_check`]
 once,
 somewhere in your crate:
 this will tell you specially about any implications for your crate's semver,
@@ -78,3 +78,8 @@ Exporting a template to other crates with `pub`
 doesn't affect its visibility *within your crate*.
 You may still need `#[macro_use]`.
 
+
+[`derive_deftly::pub_template_semver_check`]: https://docs.rs/derive-deftly/latest/derive_deftly/macro.pub_template_semver_check.html
+[must-re-export]: https://docs.rs/derive-deftly/latest/derive_deftly//macro.define_derive_deftly.html#you-must-re-export-derive_deftly-semver-implications
+[doc comment]: https://docs.rs/derive-deftly/latest/derive_deftly//macro.define_derive_deftly.html#docs-in-define
+[exporting-a-template]: https://docs.rs/derive-deftly/latest/derive_deftly//macro.define_derive_deftly.html#exporting-a-template-for-use-by-other-crates

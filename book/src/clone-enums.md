@@ -50,17 +50,17 @@ Then we match once for each field of each variant.
 
 Let's go over the new expansions here.
 First, we have
-[`$vpat`](https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#vpat-fpatname--pattern-matching-and-value-deconstruction):
+[`$vpat`][x:vpat]:
 that expands to a pattern that can match and deconstruct
 a single variant.
 Then, we have
-[`$vtype`](https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#ftype-vtype-ttype-tdeftype--types):
+[`$vtype`][x:vtype]:
 that's the type of the variant,
 suitable for use as a constructor.
 Then, inside the variant, we have `$fname`:
 that's our field name, which we've seen it before.
 Finally, we have
-[`$fpatname`](https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#vpat-fpatname--pattern-matching-and-value-deconstruction):
+[`$fpatname`][x:fpatname]:
 that is the name of the variable that we used for this field
 in the pattern that deconstructed it.
 
@@ -162,7 +162,7 @@ Sometimes, if you do something subtle,
 derive-deftly may not be able to figure
 out what you're trying to repeat over.
 You can use
-[`${for ...}`](https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#repetition-and-nesting)
+[`${for ...}`][x:for]
 to specifiy explicitly:
 so, above, instead, we could have written
 ```
@@ -181,3 +181,8 @@ You can also use `${for ...}` rather than `$(...)`
 in cases where you feel
 it makes your macro code clearer.
 
+[t:repetition]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#t:repetition
+[x:for]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#x:for
+[x:vpat]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#x:vpat
+[x:vtype]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#x:vtype
+[x:fpatname]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#x:fpatname

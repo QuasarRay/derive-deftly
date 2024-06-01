@@ -35,7 +35,7 @@ Here, instead of specifying "new"
 for the method name in our template,
 we give the name as `${tmeta(newfn)}`.
 This tells the template to look for an
-[`#[deftly(newfn="...")]`](https://docs.rs/derive-deftly/latest/derive_deftly/derive.Deftly.html#deftly-attribute)
+[`#[deftly(newfn="...")]`][deftly-attribute]
 attribute on the type,
 and to use the value of that attribute
 in place of the keyword.
@@ -51,15 +51,15 @@ Then, the template will look for an attribute like
 This avoids name clashes with other templates.</span>
 
 The
-[`$tmeta`](https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#tmeta-vmeta-fmeta--deftly-attributes)
+[`$tmeta`][x:tmeta]
 keyword that we used here
 tells the template
 to look at the `#[deftly]` attributes for the _type_.
 We can, instead, use
-[`$vmeta`](https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#tmeta-vmeta-fmeta--deftly-attributes)
+[`$vmeta`][x:vmeta]
 to look for `#[deftly]` attributes for the current _variant_,
 or
-[`$fmeta`](https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#tmeta-vmeta-fmeta--deftly-attributes)
+[`$fmeta`][x:fmeta]
 to
 to look for `#[deftly]` attributes for the current _field_.
 
@@ -67,4 +67,9 @@ to look for `#[deftly]` attributes for the current _field_.
 > TODO: Is this the right way to talk about "as lit" and "as ty"?
 > I'm thinking not yet.
  -->
+
+[x:tmeta]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#x:tmeta
+[x:vmeta]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#x:vmeta
+[x:fmeta]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#x:fmeta
+[deftly-attribute]: https://docs.rs/derive-deftly/latest/derive_deftly/derive.Deftly.html#deftly-attribute
 

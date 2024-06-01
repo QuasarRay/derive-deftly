@@ -45,11 +45,11 @@ define_derive_deftly! {
 ```
 
 Here we meet two new expansions.
-[`$tgens`](https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#tgens-tgnames-twheres-tdefgens--generics)
+[`$tgens`][x:tgens]
 ("top-level generics") becomes
 the generic parameters as declared on the top-level type.
 (In our case, that's `$T:Clone, U`.)
-[`$twheres`](https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#tgens-tgnames-twheres-tdefgens--generics)
+[`$twheres`][x:twheres]
 ("top-level where clauses") becomes
 the `where` constraints as declared on the top-level type.
 (In our case, that's `U: Clone+Debug`.)
@@ -58,7 +58,7 @@ Note that `$ttype` expands to the top-level _type_:
 that's now `MyItems<T,U>`,
 which is what we want.
 If we had wanted only `MyItems`,
-we would say [`$tname`](https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#fname-vname-tname--names) instead.
+we would say [`$tname`][x:tname] instead.
 
 Will this template still work for non-parameterized types?
 Again, yes!
@@ -78,4 +78,8 @@ where
 }
 ```
 
+
+[x:tgens]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#x:tgens
+[x:twheres]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#x:twheres
+[x:tname]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#x:tname
 

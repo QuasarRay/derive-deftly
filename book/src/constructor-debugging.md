@@ -7,7 +7,7 @@ it can sometimes be hard to figure out compiler errors.
 #### Syntax checking the expansion
 
 You can
-[tell derive-deftly what your macro is supposed to produce](https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#expect-items-expect-expr--syntax-check-the-expansion):
+[tell derive-deftly what your macro is supposed to produce][eo:expect]
 
 ```
 # use derive_deftly::{Deftly, define_derive_deftly};
@@ -34,7 +34,7 @@ you can write `expect expr` instead of `expect items`.
 
 Alternatively,
 you can request this syntax check
-[when you invoke the macro](https://docs.rs/derive-deftly/latest/derive_deftly/derive.Deftly.html#expansion-options):
+[when you invoke the macro][expansion-options]:
 
 ```
 # use derive_deftly::{Deftly, define_derive_deftly};
@@ -50,7 +50,7 @@ Sometimes, the expansion syntax checks,
 but is wrong in some other way.
 
 You can ask derive-deftly to simply
-[print a copy of the expansion](https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#dbg--print-the-expansion-to-stderr-for-debugging).
+[print a copy of the expansion][eo:dbg].
 
 ```
 # use derive_deftly::{Deftly, define_derive_deftly};
@@ -73,3 +73,6 @@ impl<> MyStruct where {
 Like the `dbg!` macro, you don't want to
 leave this in your production code.
 
+[eo:expect]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#eo:expect
+[expansion-options]: https://docs.rs/derive-deftly/latest/derive_deftly/derive.Deftly.html#expansion-options
+[eo:dbg]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#eo:dbg

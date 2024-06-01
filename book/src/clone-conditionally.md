@@ -43,7 +43,7 @@ define_derive_deftly! {
 ```
 
 Here, we are using
-[`$ftype`](https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#ftype-vtype-ttype-tdeftype--types),
+[`$ftype`][x:ftype].
 the type of a field.
 Since we're repeating it with `$( ... )`,
 we are requiring every field to be `Clone`.
@@ -76,3 +76,5 @@ where
 > `where ,`
 > (which is also a syntax error).
 
+
+[x:ftype]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#x:ftype

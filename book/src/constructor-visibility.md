@@ -26,13 +26,15 @@ define_derive_deftly! {
 Here instead of saying `pub fn new`,
 we said `$tvis fn new`.
 The
-[`$tvis`](https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#fvis-tvis-fdefvis--visibility)
+[`$tvis`][x:tvis]
 keyword will expand
 to the visibility of the top-level type.
 
 There is a similar similar
-[`$fvis`](https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#fvis-tvis-fdefvis--visibility)
+[`$fvis`][x:fvis]
 that expands to the visibility of the current field.
 
 (Since enums variants are always visible, there is no `$vvis`.)
 
+[x:tvis]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#x:tvis
+[x:fvis]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#x:fvis

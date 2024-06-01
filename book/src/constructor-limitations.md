@@ -29,7 +29,7 @@ define_derive_deftly! {
 ```
 
 (Note the use of
-[`for struct`](https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#for-struct-for-enum-for-union--insist-on-a-particular-driver-kind)
+[`for struct`][eo:for]
 above at `// (1)`.)
 
 Now if we try to apply our template to an enum,
@@ -39,4 +39,8 @@ we'll get a more useful error:
 ```text,ignore
 error: template defined for struct, but applied to enum
 ```
+
+[eo:for]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#eo:for
+
+
 

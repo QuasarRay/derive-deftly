@@ -78,9 +78,9 @@ define_derive_deftly! {
 Let's look at that template.  You've already seen `$ttype`: it expands
 to the type on which you are applying the macro.  There are two new
 pieces of syntax here, though:
-[`$( ... )`](https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#repetition-and-nesting)
+[`$( ... )`][t:repetition]
 and
-[`$fname`](https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#fname-vname-tname--names).
+[`$fname`][x:fname].
 
 
 In derive-deftly templates, `$( ... )`  denotes repetition:
@@ -106,7 +106,7 @@ there's
 > ### On naming
 >
 > Many derive-deftly expansions'
-> [names start with](https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#keyword-initial-letters)
+> [names start with][keyword-initial-letters]
 > `t` for **top-level**
 > (whatever you are applying the template to),
 > `v` for **variant**
@@ -178,3 +178,6 @@ Rust often lets you use a slightly unidiomatic syntax
 so that you can handle many different cases
 in the same way.
 
+[t:repetition]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#t:repetition
+[x:fname]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#x:fname
+[keyword-initial-letters]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#keyword-initial-letters
