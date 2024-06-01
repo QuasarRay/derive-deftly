@@ -21,6 +21,12 @@ derive_deftly::define_derive_deftly! {
 }
 ```
 
+> Declaring our template as `pub HelloWorld` in this way
+> is equivalent to marking `derive_deftly_template_HelloWorld`
+> with `#[macro_export]`.
+> Doing this puts the template into the root of the crate.
+> You can make the template visible elsewhere using `pub use`.
+
 Note that this time,
 we've defined `HelloWorld` as a trait,
 and we've changed our template to refer to that trait as
@@ -29,8 +35,9 @@ The
 [`$crate`][x:crate]
 syntax will expand to the name of the crate
 in which our template was defined,
-so that when later we expand this template,
-it can find the right template.
+so that when later we expand this template in a _different_ crate,
+it will find the right trait.
+(Otherwise, it would fail if the `HelloWorld` trait were not in scope.)
 
 We've also added a
 [doc comment],
@@ -38,22 +45,26 @@ which will appear in the public API documentation for our crate.
 
 Additionally,
 [we need to re-export `derive_deftly`][must-re-export]
-from our crate, so that users get the correct version.
-And you should invoke
+from our crate, so that when our template is applied to user types,
+a compatible derive-deftly driver is used.
+And we should also invoke
 [`derive_deftly::pub_template_semver_check`]
 once,
-somewhere in your crate:
-this will tell you specially about any implications for your crate's semver,
+somewhere in our crate:
+this will tells us about any implications for your crate's semver,
 when you change your `Cargo.toml` to upgrade the `derive-deftly` crate.
 
-
 ```rust,ignore
-// you might want to apply #[doc(hidden)] to this.
+// At the root of our crate:
+
+#[doc(hidden)]
 pub use derive_deftly;
-derive_deftly::pub_template_semver_check!("0.9.0");
+
+// Use the current version of derive_deftly here:
+derive_deftly::pub_template_semver_check!("0.11.0");
 ```
 
-Now, when somebody wants to use our template,
+Now, when somebody wants to use our template from a different crate,
 they can do it like this:
 
 ```rust,ignore
@@ -74,7 +85,7 @@ struct TheirStructure {
 }
 ```
 
-Exporting a template to other crates with `pub`
+Note that exporting a template to other crates with `pub`
 doesn't affect its visibility *within your crate*.
 You may still need `#[macro_use]`.
 
