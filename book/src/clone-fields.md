@@ -1,7 +1,9 @@
-# Simple templates: fields and repetition
+# Working with structs and fields
 
-Let's imagine we had to write Clone from scratch for a simple structure
-like this:
+Let's start by imagining that
+we didn't have `derive-deftly`,
+and we had to write Clone from scratch
+for a simple structure like this:
 
 ```
 struct GiftBasket {
@@ -75,13 +77,18 @@ define_derive_deftly! {
 }
 ```
 
-Let's look at that template.  You've already seen `$ttype`: it expands
+Let's look at that template piece by piece.
+Certain marked "expansion keywords" in the contents
+(those marked with `$`)
+are replaced with a value that depends on the struct
+that the template is beling applied to.
+
+You've already seen `$ttype`: it expands
 to the type on which you are applying the macro.  There are two new
 pieces of syntax here, though:
 [`$( ... )`][t:repetition]
 and
 [`$fname`][x:fname].
-
 
 In derive-deftly templates, `$( ... )`  denotes repetition:
 it repeats what is inside it
@@ -89,7 +96,8 @@ an "appropriate" number of times.
 (We'll give a definition of "appropriate" later on.)
 Since we want to clone every field in our struct,
 we are repating the `field: self.field.clone() ,`
-part of our implementation.
+part of our implementation
+once for each field.
 
 The `$fname` expansion means "the name of a field".
 Which field?
@@ -102,36 +110,15 @@ to the name of a different field each time.
 there's
 [more to come](clone-enums.md#a-further-note-on-reptition).)
 
+## An aside on naming
 
-> ### On naming
->
-> Many derive-deftly expansions'
-> [names start with][keyword-initial-letters]
-> `t` for **top-level**
-> (whatever you are applying the template to),
-> `v` for **variant**
-> (a variant of an `enum`),
-> or `f` for **field**
-> (a single field of a struct or variant).
->
-> So far, you've seen `$ttype` for "top-level type" and `$fname` for
-> "field name".
->
-> (We say "top-level" instead of "struct":
-> later on, we'll be showing you how to apply
-> derive_deftly to `enums`.)
->
-> Many derive-deftly expansions end with
-> a short identifier for what they contain.
-> For example, `$tname` is the name of a top-level type,
-> `$vname` is the name of a variant,
-> and `$fname` is the name of a field.
-> Whenever possible, we have tried to use the same
-> identifier for the `t`, `v`, and `f` cases,
-> whenever it is logical.
+At this point, you've seen expansions with names like `$ttype`
+and `$fname`, and you may be wondering where they come from.
+If you want to know more,
+you can skip ahead to the section
+on [naming conventions](./expansions-naming.md).
 
-
-#### Will MyClone apply to other kinds of struct?
+## Will MyClone apply to other kinds of struct?
 
 Rust defines several kinds of struct:
 structs with fields (`struct Foo {...};`),
@@ -180,4 +167,3 @@ in the same way.
 
 [t:repetition]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#t:repetition
 [x:fname]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#x:fname
-[keyword-initial-letters]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#keyword-initial-letters

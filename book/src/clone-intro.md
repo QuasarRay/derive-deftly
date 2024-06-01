@@ -1,11 +1,24 @@
 # A brief tutorial: How to write your own Clone
 
-For the next few sections, for a toy example,
-we'll be using `derive-deftly` to define
-our own version of `derive(Clone)`.
+In the previous chapters,
+we've learned how to define a simple `derive-deftly` template,
+and how to export it to the rest of the world.
+
+In this chapter, we'll use derive-deftly
+to implement our own version of Rust's standard
+`#[derive(Clone)]` macro.
 At first, it will be very simple;
 later on, we'll add a few features
 that Rust's `derive(Clone)` doesn't have.
+
+With these examples,
+we'll learn more feature of derive-deftly,
+including:
+
+* Writing templates that apply to structs and enums.
+* Writing templates that apply to generic types.
+* Using a variety of expansions, including ones
+  for top-level types, variants, and fields.
 
 > Aside:
 >

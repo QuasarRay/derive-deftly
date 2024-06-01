@@ -8,13 +8,14 @@
   - [If you're only deriving once...](adhoc.md)
 
 - [A brief tutorial: How to write your own Clone](clone-intro.md)
-  - [Simple templates: fields and repetition](clone-fields.md)
+  - [Working with structs and fields](clone-fields.md)
   - [Making MyClone apply to generics](clone-generics.md)
   - [Making MyClone apply conditionally](clone-conditionally.md)
   - [Deriving for enumerations](clone-enums.md)
 
 - [Some more advanced topics](advanced-intro.md)
   - [Transforming names and strings](paste-and-case.md)
+  - [Naming conventions for derive-deftly expansions](expansions-naming.md)
 
 - [Another example: Defining a constructor function.](constructor-intro.md)
   - [Marking a template's limitations](constructor-limitations.md)
