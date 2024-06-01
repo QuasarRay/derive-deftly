@@ -1,4 +1,4 @@
-# A first example: derive_deftly(NamePrinter)
+# A first example: derive_deftly(HelloWorld)
 
 Here we'll make an example project
 with a simple `derive-deftly` template.
@@ -27,7 +27,7 @@ Next, we'll add the `derive-deftly` crate as a new dependency:
 Now we can edit `src/lib.rs` in our project
 to define and use a new template.
 
-## Writing NamePrinter
+## Writing our HelloWorld template
 
 There are two parts to using derive-deftly:
 specifying _templates_ that you can use to derive new features for your
@@ -41,11 +41,11 @@ To define a template, you use
 use derive_deftly::define_derive_deftly;
 
 define_derive_deftly! {
-    NamePrinter:
+    HelloWorld:
 
     impl $ttype {
-        pub fn print_name() {
-            println!("The name of this type is {}", stringify!($ttype));
+        pub fn greet() {
+            println!("Greetings from {}", stringify!($ttype));
         }
     }
 }
@@ -57,27 +57,27 @@ For now, all you need to know
 is that `$ttype` expands to the type
 on which you're applying your template.)
 
-Later on, you can apply `NamePrinter` to your own type
+Later on, you can apply `HelloWorld` to your own type
 with [`#[derive(Deftly)]`[derive-Deftly], as in:
 
 ```
 # use derive_deftly::define_derive_deftly;
 # define_derive_deftly! {
-#    NamePrinter:
+#    HelloWorld:
 #
 #    impl $ttype {
-#        pub fn print_name() {
-#            println!("The name of this type is {}", stringify!($ttype));
+#        pub fn greet() {
+#            println!("Greetings from {}", stringify!($ttype));
 #        }
 #    }
 # }
 use derive_deftly::Deftly;
 
 #[derive(Clone, Debug, Deftly)]
-#[derive_deftly(NamePrinter)]
+#[derive_deftly(HelloWorld)]
 pub struct MyStruct;
 
-MyStruct::print_name();
+MyStruct::greet();
 ```
 
 ## Limitations of our template
@@ -87,7 +87,7 @@ For example, suppose that we try to apply it to a generic type:
 
 ```rust,ignore
 #[derive(Deftly)]
-#[derive_deftly(NamePrinter)]
+#[derive_deftly(HelloWorld)]
 struct Pair<T> {
     first: T,
     second: T,
@@ -98,8 +98,8 @@ In response, derive-deftly will try to expand our template
 to something like this:
 ```rust,ignore
 impl Pair {
-    pub fn print_name() {
-        println!("The name of this type is {}", stringify!(Pair));
+    pub fn greet() {
+        println!("Greetings from {}", stringify!(Pair));
     }
 }
 ```

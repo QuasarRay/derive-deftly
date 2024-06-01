@@ -6,27 +6,27 @@ so that people can use it from any crate.
 To do this, you use
 [`pub` before the name of your macro][exporting-a-template]:
 ```
-pub trait NamePrinter {
-    fn print_name();
+pub trait HelloWorld {
+    fn greet();
 }
 
 derive_deftly::define_derive_deftly! {
-    /// Derives `NamePrinter`, providing `print_name`
-    pub NamePrinter:
-    impl $crate::NamePrinter for $ttype {
-        fn print_name() {
-            println!("The name of this type is {}", stringify!($ttype));
+    /// Derives `HelloWorld`, providing `greet`
+    pub HelloWorld:
+    impl $crate::HelloWorld for $ttype {
+        fn greet() {
+            println!("Greetings from {}", stringify!($ttype));
         }
     }
 }
 ```
 
 Note that this time,
-we've defined `NamePrinter` as a trait,
+we've defined `HelloWorld` as a trait,
 and we've changed our template to refer to that trait as
-`$crate::NamePrinter`.
+`$crate::HelloWorld`.
 The
-[`$crate`](https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#crate--root-of-template-crate)
+[`$crate`][x:crate]
 syntax will expand to the name of the crate
 in which our template was defined,
 so that when later we expand this template,
@@ -57,18 +57,18 @@ Now, when somebody wants to use our template,
 they can do it like this:
 
 ```rust,ignore
-// Let's pretend our crate is called name_printer.
-use name_printer::{
+// Let's pretend our crate is called hello_world.
+use hello_world::{
     // This is the trait we defined...
-    NamePrinter,
+    HelloWorld,
     // This is the macro that makes our template work.
     // (We might come up with a better syntax for this later).
-    derive_deftly_template_NamePrinter.
+    derive_deftly_template_HelloWorld
 };
 use derive_deftly::Deftly;
 
 #[derive(Deftly)]
-#[derive_deftly(NamePrinter)]
+#[derive_deftly(HelloWorld)]
 struct TheirStructure {
     // ...
 }
@@ -83,3 +83,4 @@ You may still need `#[macro_use]`.
 [must-re-export]: https://docs.rs/derive-deftly/latest/derive_deftly//macro.define_derive_deftly.html#you-must-re-export-derive_deftly-semver-implications
 [doc comment]: https://docs.rs/derive-deftly/latest/derive_deftly//macro.define_derive_deftly.html#docs-in-define
 [exporting-a-template]: https://docs.rs/derive-deftly/latest/derive_deftly//macro.define_derive_deftly.html#exporting-a-template-for-use-by-other-crates
+[x:crate]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#x:crate
