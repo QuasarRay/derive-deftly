@@ -150,7 +150,7 @@ define_derive_deftly! {
 # enum TestCase<A> { Variant(A) }
 ```
 
-##### A further note on reptition
+##### A further note on repetition
 
 Note that when we define our additional `where` clauses,
 we don't have to specify separate of repetition

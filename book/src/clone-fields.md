@@ -108,7 +108,7 @@ to the name of a different field each time.
 
 (Again, more advanced repetition is possible;
 there's
-[more to come](clone-enums.md#a-further-note-on-reptition).)
+[more to come](clone-enums.md#a-further-note-on-repetition).)
 
 ## An aside on naming
 
