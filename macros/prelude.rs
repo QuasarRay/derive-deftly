@@ -34,13 +34,14 @@ pub use void::{ResultVoidErrExt as _, ResultVoidExt as _, Void};
 
 pub use TokenTree as TT;
 
+pub use super::approx_equal::tokens_cmp;
 pub use super::define::escape_dollars;
 pub use super::framework::TokenAccumulator;
 pub use super::paste::TokenPastesAsIdent;
 
 pub use super::utils::{
     braced_group, delimit_token_group, dummy_path, engine_macro_name,
-    flatten_none_groups, spans_join, typepath_add_missing_argument_colons,
+    spans_join, typepath_add_missing_argument_colons,
     ErrorAccumulator, ErrorLoc, Grouping, IdentAny, MacroExport, MakeError,
     TemplateName, ToTokensPunctComposable, TokenOutputTrimmer,
 };

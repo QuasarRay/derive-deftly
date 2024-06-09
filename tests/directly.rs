@@ -8,6 +8,7 @@
 //! Currently, this makes a testing version of derive-deftly without any
 //! of the optional features.
 
+use macros::approx_equal::flatten_none_groups;
 use macros::framework::*;
 use macros::Concatenated;
 

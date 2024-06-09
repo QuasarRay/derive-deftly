@@ -389,36 +389,6 @@ impl Grouping {
     }
 }
 
-/// Return the input, but with `None`-delimited `Group`s flattened away
-///
-/// Loses some span information.
-pub fn flatten_none_groups(ts: TokenStream) -> TokenStream {
-    fn recurse(out: &mut TokenStream, input: TokenStream) {
-        for tt in input {
-            match tt {
-                TT::Group(g) if g.delimiter() == Delimiter::None => {
-                    recurse(out, g.stream());
-                }
-                TT::Group(g) => {
-                    let span = g.span();
-                    let mut g = proc_macro2::Group::new(
-                        g.delimiter(),
-                        flatten_none_groups(g.stream()),
-                    );
-                    // We lose some span information here.
-                    g.set_span(span);
-                    out.extend([TT::Group(g)]);
-                }
-                _ => out.extend([tt]),
-            }
-        }
-    }
-
-    let mut out = TokenStream::new();
-    recurse(&mut out, ts);
-    out
-}
-
 //---------- IdentAny ----------
 
 /// Like `syn::Ident` but parses using `parse_any`, accepting keywords
