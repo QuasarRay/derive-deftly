@@ -2,6 +2,49 @@
 
 use super::prelude::*;
 
+use Equality::*;
+
+/// Return value of a (perhaps approximate) equality comparison
+///
+/// (Avoids use of `bool`)
+#[derive(Debug, Copy, Clone, Eq, PartialEq)]
+pub enum Equality {
+    Equal,
+    Different,
+}
+
+impl Equality {
+    /// Compare `a` and `b`
+    ///
+    /// (Name is short but avoids clash with `Ord::cmp`)
+    pub fn cmpeq<T: Eq>(a: &T, b: &T) -> Self {
+        if a == b {
+            Equal
+        } else {
+            Different
+        }
+    }
+}
+
+/// Compare, and return early if different
+///
+///  * **`cmpeq!(d: Equality)`**:
+///    If `d` is `Different`, returns it
+///
+///  * **`cmpeq!<T: Eq>(a: T, b: T);`**:
+///    compares `a` and `b` using `Equality::cmpeq`,
+///    and returns `Different` immediately if `a != b`.
+macro_rules! cmpeq {
+    { $a:expr, $b:expr } => {
+        cmpeq!(Equality::cmpeq(&$a, &$b));
+    };
+    { $r:expr } => {
+        if let d @ Different = $r {
+            return d;
+        }
+    };
+}
+
 /// Return the input, but with `None`-delimited `Group`s flattened away
 ///
 /// Loses some span information.
@@ -70,10 +113,10 @@ pub fn flatten_none_groups(ts: TokenStream) -> TokenStream {
 //
 // Comparing for equality has to be done by steam.
 // And a lot of stringification.
-pub fn tokens_cmp(a: TokenStream, b: TokenStream) -> cmp::Ordering {
+pub fn tokens_cmpeq(a: TokenStream, b: TokenStream) -> Equality {
     use proc_macro2::Group;
 
-    fn tt_cmp(a: TokenTree, b: TokenTree) -> Ordering {
+    fn tt_cmpeq(a: TokenTree, b: TokenTree) -> Equality {
         let discrim = |tt: &_| match tt {
             TT::Punct(_) => 0,
             TT::Literal(_) => 1,
@@ -81,20 +124,20 @@ pub fn tokens_cmp(a: TokenStream, b: TokenStream) -> cmp::Ordering {
             TT::Group(_) => 3,
         };
 
-        discrim(&a).cmp(&discrim(&b)).then_with(|| match (a, b) {
-            (TT::Group(a), TT::Group(b)) => group_cmp(a, b),
-            (l, r) => l.to_string().cmp(&r.to_string()),
-        })
+        cmpeq!(discrim(&a), discrim(&b));
+        match (a, b) {
+            (TT::Group(a), TT::Group(b)) => group_cmpeq(a, b),
+            (l, r) => Equality::cmpeq(&l.to_string(), &r.to_string()),
+        }
     }
 
-    fn group_cmp(a: Group, b: Group) -> Ordering {
+    fn group_cmpeq(a: Group, b: Group) -> Equality {
         let delim = |g: &Group| {
             proc_macro2::Group::new(g.delimiter(), TokenStream::new())
                 .to_string()
         };
-        delim(&a)
-            .cmp(&delim(&b))
-            .then_with(|| tokens_cmp(a.stream(), b.stream()))
+        cmpeq!(delim(&a), delim(&b));
+        tokens_cmpeq(a.stream(), b.stream())
     }
 
     let a = flatten_none_groups(a);
@@ -103,13 +146,13 @@ pub fn tokens_cmp(a: TokenStream, b: TokenStream) -> cmp::Ordering {
     for ab in a.into_iter().zip_longest(b) {
         let (a, b) = match ab {
             EitherOrBoth::Both(a, b) => (a, b),
-            EitherOrBoth::Left(_) => return Ordering::Greater,
-            EitherOrBoth::Right(_) => return Ordering::Less,
+            EitherOrBoth::Left(_) => return Different,
+            EitherOrBoth::Right(_) => return Different,
         };
-        match tt_cmp(a, b) {
-            Ordering::Equal => {}
+        match tt_cmpeq(a, b) {
+            Equal => {}
             neq => return neq,
         }
     }
-    return Ordering::Equal;
+    return Equal;
 }
