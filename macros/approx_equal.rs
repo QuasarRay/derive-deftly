@@ -127,7 +127,7 @@ pub fn tokens_cmpeq(a: TokenStream, b: TokenStream) -> Equality {
         cmpeq!(discrim(&a), discrim(&b));
         match (a, b) {
             (TT::Group(a), TT::Group(b)) => group_cmpeq(a, b),
-            (l, r) => Equality::cmpeq(&l.to_string(), &r.to_string()),
+            (a, b) => Equality::cmpeq(&a.to_string(), &b.to_string()),
         }
     }
 
