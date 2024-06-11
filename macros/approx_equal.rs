@@ -29,18 +29,20 @@ impl Equality {
 /// Compare, and return early if different
 ///
 ///  * **`cmpeq!(d: Equality)`**:
-///    If `d` is `Different`, returns it
+///    If `d` is `Different`, returns `Ok(d)`.
+///    (The containing scope should return `Result<Equality,>`.)
 ///
 ///  * **`cmpeq!<T: Eq>(a: T, b: T);`**:
 ///    compares `a` and `b` using `Equality::cmpeq`,
-///    and returns `Different` immediately if `a != b`.
+///    and returns immediately if `a != b`,
+///    or the comparison failed.
 macro_rules! cmpeq {
     { $a:expr, $b:expr } => {
         cmpeq!(Equality::cmpeq(&$a, &$b));
     };
     { $r:expr } => {
         if let d @ Different = $r {
-            return d;
+            return Ok(d);
         }
     };
 }
@@ -113,10 +115,10 @@ pub fn flatten_none_groups(ts: TokenStream) -> TokenStream {
 //
 // Comparing for equality has to be done by steam.
 // And a lot of stringification.
-pub fn tokens_cmpeq(a: TokenStream, b: TokenStream) -> Equality {
+pub fn tokens_cmpeq(a: TokenStream, b: TokenStream) -> syn::Result<Equality> {
     use proc_macro2::Group;
 
-    fn tt_cmpeq(a: TokenTree, b: TokenTree) -> Equality {
+    fn tt_cmpeq(a: TokenTree, b: TokenTree) -> syn::Result<Equality> {
         let discrim = |tt: &_| match tt {
             TT::Punct(_) => 0,
             TT::Literal(_) => 1,
@@ -127,11 +129,11 @@ pub fn tokens_cmpeq(a: TokenStream, b: TokenStream) -> Equality {
         cmpeq!(discrim(&a), discrim(&b));
         match (a, b) {
             (TT::Group(a), TT::Group(b)) => group_cmpeq(a, b),
-            (a, b) => Equality::cmpeq(&a.to_string(), &b.to_string()),
+            (a, b) => Ok(Equality::cmpeq(&a.to_string(), &b.to_string())),
         }
     }
 
-    fn group_cmpeq(a: Group, b: Group) -> Equality {
+    fn group_cmpeq(a: Group, b: Group) -> syn::Result<Equality> {
         let delim = |g: &Group| {
             proc_macro2::Group::new(g.delimiter(), TokenStream::new())
                 .to_string()
@@ -146,13 +148,13 @@ pub fn tokens_cmpeq(a: TokenStream, b: TokenStream) -> Equality {
     for ab in a.into_iter().zip_longest(b) {
         let (a, b) = match ab {
             EitherOrBoth::Both(a, b) => (a, b),
-            EitherOrBoth::Left(_) => return Different,
-            EitherOrBoth::Right(_) => return Different,
+            EitherOrBoth::Left(_) => return Ok(Different),
+            EitherOrBoth::Right(_) => return Ok(Different),
         };
-        match tt_cmpeq(a, b) {
+        match tt_cmpeq(a, b)? {
             Equal => {}
-            neq => return neq,
+            neq => return Ok(neq),
         }
     }
-    return Equal;
+    return Ok(Equal);
 }

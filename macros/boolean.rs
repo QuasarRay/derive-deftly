@@ -94,7 +94,7 @@ impl Subst<BooleanContext> {
 
             SD::is_empty(_, content) => expand(content)?.is_empty(),
             SD::approx_equal(_, [a, b]) => {
-                tokens_cmpeq(expand(a)?, expand(b)?) == Equality::Equal
+                tokens_cmpeq(expand(a)?, expand(b)?)? == Equality::Equal
             }
 
             SD::UserDefined(name) => name.lookup_eval_bool(ctx)?,

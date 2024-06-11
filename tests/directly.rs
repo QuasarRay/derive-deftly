@@ -84,14 +84,15 @@ fn check_approx_equal() {
             let o = l.next_back().unwrap();
             let l = l.as_str();
             let exp = match o {
-                '=' => Equality::Equal,
-                '!' => Equality::Different,
+                '=' => Ok(Equality::Equal),
+                '!' => Ok(Equality::Different),
+                '?' => Err(()),
                 other => panic!("{:?}", other),
             };
             for (lv, l) in versions(l) {
                 for (rv, r) in versions(r) {
                     eprintln!("{} {} {}", t, lv, rv);
-                    let got = tokens_cmpeq(l.clone(), r);
+                    let got = tokens_cmpeq(l.clone(), r).map_err(|_| ());
                     assert_eq!(got, exp);
                 }
             }
