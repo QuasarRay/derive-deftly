@@ -2,6 +2,7 @@
 
 use super::prelude::*;
 
+use proc_macro2::Group;
 use Equality::*;
 
 /// Return value of a (perhaps approximate) equality comparison
@@ -59,7 +60,7 @@ pub fn flatten_none_groups(ts: TokenStream) -> TokenStream {
                 }
                 TT::Group(g) => {
                     let span = g.span();
-                    let mut g = proc_macro2::Group::new(
+                    let mut g = Group::new(
                         g.delimiter(),
                         flatten_none_groups(g.stream()),
                     );
@@ -237,8 +238,6 @@ fn lit_cmpeq(a: &TokenTree, b: &TokenTree) -> syn::Result<Equality> {
 // Comparing for equality has to be done by steam.
 // And a lot of stringification.
 pub fn tokens_cmpeq(a: TokenStream, b: TokenStream) -> syn::Result<Equality> {
-    use proc_macro2::Group;
-
     fn tt_cmpeq(a: TokenTree, b: TokenTree) -> syn::Result<Equality> {
         let discrim = |tt: &_| match tt {
             TT::Punct(_) => 0,
@@ -257,7 +256,7 @@ pub fn tokens_cmpeq(a: TokenStream, b: TokenStream) -> syn::Result<Equality> {
 
     fn group_cmpeq(a: Group, b: Group) -> syn::Result<Equality> {
         let delim = |g: &Group| {
-            proc_macro2::Group::new(g.delimiter(), TokenStream::new())
+            Group::new(g.delimiter(), TokenStream::new())
                 .to_string()
         };
         cmpeq!(delim(&a), delim(&b));
