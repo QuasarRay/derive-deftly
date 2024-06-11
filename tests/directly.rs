@@ -39,40 +39,106 @@ mod check_semver_check;
 
 #[test]
 fn check_approx_equal() {
-    macro_rules! chk { { $eq_ne:ident, $a:tt, $b:tt } => { paste! {
-        let a = quote! { $a };
-        let b = quote! { $b };
-        let ord = tokens_cmpeq(a.clone(), b.clone());
-        [< assert_ $eq_ne >]!(
-            ord, Equality::Equal,
-            "{} <=> {} was {:?}", a, b, ord
-        );
-    } } }
+    // Testing all the corner cases for literals is quite hard.
+
+    // negative literals are deeply weird, see
+    //   https://doc.rust-lang.org/reference/procedural-macros.html#declarative-macro-tokens-and-procedural-macro-tokens
+    // so we must test this in a crazy way too.
+    //
+    // We can make single-token negative literals with
+    // the constructors on proc_macro2::Literal, or with the FromStr impl.
+    // Empirically, though, a proc_macro2::TokenStream *cannot*
+    // contain negative literals!  They seem to be converted on input.
+
+    // So, anyway, we test comparisons of tokenstreams constructed
+    //  - by parsing a string
+    //  - by putting a single literal into a TS
+    // (as returned by versions()), in all four combinations,
+    // for each test case.
+
+    fn versions(s: &str) -> impl IntoIterator<Item = (&str, TokenStream)> {
+        let s = s.trim();
+
+        let ts_direct: TokenStream = syn::parse_str(s).expect(s);
+        if s.starts_with('-') {
+            match ts_direct.clone().into_iter().next() {
+                Some(TT::Punct(p)) if p.as_char() == '-' => {}
+                other => panic!("{:?} => {:?}", s, other),
+            }
+        }
+
+        let lit = proc_macro2::Literal::from_str(s).expect(s);
+        let tt = TT::Literal(lit.clone());
+        let ts_from_tt: TokenStream = iter::once(tt).collect();
+        vec![
+            ("parse2::<TS>", ts_direct),
+            ("Literal::from_str", ts_from_tt),
+        ]
+    }
+
+    fn chk(s: &str) {
+        for t in s.split('\n').map(|t| t.trim()).filter(|t| !t.is_empty()) {
+            eprintln!("{}", t);
+            let (l, r) = t.rsplit_once('=').unwrap();
+            let mut l = l.chars();
+            let o = l.next_back().unwrap();
+            let l = l.as_str();
+            let exp = match o {
+                '=' => Equality::Equal,
+                '!' => Equality::Different,
+                other => panic!("{:?}", other),
+            };
+            for (lv, l) in versions(l) {
+                for (rv, r) in versions(r) {
+                    eprintln!("{} {} {}", t, lv, rv);
+                    let got = tokens_cmpeq(l.clone(), r);
+                    assert_eq!(got, exp);
+                }
+            }
+        }
+    }
 
     // literals; they are compared by their string representation
 
     // str
-    chk!(ne, "hi", "h\x69");
-    chk!(ne, "hi"x, "hi");
-    chk!(ne, "hi", r"hi");
+    chk(r#"
+        "hi"    != "h\x69"
+        "hi"x   != "hi"
+        "hi"    != r"hi"
+    "#);
+
     // byte str
-    chk!(ne, b"hi", b"h\x69");
-    chk!(ne, b"hi"x, b"hi");
-    chk!(ne, b"hi", br"hi");
+    chk(r#"
+        b"hi"   != b"h\x69"
+        b"hi"x  != b"hi"
+        b"hi"   != br"hi"
+    "#);
+
     // char
-    chk!(ne, 'i', '\x69');
-    chk!(ne, 'i'x, 'i');
+    chk(r#"
+        'i'     != '\x69'
+        'i'x    != 'i'
+    "#);
+
     // byte
-    chk!(ne, b'i', b'\x69');
-    chk!(ne, b'i'x, b'i');
+    chk(r#"
+        b'i'    != b'\x69'
+        b'i'x   != b'i'
+    "#);
+
     // int
-    chk!(ne, 1, 01);
-    chk!(ne, 1, 0o1);
-    chk!(ne, 1, 0b1);
-    chk!(ne, 1, 0x1);
-    chk!(ne, 1, 1_u32);
-    chk!(ne, 1u32, 1_u32);
+    chk(r#"
+        1       != 01
+        1       != 0o1
+        1       != 0b1
+        1       != 0x1
+        1       != 1_u32
+        1u32    != 1_u32
+    "#);
+
     // float
-    chk!(ne, 32, 32.0);
-    chk!(ne, 32.0_f32, 32.0f32);
+    chk(r#"
+        32      != 32.0
+        32.0_f32 != 32.0f32
+    "#);
 }

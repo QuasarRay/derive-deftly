@@ -141,7 +141,6 @@ use std::rc::Rc;
 use easy_ext::ext;
 use educe::Educe;
 use itertools::Itertools;
-use paste::paste;
 use regex::Regex;
 use static_assertions::assert_not_impl_any;
 
