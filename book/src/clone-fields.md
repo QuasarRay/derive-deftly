@@ -1,7 +1,9 @@
-# Simple templates: fields and repetition
+# Working with structs and fields
 
-Let's imagine we had to write Clone from scratch for a simple structure
-like this:
+Let's start by imagining that
+we didn't have `derive-deftly`,
+and we had to write Clone from scratch
+for a simple structure like this:
 
 ```
 struct GiftBasket {
@@ -75,13 +77,18 @@ define_derive_deftly! {
 }
 ```
 
-Let's look at that template.  You've already seen `$ttype`: it expands
+Let's look at that template piece by piece.
+Certain marked "expansion keywords" in the contents
+(those marked with `$`)
+are replaced with a value that depends on the struct
+that the template is beling applied to.
+
+You've already seen `$ttype`: it expands
 to the type on which you are applying the macro.  There are two new
 pieces of syntax here, though:
 [`$( ... )`][t:repetition]
 and
 [`$fname`][x:fname].
-
 
 In derive-deftly templates, `$( ... )`  denotes repetition:
 it repeats what is inside it
@@ -89,7 +96,8 @@ an "appropriate" number of times.
 (We'll give a definition of "appropriate" later on.)
 Since we want to clone every field in our struct,
 we are repating the `field: self.field.clone() ,`
-part of our implementation.
+part of our implementation
+once for each field.
 
 The `$fname` expansion means "the name of a field".
 Which field?
@@ -100,84 +108,15 @@ to the name of a different field each time.
 
 (Again, more advanced repetition is possible;
 there's
-[more to come](clone-enums.md#a-further-note-on-reptition).)
+[more to come](clone-enums.md#a-further-note-on-repetition).)
 
+## An aside on naming
 
-> ### On naming
->
-> Many derive-deftly expansions'
-> [names start with][keyword-initial-letters]
-> `t` for **top-level**
-> (whatever you are applying the template to),
-> `v` for **variant**
-> (a variant of an `enum`),
-> or `f` for **field**
-> (a single field of a struct or variant).
->
-> So far, you've seen `$ttype` for "top-level type" and `$fname` for
-> "field name".
->
-> (We say "top-level" instead of "struct":
-> later on, we'll be showing you how to apply
-> derive_deftly to `enums`.)
->
-> Many derive-deftly expansions end with
-> a short identifier for what they contain.
-> For example, `$tname` is the name of a top-level type,
-> `$vname` is the name of a variant,
-> and `$fname` is the name of a field.
-> Whenever possible, we have tried to use the same
-> identifier for the `t`, `v`, and `f` cases,
-> whenever it is logical.
-
-
-#### Will MyClone apply to other kinds of struct?
-
-Rust defines several kinds of struct:
-structs with fields (`struct Foo {...};`),
-tuple structs (`struct Foo(...);`),
-and unit structs (`struct Foo;`).
-
-If you try to apply the `MyClone` template above
-to a struct with fields,
-it will work just fine.
-But with a tuple struct, or a unit struct,
-you might expect it to fail.
-
-Surprisingly, it will still work fine!
-This isn't because of any clever trickery
-from derive-deftly:
-it's just how Rust works.
-When you use it on tuple or unit structs,
-the `MyClone` template we wrote above will expand
-to code like this...
-which happens to be valid syntax!
-
-```
-struct TupleStruct(String, Option<String>);
-impl Clone for TupleStruct {
-    fn clone(&self) -> Self {
-        Self {
-            0: self.0.clone(),
-            1: self.1.clone(),
-        }
-    }
-}
-
-struct UnitStruct;
-impl Clone for UnitStruct {
-    fn clone(&self) -> Self {
-        Self {
-        }
-    }
-}
-```
-
-This will be a common theme in what follows:
-Rust often lets you use a slightly unidiomatic syntax
-so that you can handle many different cases
-in the same way.
+At this point, you've seen expansions with names like `$ttype`
+and `$fname`, and you may be wondering where they come from.
+If you want to know more,
+you can skip ahead to the section
+on [naming conventions](./expansions-naming.md).
 
 [t:repetition]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#t:repetition
 [x:fname]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#x:fname
-[keyword-initial-letters]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#keyword-initial-letters
