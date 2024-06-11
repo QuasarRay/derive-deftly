@@ -199,6 +199,31 @@ fn lit_cmpeq(a: &TokenTree, b: &TokenTree) -> syn::Result<Equality> {
     }
 }
 
+fn tt_cmpeq(a: TokenTree, b: TokenTree) -> syn::Result<Equality> {
+    let discrim = |tt: &_| match tt {
+        TT::Punct(_) => 0,
+        TT::Literal(_) => 1,
+        TT::Ident(_) => 2,
+        TT::Group(_) => 3,
+    };
+
+    cmpeq!(discrim(&a), discrim(&b));
+    match (a, b) {
+        (TT::Group(a), TT::Group(b)) => group_cmpeq(a, b),
+        (a @ TT::Literal(_), b @ TT::Literal(_)) => lit_cmpeq(&a, &b),
+        (a, b) => Ok(Equality::cmpeq(&a.to_string(), &b.to_string())),
+    }
+}
+
+fn group_cmpeq(a: Group, b: Group) -> syn::Result<Equality> {
+    let delim = |g: &Group| {
+        Group::new(g.delimiter(), TokenStream::new())
+            .to_string()
+    };
+    cmpeq!(delim(&a), delim(&b));
+    tokens_cmpeq(a.stream(), b.stream())
+}
+
 /// Compares two `TokenStream`s for "equivalence"
 ///
 /// We intend that two `TokenStream`s count as "equivalent"
@@ -238,31 +263,6 @@ fn lit_cmpeq(a: &TokenTree, b: &TokenTree) -> syn::Result<Equality> {
 // Comparing for equality has to be done by steam.
 // And a lot of stringification.
 pub fn tokens_cmpeq(a: TokenStream, b: TokenStream) -> syn::Result<Equality> {
-    fn tt_cmpeq(a: TokenTree, b: TokenTree) -> syn::Result<Equality> {
-        let discrim = |tt: &_| match tt {
-            TT::Punct(_) => 0,
-            TT::Literal(_) => 1,
-            TT::Ident(_) => 2,
-            TT::Group(_) => 3,
-        };
-
-        cmpeq!(discrim(&a), discrim(&b));
-        match (a, b) {
-            (TT::Group(a), TT::Group(b)) => group_cmpeq(a, b),
-            (a @ TT::Literal(_), b @ TT::Literal(_)) => lit_cmpeq(&a, &b),
-            (a, b) => Ok(Equality::cmpeq(&a.to_string(), &b.to_string())),
-        }
-    }
-
-    fn group_cmpeq(a: Group, b: Group) -> syn::Result<Equality> {
-        let delim = |g: &Group| {
-            Group::new(g.delimiter(), TokenStream::new())
-                .to_string()
-        };
-        cmpeq!(delim(&a), delim(&b));
-        tokens_cmpeq(a.stream(), b.stream())
-    }
-
     let a = flatten_none_groups(a);
     let b = flatten_none_groups(b);
 
