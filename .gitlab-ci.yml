@@ -236,7 +236,7 @@ pages:
     - ./maint/via-cargo-install-in-ci mdbook-linkcheck
     - ./maint/build-mdbook
     - mkdir -p public/latest
-    - mv book/book/ public/latest/guide
+    - mv book/book/html public/latest/guide
   artifacts:
     paths:
       - public
