@@ -25,6 +25,30 @@ We expect to increase it cautiously and only with good reason.
 
 ## Changelog
 
+### 0.12.0
+
+#### Breaking
+
+ * Forbid defining templates named starting with lowercase letters.
+   (This is now reserved for future expansion.)
+
+#### Deprecated
+
+ * `define_derive_deftly!` calls should use `:` now, rather tha `=`.
+   `=` is still supported, for now, but it will be removed soon.
+
+#### Added
+
+ * Accept ":" in `define_derive_deftly!`, as well as "=",
+ * Reference has stable anchors (suitable for use with `#...` in URLs)
+   for each keyword and section.
+
+#### Improved
+
+ * Guide (previously the Tutorial aka Introduction) is now an mdbook book.
+   (Links from out-of-tree may need updating.)
+ * Many improvements to the Guide.
+
 ### 0.11.0
 
 #### Breaking
