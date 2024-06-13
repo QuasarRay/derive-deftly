@@ -1,4 +1,17 @@
 //! Implementation of `${approx_equal ..}`, and support functions
+//
+// # Note on error handling
+//
+// Many functions here take `cmp_loc: ErrorLoc` and return `syn::Result`.
+// `cmp_loc` is the comparison operator (`kw_span` in `boolean.rs`,
+// referring to the `approx_equal` keyword.
+//
+// When generating errors, we include this in our list of ErrorLocs.
+//
+// An alternative would be to return a bespoke error type,
+// consisting of the pieces to make the error from.
+// I experimented with this, but it's definitely worse.
+// Also this has trouble handling a `syn::Error` from other code we call.
 
 use super::prelude::*;
 
@@ -82,20 +95,22 @@ trait LitComparable {
     fn lc_compare(
         a: &Self,
         b: &Self,
+        cmp_loc: &ErrorLoc<'_>,
     ) -> syn::Result<Equality>;
 }
 trait LitConvertible {
     type V: Eq;
-    fn lc_convert(&self) -> syn::Result<Self::V>;
+    fn lc_convert(&self, cmp_loc: &ErrorLoc<'_>) -> syn::Result<Self::V>;
 }
 fn str_check_suffix(
     suffix: &str,
     span: Span,
+    cmp_loc: &ErrorLoc<'_>,
 ) -> syn::Result<()> {
     if suffix.is_empty() {
         Ok(())
     } else {
-        Err(span.error(
+        Err([(span, "literal"), *cmp_loc].error(
  "comparison of string/byte/character literals with suffixes is not supported"
         ))
     }
@@ -103,8 +118,8 @@ fn str_check_suffix(
 macro_rules! impl_LitComparable_str { { $lit:ty, $val:ty } => {
     impl LitConvertible for $lit {
         type V = $val;
-        fn lc_convert(&self) -> syn::Result<Self::V> {
-            str_check_suffix(self.suffix(), self.span())?;
+        fn lc_convert(&self, cmp_loc: &ErrorLoc<'_>) -> syn::Result<Self::V> {
+            str_check_suffix(self.suffix(), self.span(), cmp_loc)?;
             Ok(self.value())
         }
     }
@@ -120,18 +135,19 @@ impl<T: LitConvertible> LitComparable for T {
     fn lc_compare(
         a: &Self,
         b: &Self,
+        cmp_loc: &ErrorLoc<'_>,
     ) -> syn::Result<Equality> {
         Ok(Equality::cmpeq(
             //
-            &a.lc_convert()?,
-            &b.lc_convert()?,
+            &a.lc_convert(cmp_loc)?,
+            &b.lc_convert(cmp_loc)?,
         ))
     }
 }
 
 impl LitConvertible for syn::LitBool {
     type V = ();
-    fn lc_convert(&self) -> syn::Result<Self::V> {
+    fn lc_convert(&self, _cmp_loc: &ErrorLoc<'_>) -> syn::Result<Self::V> {
         Err(self.error(
             "internal error - TokenTree::Literal parsed as syn::Lit::Bool",
         ))
@@ -140,7 +156,7 @@ impl LitConvertible for syn::LitBool {
 
 impl LitConvertible for syn::LitFloat {
     type V = String;
-    fn lc_convert(&self) -> syn::Result<Self::V> {
+    fn lc_convert(&self, _cmp_loc: &ErrorLoc<'_>) -> syn::Result<Self::V> {
         Ok(self.token().to_string())
     }
 }
@@ -149,6 +165,7 @@ impl LitComparable for syn::LitInt {
     fn lc_compare(
         a: &Self,
         b: &Self,
+        cmp_loc: &ErrorLoc<'_>,
     ) -> syn::Result<Equality> {
         match (
             a.base10_parse::<u64>(),
@@ -158,6 +175,7 @@ impl LitComparable for syn::LitInt {
             (Err(ae), Err(be)) => Err(
                 [(a.span(), &*format!("left: {}", ae)),
                  (b.span(), &*format!("right: {}", be)),
+                 *cmp_loc,
                 ].error(
  "integer literal comparison with both values >u64 is not supported"
                 )),
@@ -169,6 +187,7 @@ impl LitComparable for syn::LitInt {
 fn lit_cmpeq(
     a: &TokenTree,
     b: &TokenTree,
+    cmp_loc: &ErrorLoc<'_>,
 ) -> syn::Result<Equality> {
     let mk_lit = |tt: &TokenTree| -> syn::Result<syn::Lit> {
         syn::parse2(tt.clone().into())
@@ -177,7 +196,7 @@ fn lit_cmpeq(
     macro_rules! match_lits { { $e:expr, $( $V:ident )* } => {
         match $e {
           $(
-            (syn::Lit::$V(a), syn::Lit::$V(b)) => LitComparable::lc_compare(a, b),
+            (syn::Lit::$V(a), syn::Lit::$V(b)) => LitComparable::lc_compare(a, b, cmp_loc),
             (syn::Lit::$V(_), _) => Ok(Different),
             (_, syn::Lit::$V(_)) => Ok(Different),
           )*
@@ -205,6 +224,7 @@ fn lit_cmpeq(
 fn tt_cmpeq(
     a: TokenTree,
     b: TokenTree,
+    cmp_loc: &ErrorLoc<'_>,
 ) -> syn::Result<Equality> {
     let discrim = |tt: &_| match tt {
         TT::Punct(_) => 0,
@@ -215,8 +235,8 @@ fn tt_cmpeq(
 
     cmpeq!(discrim(&a), discrim(&b));
     match (a, b) {
-        (TT::Group(a), TT::Group(b)) => group_cmpeq(a, b),
-        (a @ TT::Literal(_), b @ TT::Literal(_)) => lit_cmpeq(&a, &b),
+        (TT::Group(a), TT::Group(b)) => group_cmpeq(a, b, cmp_loc),
+        (a @ TT::Literal(_), b @ TT::Literal(_)) => lit_cmpeq(&a, &b, cmp_loc),
         (a, b) => Ok(Equality::cmpeq(&a.to_string(), &b.to_string())),
     }
 }
@@ -224,17 +244,19 @@ fn tt_cmpeq(
 fn group_cmpeq(
     a: Group,
     b: Group,
+    cmp_loc: &ErrorLoc<'_>,
 ) -> syn::Result<Equality> {
     let delim =
         |g: &Group| Group::new(g.delimiter(), TokenStream::new()).to_string();
     cmpeq!(delim(&a), delim(&b));
-    ts_cmpeq(a.stream(), b.stream())
+    ts_cmpeq(a.stream(), b.stream(), cmp_loc)
 }
 
 /// Internal, recursive, comparison of flattened `TokenStream`s
 fn ts_cmpeq(
     a: TokenStream,
     b: TokenStream,
+    cmp_loc: &ErrorLoc<'_>,
 ) -> syn::Result<Equality> {
     for ab in a.into_iter().zip_longest(b) {
         let (a, b) = match ab {
@@ -242,12 +264,11 @@ fn ts_cmpeq(
             EitherOrBoth::Left(_) => return Ok(Different),
             EitherOrBoth::Right(_) => return Ok(Different),
         };
-        match tt_cmpeq(a, b)? {
+        match tt_cmpeq(a, b, cmp_loc)? {
             Equal => {}
             neq => return Ok(neq),
         }
     }
-
     return Ok(Equal);
 }
 
@@ -292,8 +313,9 @@ fn ts_cmpeq(
 pub fn tokens_cmpeq(
     a: TokenStream,
     b: TokenStream,
+    cmp_span: Span,
 ) -> syn::Result<Equality> {
     let a = flatten_none_groups(a);
     let b = flatten_none_groups(b);
-    ts_cmpeq(a, b)
+    ts_cmpeq(a, b, &(cmp_span, "comparison"))
 }

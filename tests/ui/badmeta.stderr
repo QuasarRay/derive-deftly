@@ -378,7 +378,7 @@ error: missing `as ...` in meta expansion
 116 |     ${tmeta(dot)} // forgot `.. as`, so `"."` not even parsed
     |       ^^^^^^^^^
 
-error: comparison of string/byte/character literals with suffixes is not supported
+error: comparison of string/byte/character literals with suffixes is not supported (literal)
    --> ui/badmeta.rs:10:40
     |
 10  |   #[deftly(integer = "42", with_suffix = "42"x)]
@@ -391,6 +391,12 @@ error: comparison of string/byte/character literals with suffixes is not support
     | |_- in this macro invocation
     |
     = note: this error originates in the macro `derive_deftly_driver_DataType` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: comparison of string/byte/character literals with suffixes is not supported (comparison)
+   --> ui/badmeta.rs:121:10
+    |
+121 |     ${if approx_equal("42", ${tmeta(with_suffix) as str}) {}}
+    |          ^^^^^^^^^^^^
 
 error: integer literal comparison with both values >u64 is not supported (left: number too large to fit in target type)
    --> ui/badmeta.rs:125:23
@@ -412,6 +418,12 @@ error: integer literal comparison with both values >u64 is not supported (right:
     | |_- in this macro invocation
     |
     = note: this error originates in the macro `derive_deftly_driver_DataType` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: integer literal comparison with both values >u64 is not supported (comparison)
+   --> ui/badmeta.rs:125:10
+    |
+125 |     ${if approx_equal(0x12345678_12345678_12345678_aaaaaaaa,
+    |          ^^^^^^^^^^^^
 
 warning: unused macro definition: `derive_deftly_template_WrongRequestSyntax`
    --> ui/badmeta.rs:104:5
