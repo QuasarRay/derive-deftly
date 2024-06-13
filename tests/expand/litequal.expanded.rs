@@ -21,39 +21,19 @@ fn main() {
     let p = |s: &str| {
         ::std::io::_print(format_args!("{0}", s));
     };
-    {
-        ::std::io::_print(format_args!("{0}", "a"));
-    };
+    p("a");
     p(" simple");
-    {
-        ::std::io::_print(format_args!(".\n"));
-    };
-    {
-        ::std::io::_print(format_args!("{0}", "b"));
-    };
+    p(".\n");
+    p("b");
     p(" leftpad");
-    {
-        ::std::io::_print(format_args!(".\n"));
-    };
-    {
-        ::std::io::_print(format_args!("{0}", "c"));
-    };
+    p(".\n");
+    p("c");
     p(" hex");
-    {
-        ::std::io::_print(format_args!(".\n"));
-    };
-    {
-        ::std::io::_print(format_args!("{0}", "d"));
-    };
+    p(".\n");
+    p("d");
     p(" raw");
-    {
-        ::std::io::_print(format_args!(".\n"));
-    };
-    {
-        ::std::io::_print(format_args!("{0}", "e"));
-    };
+    p(".\n");
+    p("e");
     p(" suffix");
-    {
-        ::std::io::_print(format_args!(".\n"));
-    };
+    p(".\n");
 }
