@@ -7,6 +7,8 @@ use derive_deftly::{define_derive_deftly, derive_deftly_adhoc, Deftly};
 #[deftly(several = "first")]
 #[deftly(several = "second")]
 #[deftly(several_inner(several = "first", several = "second"))]
+//
+//
 struct DataType {}
 
 derive_deftly_adhoc! {
