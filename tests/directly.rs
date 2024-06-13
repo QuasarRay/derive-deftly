@@ -92,7 +92,8 @@ fn check_approx_equal() {
             for (lv, l) in versions(l) {
                 for (rv, r) in versions(r) {
                     eprintln!("{} {} {}", t, lv, rv);
-                    let got = tokens_cmpeq(l.clone(), r).map_err(|_| ());
+                    let got = tokens_cmpeq(l.clone(), r)
+                        .map_err(|_| ());
                     assert_eq!(got, exp);
                 }
             }

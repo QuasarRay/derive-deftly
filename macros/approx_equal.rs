@@ -166,7 +166,10 @@ impl LitComparable for syn::LitInt {
     }
 }
 
-fn lit_cmpeq(a: &TokenTree, b: &TokenTree) -> syn::Result<Equality> {
+fn lit_cmpeq(
+    a: &TokenTree,
+    b: &TokenTree,
+) -> syn::Result<Equality> {
     let mk_lit = |tt: &TokenTree| -> syn::Result<syn::Lit> {
         syn::parse2(tt.clone().into())
     };
@@ -199,7 +202,10 @@ fn lit_cmpeq(a: &TokenTree, b: &TokenTree) -> syn::Result<Equality> {
     }
 }
 
-fn tt_cmpeq(a: TokenTree, b: TokenTree) -> syn::Result<Equality> {
+fn tt_cmpeq(
+    a: TokenTree,
+    b: TokenTree,
+) -> syn::Result<Equality> {
     let discrim = |tt: &_| match tt {
         TT::Punct(_) => 0,
         TT::Literal(_) => 1,
@@ -215,7 +221,10 @@ fn tt_cmpeq(a: TokenTree, b: TokenTree) -> syn::Result<Equality> {
     }
 }
 
-fn group_cmpeq(a: Group, b: Group) -> syn::Result<Equality> {
+fn group_cmpeq(
+    a: Group,
+    b: Group,
+) -> syn::Result<Equality> {
     let delim =
         |g: &Group| Group::new(g.delimiter(), TokenStream::new()).to_string();
     cmpeq!(delim(&a), delim(&b));
@@ -223,7 +232,10 @@ fn group_cmpeq(a: Group, b: Group) -> syn::Result<Equality> {
 }
 
 /// Internal, recursive, comparison of flattened `TokenStream`s
-fn ts_cmpeq(a: TokenStream, b: TokenStream) -> syn::Result<Equality> {
+fn ts_cmpeq(
+    a: TokenStream,
+    b: TokenStream,
+) -> syn::Result<Equality> {
     for ab in a.into_iter().zip_longest(b) {
         let (a, b) = match ab {
             EitherOrBoth::Both(a, b) => (a, b),
@@ -277,7 +289,10 @@ fn ts_cmpeq(a: TokenStream, b: TokenStream) -> syn::Result<Equality> {
 //
 // Comparing for equality has to be done by steam.
 // And a lot of stringification.
-pub fn tokens_cmpeq(a: TokenStream, b: TokenStream) -> syn::Result<Equality> {
+pub fn tokens_cmpeq(
+    a: TokenStream,
+    b: TokenStream,
+) -> syn::Result<Equality> {
     let a = flatten_none_groups(a);
     let b = flatten_none_groups(b);
     ts_cmpeq(a, b)
