@@ -216,10 +216,8 @@ fn tt_cmpeq(a: TokenTree, b: TokenTree) -> syn::Result<Equality> {
 }
 
 fn group_cmpeq(a: Group, b: Group) -> syn::Result<Equality> {
-    let delim = |g: &Group| {
-        Group::new(g.delimiter(), TokenStream::new())
-            .to_string()
-    };
+    let delim =
+        |g: &Group| Group::new(g.delimiter(), TokenStream::new()).to_string();
     cmpeq!(delim(&a), delim(&b));
     tokens_cmpeq(a.stream(), b.stream())
 }
