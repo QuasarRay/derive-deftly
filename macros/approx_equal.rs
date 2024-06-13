@@ -219,7 +219,24 @@ fn group_cmpeq(a: Group, b: Group) -> syn::Result<Equality> {
     let delim =
         |g: &Group| Group::new(g.delimiter(), TokenStream::new()).to_string();
     cmpeq!(delim(&a), delim(&b));
-    tokens_cmpeq(a.stream(), b.stream())
+    ts_cmpeq(a.stream(), b.stream())
+}
+
+/// Internal, recursive, comparison of flattened `TokenStream`s
+fn ts_cmpeq(a: TokenStream, b: TokenStream) -> syn::Result<Equality> {
+    for ab in a.into_iter().zip_longest(b) {
+        let (a, b) = match ab {
+            EitherOrBoth::Both(a, b) => (a, b),
+            EitherOrBoth::Left(_) => return Ok(Different),
+            EitherOrBoth::Right(_) => return Ok(Different),
+        };
+        match tt_cmpeq(a, b)? {
+            Equal => {}
+            neq => return Ok(neq),
+        }
+    }
+
+    return Ok(Equal);
 }
 
 /// Compares two `TokenStream`s for "equivalence"
@@ -263,17 +280,5 @@ fn group_cmpeq(a: Group, b: Group) -> syn::Result<Equality> {
 pub fn tokens_cmpeq(a: TokenStream, b: TokenStream) -> syn::Result<Equality> {
     let a = flatten_none_groups(a);
     let b = flatten_none_groups(b);
-
-    for ab in a.into_iter().zip_longest(b) {
-        let (a, b) = match ab {
-            EitherOrBoth::Both(a, b) => (a, b),
-            EitherOrBoth::Left(_) => return Ok(Different),
-            EitherOrBoth::Right(_) => return Ok(Different),
-        };
-        match tt_cmpeq(a, b)? {
-            Equal => {}
-            neq => return Ok(neq),
-        }
-    }
-    return Ok(Equal);
+    ts_cmpeq(a, b)
 }
