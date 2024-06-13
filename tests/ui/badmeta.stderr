@@ -76,7 +76,7 @@ error: attribute value expanded, but no suitable value in data structure definit
 6  | | #[deftly(dot = ".")]
 7  | | #[deftly(several = "first")]
 ...  |
-11 | | //
+11 | | #[deftly(int128 = "0x12345678_12345678_12345678_12345678")]
 12 | | struct DataType {}
    | |_________________^
 ...
@@ -185,7 +185,7 @@ error: attribute value expanded, but no value in data structure definition (in t
 6  | | #[deftly(dot = ".")]
 7  | | #[deftly(several = "first")]
 ...  |
-11 | | //
+11 | | #[deftly(int128 = "0x12345678_12345678_12345678_12345678")]
 12 | | struct DataType {}
    | |_________________^
 ...
@@ -229,7 +229,7 @@ error: attribute value expanded, but no suitable value in data structure definit
 6  | | #[deftly(dot = ".")]
 7  | | #[deftly(several = "first")]
 ...  |
-11 | | //
+11 | | #[deftly(int128 = "0x12345678_12345678_12345678_12345678")]
 12 | | struct DataType {}
    | |_________________^
 ...

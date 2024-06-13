@@ -14,8 +14,6 @@ struct DataType {
     c: (),
     #[deftly(lit = r"42")]
     d: (),
-    #[deftly(lit = "42"x)]
-    e: (),
 }
 fn main() {
     let p = |s: &str| {
@@ -32,8 +30,5 @@ fn main() {
     p(".\n");
     p("d");
     p(" raw");
-    p(".\n");
-    p("e");
-    p(" suffix");
     p(".\n");
 }

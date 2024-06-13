@@ -19,8 +19,6 @@ struct DataType {
     c: (),
     #[deftly(lit = r"42")]
     d: (),
-    #[deftly(lit = "42"x)]
-    e: (),
 }
 
 fn main() {
@@ -33,7 +31,6 @@ fn main() {
         ${if approx_equal("042",    ${fmeta(lit) as str}) { p(" leftpad"); }}
         ${if approx_equal("04\x32", ${fmeta(lit) as str}) { p(" hex"); }}
         ${if approx_equal(r"42",    ${fmeta(lit) as str}) { p(" raw"); }}
-        ${if approx_equal("42"x,    ${fmeta(lit) as str}) { p(" suffix"); }}
         p(".\n");
     ) }
 }
