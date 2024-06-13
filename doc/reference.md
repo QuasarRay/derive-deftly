@@ -1176,7 +1176,6 @@ Literals are generally compared by value:
  * Negative literals are compared as two tokens,
    `-` and a nonnegative literal.
  * Comparison of other literals is unsupported.
-<!-- XXXX this is not currently true -->
 
 The `ARG`s are in derive-deftly's usual
 [syntax for positional arguments](#named-and-positional-template-arguments-to-expansions-and-conditions).

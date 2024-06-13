@@ -104,18 +104,18 @@ fn check_approx_equal() {
     // str
     chk(r#"
         "hi"    != "ho"
-        "hi"    != "h\x69"
-        "hi"x   != "hi"
-        "hi"    != r"hi"
+        "hi"    == "h\x69"
+        "hi"x   ?= "hi"
+        "hi"    == r"hi"
         "hi"    != b"hi"
     "#);
 
     // byte str
     chk(r#"
         b"hi"   != b"ho"
-        b"hi"   != b"h\x69"
-        b"hi"x  != b"hi"
-        b"hi"   != br"hi"
+        b"hi"   == b"h\x69"
+        b"hi"x  ?= b"hi"
+        b"hi"   == br"hi"
         b"i"    !=  'i'
         b"i"    != b'i'
     "#);
@@ -124,8 +124,8 @@ fn check_approx_equal() {
     chk(r#"
         'i'     != 'o'
         'i'     == 'i'
-        'i'     != '\x69'
-        'i'x    != 'i'
+        'i'     == '\x69'
+        'i'x    ?= 'i'
         'i'     != b'i'
     "#);
 
@@ -133,8 +133,8 @@ fn check_approx_equal() {
     chk(r#"
         b'i'    != b'o'
         b'i'    == b'i'
-        b'i'    != b'\x69'
-        b'i'x   != b'i'
+        b'i'    == b'\x69'
+        b'i'x   ?= b'i'
         b'i'    != 0x69
     "#);
 
@@ -142,19 +142,19 @@ fn check_approx_equal() {
     chk(r#"
         1       != 2
         1       != -1
-        1       != 01
-        1       != 0o1
-        1       != 0b1
-        1       != 0x1
-        1       != 1_u32
-        1u32    != 1_u32
-        -1u32   != -1_u32
+        1       == 01
+        1       == 0o1
+        1       == 0b1
+        1       == 0x1
+        1       == 1_u32
+        1u32    == 1_u32
+        -1u32   == -1_u32
 
         0xffff_ffff_ffff_ffff == 0xffff_ffff_ffff_ffff
         -0xffff_ffff_ffff_ffff == -0xffff_ffff_ffff_ffff
 
         0x7777_1234_5678_1234_5678_1234_5678_1234_5678 != 1
-        0x1234_5678_1234_5678_1234_5678_1234_5678 == 0x1234_5678_1234_5678_1234_5678_1234_5678
+        0x1234_5678_1234_5678_1234_5678_1234_5678 ?= 0x1234_5678_1234_5678_1234_5678_1234_5678
     "#);
 
     // float

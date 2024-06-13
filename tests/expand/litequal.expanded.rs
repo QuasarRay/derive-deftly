@@ -21,14 +21,18 @@ fn main() {
     };
     p("a");
     p(" simple");
+    p(" raw");
     p(".\n");
     p("b");
     p(" leftpad");
+    p(" hex");
     p(".\n");
     p("c");
+    p(" leftpad");
     p(" hex");
     p(".\n");
     p("d");
+    p(" simple");
     p(" raw");
     p(".\n");
 }

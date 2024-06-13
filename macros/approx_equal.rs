@@ -77,6 +77,127 @@ pub fn flatten_none_groups(ts: TokenStream) -> TokenStream {
     out
 }
 
+trait LitComparable {
+    fn lc_compare(
+        a: &Self,
+        b: &Self,
+    ) -> syn::Result<Equality>;
+}
+trait LitConvertible {
+    type V: Eq;
+    fn lc_convert(&self) -> syn::Result<Self::V>;
+}
+fn str_check_suffix(
+    suffix: &str,
+    span: Span,
+) -> syn::Result<()> {
+    if suffix.is_empty() {
+        Ok(())
+    } else {
+        Err(span.error(
+ "comparison of string/byte/character literals with suffixes is not supported"
+        ))
+    }
+}
+macro_rules! impl_LitComparable_str { { $lit:ty, $val:ty } => {
+    impl LitConvertible for $lit {
+        type V = $val;
+        fn lc_convert(&self) -> syn::Result<Self::V> {
+            str_check_suffix(self.suffix(), self.span())?;
+            Ok(self.value())
+        }
+    }
+} }
+
+impl_LitComparable_str!(syn::LitStr, String);
+impl_LitComparable_str!(syn::LitByteStr, Vec<u8>);
+impl_LitComparable_str!(syn::LitCStr, std::ffi::CString);
+impl_LitComparable_str!(syn::LitByte, u8);
+impl_LitComparable_str!(syn::LitChar, char);
+
+impl<T: LitConvertible> LitComparable for T {
+    fn lc_compare(
+        a: &Self,
+        b: &Self,
+    ) -> syn::Result<Equality> {
+        Ok(Equality::cmpeq(
+            //
+            &a.lc_convert()?,
+            &b.lc_convert()?,
+        ))
+    }
+}
+
+impl LitConvertible for syn::LitBool {
+    type V = ();
+    fn lc_convert(&self) -> syn::Result<Self::V> {
+        Err(self.error(
+            "internal error - TokenTree::Literal parsed as syn::Lit::Bool",
+        ))
+    }
+}
+
+impl LitConvertible for syn::LitFloat {
+    type V = String;
+    fn lc_convert(&self) -> syn::Result<Self::V> {
+        Ok(self.token().to_string())
+    }
+}
+
+impl LitComparable for syn::LitInt {
+    fn lc_compare(
+        a: &Self,
+        b: &Self,
+    ) -> syn::Result<Equality> {
+        match (
+            a.base10_parse::<u64>(),
+            b.base10_parse::<u64>(),
+        ) {
+            (Ok(a), Ok(b)) => Ok(Equality::cmpeq(&a, &b)),
+            (Err(ae), Err(be)) => Err(
+                [(a.span(), &*format!("left: {}", ae)),
+                 (b.span(), &*format!("right: {}", be)),
+                ].error(
+ "integer literal comparison with both values >u64 is not supported"
+                )),
+            (Err(_), Ok(_)) | (Ok(_), Err(_)) => Ok(Different),
+        }
+    }
+}
+
+fn lit_cmpeq(a: &TokenTree, b: &TokenTree) -> syn::Result<Equality> {
+    let mk_lit = |tt: &TokenTree| -> syn::Result<syn::Lit> {
+        syn::parse2(tt.clone().into())
+    };
+
+    macro_rules! match_lits { { $e:expr, $( $V:ident )* } => {
+        match $e {
+          $(
+            (syn::Lit::$V(a), syn::Lit::$V(b)) => LitComparable::lc_compare(a, b),
+            (syn::Lit::$V(_), _) => Ok(Different),
+            (_, syn::Lit::$V(_)) => Ok(Different),
+          )*
+            (a, b) => Err(
+                [(a.span(), "left"), (b.span(), "right")].error(
+                    "unsupported literals in approx_equal comparison"
+                )
+            ),
+        }
+    } }
+
+    match_lits! {
+        (&mk_lit(a)?, &mk_lit(b)?),
+        Str
+        ByteStr
+        CStr
+        Byte
+        Char
+        Bool
+        Int
+        Float
+    }
+}
+
 /// Compares two `TokenStream`s for "equivalence"
 ///
 /// We intend that two `TokenStream`s count as "equivalent"
@@ -129,6 +250,7 @@ pub fn tokens_cmpeq(a: TokenStream, b: TokenStream) -> syn::Result<Equality> {
         cmpeq!(discrim(&a), discrim(&b));
         match (a, b) {
             (TT::Group(a), TT::Group(b)) => group_cmpeq(a, b),
+            (a @ TT::Literal(_), b @ TT::Literal(_)) => lit_cmpeq(&a, &b),
             (a, b) => Ok(Equality::cmpeq(&a.to_string(), &b.to_string())),
         }
     }
