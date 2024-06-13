@@ -19,40 +19,40 @@ struct DataType {
 }
 fn main() {
     let p = |s: &str| {
-        ::std::io::_print(format_args!(" {0}", s));
+        ::std::io::_print(format_args!("{0}", s));
     };
     {
         ::std::io::_print(format_args!("{0}", "a"));
     };
-    p("simple");
+    p(" simple");
     {
         ::std::io::_print(format_args!(".\n"));
     };
     {
         ::std::io::_print(format_args!("{0}", "b"));
     };
-    p("leftpad");
+    p(" leftpad");
     {
         ::std::io::_print(format_args!(".\n"));
     };
     {
         ::std::io::_print(format_args!("{0}", "c"));
     };
-    p("hex");
+    p(" hex");
     {
         ::std::io::_print(format_args!(".\n"));
     };
     {
         ::std::io::_print(format_args!("{0}", "d"));
     };
-    p("raw");
+    p(" raw");
     {
         ::std::io::_print(format_args!(".\n"));
     };
     {
         ::std::io::_print(format_args!("{0}", "e"));
     };
-    p("suffix");
+    p(" suffix");
     {
         ::std::io::_print(format_args!(".\n"));
     };
