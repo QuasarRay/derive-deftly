@@ -193,8 +193,11 @@ fn lit_cmpeq(
         syn::parse2(tt.clone().into())
     };
 
-    macro_rules! match_lits { { $e:expr, $( $V:ident )* } => {
-        match $e {
+    let a = mk_lit(a)?;
+    let b = mk_lit(b)?;
+
+    macro_rules! match_lits { { $( $V:ident )* } => {
+        match (&a, &b) {
           $(
             (syn::Lit::$V(a), syn::Lit::$V(b)) => LitComparable::lc_compare(a, b, cmp_loc),
             (syn::Lit::$V(_), _) => Ok(Different),
@@ -209,7 +212,6 @@ fn lit_cmpeq(
     } }
 
     match_lits! {
-        (&mk_lit(a)?, &mk_lit(b)?),
         Str
         ByteStr
         CStr
