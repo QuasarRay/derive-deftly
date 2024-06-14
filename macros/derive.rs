@@ -215,9 +215,9 @@ pub fn derive_deftly(
 
         let macro_export = adhoc
             .pub_
-            .map(|vis_pub| {
+            .map(|export| {
                 let macro_export =
-                    quote_spanned!(vis_pub.span()=> #[macro_export]);
+                    quote_spanned!(export.span()=> #[macro_export]);
                 Ok::<_, syn::Error>(macro_export)
             })
             .transpose()?;
