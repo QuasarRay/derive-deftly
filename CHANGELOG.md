@@ -87,7 +87,7 @@ We expect to increase it cautiously and only with good reason.
  * Short-circuiting behaviour of `any` and `all` conditions is documented.
  * Improved some error messages.
 
-#### pub template semver
+#### template export semver
 
 Updating to derive-deftly 0.11.0 is a breaking change
 to the API of a crate which exports templates:
@@ -192,7 +192,7 @@ So the calling convention for the template macro is quite incompatible.
  * Improve spans in certain error messages relating to `Xmeta`.
  * Fix heading formatting issues in the entry for 0.9.0.
 
-#### pub template semver
+#### template export semver
 
 Updating to derive-deftly 0.10.0 is a breaking change
 to the API of a crate which exports templates:
@@ -239,7 +239,7 @@ derive_adhoc_expand!            derive_deftly_engine!
 derive_adhoc!                   derive_deftly_adhoc!
 ```
 
-##### pub template semver
+##### template export semver
 
 Updating to `derive-deftly` from `derive-adhoc` is a breaking change
 to the API of a crate which exports templates.
@@ -258,7 +258,7 @@ to the API of a crate which exports templates.
 
 ### 0.8.0
 
-#### Nominally breaking (pub template semver)
+#### Nominally breaking (template export semver)
 
 **We recommend you do *not* treat these changes as semver-breaking
 for template-defining crates.**

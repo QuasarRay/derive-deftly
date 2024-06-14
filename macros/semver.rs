@@ -69,7 +69,7 @@ pub fn pub_template_semver_check_func_macro(
         mk_err(&format_args!(
             r#"derive-deftly has been updated!
 Please check the changelog for breaking changes since {}
-Search for section titles containing "pub template semver"."#,
+Search for section titles containing "template export semver"."#,
             version,
         ))
     };

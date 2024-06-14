@@ -278,7 +278,7 @@ pub fn derive_deftly_adhoc(
 /// Changes that would require a semver bump
 /// for all libraries that export templates,
 /// will be rare, and specially marked in the derive-deftly changelog.
-/// Search for sections with titles containing "pub template semver".
+/// Search for sections with titles containing "template export semver".
 ///
 /// ## Namespacing within a template
 ///

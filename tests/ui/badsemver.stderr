@@ -1,6 +1,6 @@
 error: derive-deftly has been updated!
        Please check the changelog for breaking changes since 0.2.x
-       Search for section titles containing "pub template semver".
+       Search for section titles containing "template export semver".
  --> ui/badsemver.rs:3:28
   |
 3 | pub_template_semver_check!("0.2");
@@ -8,7 +8,7 @@ error: derive-deftly has been updated!
 
 error: derive-deftly has been updated!
        Please check the changelog for breaking changes since 0.2.x
-       Search for section titles containing "pub template semver".
+       Search for section titles containing "template export semver".
  --> ui/badsemver.rs:4:28
   |
 4 | pub_template_semver_check!("0.2.3");
