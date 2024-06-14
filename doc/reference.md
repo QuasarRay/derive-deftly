@@ -835,7 +835,7 @@ The `${ignore ..}` therefore expands to nothing.
 
 All side-effects of `CONTENT` *do* occur.  So:
 if expanding `CONTENT` causes an error,
-`${ignore }` *does* reports that error;
+`${ignore }` *does* report that error;
 the content of `${ignore }` *can* affect
 the repetition scope of its surroundings.
 `${ignore }` is permitted in `${paste }` and case changing.
