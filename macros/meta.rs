@@ -1581,6 +1581,7 @@ macro_rules! impL_find_recog_metas_via_iter { {
 } => {
     impl<T: FindRecogMetas, $($gens)*> FindRecogMetas for $i {
         fn find_recog_metas(&self, acc: &mut Recognised) {
+            #[allow(for_loops_over_fallibles)]
             for item in self {
                 item.find_recog_metas(acc)
             }
