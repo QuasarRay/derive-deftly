@@ -173,3 +173,22 @@ fn check_approx_equal() {
         0.0     != -0.00
     "#);
 }
+
+#[test]
+fn check_approx_equal_verbatim() {
+    let span = Span::call_site();
+    let verb = syn::Lit::Verbatim("1".parse().unwrap());
+    let num = syn::Lit::Int(syn::LitInt::new("-1", span));
+    for (a, b) in [
+        (&verb, &verb),
+        (&verb, &num),
+        (&num, &verb),
+    ] {
+        let r = macros::approx_equal::syn_lit_cmpeq_approx(
+            a.clone(),
+            b.clone(),
+            &(span, "dummy"),
+        );
+        assert!(r.expect_err("unsupp").to_string().contains("unsupported"));
+    }
+}
