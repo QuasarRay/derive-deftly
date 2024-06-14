@@ -551,3 +551,34 @@ However, the likelihood of this breaking a working build seems low.
 ### 0.0.1
 
  * Initial release to crates.io, not widely advertised.
+
+## Stability and semver policy
+
+We take a similar approach to stability to Rust upstream,
+but we may make breaking changes, signaled via semver.
+
+If you write your code according to a
+reasonable interpretation of the documentation,
+and it is accepted,
+we intend that it won't break with a new version of derive-deftly,
+unless we have declared the breakage
+by making a semver-breaking change to our version number.
+
+Rarely, we may need to make a change which violates that rule,
+especially if we discover a serious issue that might mean
+actual programs in the wild are likely to be not behaving
+as the programmer might expect.
+
+When we say that something will be "rejected",
+or use precisely the phrase "it is an error",
+we intend that you can rely on that:
+making it be accepted would be a breaking change.
+In contrast, when we write that something is "not supported",
+or use terminology like "must",
+or show it with `error,` in examples
+we might add sypport for it later.
+
+There are additional, stronger, promises relating to the API
+of exported templates,
+to help you manage the semver implications for the exporting crate.
+This is set out in the relevant documentation.
