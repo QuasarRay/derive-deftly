@@ -290,7 +290,7 @@ that is just a semver breaking change.
 More intrusive or technical changes can cause semver breaks
 *in crates that export templates*.
 See [the public API docs for `define_derive_deftly`](macro@define_derive_deftly#you-must-re-export-derive_deftly-semver-implications)
-and [`pub_template_semver_check`](macro@pub_template_semver_check).
+and [`template_export_semver_check`](macro@template_export_semver_check).
 Such breaking changes should be avoided if at all possible.
 There are complex arrangements for testing that
 compatibility isn't broken accidentally,

@@ -269,7 +269,7 @@ pub fn derive_deftly_adhoc(
 /// Such use would be outside the semver guarantees.)
 ///
 /// You *should* call
-/// [`derive_deftly::pub_template_semver_check!`](macro@pub_template_semver_check)
+/// [`derive_deftly::template_export_semver_check!`](macro@template_export_semver_check)
 /// once in each crate that exports macros.
 /// This will notify you, by breaking your build,
 /// if you update to a derive-deftly version
@@ -495,8 +495,16 @@ pub fn derive_deftly(
 ///
 /// ```
 /// # use derive_deftly_macros as derive_deftly;
-/// derive_deftly::pub_template_semver_check!("0.11.0");
+/// derive_deftly::template_export_semver_check!("0.11.0");
 /// ```
+#[cfg_attr(proc_macro, proc_macro)]
+pub fn template_export_semver_check(
+    input: proc_macro::TokenStream,
+) -> proc_macro::TokenStream {
+    wrap_macro_func(semver::pub_template_semver_check_func_macro, input)
+}
+
+/// Deprecated alias for `template_export_semver_check`
 #[cfg_attr(proc_macro, proc_macro)]
 pub fn pub_template_semver_check(
     input: proc_macro::TokenStream,
