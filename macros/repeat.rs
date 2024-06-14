@@ -499,16 +499,15 @@ impl<'c> Context<'c> {
                 NESTING_LIMIT
             ));
             // And the unique reference sites from the call stack
-            let calls = itertools::unfold(
-                //
-                Some(stack_entry),
-                |ascend| {
-                    let (ctx, call) = (*ascend)?;
-                    *ascend = ctx.nesting_parent;
+            let calls = {
+                let mut ascend = Some(stack_entry);
+                iter::from_fn(|| {
+                    let (ctx, call) = ascend?;
+                    ascend = ctx.nesting_parent;
                     Some((call, ctx.nesting_depth))
-                },
-            )
-            .collect_vec();
+                })
+                .collect_vec()
+            };
 
             // Collect and reverse because we preferentially want
             // to display less deep entries (earlier ones), which are
