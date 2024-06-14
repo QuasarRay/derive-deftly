@@ -41,9 +41,8 @@ pub use super::paste::TokenPastesAsIdent;
 pub use super::utils::{
     braced_group, delimit_token_group, dummy_path, engine_macro_name,
     flatten_none_groups, spans_join, typepath_add_missing_argument_colons,
-    ErrorAccumulator, ErrorLoc, Grouping, IdentAny, MakeError, TemplateName,
-    ToTokensPunctComposable, TokenOutputTrimmer,
-    MacroExport,
+    ErrorAccumulator, ErrorLoc, Grouping, IdentAny, MacroExport, MakeError,
+    TemplateName, ToTokensPunctComposable, TokenOutputTrimmer,
 };
 
 pub(super) use super::{accum, adviseable, check};
