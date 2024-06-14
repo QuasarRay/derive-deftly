@@ -196,6 +196,17 @@ fn lit_cmpeq(
     let a = mk_lit(a)?;
     let b = mk_lit(b)?;
 
+    syn_lit_cmpeq_approx(a, b, cmp_loc)
+}
+
+/// Compare two literals the way `approx_equal` does
+///
+/// `pub` just so that the tests in `directly.rs` can call it
+pub fn syn_lit_cmpeq_approx(
+    a: syn::Lit,
+    b: syn::Lit,
+    cmp_loc: &ErrorLoc<'_>,
+) -> syn::Result<Equality> {
     macro_rules! match_lits { { $( $V:ident )* } => {
         let mut error_locs = vec![];
         for (lit, lr) in [(&a, "left"), (&b, "right")] {
