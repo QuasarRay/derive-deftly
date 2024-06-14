@@ -225,7 +225,8 @@ pub fn syn_lit_cmpeq_approx(
 
         match (&a, &b) {
           $(
-            (syn::Lit::$V(a), syn::Lit::$V(b)) => LitComparable::lc_compare(a, b, cmp_loc),
+            (syn::Lit::$V(a), syn::Lit::$V(b))
+                  => LitComparable::lc_compare(a, b, cmp_loc),
           )*
             _ => Ok(Different),
         }
