@@ -254,7 +254,7 @@ Quite likely, you'll need to update cargo-expand too, since it may not
 build with the new nightly.
 
 Find the most recent version on `crates.io`,
-and `cargo install --version 1.0.NN cargo-expand`
+and `cargo install --locked --version 1.0.NN cargo-expand`
 
 Run the overwriting test rune, above.
 **Inspect the output carefully** before committing.
