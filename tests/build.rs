@@ -11,6 +11,7 @@
 
 use std::fmt::Write as _;
 
+#[allow(clippy::format_collect)]
 fn main() {
     let features = "bizarre expect skip_imported_driver"
         .split_ascii_whitespace()
