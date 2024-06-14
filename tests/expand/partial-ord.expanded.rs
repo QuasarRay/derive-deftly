@@ -63,9 +63,9 @@ where
         let __arg1_discr = ::core::intrinsics::discriminant_value(other);
         __self_discr == __arg1_discr
             && match (self, other) {
-                (Enum::Tuple(__self_0), Enum::Tuple(__arg1_0)) => *__self_0 == *__arg1_0,
+                (Enum::Tuple(__self_0), Enum::Tuple(__arg1_0)) => __self_0 == __arg1_0,
                 (Enum::Struct { field: __self_0 }, Enum::Struct { field: __arg1_0 }) => {
-                    *__self_0 == *__arg1_0
+                    __self_0 == __arg1_0
                 }
                 _ => true,
             }
