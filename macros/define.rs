@@ -5,7 +5,7 @@ use super::framework::*;
 #[derive(Debug, Clone)]
 struct TemplateDefinition {
     doc_attrs: Vec<syn::Attribute>,
-    vis: Option<MacroExport>,
+    export: Option<MacroExport>,
     templ_name: TemplateName,
     options: UnprocessedOptions,
     template: TokenStream,
@@ -24,7 +24,7 @@ impl Parse for TemplateDefinition {
                     .error("only doc attributes are supported"));
             }
         }
-        let vis = MacroExport::parse_option(input)?;
+        let export = MacroExport::parse_option(input)?;
         let templ_name = input.parse()?;
         let options =
             UnprocessedOptions::parse(&input, OpContext::TemplateDefinition)?;
@@ -39,7 +39,7 @@ impl Parse for TemplateDefinition {
         let template = input.parse()?;
         Ok(TemplateDefinition {
             doc_attrs,
-            vis,
+            export,
             templ_name,
             options,
             template,
@@ -162,7 +162,7 @@ pub fn define_derive_deftly_func_macro(
 
     let TemplateDefinition {
         doc_attrs,
-        vis,
+        export,
         templ_name,
         options,
         template,
@@ -202,15 +202,15 @@ To use it, write: `#[derive(Deftly)] #[derive_deftly({})]`."#,
     });
 
     let engine_macro;
-    let vis_export;
-    match vis {
+    let export_attr;
+    match export {
         None => {
-            vis_export = quote! {};
+            export_attr = quote! {};
             engine_macro = engine_macro_name()?;
         }
         Some(pub_token) => {
             let span = pub_token.span();
-            vis_export = quote_spanned!(span=> #[macro_export]);
+            export_attr = quote_spanned!(span=> #[macro_export]);
             engine_macro = quote_spanned!(span=> $crate::derive_deftly::derive_deftly_engine);
         }
     }
@@ -220,7 +220,7 @@ To use it, write: `#[derive(Deftly)] #[derive_deftly({})]`."#,
     output.extend(quote! {
         #( #doc_attrs )*
         #doc_addendum
-        #vis_export
+        #export_attr
         macro_rules! #templ_mac_name {
             {
                 { $($driver:tt)* }
