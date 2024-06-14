@@ -197,17 +197,26 @@ fn lit_cmpeq(
     let b = mk_lit(b)?;
 
     macro_rules! match_lits { { $( $V:ident )* } => {
+        let mut error_locs = vec![];
+        for (lit, lr) in [(&a, "left"), (&b, "right")] {
+            match lit {
+              $(
+                syn::Lit::$V(_) => {}
+              )*
+                _ => error_locs.push((lit.span(), lr)),
+            }
+        }
+        if !error_locs.is_empty() {
+            return Err(error_locs.error(
+                "unsupported literal(s) in approx_equal comparison"
+            ));
+        }
+
         match (&a, &b) {
           $(
             (syn::Lit::$V(a), syn::Lit::$V(b)) => LitComparable::lc_compare(a, b, cmp_loc),
-            (syn::Lit::$V(_), _) => Ok(Different),
-            (_, syn::Lit::$V(_)) => Ok(Different),
           )*
-            (a, b) => Err(
-                [(a.span(), "left"), (b.span(), "right")].error(
-                    "unsupported literals in approx_equal comparison"
-                )
-            ),
+            _ => Ok(Different),
         }
     } }
 
