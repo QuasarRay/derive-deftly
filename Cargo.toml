@@ -34,7 +34,8 @@ members = [
 
 [features]
 default = ["full"]
-full = ["case", "expect", "meta-as-items", "minimal-1"]
+full = ["full-msrv-1.56"]
+"full-msrv-1.56" = ["case", "expect", "meta-as-items", "minimal-1"]
 minimal-1 = []
 # The minimal-1 feature is mandatory.
 # This apporach will allow us to move things from "always enabled" to

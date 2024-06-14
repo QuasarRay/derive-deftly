@@ -6,6 +6,9 @@ Features are provided to allow for a build with reduced dependencies.
 
  * `full`: Metafeature.
    Enable all reasonable, non-experimental, features.
+ * `full-msrv-1.56`: Metafeature.
+   Enable all reasonable, non-experimental, features
+   compatible with Rust 1.56.
  * `case`: [Case conversions](../doc_reference/index.html#case-changing),
    using `heck`.
  * `expect`: the [`expect`](../doc_reference/index.html#expect-items-expect-expr--syntax-check-the-expansion)
@@ -22,6 +25,10 @@ The Minimum Supported Rust Version for derive-deftly is 1.56.
 
 We expect to increase it cautiously and only with good reason.
 (However, MSRV increase would be a minor version bump.)
+
+Future cargo features might imply a higher MSRV.
+Such features might be added to the metafeature `full`,
+again, in a minor version bump.
 
 ## Changelog
 
