@@ -344,6 +344,16 @@ impl MacroExport {
     pub fn parse_option(input: ParseStream) -> syn::Result<Option<Self>> {
         let span = if let Some(vis) = input.parse::<Option<Token![pub]>>()? {
             Some(vis.span())
+        } else if let Some(export) = (|| {
+            use syn::parse::discouraged::Speculative;
+            input.peek(syn::Ident).then(|| ())?;
+            let forked = input.fork();
+            let ident: syn::Ident = forked.parse().expect("it *was*");
+            (ident == "export").then(|| ())?;
+            input.advance_to(&forked);
+            Some(ident)
+        })() {
+            Some(export.span())
         } else {
             None
         };
