@@ -43,6 +43,7 @@ pub use super::utils::{
     flatten_none_groups, spans_join, typepath_add_missing_argument_colons,
     ErrorAccumulator, ErrorLoc, Grouping, IdentAny, MakeError, TemplateName,
     ToTokensPunctComposable, TokenOutputTrimmer,
+    MacroExport,
 };
 
 pub(super) use super::{accum, adviseable, check};
