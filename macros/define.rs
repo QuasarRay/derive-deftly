@@ -5,7 +5,7 @@ use super::framework::*;
 #[derive(Debug, Clone)]
 struct TemplateDefinition {
     doc_attrs: Vec<syn::Attribute>,
-    vis: Option<syn::token::Pub>,
+    vis: Option<MacroExport>,
     templ_name: TemplateName,
     options: UnprocessedOptions,
     template: TokenStream,
@@ -24,7 +24,7 @@ impl Parse for TemplateDefinition {
                     .error("only doc attributes are supported"));
             }
         }
-        let vis: Option<_> = input.parse()?;
+        let vis = MacroExport::parse_option(input)?;
         let templ_name = input.parse()?;
         let options =
             UnprocessedOptions::parse(&input, OpContext::TemplateDefinition)?;

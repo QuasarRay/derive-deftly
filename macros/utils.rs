@@ -326,6 +326,41 @@ impl Drop for ErrorAccumulator {
     }
 }
 
+//---------- Template and driver export ----------
+
+/// Token `export` (or `pub`), indicating that a macro should be exported
+///
+/// Usually found in `Option`.
+#[derive(Debug, Clone)]
+pub struct MacroExport(Span);
+
+impl Spanned for MacroExport {
+    fn span(&self) -> Span {
+        self.0
+    }
+}
+
+impl MacroExport {
+    pub fn parse_option(input: ParseStream) -> syn::Result<Option<Self>> {
+        let span = if let Some(vis) = input.parse::<Option<Token![pub]>>()? {
+            Some(vis.span())
+        } else if let Some(export) = (|| {
+            use syn::parse::discouraged::Speculative;
+            input.peek(syn::Ident).then(|| ())?;
+            let forked = input.fork();
+            let ident: syn::Ident = forked.parse().expect("it *was*");
+            (ident == "export").then(|| ())?;
+            input.advance_to(&forked);
+            Some(ident)
+        })() {
+            Some(export.span())
+        } else {
+            None
+        };
+        Ok(span.map(MacroExport))
+    }
+}
+
 //---------- Grouping ----------
 
 /// Whether an expansion should be surrounded by a `None`-delimited `Group`
