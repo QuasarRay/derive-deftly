@@ -135,7 +135,7 @@ fn read_changelog(
 }
 
 fn check_1(tv: &TrackedVersion, exp: Result<(), ()>) {
-    let got_full = macros::semver::pub_template_semver_check_func_macro(
+    let got_full = macros::semver::template_export_semver_check_func_macro(
         quote! { #tv }, //
     );
     let got_abbrev = got_full.as_ref().map_err(|_| ()).map(|_| ());

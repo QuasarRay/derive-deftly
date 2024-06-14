@@ -298,6 +298,6 @@ mostly in `compat/`.  (See `tests/compat/README.md`.)
 
 If it is necessary to make such a totally breaking change,
 consult the git history and see how it was done last time.
-(`git annotate` on the implementation of `pub_template_semver_check`
+(`git annotate` on the implementation of `template_export_semver_check`
 or `git log -G` on a relevant version number
 may be helpful to find the relevant MR and its commits).
