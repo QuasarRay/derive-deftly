@@ -25,6 +25,15 @@ We expect to increase it cautiously and only with good reason.
 
 ## Changelog
 
+### 0.12.1
+
+#### Deprecated
+
+ * Deprecate `pub` (in template definitions and driver adhoc exports)
+   in favour of `export`; and deprecate `pub_template_semver_check!`
+   in favour of `template_export_semver_check!`.
+   `pub` etc. are still supported for now, but will be removed soon.
+
 ### 0.12.0
 
 #### Breaking
