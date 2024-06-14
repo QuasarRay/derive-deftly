@@ -1,4 +1,4 @@
-//! Macro impl for `pub_template_semver_check!`
+//! Macro impl for `template_export_semver_check!`
 
 use super::prelude::*;
 
@@ -53,8 +53,8 @@ impl Spanned for SemverCheckInput {
     }
 }
 
-/// This is `pub_template_semver_check!`
-pub fn pub_template_semver_check_func_macro(
+/// This is `template_export_semver_check!`
+pub fn template_export_semver_check_func_macro(
     input: TokenStream,
 ) -> Result<TokenStream, syn::Error> {
     let version: SemverCheckInput = syn::parse2(input)?;
@@ -69,7 +69,7 @@ pub fn pub_template_semver_check_func_macro(
         mk_err(&format_args!(
             r#"derive-deftly has been updated!
 Please check the changelog for breaking changes since {}
-Search for section titles containing "pub template semver"."#,
+Search for section titles containing "template export semver"."#,
             version,
         ))
     };
