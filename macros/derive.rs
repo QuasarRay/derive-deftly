@@ -15,7 +15,7 @@ struct InvocationAttr {
 /// Contents of an entry in a `#[derive_deftly_adhoc(..)]` attribute
 #[derive(Default)]
 struct AdhocAttr {
-    pub_: Option<syn::token::Pub>,
+    pub_: Option<MacroExport>,
 }
 
 impl Parse for InvocationEntry {
@@ -162,7 +162,10 @@ pub fn derive_deftly(
                         syn::MacroDelimiter::Bracket(t) => Err(t.span),
                     }
                     .map_err(|span| span.error("expected parentheses"))?;
-                    let pub_ = syn::parse2(tokens.clone())?;
+                    let pub_ = Parser::parse2(
+                        MacroExport::parse_option,
+                        tokens.clone(),
+                    )?;
                     AdhocAttr { pub_ }
                 }
             };
