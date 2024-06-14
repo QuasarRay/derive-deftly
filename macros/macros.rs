@@ -182,7 +182,7 @@ pub fn derive_deftly_adhoc(
 /// ```text
 /// define_derive_deftly! {
 ///     [/// DOCS]
-///     [pub] MyMacro OPTIONS,..:
+///     [export] MyMacro OPTIONS,..:
 ///     TEMPLATE
 /// }
 /// ```
@@ -223,20 +223,24 @@ pub fn derive_deftly_adhoc(
 ///
 /// ## Exporting a template for use by other crates
 ///
-/// With `pub MyMacro`, `define_derive_deftly!` exports the template
+/// With `export MyMacro`, `define_derive_deftly!` exports the template
 /// for use by other crates.
 /// Then, it is referred to in other crates
 /// with `#[derive_ahdoc(this_crate::MyMacro)]`.
 ///
-/// I.e., `pub MyMacro` causes the `derive_deftly_template_MyMacro`
+/// I.e., `export MyMacro` causes the `derive_deftly_template_MyMacro`
 /// pattern macro to be exported with `#[macro_export]`.
 ///
 /// Note that a template is always exported at the crate top level,
 /// not in a sub-module,
 /// even if it is *defined* in a sub-module.
-/// Also, note that `pub` does not have any effect on
+/// Also, note that `export` does not have any effect on
 /// visibility of the template *within the same crate*.
 /// You may still need `#[macro_use]`.
+///
+/// (`pub` is currently allowed as well as `export`.
+/// This still appears in some of the in-tree documentation.
+/// But use of `pub` is deprecated and will stop being supported fairly soon.)
 ///
 /// ### You must re-export `derive_deftly`; semver implications
 ///
@@ -410,7 +414,7 @@ pub fn define_derive_deftly(
 //
 /// To cause the macro embodying the driver struct to be exported,
 /// write:
-/// `#[derive_deftly_adhoc(pub)]`.
+/// `#[derive_deftly_adhoc(export)]`.
 /// The driver can then be derived from in other crates,
 /// with `derive_deftly_adhoc! { exporting_crate::DriverStruct: ... }`.
 ///
@@ -432,6 +436,10 @@ pub fn define_derive_deftly(
 /// And every time you update, you must read the `CHANGELOG.md`,
 /// since there is nothing that will warn you automatically
 /// about breaking changes.
+///
+/// (`pub` is currently allowed as well as `export`.
+/// This still appears in some of the in-tree documentation.
+/// But use of `pub` is deprecated and will stop being supported fairly soon.)
 //
 // This is the implementation of #[derive(Deftly)]
 #[cfg_attr(
