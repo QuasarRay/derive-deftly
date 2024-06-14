@@ -223,7 +223,11 @@ must be kept in sync.  `cargo expand` will probably need updating too.
 
 Use this to select a corresponding Nightly Rust and container image:
 <br>
-<https://www.chiark.greenend.org.uk/~ian/docker-tags-history/README.txt>
+<https://www.chiark.greenend.org.uk/~ian/docker-tags-history/>
+
+To parse the json, You can use a rune like this:
+<br>
+`curl https://www.chiark.greenend.org.uk/~ian/docker-tags-history/rustlang,rust/tags.2024-06-06T13:08+00:00.gz | zcat | jq <json -r '.results[] | select(.name | match("^nightly-bookworm$")) | .images[] | select(.architecture | match("^amd64"))'`
 
 Pick a date just before upstream Rust branched for a release, since that way
 we'll maybe have a less-buggy nightly.  Note the date `YYYY-MM-DD` and
