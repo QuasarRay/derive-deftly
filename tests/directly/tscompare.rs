@@ -18,10 +18,10 @@ pub enum ExpectedOutputNoneGrouping {
 
 /// When displaying, call `eprintln_extended_info` too
 pub struct Mismatch {
-    pub kind: &'static str,
-    pub got: String,
-    pub context_desc: String,
-    pub info: Option<DissimilarTokenStreams>,
+    kind: &'static str,
+    got: String,
+    context_desc: String,
+    info: Option<DissimilarTokenStreams>,
 }
 
 /// Parsed expected output from a test case
