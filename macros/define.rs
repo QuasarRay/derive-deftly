@@ -30,7 +30,10 @@ impl Parse for TemplateDefinition {
             UnprocessedOptions::parse(&input, OpContext::TemplateDefinition)?;
         let la = input.lookahead1();
         if la.peek(Token![=]) {
-            let _equals: Token![=] = input.parse()?;
+            let equals: Token![=] = input.parse()?;
+            return Err(equals.error(
+ "You must now write `define_derive_deftly! { Template: ... }`, not `Template =`, since derive-deftly version 0.14.0"
+            ));
         } else if la.peek(Token![:]) {
             let _colon: Token![:] = input.parse()?;
         } else {
