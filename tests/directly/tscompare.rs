@@ -16,6 +16,9 @@ pub enum ExpectedOutputNoneGrouping {
     Flatten,
 }
 
+/// `Err` means we expected an error containing that string
+pub type ExpectedOutput = Result<TokenStream, String>;
+
 impl DissimilarTokenStreams {
     pub fn eprintln(&self, in_title: impl Display) {
         use EitherOrBoth as EOB;

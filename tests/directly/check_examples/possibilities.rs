@@ -13,9 +13,7 @@ pub struct PossibilitiesExample {
     /// Limit on which contexts to consider
     limit: Limit,
     /// Expected output
-    ///
-    /// `Err` means we expected an error containing that string
-    output: Result<TokenStream, String>,
+    output: ExpectedOutput,
     /// Are *all* the possibilities (subject to `limit`) supposed to match?
     all_must_match: bool,
     /// Does the `output` faithfully represent `None`-delimited `Group`s?
