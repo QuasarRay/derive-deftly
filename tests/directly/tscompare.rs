@@ -18,6 +18,7 @@ pub enum ExpectedOutputNoneGrouping {
 
 /// When displaying, call `eprintln_extended_info` too
 pub struct Mismatch {
+    pub kind: &'static str,
     pub got: String,
     pub context_desc: String,
     pub info: Option<DissimilarTokenStreams>,
@@ -104,15 +105,15 @@ pub fn compare_expected_output(
     grouping: ExpectedOutputNoneGrouping,
     context_desc: &str,
 ) -> Result<(), Mismatch> {
-    let mk_mismatch = |info, got: &dyn Display| Mismatch {
+    let mk_mismatch = |kind, info, got: &dyn Display| Mismatch {
+        kind,
         info,
         got: got.to_string(),
         context_desc: context_desc.to_owned(),
     };
 
     let handle_syn_error = |e: syn::Error| {
-        //println!("  ERROR {}", &context_desc);
-        mk_mismatch(None, &format_args!("error: {}", e))
+        mk_mismatch("syn::Error", None, &format_args!("error: {}", e))
     };
 
     match exp {
@@ -128,8 +129,7 @@ pub fn compare_expected_output(
                 &exp, &got, //
             )
                 .map_err(|info| {
-                    //println!("  MISMATCH {}", &context_desc);
-                    mk_mismatch(Some(info), &got)
+                    mk_mismatch("mismatch", Some(info), &got)
                 })?;
             //println!("  MATCHED {}", &context_desc);
         }
@@ -140,13 +140,11 @@ pub fn compare_expected_output(
             };
             let got = got
                 .map_err(|got| {
-                    //println!("  UNEXPECTED-SUCCESS {}", &context_desc);
-                    mk_mismatch(None, &got)
+                    mk_mismatch("unexpected success", None, &got)
                 })?
                 .to_string();
             if !got.contains(exp) {
-                //println!("  WRONG-ERROR {}", &context_desc);
-                return Err(mk_mismatch(None, &got));
+                return Err(mk_mismatch("wrong error", None, &got));
             }
         }
     }
@@ -156,8 +154,8 @@ pub fn compare_expected_output(
 impl Mismatch {
     pub fn eprintln_initial(&self) {
         eprintln!(
-            "mismatched: {} [{}]",
-            self.got, self.context_desc
+            "{}: {} [{}]",
+            self.kind, self.got, self.context_desc
         )
     }
 
