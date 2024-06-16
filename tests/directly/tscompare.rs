@@ -29,6 +29,7 @@ pub struct Mismatch {
 pub struct ExpectedOutput {
     /// `Err` means we expected an error containing that string
     pub exp: Result<TokenStream, String>,
+    pub grouping: ExpectedOutputNoneGrouping,
 }
 
 impl Display for ExpectedOutput {
@@ -111,13 +112,12 @@ impl ExpectedOutput {
             }),
             Err(msg) => Err(msg.to_string()),
         };
-        Ok(ExpectedOutput { exp })
+        Ok(ExpectedOutput { exp, grouping })
     }
 
     pub fn compare(
         &self,
         got: syn::Result<TokenStream>,
-        grouping: ExpectedOutputNoneGrouping,
         context_desc: &str,
     ) -> Result<(), Mismatch> {
         let mk_mismatch = |kind, info, got: &dyn Display| Mismatch {
@@ -134,7 +134,7 @@ impl ExpectedOutput {
         match &self.exp {
             Ok(exp) => {
                 let got = got.map_err(handle_syn_error)?;
-                let got = match grouping {
+                let got = match self.grouping {
                     ExpectedOutputNoneGrouping::Explicit => got,
                     ExpectedOutputNoneGrouping::Flatten => {
                         flatten_none_groups(got)

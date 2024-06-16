@@ -16,8 +16,6 @@ pub struct PossibilitiesExample {
     output: ExpectedOutput,
     /// Are *all* the possibilities (subject to `limit`) supposed to match?
     all_must_match: bool,
-    /// Does the `output` faithfully represent `None`-delimited `Group`s?
-    grouping: ExpectedOutputNoneGrouping,
 }
 
 struct Tracker {
@@ -140,7 +138,6 @@ impl PossibilitiesExample {
             limit,
             all_must_match,
             output,
-            grouping,
         }))
     }
 
@@ -177,7 +174,6 @@ impl PossibilitiesExample {
 
         let matched = self.output.compare(
             got,
-            self.grouping,
             &context_desc,
         );
 
@@ -206,6 +202,7 @@ fn poc() {
     let output = quote! { UnitVariant, TupleVariant, NamedVariant, };
     let output = ExpectedOutput {
         exp: Ok(output),
+        grouping: ExpectedOutputNoneGrouping::Flatten,
     };
     PossibilitiesExample {
         all_must_match: false,
@@ -213,7 +210,6 @@ fn poc() {
         input: input,
         limit: limit,
         output,
-        grouping: ExpectedOutputNoneGrouping::Flatten,
     }
     .check(&mut Errors::new(), &[driver]);
 }
