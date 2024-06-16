@@ -145,26 +145,7 @@ impl PossibilitiesExample {
         grouping: ExpectedOutputNoneGrouping,
     ) -> Result<Box<PossibilitiesExample>, String> {
         let input = parse_str(input, "input")?;
-        let output = match output {
-            Ok(exp) => Ok({
-                if let Some(inner) = (|| {
-                    let exp = exp.strip_prefix("«")?;
-                    let exp = exp.strip_suffix("»")?;
-                    Some(exp.trim())
-                })() {
-                    assert!(matches!(
-                        grouping,
-                        ExpectedOutputNoneGrouping::Explicit,
-                    ));
-                    let inner = parse_str(inner, "output (inner group)")?;
-                    proc_macro2::Group::new(Delimiter::None, inner)
-                        .to_token_stream()
-                } else {
-                    parse_str(exp, "output")?
-                }
-            }),
-            Err(msg) => Err(msg.to_string()),
-        };
+        let output = parse_expected_output(output, grouping)?;
         Ok(Box::new(PossibilitiesExample {
             loc,
             input,

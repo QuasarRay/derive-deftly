@@ -65,6 +65,32 @@ where T: syn::parse::Parse
     })
 }
 
+pub fn parse_expected_output(
+    stated: Result<&str, &str>,
+    grouping: ExpectedOutputNoneGrouping,
+) -> Result<ExpectedOutput, String> {
+    Ok(match stated {
+        Ok(exp) => Ok({
+            if let Some(inner) = (|| {
+                let exp = exp.strip_prefix("«")?;
+                let exp = exp.strip_suffix("»")?;
+                Some(exp.trim())
+            })() {
+                assert!(matches!(
+                    grouping,
+                    ExpectedOutputNoneGrouping::Explicit,
+                ));
+                let inner = parse_str(inner, "output (inner group)")?;
+                proc_macro2::Group::new(Delimiter::None, inner)
+                    .to_token_stream()
+            } else {
+                parse_str(exp, "output")?
+            }
+        }),
+        Err(msg) => Err(msg.to_string()),
+    })
+}
+
 /// Tries to compare but disregarding spacing, which is unpredictable
 ///
 /// What we really want to know is
