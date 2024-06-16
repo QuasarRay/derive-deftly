@@ -127,7 +127,6 @@ macro_rules! impl_LitComparable_str { { $lit:ty, $val:ty } => {
 
 impl_LitComparable_str!(syn::LitStr, String);
 impl_LitComparable_str!(syn::LitByteStr, Vec<u8>);
-impl_LitComparable_str!(syn::LitCStr, std::ffi::CString);
 impl_LitComparable_str!(syn::LitByte, u8);
 impl_LitComparable_str!(syn::LitChar, char);
 
@@ -232,10 +231,20 @@ pub fn syn_lit_cmpeq_approx(
         }
     } }
 
+    // We do not support comparison of `CStr`.
+    // c"..." literals are recognised only by Rust 1.77,
+    // and we would need syn 2.0.59 to parse them.
+    // So this would require
+    //   - bumping our syn dependency to 2.0.59 globally,
+    //     or somehow making that feature-conditional,
+    //     or messing about parsing the lockfile in build.rs.
+    //   - Adding an MSRV-influencing feature,
+    //     or testing the rustc version in build.rs.
+    // I hoping we can put this off.
+
     match_lits! {
         Str
         ByteStr
-        CStr
         Byte
         Char
         Bool

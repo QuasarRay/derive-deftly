@@ -1170,6 +1170,7 @@ Literals are generally compared by value:
  * Integer literals are compared by value, ignoring any type suffixes.
    (Both values `>u64` is unsupported.)
  * String, byte and character literals are compared by value.
+   `c"..."` literals are unsupported.
    (Suffixes are unsupported.).
  * Floating point literals are compared *textually*, not by value;
    so are considered equal only if written identically.
