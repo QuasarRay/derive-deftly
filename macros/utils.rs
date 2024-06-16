@@ -344,7 +344,9 @@ impl Spanned for MacroExport {
 impl MacroExport {
     pub fn parse_option(input: ParseStream) -> syn::Result<Option<Self>> {
         let span = if let Some(vis) = input.parse::<Option<Token![pub]>>()? {
-            Some(vis.span())
+            return Err(vis.error(
+ "You must now write `define_derive_deftly! { export Template: ... }`, not `puib Template:`, since derive-deftly version 0.14.0"
+            ));
         } else if let Some(export) = (|| {
             use syn::parse::discouraged::Speculative;
             input.peek(syn::Ident).then(|| ())?;

@@ -235,10 +235,6 @@ pub fn derive_deftly_adhoc(
 /// visibility of the template *within the same crate*.
 /// You may still need `#[macro_use]`.
 ///
-/// (`pub` is currently allowed as well as `export`.
-/// This still appears in some of the in-tree documentation.
-/// But use of `pub` is deprecated and will stop being supported fairly soon.)
-///
 /// ### You must re-export `derive_deftly`; semver implications
 ///
 /// When exporting a template to other crates, you must also
@@ -436,10 +432,6 @@ pub fn define_derive_deftly(
 /// And every time you update, you must read the `CHANGELOG.md`,
 /// since there is nothing that will warn you automatically
 /// about breaking changes.
-///
-/// (`pub` is currently allowed as well as `export`.
-/// This still appears in some of the in-tree documentation.
-/// But use of `pub` is deprecated and will stop being supported fairly soon.)
 //
 // This is the implementation of #[derive(Deftly)]
 #[cfg_attr(
