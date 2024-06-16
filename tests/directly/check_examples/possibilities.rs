@@ -144,12 +144,7 @@ impl PossibilitiesExample {
         output: Result<&str, &str>,
         grouping: ExpectedOutputNoneGrouping,
     ) -> Result<Box<PossibilitiesExample>, String> {
-        let parse = |s, what| {
-            syn::parse_str(s).map_err(|e| {
-                format!(r#"failed to parse {}: {:?}: {}"#, what, s, e)
-            })
-        };
-        let input = parse(input, "input")?;
+        let input = parse_str(input, "input")?;
         let output = match output {
             Ok(exp) => Ok({
                 if let Some(inner) = (|| {
@@ -161,11 +156,11 @@ impl PossibilitiesExample {
                         grouping,
                         ExpectedOutputNoneGrouping::Explicit,
                     ));
-                    let inner = parse(inner, "output (inner group)")?;
+                    let inner = parse_str(inner, "output (inner group)")?;
                     proc_macro2::Group::new(Delimiter::None, inner)
                         .to_token_stream()
                 } else {
-                    parse(exp, "output")?
+                    parse_str(exp, "output")?
                 }
             }),
             Err(msg) => Err(msg.to_string()),

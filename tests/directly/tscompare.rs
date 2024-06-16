@@ -56,6 +56,15 @@ impl DissimilarTokenStreams {
     }
 }
 
+/// Convenience version of `syn::parse_str` with more convenient error
+pub fn parse_str<T>(s: &str, what: &str) -> Result<T, String>
+where T: syn::parse::Parse
+{
+    syn::parse_str(s).map_err(|e| {
+        format!(r#"failed to parse {}: {:?}: {}"#, what, s, e)
+    })
+}
+
 /// Tries to compare but disregarding spacing, which is unpredictable
 ///
 /// What we really want to know is
