@@ -346,7 +346,9 @@ fn parse_bullet(
         )));
     } else if m!(outputs, "^nothing$") {
         poss(Ok(""))?;
-    } else if let Some((msg,)) = mc!(outputs, r"error, ``(.*)``$") {
+    } else if let Some((msg,)) = mc!(outputs, r"error, ``(.*)``$")
+        .or_else(|| mc!(outputs, r"rejected, ``(.*)``$"))
+    {
         poss(Err(msg.trim()))?;
     } else {
         let mut outputs = outputs;

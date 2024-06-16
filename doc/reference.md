@@ -547,7 +547,7 @@ These checks are disabled by `#[derive_deftly_adhoc]`.
  * `${vmeta(value) as ident}`: `unit_toplevel`, `enum_variant`
  * `${fmeta(nested(inner)) as expr}` for `field` in `Struct`: `(42)`
  * `${vmeta(items) as items}` for `TupleVariant`: `type T = i32; const K: T = 7;`
- * `${fmeta(nested)}`: error, ``expected a leaf node, found a list with sub-attributes``
+ * `${fmeta(nested)}`: rejected, ``expected a leaf node, found a list with sub-attributes``
 
 #### Examples involving pasting
 
@@ -712,9 +712,9 @@ otherwise it is an error.
 #### Examples
 
  * `${select1 is_enum { E } is_struct { S }}`: `E`, `S`
- * `${select1 v_is_named { N } v_is_tuple { T }}` for `Enum`: error, ``no conditions matched, and no else clause``
+ * `${select1 v_is_named { N } v_is_tuple { T }}` for `Enum`: rejected, ``no conditions matched, and no else clause``
  * `$( ${select1 v_is_named { N } v_is_tuple { T } else { X }} )` for `Enum`: `X T N`
- * `${select1 v_is_unit { U } tmeta(gentype) { GT }}` for `Unit`: error, ``multiple conditions matched``
+ * `${select1 v_is_unit { U } tmeta(gentype) { GT }}` for `Unit`: rejected, ``multiple conditions matched``
 
 <div id="x:for-fields">
 <div id="x:for-variants">
@@ -835,7 +835,7 @@ The `${ignore ..}` therefore expands to nothing.
 
 All side-effects of `CONTENT` *do* occur.  So:
 if expanding `CONTENT` causes an error,
-`${ignore }` *does* reports that error;
+`${ignore }` *does* report that error;
 the content of `${ignore }` *can* affect
 the repetition scope of its surroundings.
 `${ignore }` is permitted in `${paste }` and case changing.
