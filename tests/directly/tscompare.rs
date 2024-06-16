@@ -86,83 +86,85 @@ where T: syn::parse::Parse
     })
 }
 
-pub fn parse_expected_output(
-    stated: Result<&str, &str>,
-    grouping: ExpectedOutputNoneGrouping,
-) -> Result<ExpectedOutput, String> {
-    let exp = match stated {
-        Ok(exp) => Ok({
-            if let Some(inner) = (|| {
-                let exp = exp.strip_prefix("«")?;
-                let exp = exp.strip_suffix("»")?;
-                Some(exp.trim())
-            })() {
-                assert!(matches!(
-                    grouping,
-                    ExpectedOutputNoneGrouping::Explicit,
-                ));
-                let inner = parse_str(inner, "output (inner group)")?;
-                proc_macro2::Group::new(Delimiter::None, inner)
-                    .to_token_stream()
-            } else {
-                parse_str(exp, "output")?
-            }
-        }),
-        Err(msg) => Err(msg.to_string()),
-    };
-    Ok(ExpectedOutput { exp })
-}
-
-pub fn compare_expected_output(
-    got: syn::Result<TokenStream>,
-    exp: &ExpectedOutput,
-    grouping: ExpectedOutputNoneGrouping,
-    context_desc: &str,
-) -> Result<(), Mismatch> {
-    let mk_mismatch = |kind, info, got: &dyn Display| Mismatch {
-        kind,
-        info,
-        got: got.to_string(),
-        context_desc: context_desc.to_owned(),
-    };
-
-    let handle_syn_error = |e: syn::Error| {
-        mk_mismatch("syn::Error", None, &format_args!("error: {}", e))
-    };
-
-    match &exp.exp {
-        Ok(exp) => {
-            let got = got.map_err(handle_syn_error)?;
-            let got = match grouping {
-                ExpectedOutputNoneGrouping::Explicit => got,
-                ExpectedOutputNoneGrouping::Flatten => {
-                    flatten_none_groups(got)
+impl ExpectedOutput {
+    pub fn parse(
+        stated: Result<&str, &str>,
+        grouping: ExpectedOutputNoneGrouping,
+    ) -> Result<ExpectedOutput, String> {
+        let exp = match stated {
+            Ok(exp) => Ok({
+                if let Some(inner) = (|| {
+                    let exp = exp.strip_prefix("«")?;
+                    let exp = exp.strip_suffix("»")?;
+                    Some(exp.trim())
+                })() {
+                    assert!(matches!(
+                        grouping,
+                        ExpectedOutputNoneGrouping::Explicit,
+                    ));
+                    let inner = parse_str(inner, "output (inner group)")?;
+                    proc_macro2::Group::new(Delimiter::None, inner)
+                        .to_token_stream()
+                } else {
+                    parse_str(exp, "output")?
                 }
-            };
-            check_expected_actual_similar_tokens(
-                &exp, &got, //
-            )
-                .map_err(|info| {
-                    mk_mismatch("mismatch", Some(info), &got)
-                })?;
-            //println!("  MATCHED {}", &context_desc);
-        }
-        Err(exp) => {
-            let got = match got {
-                Err(n) => Ok(n),
-                Ok(y) => Err(y),
-            };
-            let got = got
-                .map_err(|got| {
-                    mk_mismatch("unexpected success", None, &got)
-                })?
-                .to_string();
-            if !got.contains(exp) {
-                return Err(mk_mismatch("wrong error", None, &got));
+            }),
+            Err(msg) => Err(msg.to_string()),
+        };
+        Ok(ExpectedOutput { exp })
+    }
+
+    pub fn compare(
+        &self,
+        got: syn::Result<TokenStream>,
+        grouping: ExpectedOutputNoneGrouping,
+        context_desc: &str,
+    ) -> Result<(), Mismatch> {
+        let mk_mismatch = |kind, info, got: &dyn Display| Mismatch {
+            kind,
+            info,
+            got: got.to_string(),
+            context_desc: context_desc.to_owned(),
+        };
+
+        let handle_syn_error = |e: syn::Error| {
+            mk_mismatch("syn::Error", None, &format_args!("error: {}", e))
+        };
+
+        match &self.exp {
+            Ok(exp) => {
+                let got = got.map_err(handle_syn_error)?;
+                let got = match grouping {
+                    ExpectedOutputNoneGrouping::Explicit => got,
+                    ExpectedOutputNoneGrouping::Flatten => {
+                        flatten_none_groups(got)
+                    }
+                };
+                check_expected_actual_similar_tokens(
+                    &exp, &got, //
+                )
+                    .map_err(|info| {
+                        mk_mismatch("mismatch", Some(info), &got)
+                    })?;
+                //println!("  MATCHED {}", &context_desc);
+            }
+            Err(exp) => {
+                let got = match got {
+                    Err(n) => Ok(n),
+                    Ok(y) => Err(y),
+                };
+                let got = got
+                    .map_err(|got| {
+                        mk_mismatch("unexpected success", None, &got)
+                    })?
+                    .to_string();
+                if !got.contains(exp) {
+                    return Err(mk_mismatch("wrong error", None, &got));
+                }
             }
         }
+        Ok(())
     }
-    Ok(())
 }
 
 impl Mismatch {

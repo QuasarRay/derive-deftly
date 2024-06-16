@@ -133,7 +133,7 @@ impl PossibilitiesExample {
         grouping: ExpectedOutputNoneGrouping,
     ) -> Result<Box<PossibilitiesExample>, String> {
         let input = parse_str(input, "input")?;
-        let output = parse_expected_output(output, grouping)?;
+        let output = ExpectedOutput::parse(output, grouping)?;
         Ok(Box::new(PossibilitiesExample {
             loc,
             input,
@@ -175,9 +175,8 @@ impl PossibilitiesExample {
             Ok(got)
         })();
 
-        let matched = compare_expected_output(
+        let matched = self.output.compare(
             got,
-            &self.output,
             self.grouping,
             &context_desc,
         );
