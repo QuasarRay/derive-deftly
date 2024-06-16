@@ -27,12 +27,6 @@ struct Tracker {
     skipped_context_descs: Vec<String>,
 }
 
-struct Mismatch {
-    got: String,
-    context_desc: String,
-    info: Option<DissimilarTokenStreams>,
-}
-
 impl Tracker {
     fn finish_ok(&self) -> Result<(), String> {
         if self.all_must_match {
@@ -186,17 +180,6 @@ impl PossibilitiesExample {
         let matched = (|| {
             let mut out = TokenAccumulator::new();
 
-            let mk_mismatch = |info, got: &dyn Display| Mismatch {
-                info,
-                got: got.to_string(),
-                context_desc: context_desc.clone(),
-            };
-
-            let handle_syn_error = |e: syn::Error| {
-                //println!("  ERROR {}", &context_desc);
-                mk_mismatch(None, &format_args!("error: {}", e))
-            };
-
             let got = (|| {
                 let template: Template<TokenAccumulator> =
                     syn::parse2(input.clone())?;
@@ -207,42 +190,12 @@ impl PossibilitiesExample {
                 Ok(got)
             })();
 
-            match &self.output {
-                Ok(exp) => {
-                    let got = got.map_err(handle_syn_error)?;
-                    let got = match self.grouping {
-                        ExpectedOutputNoneGrouping::Explicit => got,
-                        ExpectedOutputNoneGrouping::Flatten => {
-                            flatten_none_groups(got)
-                        }
-                    };
-                    check_expected_actual_similar_tokens(
-                        &exp, &got, //
-                    )
-                    .map_err(|info| {
-                        //println!("  MISMATCH {}", &context_desc);
-                        mk_mismatch(Some(info), &got)
-                    })?;
-                    //println!("  MATCHED {}", &context_desc);
-                }
-                Err(exp) => {
-                    let got = match got {
-                        Err(n) => Ok(n),
-                        Ok(y) => Err(y),
-                    };
-                    let got = got
-                        .map_err(|got| {
-                            //println!("  UNEXPECTED-SUCCESS {}", &context_desc);
-                            mk_mismatch(None, &got)
-                        })?
-                        .to_string();
-                    if !got.contains(exp) {
-                        //println!("  WRONG-ERROR {}", &context_desc);
-                        return Err(mk_mismatch(None, &got));
-                    }
-                }
-            }
-            Ok(())
+            compare_expected_output(
+                got,
+                &self.output,
+                self.grouping,
+                &context_desc,
+            )
         })();
 
         tracker.note(matched);

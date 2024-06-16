@@ -16,6 +16,12 @@ pub enum ExpectedOutputNoneGrouping {
     Flatten,
 }
 
+pub struct Mismatch {
+    pub got: String,
+    pub context_desc: String,
+    pub info: Option<DissimilarTokenStreams>,
+}
+
 /// `Err` means we expected an error containing that string
 pub type ExpectedOutput = Result<TokenStream, String>;
 
@@ -89,6 +95,61 @@ pub fn parse_expected_output(
         }),
         Err(msg) => Err(msg.to_string()),
     })
+}
+
+pub fn compare_expected_output(
+    got: syn::Result<TokenStream>,
+    exp: &ExpectedOutput,
+    grouping: ExpectedOutputNoneGrouping,
+    context_desc: &str,
+) -> Result<(), Mismatch> {
+    let mk_mismatch = |info, got: &dyn Display| Mismatch {
+        info,
+        got: got.to_string(),
+        context_desc: context_desc.to_owned(),
+    };
+
+    let handle_syn_error = |e: syn::Error| {
+        //println!("  ERROR {}", &context_desc);
+        mk_mismatch(None, &format_args!("error: {}", e))
+    };
+
+    match exp {
+        Ok(exp) => {
+            let got = got.map_err(handle_syn_error)?;
+            let got = match grouping {
+                ExpectedOutputNoneGrouping::Explicit => got,
+                ExpectedOutputNoneGrouping::Flatten => {
+                    flatten_none_groups(got)
+                }
+            };
+            check_expected_actual_similar_tokens(
+                &exp, &got, //
+            )
+                .map_err(|info| {
+                    //println!("  MISMATCH {}", &context_desc);
+                    mk_mismatch(Some(info), &got)
+                })?;
+            //println!("  MATCHED {}", &context_desc);
+        }
+        Err(exp) => {
+            let got = match got {
+                Err(n) => Ok(n),
+                Ok(y) => Err(y),
+            };
+            let got = got
+                .map_err(|got| {
+                    //println!("  UNEXPECTED-SUCCESS {}", &context_desc);
+                    mk_mismatch(None, &got)
+                })?
+                .to_string();
+            if !got.contains(exp) {
+                //println!("  WRONG-ERROR {}", &context_desc);
+                return Err(mk_mismatch(None, &got));
+            }
+        }
+    }
+    Ok(())
 }
 
 /// Tries to compare but disregarding spacing, which is unpredictable
