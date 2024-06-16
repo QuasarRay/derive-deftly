@@ -177,26 +177,23 @@ impl PossibilitiesExample {
 
         let input = &self.input;
 
-        let matched = (|| {
-            let mut out = TokenAccumulator::new();
+        let mut out = TokenAccumulator::new();
+        let got = (|| {
+            let template: Template<TokenAccumulator> =
+                syn::parse2(input.clone())?;
 
-            let got = (|| {
-                let template: Template<TokenAccumulator> =
-                    syn::parse2(input.clone())?;
+            template.expand(ctx, &mut out);
+            let got = out.tokens()?;
 
-                template.expand(ctx, &mut out);
-                let got = out.tokens()?;
-
-                Ok(got)
-            })();
-
-            compare_expected_output(
-                got,
-                &self.output,
-                self.grouping,
-                &context_desc,
-            )
+            Ok(got)
         })();
+
+        let matched = compare_expected_output(
+            got,
+            &self.output,
+            self.grouping,
+            &context_desc,
+        );
 
         tracker.note(matched);
     }
