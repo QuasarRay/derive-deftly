@@ -180,6 +180,7 @@ fn check_approx_equal_verbatim() {
     let verb = syn::Lit::Verbatim("1".parse().unwrap());
     let num = syn::Lit::Int(syn::LitInt::new("-1", span));
     for (a, b) in [
+        //
         (&verb, &verb),
         (&verb, &num),
         (&num, &verb),
