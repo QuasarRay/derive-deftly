@@ -496,11 +496,3 @@ pub fn template_export_semver_check(
 ) -> proc_macro::TokenStream {
     wrap_macro_func(semver::template_export_semver_check_func_macro, input)
 }
-
-/// Deprecated alias for `template_export_semver_check`
-#[cfg_attr(proc_macro, proc_macro)]
-pub fn pub_template_semver_check(
-    input: proc_macro::TokenStream,
-) -> proc_macro::TokenStream {
-    wrap_macro_func(semver::template_export_semver_check_func_macro, input)
-}
