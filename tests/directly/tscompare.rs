@@ -10,6 +10,7 @@ pub struct DissimilarTokenStreams {
     diff: itertools::EitherOrBoth<TokenTree, TokenTree>,
 }
 
+#[derive(Debug, Clone, Copy)]
 pub enum ExpectedOutputNoneGrouping {
     Explicit,
     Flatten,
