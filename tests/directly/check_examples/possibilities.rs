@@ -106,10 +106,7 @@ documented: {}",
                     self.output_for_messages(),
                 );
                 for got in &tracker.other_outputs {
-                    eprintln!(
-                        "mismatched: {} [{}]",
-                        got.got, got.context_desc
-                    );
+                    got.eprintln_initial();
                 }
                 eprintln!("matched: {}", tracker.matching_outputs);
                 eprint!("skipped:");
@@ -118,10 +115,7 @@ documented: {}",
                 }
                 eprintln!("");
                 for got in &tracker.other_outputs {
-                    let Some(info) = &got.info else {
-                        continue;
-                    };
-                    info.eprintln(format!("[{}]", got.context_desc));
+                    got.eprintln_extended();
                 }
                 eprintln!("========================================");
             }

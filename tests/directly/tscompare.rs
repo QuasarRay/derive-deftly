@@ -16,6 +16,7 @@ pub enum ExpectedOutputNoneGrouping {
     Flatten,
 }
 
+/// When displaying, call `eprintln_extended_info` too
 pub struct Mismatch {
     pub got: String,
     pub context_desc: String,
@@ -150,6 +151,21 @@ pub fn compare_expected_output(
         }
     }
     Ok(())
+}
+
+impl Mismatch {
+    pub fn eprintln_initial(&self) {
+        eprintln!(
+            "mismatched: {} [{}]",
+            self.got, self.context_desc
+        )
+    }
+
+    pub fn eprintln_extended(&self) {
+        if let Some(info) = &self.info {
+            info.eprintln(format!("[{}]", self.context_desc));
+        }
+    }
 }
 
 /// Tries to compare but disregarding spacing, which is unpredictable
