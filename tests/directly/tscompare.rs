@@ -28,8 +28,8 @@ pub struct Mismatch {
 #[must_use]
 pub struct ExpectedOutput {
     /// `Err` means we expected an error containing that string
-    pub exp: Result<TokenStream, String>,
-    pub grouping: ExpectedOutputNoneGrouping,
+    exp: Result<TokenStream, String>,
+    grouping: ExpectedOutputNoneGrouping,
 }
 
 impl Display for ExpectedOutput {

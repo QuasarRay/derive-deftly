@@ -199,11 +199,10 @@ fn poc() {
     };
     let input = quote! { $($vname,) };
     let limit = Limit::Name("Enum".into());
-    let output = quote! { UnitVariant, TupleVariant, NamedVariant, };
-    let output = ExpectedOutput {
-        exp: Ok(output),
-        grouping: ExpectedOutputNoneGrouping::Flatten,
-    };
+    let output = ExpectedOutput::parse(
+        Ok("UnitVariant, TupleVariant, NamedVariant,"),
+        ExpectedOutputNoneGrouping::Flatten,
+    ).unwrap();
     PossibilitiesExample {
         all_must_match: false,
         loc: 42,
