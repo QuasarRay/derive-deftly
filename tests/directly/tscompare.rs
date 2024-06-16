@@ -24,8 +24,21 @@ pub struct Mismatch {
     pub info: Option<DissimilarTokenStreams>,
 }
 
-/// `Err` means we expected an error containing that string
-pub type ExpectedOutput = Result<TokenStream, String>;
+/// Parsed expected output from a test case
+#[must_use]
+pub struct ExpectedOutput {
+    /// `Err` means we expected an error containing that string
+    pub exp: Result<TokenStream, String>,
+}
+
+impl Display for ExpectedOutput {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match &self.exp {
+            Ok(y) => Display::fmt(y, f),
+            Err(e) => write!(f, "error: {}", e),
+        }
+    }
+}
 
 impl DissimilarTokenStreams {
     pub fn eprintln(&self, in_title: impl Display) {
@@ -77,7 +90,7 @@ pub fn parse_expected_output(
     stated: Result<&str, &str>,
     grouping: ExpectedOutputNoneGrouping,
 ) -> Result<ExpectedOutput, String> {
-    Ok(match stated {
+    let exp = match stated {
         Ok(exp) => Ok({
             if let Some(inner) = (|| {
                 let exp = exp.strip_prefix("«")?;
@@ -96,7 +109,8 @@ pub fn parse_expected_output(
             }
         }),
         Err(msg) => Err(msg.to_string()),
-    })
+    };
+    Ok(ExpectedOutput { exp })
 }
 
 pub fn compare_expected_output(
@@ -116,7 +130,7 @@ pub fn compare_expected_output(
         mk_mismatch("syn::Error", None, &format_args!("error: {}", e))
     };
 
-    match exp {
+    match &exp.exp {
         Ok(exp) => {
             let got = got.map_err(handle_syn_error)?;
             let got = match grouping {

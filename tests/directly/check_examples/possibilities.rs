@@ -70,7 +70,7 @@ impl Example for PossibilitiesExample {
             "checking :{} {} => {}",
             self.loc,
             &self.input,
-            self.output_for_messages()
+            self.output,
         );
     }
 
@@ -103,7 +103,7 @@ documented: {}",
                     m,
                     self.input,
                     self.limit,
-                    self.output_for_messages(),
+                    self.output,
                 );
                 for got in &tracker.other_outputs {
                     got.eprintln_initial();
@@ -142,13 +142,6 @@ impl PossibilitiesExample {
             output,
             grouping,
         }))
-    }
-
-    fn output_for_messages(&self) -> impl Display {
-        match &self.output {
-            Ok(y) => y.to_string(),
-            Err(e) => format!("error: {}", e),
-        }
     }
 
     fn compare_one_output(&self, tracker: &mut Tracker, ctx: &Context<'_>) {
@@ -212,12 +205,15 @@ fn poc() {
     let input = quote! { $($vname,) };
     let limit = Limit::Name("Enum".into());
     let output = quote! { UnitVariant, TupleVariant, NamedVariant, };
+    let output = ExpectedOutput {
+        exp: Ok(output),
+    };
     PossibilitiesExample {
         all_must_match: false,
         loc: 42,
         input: input,
         limit: limit,
-        output: Ok(output),
+        output,
         grouping: ExpectedOutputNoneGrouping::Flatten,
     }
     .check(&mut Errors::new(), &[driver]);
