@@ -10,6 +10,11 @@ pub struct DissimilarTokenStreams {
     diff: itertools::EitherOrBoth<TokenTree, TokenTree>,
 }
 
+pub enum ExpectedOutputNoneGrouping {
+    Explicit,
+    Flatten,
+}
+
 impl DissimilarTokenStreams {
     pub fn eprintln(&self, in_title: impl Display) {
         use EitherOrBoth as EOB;

@@ -22,11 +22,6 @@ pub struct PossibilitiesExample {
     grouping: ExpectedOutputNoneGrouping,
 }
 
-pub enum ExpectedOutputNoneGrouping {
-    Explicit,
-    Flatten,
-}
-
 struct Tracker {
     all_must_match: bool,
     matching_outputs: usize,

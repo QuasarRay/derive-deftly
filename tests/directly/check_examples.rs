@@ -75,7 +75,7 @@ mod reference_extract;
 use conditions::ConditionExample;
 use contexts::{for_every_example_context, ContextExt as _, Limit};
 use for_toplevels_concat::ForToplevelsConcatExample;
-use possibilities::{ExpectedOutputNoneGrouping, PossibilitiesExample};
+use possibilities::PossibilitiesExample;
 
 const INPUT_FILE: &str = "doc/reference.md";
 
