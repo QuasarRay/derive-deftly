@@ -820,7 +820,7 @@ where
     }
 }
 
-fn metavalue_spans(tspan: Span, vspan: Span) -> [ErrorLoc; 2] {
+fn metavalue_spans(tspan: Span, vspan: Span) -> [ErrorLoc<'static>; 2] {
     [(vspan, "attribute value"), (tspan, "template")]
 }
 

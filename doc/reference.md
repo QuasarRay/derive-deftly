@@ -1166,15 +1166,17 @@ are treated as different:
 for example, `Vec<u8>` is not equal to `Vec<u8, Global>`
 and `std::os::raw::c_char` is not equal to `std::ffi::c_char`.)
 
-Literals are compared textually, not by value.
-So they count as the same only if they have the same suffix,
-base, rawness, escaping, and so on.
-This applies to the results of `${Xmeta .. as str}` too:
-`${Xmeta .. as str}` will only compare equal to a fixed string,
-if the user-supplied value uses precisely the same escaping
-as the fixed string in the template.
-<!-- we could improve this by manually re-assembling the literal
-     in metavalue_litstr, to give a bespoke and stable representation -->
+Literals are generally compared by value:
+ * Integer literals are compared by value, ignoring any type suffixes.
+   (Both values `>u64` is unsupported.)
+ * String, byte and character literals are compared by value.
+   `c"..."` literals are unsupported.
+   (Suffixes are unsupported.).
+ * Floating point literals are compared *textually*, not by value;
+   so are considered equal only if written identically.
+ * Negative literals are compared as two tokens,
+   `-` and a nonnegative literal.
+ * Comparison of other literals is unsupported.
 
 The `ARG`s are in derive-deftly's usual
 [syntax for positional arguments](#named-and-positional-template-arguments-to-expansions-and-conditions).

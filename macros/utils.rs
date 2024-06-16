@@ -184,14 +184,14 @@ impl<T: Spanned> MakeError for T {
 /// the strings are included to indicate to the user
 /// what role each `Span` location played.
 /// For example, `(tspan, "template")`.
-pub type ErrorLoc = (Span, &'static str);
+pub type ErrorLoc<'s> = (Span, &'s str);
 
 /// Generates multiple copies of the error, for multiple places
 ///
 /// # Panics
 ///
 /// Panics if passed an empty slice.
-impl MakeError for [ErrorLoc] {
+impl MakeError for [ErrorLoc<'_>] {
     fn error<M: Display>(&self, m: M) -> syn::Error {
         let mut locs = self.into_iter().cloned();
         let mk = |(span, frag): (Span, _)| {
@@ -387,36 +387,6 @@ impl Grouping {
             }
         }
     }
-}
-
-/// Return the input, but with `None`-delimited `Group`s flattened away
-///
-/// Loses some span information.
-pub fn flatten_none_groups(ts: TokenStream) -> TokenStream {
-    fn recurse(out: &mut TokenStream, input: TokenStream) {
-        for tt in input {
-            match tt {
-                TT::Group(g) if g.delimiter() == Delimiter::None => {
-                    recurse(out, g.stream());
-                }
-                TT::Group(g) => {
-                    let span = g.span();
-                    let mut g = proc_macro2::Group::new(
-                        g.delimiter(),
-                        flatten_none_groups(g.stream()),
-                    );
-                    // We lose some span information here.
-                    g.set_span(span);
-                    out.extend([TT::Group(g)]);
-                }
-                _ => out.extend([tt]),
-            }
-        }
-    }
-
-    let mut out = TokenStream::new();
-    recurse(&mut out, ts);
-    out
 }
 
 //---------- IdentAny ----------
