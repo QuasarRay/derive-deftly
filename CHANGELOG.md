@@ -559,7 +559,7 @@ but we may make breaking changes, signaled via semver.
 
 If you write your code according to a
 reasonable interpretation of the documentation,
-and it is accepted,
+and it is accepted by the compiler,
 we intend that it won't break with a new version of derive-deftly,
 unless we have declared the breakage
 by making a semver-breaking change to our version number.
