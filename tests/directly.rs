@@ -20,6 +20,9 @@ use syn::parse_quote;
 #[path = "../macros/macros.rs"]
 pub(super) mod macros;
 
+mod tscompare;
+use tscompare::*;
+
 // PreprocessedTree contains a Cell which shouldn't be Clone,
 // since that duplicates the interior mutability, which can lead to bugs.
 assert_not_impl_any!(macros::meta::PreprocessedTree: Clone);

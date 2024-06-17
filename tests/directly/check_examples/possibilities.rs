@@ -13,18 +13,9 @@ pub struct PossibilitiesExample {
     /// Limit on which contexts to consider
     limit: Limit,
     /// Expected output
-    ///
-    /// `Err` means we expected an error containing that string
-    output: Result<TokenStream, String>,
+    output: ExpectedOutput,
     /// Are *all* the possibilities (subject to `limit`) supposed to match?
     all_must_match: bool,
-    /// Does the `output` faithfully represent `None`-delimited `Group`s?
-    grouping: ExpectedOutputNoneGrouping,
-}
-
-pub enum ExpectedOutputNoneGrouping {
-    Explicit,
-    Flatten,
 }
 
 struct Tracker {
@@ -32,12 +23,6 @@ struct Tracker {
     matching_outputs: usize,
     other_outputs: Vec<Mismatch>,
     skipped_context_descs: Vec<String>,
-}
-
-struct Mismatch {
-    got: String,
-    context_desc: String,
-    info: Option<DissimilarTokenStreams>,
 }
 
 impl Tracker {
@@ -79,12 +64,7 @@ impl Tracker {
 
 impl Example for PossibilitiesExample {
     fn print_checking(&self) {
-        println!(
-            "checking :{} {} => {}",
-            self.loc,
-            &self.input,
-            self.output_for_messages()
-        );
+        println!("checking :{} {} => {}", self.loc, &self.input, self.output,);
     }
 
     fn check(&self, errs: &mut Errors, drivers: &[syn::DeriveInput]) {
@@ -113,16 +93,10 @@ impl Example for PossibilitiesExample {
 input: {}
 limit: {:?}
 documented: {}",
-                    m,
-                    self.input,
-                    self.limit,
-                    self.output_for_messages(),
+                    m, self.input, self.limit, self.output,
                 );
                 for got in &tracker.other_outputs {
-                    eprintln!(
-                        "mismatched: {} [{}]",
-                        got.got, got.context_desc
-                    );
+                    got.eprintln_initial();
                 }
                 eprintln!("matched: {}", tracker.matching_outputs);
                 eprint!("skipped:");
@@ -131,10 +105,7 @@ documented: {}",
                 }
                 eprintln!("");
                 for got in &tracker.other_outputs {
-                    let Some(info) = &got.info else {
-                        continue;
-                    };
-                    info.eprintln(format!("[{}]", got.context_desc));
+                    got.eprintln_extended();
                 }
                 eprintln!("========================================");
             }
@@ -151,47 +122,15 @@ impl PossibilitiesExample {
         output: Result<&str, &str>,
         grouping: ExpectedOutputNoneGrouping,
     ) -> Result<Box<PossibilitiesExample>, String> {
-        let parse = |s, what| {
-            syn::parse_str(s).map_err(|e| {
-                format!(r#"failed to parse {}: {:?}: {}"#, what, s, e)
-            })
-        };
-        let input = parse(input, "input")?;
-        let output = match output {
-            Ok(exp) => Ok({
-                if let Some(inner) = (|| {
-                    let exp = exp.strip_prefix("«")?;
-                    let exp = exp.strip_suffix("»")?;
-                    Some(exp.trim())
-                })() {
-                    assert!(matches!(
-                        grouping,
-                        ExpectedOutputNoneGrouping::Explicit,
-                    ));
-                    let inner = parse(inner, "output (inner group)")?;
-                    proc_macro2::Group::new(Delimiter::None, inner)
-                        .to_token_stream()
-                } else {
-                    parse(exp, "output")?
-                }
-            }),
-            Err(msg) => Err(msg.to_string()),
-        };
+        let input = parse_str(input, "input")?;
+        let output = ExpectedOutput::parse(output, grouping)?;
         Ok(Box::new(PossibilitiesExample {
             loc,
             input,
             limit,
             all_must_match,
             output,
-            grouping,
         }))
-    }
-
-    fn output_for_messages(&self) -> impl Display {
-        match &self.output {
-            Ok(y) => y.to_string(),
-            Err(e) => format!("error: {}", e),
-        }
     }
 
     fn compare_one_output(&self, tracker: &mut Tracker, ctx: &Context<'_>) {
@@ -214,67 +153,18 @@ impl PossibilitiesExample {
 
         let input = &self.input;
 
-        let matched = (|| {
-            let mut out = TokenAccumulator::new();
+        let mut out = TokenAccumulator::new();
+        let got = (|| {
+            let template: Template<TokenAccumulator> =
+                syn::parse2(input.clone())?;
 
-            let mk_mismatch = |info, got: &dyn Display| Mismatch {
-                info,
-                got: got.to_string(),
-                context_desc: context_desc.clone(),
-            };
+            template.expand(ctx, &mut out);
+            let got = out.tokens()?;
 
-            let handle_syn_error = |e: syn::Error| {
-                //println!("  ERROR {}", &context_desc);
-                mk_mismatch(None, &format_args!("error: {}", e))
-            };
-
-            let got = (|| {
-                let template: Template<TokenAccumulator> =
-                    syn::parse2(input.clone())?;
-
-                template.expand(ctx, &mut out);
-                let got = out.tokens()?;
-
-                Ok(got)
-            })();
-
-            match &self.output {
-                Ok(exp) => {
-                    let got = got.map_err(handle_syn_error)?;
-                    let got = match self.grouping {
-                        ExpectedOutputNoneGrouping::Explicit => got,
-                        ExpectedOutputNoneGrouping::Flatten => {
-                            flatten_none_groups(got)
-                        }
-                    };
-                    check_expected_actual_similar_tokens(
-                        &exp, &got, //
-                    )
-                    .map_err(|info| {
-                        //println!("  MISMATCH {}", &context_desc);
-                        mk_mismatch(Some(info), &got)
-                    })?;
-                    //println!("  MATCHED {}", &context_desc);
-                }
-                Err(exp) => {
-                    let got = match got {
-                        Err(n) => Ok(n),
-                        Ok(y) => Err(y),
-                    };
-                    let got = got
-                        .map_err(|got| {
-                            //println!("  UNEXPECTED-SUCCESS {}", &context_desc);
-                            mk_mismatch(None, &got)
-                        })?
-                        .to_string();
-                    if !got.contains(exp) {
-                        //println!("  WRONG-ERROR {}", &context_desc);
-                        return Err(mk_mismatch(None, &got));
-                    }
-                }
-            }
-            Ok(())
+            Ok(got)
         })();
+
+        let matched = self.output.compare(got, &context_desc);
 
         tracker.note(matched);
     }
@@ -298,14 +188,17 @@ fn poc() {
     };
     let input = quote! { $($vname,) };
     let limit = Limit::Name("Enum".into());
-    let output = quote! { UnitVariant, TupleVariant, NamedVariant, };
+    let output = ExpectedOutput::parse(
+        Ok("UnitVariant, TupleVariant, NamedVariant,"),
+        ExpectedOutputNoneGrouping::Flatten,
+    )
+    .unwrap();
     PossibilitiesExample {
         all_must_match: false,
         loc: 42,
         input: input,
         limit: limit,
-        output: Ok(output),
-        grouping: ExpectedOutputNoneGrouping::Flatten,
+        output,
     }
     .check(&mut Errors::new(), &[driver]);
 }
