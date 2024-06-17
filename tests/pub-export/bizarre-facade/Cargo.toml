@@ -19,7 +19,8 @@ autotests = false
 
 [features]
 default = ["full"]
-full = ["case", "expect", "meta-as-items", "minimal-1"]
+full = ["full-msrv-1.56"]
+"full-msrv-1.56" = ["case", "expect", "meta-as-items", "minimal-1"]
 minimal-1 = []
 
 case = ["derive-deftly-macros/case", "heck"]

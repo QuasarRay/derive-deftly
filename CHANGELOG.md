@@ -6,6 +6,9 @@ Features are provided to allow for a build with reduced dependencies.
 
  * `full`: Metafeature.
    Enable all reasonable, non-experimental, features.
+ * `full-msrv-1.56`: Metafeature.
+   Enable all reasonable, non-experimental, features
+   compatible with Rust 1.56.
  * `case`: [Case conversions](../doc_reference/index.html#case-changing),
    using `heck`.
  * `expect`: the [`expect`](../doc_reference/index.html#expect-items-expect-expr--syntax-check-the-expansion)
@@ -22,6 +25,10 @@ The Minimum Supported Rust Version for derive-deftly is 1.56.
 
 We expect to increase it cautiously and only with good reason.
 (However, MSRV increase would be a minor version bump.)
+
+Future cargo features might imply a higher MSRV.
+Such features might be added to the metafeature `full`,
+again, in a minor version bump.
 
 ## Changelog
 
@@ -544,3 +551,35 @@ However, the likelihood of this breaking a working build seems low.
 ### 0.0.1
 
  * Initial release to crates.io, not widely advertised.
+
+## Stability and semver policy
+
+We take a similar approach to stability to Rust upstream,
+but we may make breaking changes, signaled via semver.
+
+If you write your code according to a
+reasonable interpretation of the documentation,
+and it is accepted by the compiler,
+we intend that it won't break with a new version of derive-deftly,
+unless we have declared the breakage
+by making a semver-breaking change to our version number.
+
+Rarely, we may need to make a change which violates that rule,
+especially if we discover a serious issue that might mean
+actual programs in the wild are likely to be not behaving
+as the programmer might expect.
+
+When we say that something will be "rejected",
+or use precisely the phrase "it is an error",
+we intend that you can rely on that:
+making it be accepted would be a breaking change.
+In contrast, when we write that something is "not supported",
+or use terminology like "must",
+or show it with `error,` in examples
+we might add support for it later.
+
+There are additional, stronger, promises relating to the API
+of exported templates,
+to help you manage the semver implications for the exporting crate.
+This is set out in the
+[relevant documentation](../macro.define_derive_deftly.html#exporting-a-template-for-use-by-other-crates).
