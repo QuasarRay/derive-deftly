@@ -64,12 +64,7 @@ impl Tracker {
 
 impl Example for PossibilitiesExample {
     fn print_checking(&self) {
-        println!(
-            "checking :{} {} => {}",
-            self.loc,
-            &self.input,
-            self.output,
-        );
+        println!("checking :{} {} => {}", self.loc, &self.input, self.output,);
     }
 
     fn check(&self, errs: &mut Errors, drivers: &[syn::DeriveInput]) {
@@ -98,10 +93,7 @@ impl Example for PossibilitiesExample {
 input: {}
 limit: {:?}
 documented: {}",
-                    m,
-                    self.input,
-                    self.limit,
-                    self.output,
+                    m, self.input, self.limit, self.output,
                 );
                 for got in &tracker.other_outputs {
                     got.eprintln_initial();
@@ -172,10 +164,7 @@ impl PossibilitiesExample {
             Ok(got)
         })();
 
-        let matched = self.output.compare(
-            got,
-            &context_desc,
-        );
+        let matched = self.output.compare(got, &context_desc);
 
         tracker.note(matched);
     }
@@ -202,7 +191,8 @@ fn poc() {
     let output = ExpectedOutput::parse(
         Ok("UnitVariant, TupleVariant, NamedVariant,"),
         ExpectedOutputNoneGrouping::Flatten,
-    ).unwrap();
+    )
+    .unwrap();
     PossibilitiesExample {
         all_must_match: false,
         loc: 42,

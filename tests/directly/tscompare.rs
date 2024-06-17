@@ -80,11 +80,11 @@ impl DissimilarTokenStreams {
 
 /// Convenience version of `syn::parse_str` with more convenient error
 pub fn parse_str<T>(s: &str, what: &str) -> Result<T, String>
-where T: syn::parse::Parse
+where
+    T: syn::parse::Parse,
 {
-    syn::parse_str(s).map_err(|e| {
-        format!(r#"failed to parse {}: {:?}: {}"#, what, s, e)
-    })
+    syn::parse_str(s)
+        .map_err(|e| format!(r#"failed to parse {}: {:?}: {}"#, what, s, e))
 }
 
 impl ExpectedOutput {
@@ -143,9 +143,7 @@ impl ExpectedOutput {
                 check_expected_actual_similar_tokens(
                     &exp, &got, //
                 )
-                    .map_err(|info| {
-                        mk_mismatch("mismatch", Some(info), &got)
-                    })?;
+                .map_err(|info| mk_mismatch("mismatch", Some(info), &got))?;
                 //println!("  MATCHED {}", &context_desc);
             }
             Err(exp) => {
@@ -169,10 +167,7 @@ impl ExpectedOutput {
 
 impl Mismatch {
     pub fn eprintln_initial(&self) {
-        eprintln!(
-            "{}: {} [{}]",
-            self.kind, self.got, self.context_desc
-        )
+        eprintln!("{}: {} [{}]", self.kind, self.got, self.context_desc)
     }
 
     pub fn eprintln_extended(&self) {
