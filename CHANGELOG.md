@@ -576,7 +576,7 @@ making it be accepted would be a breaking change.
 In contrast, when we write that something is "not supported",
 or use terminology like "must",
 or show it with `error,` in examples
-we might add sypport for it later.
+we might add support for it later.
 
 There are additional, stronger, promises relating to the API
 of exported templates,
