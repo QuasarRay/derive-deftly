@@ -377,7 +377,7 @@ pub fn define_derive_deftly(
 /// ## Applying a template (derive-deftly macro) from another crate
 ///
 /// `#[derive_deftly(some_crate::MyMacro)]`
-/// applies an exported (`pub`) template
+/// applies an exported template
 /// defined and exported by `some_crate`.
 ///
 /// You can import a template from another crate,
@@ -468,7 +468,7 @@ pub fn derive_deftly(
 ///
 /// ## When and how to call this
 ///
-/// If you export templates, with `define_derive_deftly! { pub ...`,
+/// If you export templates, with `define_derive_deftly! { export ...`,
 /// call this macro too, once in your crate.
 ///
 /// Pass it the version of `derive-deftly` that was current,
@@ -490,7 +490,7 @@ pub fn derive_deftly(
 /// updates of derive-deftly.)
 ///
 /// (Exporting a *driver* struct for derivation in downstream crates,
-/// `#[derive_deftly_adhoc(pub)]`, is not covered by this promise.)
+/// `#[derive_deftly_adhoc(export)]`, is not covered by this promise.)
 ///
 /// ## Example
 ///

@@ -737,7 +737,7 @@ see [Repetition and nesting](#repetition-and-nesting).
 
 `$crate` always refers to the root of the crate 
 defining the template.
-Within a `pub` template,
+Within an `export`ed template,
 being expanded in another crate,
 it refers to the crate containing the template definition.
 In templates being used locally,

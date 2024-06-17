@@ -42,7 +42,7 @@ and the docs for the individual proc macros.
 use derive_deftly::{define_derive_deftly, Deftly};
 
 define_derive_deftly! {
-    ListVariants =
+    ListVariants:
 
     impl $ttype {
         fn list_variants() -> Vec<&'static str> {
