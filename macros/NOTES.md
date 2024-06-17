@@ -72,7 +72,7 @@ won't get in the way.
     3. `#[deftly(...)]` attributes on bits of the data structure
 	   (checked via chaining technique).
 
- * **`define_derive_deftly!{ [pub] MACNAME = TEMPLATE }`**:
+ * **`define_derive_deftly!{ [export] MACNAME: TEMPLATE }`**:
    define a reusable template, which may be invoked as
    `#[derive_deftly(MACNAME)]`
    (within a struct annotated with `#[derive(Deftly)]` or
