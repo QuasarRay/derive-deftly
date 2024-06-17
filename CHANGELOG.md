@@ -581,4 +581,5 @@ we might add support for it later.
 There are additional, stronger, promises relating to the API
 of exported templates,
 to help you manage the semver implications for the exporting crate.
-This is set out in the relevant documentation.
+This is set out in the
+[relevant documentation](../macro.define_derive_deftly.html#exporting-a-template-for-use-by-other-crates).
