@@ -94,7 +94,7 @@ Implemented in `define.rs::define_derive_deftly_func_macro`.
 When used like this
 ```rust,ignore
     define_derive_deftly! {
-        MyMacro TOPTIONS.. =
+        MyMacro TOPTIONS..:
         TEMPLATE..
     }
 ```
