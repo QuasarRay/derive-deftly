@@ -171,7 +171,8 @@ fn check_details_shapes() {
 fn check_details_types() {
     tests_using_driver(
         quote! {
-            struct T<'l0, 'l1: 'l0, AG: Bound = Def>(A<'l0, AG>);
+            struct T<'l0, 'l1: 'l0, AG: Bound = Def>(A<'l0, AG>)
+                where AG: 'l0;
         },
         EONG::Explicit,
         &[
@@ -187,6 +188,24 @@ fn check_details_types() {
                 Ok("TT::<'l0, 'l1, AG>"),
             ),
             ("$tdeftype", Ok("T<'l0, 'l1: 'l0, AG: Bound = Def>")),
+            // However, "gens" all have a final comma unless they're empty.
+            ("$tgens", Ok("'l0, 'l1: 'l0, AG: Bound,")),
+            ("$tgnames", Ok("'l0, 'l1, AG,")),
+            ("$twheres", Ok("AG: 'l0,")),
+            ("$tdefgens", Ok("'l0, 'l1: 'l0, AG: Bound = Def,")),
+        ],
+    );
+
+    tests_using_driver(
+        quote! {
+            struct Unit;
+        },
+        EONG::Explicit,
+        &[
+            ("$tgens", Ok("")),
+            ("$tgnames", Ok("")),
+            ("$twheres", Ok("")),
+            ("$tdefgens", Ok("")),
         ],
     );
 
