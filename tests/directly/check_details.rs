@@ -78,3 +78,39 @@ fn check_details_idents() {
         ],
     );
 }
+
+// Test "redefinition keywords" and `$vpat`
+//
+// In particular, we test that
+//  - you can define a new data structure
+//  - of every kind
+//  - with >1 of every kind of content (field, variant)
+//    (proving that the commas are all there)
+//  - and that it parses as an item
+// This shows that our commas are all present and correct,
+// avoiding a repetition of #74 for these cases.
+// We use `Flatten` because any groups are buried in the middle, here.
+//
+// We also have handwritten expected outputs for $vpat in all cases.
+#[test]
+#[rustfmt::skip] // this test includes deliberately-missing commas in inputs
+fn check_details_shapes() {
+    let redefine = r#"
+        $tdefkwd $tdeftype ${tdefvariants $(
+             ${vdefbody $vname $(
+                 ${fdefine $fname} $ftype,
+             )}
+         )}
+    "#;
+    tests_using_driver(
+        quote!(
+            struct S { a: A, b: B }
+        ),
+        EONG::Flatten,
+        &[
+            //
+            ("$vpat", Ok("S { a: f_a, b: f_b, }")),
+            (redefine, Ok("struct S { a: A, b: B, }")),
+        ],
+    );
+}
