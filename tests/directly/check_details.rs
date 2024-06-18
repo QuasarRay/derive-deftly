@@ -111,12 +111,12 @@ fn check_details_shapes() {
     "#;
     tests_using_driver(
         quote!(
-            struct S;
+            struct S<'l, G: Bound = Def>;
         ),
         EONG::Flatten,
         &[
             ("$vpat", Ok("S {}")),
-            (redefine, item_ok("struct S;")),
+            (redefine, item_ok("struct S<'l, G: Bound = Def>;")),
         ],
     );
     tests_using_driver(
@@ -171,7 +171,7 @@ fn check_details_shapes() {
 fn check_details_types() {
     tests_using_driver(
         quote! {
-            struct T<'l0, 'l1: 'l0, AG: Bound>(A<'l0, AG>);
+            struct T<'l0, 'l1: 'l0, AG: Bound = Def>(A<'l0, AG>);
         },
         EONG::Explicit,
         &[
@@ -186,7 +186,7 @@ fn check_details_types() {
                 "${vtype self=$<T $ttype> vname=$<V $vname>}",
                 Ok("TT::<'l0, 'l1, AG>"),
             ),
-            ("$tdeftype", Ok("T<'l0, 'l1: 'l0, AG: Bound>")),
+            ("$tdeftype", Ok("T<'l0, 'l1: 'l0, AG: Bound = Def>")),
         ],
     );
 
