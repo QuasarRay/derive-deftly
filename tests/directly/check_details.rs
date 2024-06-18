@@ -192,6 +192,21 @@ fn check_details_types() {
 
     tests_using_driver(
         quote! {
+            enum E<'l0, 'l1: 'l0, AG: Bound> { U }
+        },
+        EONG::Explicit,
+        &[
+            //
+            ("$( $vtype ) /", Ok("E::U::<'l0, 'l1, AG> /")),
+            (
+                "$( ${vtype self=$<T $ttype> vname=$<V $vname>} ) /",
+                Ok("TE::VU::<'l0, 'l1, AG> /"),
+            ),
+        ],
+    );
+
+    tests_using_driver(
+        quote! {
             enum E<'l0, 'l1: 'l0, AG: Bound, BG> {
                 U,
                 S {
