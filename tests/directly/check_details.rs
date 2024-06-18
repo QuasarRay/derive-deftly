@@ -166,3 +166,45 @@ fn check_details_shapes() {
         ],
     );
 }
+
+#[test]
+fn check_details_types() {
+    tests_using_driver(
+        quote! {
+            struct T<'l0, 'l1: 'l0, AG: Bound>(A<'l0, AG>);
+        },
+        EONG::Explicit,
+        &[
+            // Note lack of final `,` in generics inside A and T, below.
+            // That's fine because one can't deconstruct this;
+            // if we invent $fgens or something, it would need the `,`
+            ("$( $ftype )", Ok("« A::<'l0, AG> »")),
+            ("$ttype", Ok("T::<'l0, 'l1, AG>")),
+            ("$vtype", Ok("T::<'l0, 'l1, AG>")),
+            ("${vtype self=T2 vname=$<V $vname>}", Ok("T2")),
+            ("${vtype self=$<T $ttype> vname=$<V $vname>}",
+             Ok("TT::<'l0, 'l1, AG>")),
+            ("$tdeftype", Ok("T<'l0, 'l1: 'l0, AG: Bound>")),
+        ],
+    );
+
+    tests_using_driver(
+        quote! {
+            enum E<'l0, 'l1: 'l0, AG: Bound, BG> {
+                U,
+                S {
+                    a: A<'l0, AG>,
+                    b: B::<'l1, BG>,
+                },
+            }
+        },
+        // Proper grouping is tested in the first block, above.
+        EONG::Flatten,
+        &[
+            // Again, note lack of final `,` inside `$ftype` and `$vtype`
+            ("$( $ftype / )", Ok("A::<'l0, AG> / B::<'l1, BG> /")),
+            ("$( $vtype / )", Ok("E::U::<'l0, 'l1, AG, BG> / 
+                                  E::S::<'l0, 'l1, AG, BG> /")),
+        ],
+    );
+}
