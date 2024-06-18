@@ -154,6 +154,10 @@ fn check_details_shapes() {
             ("$( $vpat | )", Ok(r"E::U {} |
                                   E::T { 0: f_0, 1: f_1 ,} |
                                   E::S { a: f_a, b: f_b, } |")),
+            ("$( ${vpat self=$<T $ttype> vname=$<V $vname> fprefix=g_} | )",
+             Ok(r"TE::VU {} |
+                  TE::VT { 0: g_0, 1: g_1, } |
+                  TE::VS { a: g_a, b: g_b, } |")),
             (redefine, item_ok(r"enum E {
                                     U,
                                     T(A, B,),
