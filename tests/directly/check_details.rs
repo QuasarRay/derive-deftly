@@ -111,6 +111,27 @@ fn check_details_shapes() {
     "#;
     tests_using_driver(
         quote!(
+            struct S;
+        ),
+        EONG::Flatten,
+        &[
+            ("$vpat", Ok("S {}")),
+            (redefine, item_ok("struct S;")),
+        ],
+    );
+    tests_using_driver(
+        quote!(
+            struct S(A, B);
+
+        ),
+        EONG::Flatten,
+        &[
+            ("$vpat", Ok("S { 0: f_0, 1: f_1, }")),
+            (redefine, item_ok("struct S(A, B,);")),
+        ],
+    );
+    tests_using_driver(
+        quote!(
             struct S { a: A, b: B }
         ),
         EONG::Flatten,
