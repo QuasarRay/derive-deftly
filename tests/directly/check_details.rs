@@ -141,4 +141,24 @@ fn check_details_shapes() {
             (redefine, item_ok("struct S { a: A, b: B, }")),
         ],
     );
+    tests_using_driver(
+        quote!(
+            enum E {
+                U,
+                T(A, B),
+                S { a: A, b: B }
+            }
+        ),
+        EONG::Flatten,
+        &[
+            ("$( $vpat | )", Ok(r"E::U {} |
+                                  E::T { 0: f_0, 1: f_1 ,} |
+                                  E::S { a: f_a, b: f_b, } |")),
+            (redefine, item_ok(r"enum E {
+                                    U,
+                                    T(A, B,),
+                                    S { a: A, b: B, },
+                                }")),
+        ],
+    );
 }
