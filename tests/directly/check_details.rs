@@ -79,6 +79,13 @@ fn check_details_idents() {
     );
 }
 
+/// Returns `Ok(s)`, but checking that it parses as an item
+fn item_ok(s: &str) -> Result<&str, &str> {
+    syn::parse_str(s)
+        .map(|_: syn::Item| s)
+        .map_err(|e| panic!("parse failed: {:?}: {}", s, e))
+}
+
 // Test "redefinition keywords" and `$vpat`
 //
 // In particular, we test that
@@ -110,7 +117,7 @@ fn check_details_shapes() {
         &[
             //
             ("$vpat", Ok("S { a: f_a, b: f_b, }")),
-            (redefine, Ok("struct S { a: A, b: B, }")),
+            (redefine, item_ok("struct S { a: A, b: B, }")),
         ],
     );
 }
