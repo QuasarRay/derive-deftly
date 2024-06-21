@@ -4,7 +4,7 @@ But now suppose that you want to expose your template,
 so that people can use it from any crate.
 
 To do this, you use
-[`pub` before the name of your macro][exporting-a-template]:
+[`export` before the name of your macro][exporting-a-template]:
 ```
 pub trait HelloWorld {
     fn greet();
@@ -12,7 +12,7 @@ pub trait HelloWorld {
 
 derive_deftly::define_derive_deftly! {
     /// Derives `HelloWorld`, providing `greet`
-    pub HelloWorld:
+    export HelloWorld:
     impl $crate::HelloWorld for $ttype {
         fn greet() {
             println!("Greetings from {}", stringify!($ttype));
@@ -23,7 +23,7 @@ derive_deftly::define_derive_deftly! {
 # fn main() {}
 ```
 
-> Declaring our template as `pub HelloWorld` in this way
+> Declaring our template as `export HelloWorld` in this way
 > is equivalent to marking `derive_deftly_template_HelloWorld`
 > with `#[macro_export]`.
 > Doing this puts the template into the root of the crate.
@@ -50,7 +50,7 @@ Additionally,
 from our crate, so that when our template is applied to user types,
 a compatible derive-deftly driver is used.
 And we should also invoke
-[`derive_deftly::pub_template_semver_check`]
+[`derive_deftly::template_export_semver_check`]
 once,
 somewhere in our crate:
 this will tells us about any implications for your crate's semver,
@@ -63,7 +63,7 @@ when you change your `Cargo.toml` to upgrade the `derive-deftly` crate.
 pub use derive_deftly;
 
 // Use the current version of derive_deftly here:
-derive_deftly::pub_template_semver_check!("0.11.0");
+derive_deftly::template_export_semver_check!("0.11.0");
 ```
 
 Now, when somebody wants to use our template from a different crate,
@@ -87,7 +87,7 @@ struct TheirStructure {
 }
 ```
 
-Note that exporting a template to other crates with `pub`
+Note that exporting a template to other crates with `export`
 doesn't affect its visibility *within your crate*.
 You may still need `#[macro_use]`.
 
@@ -101,7 +101,7 @@ structs, enums, fields, variants, and more.
 
 
 
-[`derive_deftly::pub_template_semver_check`]: https://docs.rs/derive-deftly/latest/derive_deftly/macro.pub_template_semver_check.html
+[`derive_deftly::template_export_semver_check`]: https://docs.rs/derive-deftly/latest/derive_deftly/macro.template_export_semver_check.html
 [must-re-export]: https://docs.rs/derive-deftly/latest/derive_deftly//macro.define_derive_deftly.html#you-must-re-export-derive_deftly-semver-implications
 [doc comment]: https://docs.rs/derive-deftly/latest/derive_deftly//macro.define_derive_deftly.html#docs-in-define
 [exporting-a-template]: https://docs.rs/derive-deftly/latest/derive_deftly//macro.define_derive_deftly.html#exporting-a-template-for-use-by-other-crates
