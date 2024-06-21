@@ -32,4 +32,4 @@ pub mod doc_implementation {}
 pub mod doc_changelog {}
 
 #[cfg(not(feature = "minimal-1"))]
-compile_error! { "You must enable at least one derive-deftly crate feature!" }
+compile_error! { "You must enable (directly or indirectly) the derive-deftly crate feature `minimal-1`!" }

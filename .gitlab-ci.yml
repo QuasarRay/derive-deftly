@@ -123,6 +123,7 @@ python3-mypy:
   script:
     - apt-get update && apt-get install -y mypy
     - mypy --strict maint/build-docs-local
+    - mypy --strict maint/feature-matrix-test
 
 cargo-test-minfeatures:
   stage: comprehensive
@@ -212,6 +213,12 @@ minimal-versions-minfeatures:
   script:
     - mv Cargo.lock.minimal Cargo.lock
     - maint/cargo-test-locked +1.56.0 -p derive-deftly-tests --no-default-features
+
+feature-matrix:
+  stage: comprehensive
+  script:
+    - apt-get update && apt-get install -y python3-toml
+    - maint/feature-matrix-test
 
 cargo-test-dprint:
   stage: comprehensive
