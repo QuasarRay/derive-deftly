@@ -14,7 +14,7 @@
       * [`$tgens`, `$tgnames`, `$twheres`, `$tdefgens` -- generics](#tgens-tgnames-twheres-tdefgens--generics)
       * [`${tmeta(...)}` `${vmeta(...)}` `${fmeta(...)}` -- `#[deftly]` attributes](#tmeta-vmeta-fmeta--deftly-attributes)
       * [`${fattrs ...}` `${vattrs ...}` `${tattrs ...}` -- other attributes](#fattrs--vattrs--tattrs---other-attributes)
-      * [`$<...>`, `${paste ...}` -- identifier pasting](#-paste---identifier-pasting)
+      * [`${paste ...}`, `$<...>` -- identifier pasting](#paste----identifier-pasting)
       * [`${CASE_CHANGE ...}` -- case changing](#case_change---case-changing)
       * [`${when CONDITION}` -- filtering out repetitions by a predicate](#when-condition--filtering-out-repetitions-by-a-predicate)
       * [`${if COND1 { ... } else if COND2 { ... } else { ... }}` -- conditional](#if-cond1----else-if-cond2----else-----conditional)
@@ -626,7 +626,7 @@ that come *after* the `#[derive(..., Deftly, ...)]`.
 
 <div id="x:paste">
 
-### `$<...>`, `${paste ...}` -- identifier pasting
+### `${paste ...}`, `$<...>` -- identifier pasting
 
 </div>
 
