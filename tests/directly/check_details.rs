@@ -60,12 +60,21 @@ fn check_details_idents() {
             ("${tmeta(raw) as str}", Ok(r#""r#for""#)),
             ("${tmeta(raw) as ident}", Ok("r#for")),
             ("$< ${tmeta(raw)} >", Ok("r#for")),
-            ("$< ${tmeta(plain)} _ ${tmeta(raw)} >", Err(r#""plain_r#for""#)),
+            (
+                "$< ${tmeta(plain)} _ ${tmeta(raw)} >",
+                Err(r#""plain_r#for""#),
+            ),
             ("$< ${tmeta(raw)} _ ${tmeta(plain)} >", Ok("r#for_plain")),
             ("${tmeta(raw) as ident}", Ok("r#for")),
             ("$< ${tmeta(raw) as ident} >", Ok("r#for")),
-            ("$< ${tmeta(plain)} _ ${tmeta(raw) as ident} >", Ok("plain_for")),
-            ("$< ${tmeta(raw) as ident} _ ${tmeta(plain)} >", Ok("for_plain")),
+            (
+                "$< ${tmeta(plain)} _ ${tmeta(raw) as ident} >",
+                Ok("plain_for"),
+            ),
+            (
+                "$< ${tmeta(raw) as ident} _ ${tmeta(plain)} >",
+                Ok("for_plain"),
+            ),
         ],
     );
 }
