@@ -3,7 +3,7 @@
 use super::*;
 
 #[test]
-fn check_approx_equal() {
+fn check_approx_equal_lit() {
     // Testing all the corner cases for literals is quite hard.
 
     // negative literals are deeply weird, see
@@ -140,7 +140,7 @@ fn check_approx_equal() {
 }
 
 #[test]
-fn check_approx_equal_verbatim() {
+fn check_approx_equal_lit_verbatim() {
     let span = Span::call_site();
     let verb = syn::Lit::Verbatim("1".parse().unwrap());
     let num = syn::Lit::Int(syn::LitInt::new("-1", span));
