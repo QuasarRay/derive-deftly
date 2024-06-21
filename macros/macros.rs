@@ -373,6 +373,9 @@ pub fn define_derive_deftly(
 /// and
 /// the `mod` statement will need `#[macro_use]`.
 /// So the placement and order of `mod` statements can matter.
+/// Alternatively, it is possible to use path-based scoping;
+/// there is
+/// [an example in the Guide](https://diziet.pages.torproject.net/rust-derive-deftly/latest/guide/templates-in-modules.html#path-scope).
 ///
 /// ## Applying a template (derive-deftly macro) from another crate
 ///
