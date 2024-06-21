@@ -109,7 +109,7 @@ pub struct SubstMeta<O: SubstParseContext> {
 #[derive(Debug, Clone, AsRefStr, Display)]
 #[allow(non_camel_case_types)] // clearer to use the exact ident
 pub enum SubstAs<O: SubstParseContext> {
-    expr(O::NotInBool, O::NotInPaste),
+    expr(O::NotInBool, O::NotInPaste, SubstAsSupported<ValueExpr>),
     ident(O::NotInBool),
     items(O::NotInBool, O::NotInPaste, SubstAsSupported<ValueItems>),
     path(O::NotInBool),
@@ -282,7 +282,7 @@ impl<O: SubstParseContext> SubstAs<O> {
             SubstAsSupportStatus::new(&kw)
         }
 
-        keyword! { expr(nb, not_in_paste()?) }
+        keyword! { expr(nb, not_in_paste()?, supported(&kw)?) }
         keyword! { ident(nb) }
         keyword! { items(nb, not_in_paste()?, supported(&kw)?) }
         keyword! { path(nb) }
@@ -698,6 +698,8 @@ fn check_borrowed_desig() {
 
 //---------- conditional support for `Xmeta as items` ----------
 
+pub type ValueExpr = syn::Expr;
+
 #[cfg(feature = "meta-as-items")]
 pub type ValueItems = Concatenated<syn::Item>;
 #[cfg(not(feature = "meta-as-items"))]
@@ -912,8 +914,9 @@ impl<'l> FoundNode<'l> {
         };
 
         match as_ {
-            as_ @ SA::expr(.., np) => {
-                let expr: syn::Expr = metavalue_lit_as(lit, tspan, as_)?;
+            as_ @ SA::expr(.., np, supported) => {
+                let expr = metavalue_lit_as(lit, tspan, as_)?;
+                supported.infer_type(&expr);
                 out.append_tokens(np, Grouping::Parens.surround(expr))?;
             }
             as_ @ SA::ident(..) => {
