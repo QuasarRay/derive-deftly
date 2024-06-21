@@ -225,6 +225,25 @@ fn check_details_types() {
         ],
     );
 
+    #[cfg(feature = "recent")] // const generics
+    tests_using_driver(
+        quote! {
+            struct T<'l, G, const C: i32 = 0>();
+        },
+        EONG::Explicit,
+        &[
+            // No commas in non-deconstructed type names
+            ("$ttype", Ok("T::<'l, G, C>")),
+            ("$vtype", Ok("T::<'l, G, C>")),
+            ("${vtype self=$<T $ttype>}", Ok("TT::<'l, G, C>")),
+            ("$tdeftype", Ok("T<'l, G, const C: i32 = 0>")),
+            // However, "gens" all have a final comma unless they're empty.
+            ("$tgens", Ok("'l, G, const C: i32,")),
+            ("$tgnames", Ok("'l, G, C,")),
+            ("$tdefgens", Ok("'l, G, const C: i32 = 0,")),
+        ],
+    );
+
     tests_using_driver(
         quote! {
             struct Unit;
@@ -249,6 +268,22 @@ fn check_details_types() {
             (
                 "$( ${vtype self=$<T $ttype> vname=$<V $vname>} ) /",
                 Ok("TE::VU::<'l0, 'l1, AG> /"),
+            ),
+        ],
+    );
+
+    #[cfg(feature = "recent")] // const generics
+    tests_using_driver(
+        quote! {
+            enum E<'l, G, const C: i32 = 0> { U }
+        },
+        EONG::Explicit,
+        &[
+            //
+            ("$( $vtype ) /", Ok("E::U::<'l, G, C> /")),
+            (
+                "$( ${vtype self=$<T $ttype> vname=$<V $vname>} ) /",
+                Ok("TE::VU::<'l, G, C> /"),
             ),
         ],
     );
