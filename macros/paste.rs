@@ -130,7 +130,12 @@ impl<T: ToTokens + quote::IdentFragment + Display> IdentFrag for T {
     }
 
     fn fragment(&self) -> String {
-        self.to_string()
+        let s = self.to_string();
+        if let Some(s) = s.strip_prefix("r#") {
+            s.to_string()
+        } else {
+            s
+        }
     }
 }
 

@@ -64,9 +64,8 @@ fn check_details_idents() {
             ("$< ${tmeta(raw)} _ ${tmeta(plain)} >", Ok("r#for_plain")),
             ("${tmeta(raw) as ident}", Ok("r#for")),
             ("$< ${tmeta(raw) as ident} >", Ok("r#for")),
-            // XXXX these next two are wrong!
-            ("$< ${tmeta(plain)} _ ${tmeta(raw) as ident} >", Err("")),
-            ("$< ${tmeta(raw) as ident} _ ${tmeta(plain)} >", Ok("r#for_plain")),
+            ("$< ${tmeta(plain)} _ ${tmeta(raw) as ident} >", Ok("plain_for")),
+            ("$< ${tmeta(raw) as ident} _ ${tmeta(plain)} >", Ok("for_plain")),
         ],
     );
 }
