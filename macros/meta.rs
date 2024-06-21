@@ -275,6 +275,12 @@ impl<O: SubstParseContext> SubstAs<O> {
         } }
 
         let not_in_paste = || O::not_in_paste(&kw);
+        fn supported<P>(kw: &IdentAny) -> syn::Result<SubstAsSupported<P>>
+        where
+            P: SubstAsSupportStatus,
+        {
+            SubstAsSupportStatus::new(&kw)
+        }
 
         keyword! { expr(nb, not_in_paste()?) }
         keyword! { ident(nb) }
@@ -285,7 +291,7 @@ impl<O: SubstParseContext> SubstAs<O> {
 
         keyword! { items(
             nb, not_in_paste()?,
-            SubstAsSupportStatus::new(&kw)?)
+            supported(&kw)?)
         }
 
         Err(kw.error("unknown derive-deftly 'as' syntax type keyword"))
