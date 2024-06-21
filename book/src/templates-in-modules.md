@@ -11,7 +11,7 @@ In general, there are two ways to expose a macro;
 we'll go over how to use each one
 for a derive-deftly template.
 
-## With path-scoped macros
+## With path-scoped macros { #path-scope }
 
 With modern versions of Rust
 (Rust 2018 and later),
