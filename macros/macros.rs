@@ -476,7 +476,8 @@ pub fn derive_deftly(
 /// and considered breaking changes.
 ///
 /// (The argument must be a string literal, containing a
-/// 2- or 3-element version number.)
+/// 2- or 3-element version number.
+/// If the 3rd element is omitted, 0 is used.)
 ///
 /// ## Guarantee
 ///
