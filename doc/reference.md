@@ -1178,6 +1178,17 @@ Literals are generally compared by value:
    `-` and a nonnegative literal.
  * Comparison of other literals is unsupported.
 
+Raw identifiers are considered unequal to non-raw identifiers,
+even if the designated identifier is the same.
+
+<!--
+  The alternative is either to say that `r#for` == `for`,
+  or to somehow make equality depend on whether *this* version of Rust
+  considers the thing a keyword.
+  "*This* version of Rust" ought to be the edition, but whose edition?
+  Also I don't think we can calculate that.
+-->
+
 The `ARG`s are in derive-deftly's usual
 [syntax for positional arguments](#named-and-positional-template-arguments-to-expansions-and-conditions).
 
