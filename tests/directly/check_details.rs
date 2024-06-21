@@ -79,6 +79,35 @@ fn check_details_idents() {
     );
 }
 
+#[test]
+fn check_details_meta() {
+    tests_using_driver(
+        quote!(
+            #[deftly(ty = "Option<u32>", expr = "42", r#mod = "mod m {}")]
+            struct S;
+        ),
+        EONG::Explicit,
+        &[
+            //
+            ("${tmeta(expr) as str}", Ok(r#""42""#)),
+            ("${tmeta(expr) as expr}", Ok("(42)")),
+            // Note that we add the missing colons here, so that you
+            // can use use this in UFCS etc.
+            ("${tmeta(ty) as ty}", Ok("« Option::<u32> »")),
+            ("${tmeta(ty) as path}", Ok("« Option::<u32> »")),
+            // `as token_stream` gives you precisely what's in the driver
+            ("${tmeta(ty) as token_stream}", Ok("Option<u32>")),
+            // You can look up things with raw identifiers
+            #[cfg(feature = "meta-as-items")]
+            ("${tmeta(r#mod) as items}", Ok("mod m {}")),
+            ("${tmeta(r#mod) as token_stream}", Ok("mod m {}")),
+            // This one is rather odd, but comparison of Idents
+            // considers rawness, in proc_macro::Ident and in syn::Path.
+            ("${tmeta(r#expr) as str}", Err("no value in data structure")),
+        ],
+    );
+}
+
 /// Returns `Ok(s)`, but checking that it parses as an item
 fn item_ok(s: &str) -> Result<&str, &str> {
     syn::parse_str(s)
