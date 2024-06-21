@@ -714,7 +714,7 @@ pub struct SubstAsSupported<P: SubstAsSupportStatus>(P::Marker);
 pub trait SubstAsSupportStatus: Sized {
     type Marker;
     type Parsed: Parse + ToTokens;
-    fn new(kw: &impl Spanned) -> syn::Result<SubstAsSupported<Self>>;
+    fn new(kw: &IdentAny) -> syn::Result<SubstAsSupported<Self>>;
 }
 
 impl<P: SubstAsSupportStatus> SubstAsSupported<P> {
@@ -724,7 +724,7 @@ impl<P: SubstAsSupportStatus> SubstAsSupported<P> {
 impl<T: Parse + ToTokens> SubstAsSupportStatus for T {
     type Marker = ();
     type Parsed = T;
-    fn new(_kw: &impl Spanned) -> syn::Result<SubstAsSupported<Self>> {
+    fn new(_kw: &IdentAny) -> syn::Result<SubstAsSupported<Self>> {
         Ok(SubstAsSupported(()))
     }
 }
@@ -732,10 +732,13 @@ impl<T: Parse + ToTokens> SubstAsSupportStatus for T {
 impl SubstAsSupportStatus for MetaUnsupported {
     type Marker = MetaUnsupported;
     type Parsed = TokenStream;
-    fn new(kw: &impl Spanned) -> syn::Result<SubstAsSupported<Self>> {
-        Err(kw.error(
- "${Xmeta as items} used but cargo feature meta-as-items disabled"
-        ))
+    fn new(kw: &IdentAny) -> syn::Result<SubstAsSupported<Self>> {
+        Err(kw.error(format_args!(
+            // We're a bit fast and loose here: if kw contained `_`,
+            // or there were aliases, this message would be a bit wrong.
+            "${{Xmeta as {}}} used but cargo feature meta-as-{} disabled",
+            **kw, **kw,
+        )))
     }
 }
 
