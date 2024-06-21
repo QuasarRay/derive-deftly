@@ -28,6 +28,7 @@ use tscompare::*;
 assert_not_impl_any!(macros::meta::PreprocessedTree: Clone);
 
 mod check_approx_equal;
+mod check_details;
 mod check_meta_coding;
 
 #[cfg(all(
