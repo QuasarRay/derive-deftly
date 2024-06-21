@@ -31,6 +31,15 @@ fn tests_using_driver(
     }
 }
 
+#[cfg_attr(not(feature = "full"), allow(dead_code))]
+fn check_template_parse_fail(template: &str, exp: &str) {
+    eprintln!("check parsing failure for {:?}", template);
+    let got = syn::parse_str::<Template<TokenAccumulator>>(template)
+        .unwrap_err()
+        .to_string();
+    assert!(got.contains(exp), "expected {:?}, got {:?}", exp, got);
+}
+
 #[test]
 fn check_details_one() {
     tests_using_driver(
@@ -107,6 +116,17 @@ fn check_details_meta() {
             #[cfg(feature = "meta-as-expr")]
             ("${tmeta(r#expr) as str}", Err("no value in data structure")),
         ],
+    );
+
+    #[cfg(not(feature = "meta-as-expr"))]
+    check_template_parse_fail(
+        "${tmeta(expr) as expr}",
+        "feature meta-as-expr disabled",
+    );
+    #[cfg(not(feature = "meta-as-items"))]
+    check_template_parse_fail(
+        "${tmeta(r#mod) as items}",
+        "feature meta-as-items disabled",
     );
 }
 
