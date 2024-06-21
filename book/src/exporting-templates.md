@@ -19,6 +19,8 @@ derive_deftly::define_derive_deftly! {
         }
     }
 }
+
+# fn main() {}
 ```
 
 > Declaring our template as `pub HelloWorld` in this way
