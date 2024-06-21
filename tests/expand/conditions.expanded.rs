@@ -345,7 +345,8 @@ impl<T> Trait for Generic<T> {
         }
     }
 }
-fn static_test() {}
+fn static_test_unit() {}
+fn static_test_struct() {}
 fn test(top: &str, tgens: bool, fields: &str, tmeta: bool, vmeta: bool, v: impl Trait) {
     if !(v.shape_top() == top && v.shape_fields() == fields && v.has_tgens() == tgens
         && v.has_tmeta() == tmeta && v.has_vmeta() == vmeta)
@@ -375,7 +376,8 @@ fn test_get_usize(some_usize: Option<usize>, v: impl GetUsize) {
     }
 }
 fn main() {
-    static_test();
+    static_test_unit();
+    static_test_struct();
     test("struct", false, "unit", false, false, Unit);
     test("struct", false, "tuple", true, false, Tuple(0));
     test("struct", false, "named", false, true, Struct { field: 0 });

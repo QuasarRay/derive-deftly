@@ -47,3 +47,34 @@ fn check_details_one() {
         ],
     );
 }
+
+#[test]
+fn check_details_idents() {
+    tests_using_driver(
+        quote! {
+            #[deftly(raw = "r#for", plain = "plain")]
+            struct S;
+        },
+        EONG::Explicit,
+        &[
+            ("${tmeta(raw) as str}", Ok(r#""r#for""#)),
+            ("${tmeta(raw) as ident}", Ok("r#for")),
+            ("$< ${tmeta(raw)} >", Ok("r#for")),
+            (
+                "$< ${tmeta(plain)} _ ${tmeta(raw)} >",
+                Err(r#""plain_r#for""#),
+            ),
+            ("$< ${tmeta(raw)} _ ${tmeta(plain)} >", Ok("r#for_plain")),
+            ("${tmeta(raw) as ident}", Ok("r#for")),
+            ("$< ${tmeta(raw) as ident} >", Ok("r#for")),
+            (
+                "$< ${tmeta(plain)} _ ${tmeta(raw) as ident} >",
+                Ok("plain_for"),
+            ),
+            (
+                "$< ${tmeta(raw) as ident} _ ${tmeta(plain)} >",
+                Ok("for_plain"),
+            ),
+        ],
+    );
+}

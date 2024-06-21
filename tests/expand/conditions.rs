@@ -134,7 +134,7 @@ struct Generic<T>(T);
 derive_deftly_adhoc! {
     Unit:
 
-    fn static_test() {
+    fn static_test_unit() {
         // bad is an error
         ${if false             { bad }}
         ${if true              {} else { bad }}
@@ -152,6 +152,16 @@ derive_deftly_adhoc! {
         ${if all(false,true)   { bad }}
         ${if approx_equal({}, {wobble}) { bad }}
         ${if approx_equal({wobble}, {}) { bad }}
+    }
+}
+
+derive_deftly_adhoc! {
+    Struct:
+
+    fn static_test_struct() {
+      $(
+        ${if approx_equal($ftype, r#usize) { bad }}
+      )
     }
 }
 
@@ -180,7 +190,8 @@ fn test_get_usize(some_usize: Option<usize>, v: impl GetUsize) {
 }
 
 fn main() {
-    static_test();
+    static_test_unit();
+    static_test_struct();
 
     test("struct", false, "unit", false, false, Unit);
     test("struct", false, "tuple", true, false, Tuple(0));
