@@ -397,7 +397,9 @@ Generic parameters and bounds, from the toplevel type,
 in various forms.
 
    * **`$tgens`**:
-     The generic arguments, with bounds, but without defaults.
+     The generic arguments, with bounds
+	 (and the types of const generics)
+	 but without defaults.
      Suitable for use when starting an `impl`.
 
    * **`$tgnames`**:
