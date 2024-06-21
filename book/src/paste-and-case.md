@@ -137,7 +137,7 @@ you can write [`$$`][dollar-dollar].
 [dollar-dollar]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#dollar-dollar
 [x:paste]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#x:paste
 [case-changing]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#case-changing
-[identifier-pasting]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#-paste---identifier-pasting
+[identifier-pasting]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#x:paste
 [arg-syntax]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#named-and-positional-template-arguments-to-expansions-and-conditions
 
 

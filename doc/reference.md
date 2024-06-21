@@ -80,7 +80,7 @@ In general the syntax is:
  * `$( .... )`: Repetition (abbreviated, automatic, form).
    (Note: there is no `+` or `*` after the `)`)
  * `$< .... >`: Identifier pasting (shorthand for
-   [`${paste ...}`](#-paste---identifier-pasting)).
+   [`${paste ...}`](#x:paste)).
 
 In all cases, `$KEYWORD` is equivalent to `${KEYWORD}`.
 
