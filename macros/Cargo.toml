@@ -17,6 +17,7 @@ repository = "https://gitlab.torproject.org/Diziet/rust-derive-deftly"
 [features]
 case = ["heck"]
 expect = ["sha3", "syn/full"]
+meta-as-expr = ["syn/full"]
 meta-as-items = ["syn/full"]
 
 [dependencies]

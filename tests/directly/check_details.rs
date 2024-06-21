@@ -90,6 +90,7 @@ fn check_details_meta() {
         &[
             //
             ("${tmeta(expr) as str}", Ok(r#""42""#)),
+            #[cfg(feature = "meta-as-expr")]
             ("${tmeta(expr) as expr}", Ok("(42)")),
             // Note that we add the missing colons here, so that you
             // can use use this in UFCS etc.
@@ -103,6 +104,7 @@ fn check_details_meta() {
             ("${tmeta(r#mod) as token_stream}", Ok("mod m {}")),
             // This one is rather odd, but comparison of Idents
             // considers rawness, in proc_macro::Ident and in syn::Path.
+            #[cfg(feature = "meta-as-expr")]
             ("${tmeta(r#expr) as str}", Err("no value in data structure")),
         ],
     );

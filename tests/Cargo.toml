@@ -23,6 +23,7 @@ full = ["derive-deftly/full"]
 # since the way we invoke the tests gets those via the dependency
 # on derive-deftly/full, above.
 case = []
+meta-as-expr = []
 meta-as-items = []
 #
 # `expect` is not here because it doesn't work without a build.rs,

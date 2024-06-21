@@ -698,7 +698,10 @@ fn check_borrowed_desig() {
 
 //---------- conditional support for `Xmeta as items` ----------
 
+#[cfg(feature = "meta-as-expr")]
 pub type ValueExpr = syn::Expr;
+#[cfg(not(feature = "meta-as-expr"))]
+pub type ValueExpr = MetaUnsupported;
 
 #[cfg(feature = "meta-as-items")]
 pub type ValueItems = Concatenated<syn::Item>;
