@@ -123,6 +123,7 @@ python3-mypy:
   script:
     - apt-get update && apt-get install -y mypy
     - mypy --strict maint/build-docs-local
+    - mypy --strict maint/feature-matrix-test
 
 cargo-test-minfeatures:
   stage: comprehensive

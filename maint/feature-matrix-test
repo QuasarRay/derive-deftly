@@ -20,7 +20,10 @@
 import argparse
 import subprocess
 import toml.decoder
+from typing import Iterable, Tuple, TypeVar
 from itertools import chain, combinations
+
+T = TypeVar('T')
 
 # Copied from https://docs.python.org/3/library/itertools.html
 # retrieved 2024-06-21.  Licence there is as follows:
@@ -28,7 +31,7 @@ from itertools import chain, combinations
 #    the Python Software Foundation License Version 2.
 #   Examples, recipes, and other code in the documentation are
 #    additionally licensed under the Zero Clause BSD License. 
-def powerset(iterable):
+def powerset(iterable: Iterable[T]) -> Iterable[Iterable[T]]:
     "powerset([1,2,3]) → () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)"
     s = list(iterable)
     return chain.from_iterable(combinations(s, r) for r in range(len(s)+1))
