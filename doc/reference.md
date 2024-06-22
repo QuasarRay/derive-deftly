@@ -1294,7 +1294,7 @@ which will be applied to each relevant template expansion:
 derive_deftly_adhoc! { DataStructureType OPTIONS,... : TEMPLATE }
 
 // Define a template Template which always expands with OPTIONS
-define_derive_deftly! { Template OPTIONS,... = TEMPLATE }
+define_derive_deftly! { Template OPTIONS,...: TEMPLATE }
 
 // Expand Template for DataStructureType, with OPTIONS
 #[derive(Deftly)]
@@ -1375,7 +1375,7 @@ the [`$dbg_all_keywords` expansion](#dbg--dbg_all_keywords--debugging-output).
 
 ```
 # use derive_deftly::{define_derive_deftly, Deftly};
-define_derive_deftly! { Nothing for struct, expect items = }
+define_derive_deftly! { Nothing for struct, expect items: }
 
 #[derive(Deftly)]
 #[derive_deftly(Nothing[expect items, dbg])]
