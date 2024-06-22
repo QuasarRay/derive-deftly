@@ -13,8 +13,9 @@ Features are provided to allow for a build with reduced dependencies.
    using `heck`.
  * `expect`: the [`expect`](../doc_reference/index.html#expect-items-expect-expr--syntax-check-the-expansion)
    expansion option for syntax checking.
- * `meta-as-items`: handling attributes containing (syntax-checked) items via
-   [`${Xmeta(...) as items}`](../doc_reference/index.html#tmeta-vmeta-fmeta--deftly-attributes)
+ * `meta-as-expr`, `meta-as-items`:
+   handling attributes containing (syntax-checked) expressions and items via
+   [`${Xmeta(...) as expr / items}`](../doc_reference/index.html#tmeta-vmeta-fmeta--deftly-attributes)
  * `minimal-1`: Minimal feature set.  Must be enabled.
 
 All of the above features are enabled by default.

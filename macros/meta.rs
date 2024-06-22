@@ -109,9 +109,9 @@ pub struct SubstMeta<O: SubstParseContext> {
 #[derive(Debug, Clone, AsRefStr, Display)]
 #[allow(non_camel_case_types)] // clearer to use the exact ident
 pub enum SubstAs<O: SubstParseContext> {
-    expr(O::NotInBool, O::NotInPaste),
+    expr(O::NotInBool, O::NotInPaste, SubstAsSupported<ValueExpr>),
     ident(O::NotInBool),
-    items(O::NotInBool, O::NotInPaste, SubstAsItemsSupported),
+    items(O::NotInBool, O::NotInPaste, SubstAsSupported<ValueItems>),
     path(O::NotInBool),
     str(O::NotInBool),
     token_stream(O::NotInBool, O::NotInPaste),
@@ -275,18 +275,20 @@ impl<O: SubstParseContext> SubstAs<O> {
         } }
 
         let not_in_paste = || O::not_in_paste(&kw);
+        fn supported<P>(kw: &IdentAny) -> syn::Result<SubstAsSupported<P>>
+        where
+            P: SubstAsSupportStatus,
+        {
+            SubstAsSupportStatus::new(&kw)
+        }
 
-        keyword! { expr(nb, not_in_paste()?) }
+        keyword! { expr(nb, not_in_paste()?, supported(&kw)?) }
         keyword! { ident(nb) }
+        keyword! { items(nb, not_in_paste()?, supported(&kw)?) }
         keyword! { path(nb) }
         keyword! { str(nb) }
         keyword! { token_stream(nb, not_in_paste()?) }
         keyword! { ty(nb) }
-
-        keyword! { items(
-            nb, not_in_paste()?,
-            SubstAsItemsSupported::new(&kw)?)
-        }
 
         Err(kw.error("unknown derive-deftly 'as' syntax type keyword"))
     }
@@ -696,61 +698,60 @@ fn check_borrowed_desig() {
 
 //---------- conditional support for `Xmeta as items` ----------
 
-trait SubstAsItemsSupportedInterface: Debug + Clone + Sized {
-    type Parsed: Parse + ToTokens;
-    type Emit: ToTokens;
-    fn new(kw: &impl Spanned) -> syn::Result<Self>;
-    fn emit(&self, parsed: Self::Parsed) -> Self::Emit;
-}
+#[cfg(feature = "meta-as-expr")]
+pub type ValueExpr = syn::Expr;
+#[cfg(not(feature = "meta-as-expr"))]
+pub type ValueExpr = MetaUnsupported;
 
 #[cfg(feature = "meta-as-items")]
-mod meta_as_items {
-    use super::*;
-
-    #[derive(Debug, Clone)]
-    pub struct SubstAsItemsSupported;
-
-    impl SubstAsItemsSupportedInterface for SubstAsItemsSupported {
-        type Parsed = Concatenated<syn::Item>;
-        type Emit = Concatenated<syn::Item>;
-
-        fn new(_kw: &impl Spanned) -> syn::Result<Self> {
-            Ok(SubstAsItemsSupported)
-        }
-        fn emit(&self, parsed: Self::Parsed) -> Self::Emit {
-            parsed
-        }
-    }
-}
-
+pub type ValueItems = Concatenated<syn::Item>;
 #[cfg(not(feature = "meta-as-items"))]
-mod meta_as_items {
-    use super::*;
+pub type ValueItems = MetaUnsupported;
 
-    #[derive(Debug, Copy, Clone)]
-    pub struct SubstAsItemsSupported(Void);
+/// newtype to avoid coherence - it doesn't impl `Parse + ToTokens`
+#[derive(Debug, Copy, Clone)]
+pub struct MetaUnsupported(Void);
 
-    impl SubstAsItemsSupportedInterface for SubstAsItemsSupported {
-        type Parsed = TokenStream;
-        type Emit = SubstAsItemsSupported;
+#[derive(Debug, Copy, Clone)]
+pub struct SubstAsSupported<P: SubstAsSupportStatus>(P::Marker);
 
-        fn new(kw: &impl Spanned) -> syn::Result<Self> {
-            Err(kw.error(
- "${Xmeta as items} used but cargo feature meta-as-items disabled"
-            ))
-        }
-        fn emit(&self, _: Self::Parsed) -> Self::Emit {
-            *self
-        }
-    }
-    impl ToTokens for SubstAsItemsSupported {
-        fn to_tokens(&self, _out: &mut TokenStream) {
-            void::unreachable(self.0)
-        }
+/// Implemented for syn types supported in this build, and `MetaUnsupported`
+pub trait SubstAsSupportStatus: Sized {
+    type Marker;
+    type Parsed: Parse + ToTokens;
+    fn new(kw: &IdentAny) -> syn::Result<SubstAsSupported<Self>>;
+}
+
+impl<P: SubstAsSupportStatus> SubstAsSupported<P> {
+    fn infer_type(&self, _parsed: &P::Parsed) {}
+}
+
+impl<T: Parse + ToTokens> SubstAsSupportStatus for T {
+    type Marker = ();
+    type Parsed = T;
+    fn new(_kw: &IdentAny) -> syn::Result<SubstAsSupported<Self>> {
+        Ok(SubstAsSupported(()))
     }
 }
 
-use meta_as_items::*;
+impl SubstAsSupportStatus for MetaUnsupported {
+    type Marker = MetaUnsupported;
+    type Parsed = TokenStream;
+    fn new(kw: &IdentAny) -> syn::Result<SubstAsSupported<Self>> {
+        Err(kw.error(format_args!(
+            // We're a bit fast and loose here: if kw contained `_`,
+            // or there were aliases, this message would be a bit wrong.
+            "${{Xmeta as {}}} used but cargo feature meta-as-{} disabled",
+            **kw, **kw,
+        )))
+    }
+}
+
+impl ToTokens for MetaUnsupported {
+    fn to_tokens(&self, _out: &mut TokenStream) {
+        void::unreachable(self.0)
+    }
+}
 
 //---------- template expansion ----------
 
@@ -916,8 +917,9 @@ impl<'l> FoundNode<'l> {
         };
 
         match as_ {
-            as_ @ SA::expr(.., np) => {
-                let expr: syn::Expr = metavalue_lit_as(lit, tspan, as_)?;
+            as_ @ SA::expr(.., np, supported) => {
+                let expr = metavalue_lit_as(lit, tspan, as_)?;
+                supported.infer_type(&expr);
                 out.append_tokens(np, Grouping::Parens.surround(expr))?;
             }
             as_ @ SA::ident(..) => {
@@ -926,7 +928,8 @@ impl<'l> FoundNode<'l> {
             }
             SA::items(_, np, supported) => {
                 let items = metavalue_lit_as(lit, tspan, &"items")?;
-                out.append_tokens(np, supported.emit(items))?;
+                supported.infer_type(&items);
+                out.append_tokens(np, items)?;
             }
             as_ @ SA::path(..) => out.append_syn_type(
                 tspan,

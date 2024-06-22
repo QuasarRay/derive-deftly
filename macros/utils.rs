@@ -110,7 +110,8 @@ impl<T: Parse> Parse for Discard<T> {
 }
 
 /// Type which parses as a concatenated series of `T`
-#[allow(dead_code)] // used in tests
+#[derive(Debug, Clone)]
+#[allow(dead_code)] // used in tests and certain configurations
 pub struct Concatenated<T>(pub Vec<T>);
 
 impl<T: Parse> Parse for Concatenated<T> {
