@@ -484,7 +484,7 @@ Accesses macro parameters passed via `#[deftly(...)]` attributes.
      so this is suitable for accepting a module path, too.
 
     * **`expr`**:
-     `VALUE` is parsed as an aexpression.
+     `VALUE` is parsed as an expression.
      When expanded, it is surrounded with `( )`
      to ensure correct precedence.
 
@@ -1152,7 +1152,7 @@ Spacing is disregarded, even between punctuation characters.
 For example, `approx_equal` regards `<<` as equal to `< <`.
 This means expansions might count as equal
 even if the Rust compiler would accept one and reject the other;
-and, expansions migtht count as equal
+and, expansions might count as equal
 even if macros could tell the difference.
 
 Also,
