@@ -494,7 +494,7 @@ Accesses macro parameters passed via `#[deftly(...)]` attributes.
      `as ident` rejects initial digits, and the empty string.)
 
     * **`items`**:
-     `VALUE` is parsed as zero or more Rust Items.  (`syn::Item`)
+     `VALUE` is parsed as zero or more Rust Items (`syn::Item`).
      Note that the driver must pass the items' source code in `"..."`.
 
     * **`token_stream`**:
