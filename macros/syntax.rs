@@ -16,6 +16,19 @@ pub struct Template<O: SubstParseContext> {
     pub elements: Vec<TemplateElement<O>>,
 }
 
+/// `ARG` as per
+/// "Named and positional template arguments"
+/// in the reference.
+///
+/// Parses from one of
+///   *  identifier
+///   *  literal
+///   *  `$EXPN`
+///   *  `${EXPN..}`
+///   *  `{ TEMPLATE }`
+#[derive(Debug)]
+pub struct Argument<O: SubstParseContext = TokenAccumulator>(pub Template<O>);
+
 #[derive(Debug)]
 pub struct TemplateWithWhens<O: SubstParseContext> {
     pub elements: Vec<TemplateElement<O>>,
@@ -107,13 +120,9 @@ pub enum SubstDetails<O: SubstParseContext> {
     vtype(SubstVType, O::NotInPaste, O::NotInBool),
 
     tdefvariants(Template<TokenAccumulator>, O::NotInPaste, O::NotInBool),
-    fdefine(
-        Option<Template<TokenAccumulator>>,
-        O::NotInPaste,
-        O::NotInBool,
-    ),
+    fdefine(Option<Argument>, O::NotInPaste, O::NotInBool),
     vdefbody(
-        Template<O>,
+        Argument<O>,
         Template<TokenAccumulator>,
         O::NotInPaste,
         O::NotInBool,
@@ -142,7 +151,7 @@ pub enum SubstDetails<O: SubstParseContext> {
     v_is_tuple(O::BoolOnly),
     v_is_named(O::BoolOnly),
     is_empty(O::BoolOnly, Template<TokenAccumulator>),
-    approx_equal(O::BoolOnly, [Template<TokenAccumulator>; 2]),
+    approx_equal(O::BoolOnly, [Argument; 2]),
 
     // Explicit iteration
     For(RepeatedTemplate<O>, O::NotInBool),
@@ -170,8 +179,8 @@ pub struct DefinitionName(syn::Ident);
 
 #[derive(Debug)]
 pub enum DefinitionBody {
-    Normal(Template<TokenAccumulator>),
-    Paste(Template<paste::Items>),
+    Normal(Argument),
+    Paste(Argument<paste::Items>),
 }
 
 pub type DefCondBody = Box<Condition>;
@@ -203,14 +212,14 @@ pub enum SubstVis {
 
 #[derive(Debug)]
 pub struct SubstVType {
-    pub self_: Option<Template<TokenAccumulator>>,
-    pub vname: Option<Template<TokenAccumulator>>,
+    pub self_: Option<Argument>,
+    pub vname: Option<Argument>,
 }
 
 #[derive(Debug)]
 pub struct SubstVPat {
     pub vtype: SubstVType,
-    pub fprefix: Option<Template<paste::Items>>,
+    pub fprefix: Option<Argument<paste::Items>>,
 }
 
 #[derive(Debug, Clone)]
@@ -308,25 +317,25 @@ impl Parse for Definition<DefinitionBody> {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let name = input.parse()?;
         let body_span = input.span();
-        let mut body = Template::parse_single_or_braced(input)?;
+        let mut body: Argument<_> = input.parse()?;
 
         // Is it precisely an invocation of ${paste } or $< > ?
         let body = match (|| {
             if body.elements.len() != 1 {
                 return None;
             }
-            let Template { elements } = &mut body;
+            let Template { elements } = &mut body.0;
             // This is tedious.  We really want to move match on a vec.
             match elements.pop().expect("just checked length") {
                 TE::Subst(Subst {
                     kw_span,
                     sd: SD::paste(items, not_in_bool),
-                }) => Some(Template {
+                }) => Some(Argument(Template {
                     elements: vec![TE::Subst(Subst {
                         kw_span,
                         sd: SD::paste(items, not_in_bool),
                     })],
-                }),
+                })),
                 other => {
                     // Oops, put it back
                     elements.push(other);
@@ -406,14 +415,8 @@ impl<O: SubstParseContext> TemplateWithWhens<O> {
     }
 }
 
-impl<O: SubstParseContext> Template<O> {
-    /// Parses one of
-    ///     identifier
-    ///     literal
-    ///     $EXPN
-    ///     ${EXPN..}
-    ///     { TEMPLATE }
-    fn parse_single_or_braced(input: ParseStream) -> syn::Result<Self> {
+impl<O: SubstParseContext> Parse for Argument<O> {
+    fn parse(input: ParseStream) -> syn::Result<Self> {
         let la = input.lookahead1();
         if la.peek(token::Brace) {
             let inner;
@@ -424,12 +427,21 @@ impl<O: SubstParseContext> Template<O> {
             || la.peek(syn::Lit)
         {
             let element = input.parse()?;
-            Ok(Template {
+            TemplateWithWhens {
                 elements: vec![element],
-            })
+            }
+            .try_into()
         } else {
             Err(la.error())
         }
+        .map(Argument)
+    }
+}
+
+impl<O: SubstParseContext> Deref for Argument<O> {
+    type Target = Template<O>;
+    fn deref(&self) -> &Template<O> {
+        &self.0
     }
 }
 
@@ -585,7 +597,7 @@ pub trait ParseOneSubkeyword: Sized {
 /// Helper for `impl_parse_subkeywords!`; parse and store subkw argument
 ///
 /// Parses and stores a template element argument to a subkeyword,
-/// using [`Template::parse_single_or_braced`].
+/// using [`Argument::parse`].
 ///
 /// Detects repeated specification of the same keyword, as an error.
 ///
@@ -594,7 +606,7 @@ pub trait ParseOneSubkeyword: Sized {
 fn subkw_parse_store<KO>(
     subkw: &syn::Ident,
     input: ParseStream,
-    dest: &mut Option<Template<KO>>,
+    dest: &mut Option<Argument<KO>>,
 ) -> syn::Result<()>
 where
     KO: SubstParseContext,
@@ -605,7 +617,7 @@ where
             subkw.error("same argument sub-keyword specified more than once")
         );
     }
-    *dest = Some(input.call(|input| Template::parse_single_or_braced(input))?);
+    *dest = Some(input.parse()?);
     Ok(())
 }
 
@@ -789,11 +801,9 @@ impl<O: SubstParseContext> Parse for Subst<O> {
             Ok(inner)
         };
 
-        let parse_def_body = |input: ParseStream<'i>| {
+        let parse_def_body = |input: ParseStream<'i>, m| {
             if input.is_empty() {
-                return Err(kw.error(
-                    "tdefvariants needs to contain the variant definitions",
-                ));
+                return Err(kw.error(m));
             }
             Template::parse(input)
         };
@@ -845,18 +855,22 @@ impl<O: SubstParseContext> Parse for Subst<O> {
         ) }
 
         keyword! { tdefvariants(
-            parse_def_body(input)?,
+            parse_def_body(
+                input,
+                "tdefvariants needs to contain the variant definitions",
+            )?,
             not_in_paste()?, not_in_bool()?,
         ) }
         keyword! { fdefine(
-            (!input.is_empty()).then(|| {
-                Template::parse_single_or_braced(input)
-            }).transpose()?,
+            (!input.is_empty()).then(|| input.parse()).transpose()?,
             not_in_paste()?, not_in_bool()?
         ) }
         keyword! { vdefbody(
-            Template::parse_single_or_braced(input)?,
-            parse_def_body(input)?,
+            input.parse()?,
+            parse_def_body(
+                input,
+                "vdefbody needs to contain the body definition",
+            )?,
             not_in_paste()?, not_in_bool()?,
         ) }
         keyword! { is_empty(bool_only()?, {
@@ -865,12 +879,14 @@ impl<O: SubstParseContext> Parse for Subst<O> {
             content.parse()?
         }) }
         keyword! { approx_equal(bool_only()?, {
-            let args = Punctuated::<_, Token![,]>::parse_separated_nonempty_with(
-                &in_parens(input)?,
-                Template::parse_single_or_braced,
-            )?;
+            let args =
+                Punctuated::<_, Token![,]>::parse_separated_nonempty(
+                    &in_parens(input)?,
+                )?;
             if args.len() != 2 {
-                return Err(kw.error("approx_equal() requires two comma-separated arguments"))
+                return Err(kw.error(
+                    "approx_equal() requires two comma-separated arguments"
+                ))
             }
             let mut args = args.into_iter();
             // std::array::from_fn needs MSRV 1.63

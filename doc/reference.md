@@ -769,20 +769,18 @@ Expands to `struct`, `enum`, or `union`.
 These, used together, allow the template to expand to a
 new definition, mirroring the driver type in form.
 
-**`${tdefvariants VARIANTS}`** expands to `{ VARIANTS }` for an enum,
-or just `VARIANTS` otherwise.
+**`${tdefvariants VARIANTS..}`** expands to `{ VARIANTS.. }` for an enum,
+or just `VARIANTS..` otherwise.
 Usually, it would contain a `$( )` repeating over the variants,
 expanding `$vdefbody` for each one.
 
-**`${vdefbody VNAME FIELDS}`** expands to the definition of a variant,
+**`${vdefbody VNAME FIELDS..}`** expands to the definition of a variant,
 with a appropriate delimiters.
-Usualy, it would contain a `$( )` repeating over the fields,
+`VNAME` is in the standard syntax for a positional argument,
+and `FIELDS..` is the rest of the content.
+Usually, `FIELDS..` would contain a `$( )` repeating over the fields,
 using `$fdefine` to introduce each one.
 Specifically:
-
-**`${fdefine FNAME}`** expands to `FNAME:` in the context of
-named fields (a "struct" or "struct variant"),
-or nothing otherwise.
 
 <!--##examples-possibilities-blockquote##-->
 <!--iiiiiiiiiiiiiiiiiiiiiii fffffffffffffffffffff oooooooooooooooooo ###############-->
@@ -795,6 +793,11 @@ or nothing otherwise.
  ${vdefbody VNAME FIELDS}   for tuple variant     VNAME ( FIELDS ),
  ${vdefbody VNAME FIELDS}   for braced variant    VNAME { FIELDS },
 ```
+
+**`${fdefine FNAME}`** expands to `FNAME:` in the context of
+named fields (a "struct" or "struct variant"),
+or nothing otherwise.
+`FNAME` is in the standard syntax for a positional argument,
 
 `[*]`: In the unit and unit variant cases,
 `FIELDS` ought to expand to nothing;

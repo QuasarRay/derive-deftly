@@ -1595,11 +1595,17 @@ impL_find_recog_metas_via_iter!((), [T]);
 impL_find_recog_metas_via_iter!((), Option<T>);
 impL_find_recog_metas_via_iter!((U), Punctuated<T, U>);
 
-impl<T: FindRecogMetas> FindRecogMetas for Box<T> {
-    fn find_recog_metas(&self, acc: &mut Recognised) {
-        self.deref().find_recog_metas(acc)
+macro_rules! impL_find_recog_metas_via_deref { {
+    ( $($gens:tt)* ), $i:ty
+} => {
+    impl<$($gens)*> FindRecogMetas for $i {
+        fn find_recog_metas(&self, acc: &mut Recognised) {
+            (**self).find_recog_metas(acc)
+        }
     }
-}
+} }
+impL_find_recog_metas_via_deref!((O: SubstParseContext), Argument<O>);
+impL_find_recog_metas_via_deref!((T: FindRecogMetas), Box<T>);
 
 impl<O: SubstParseContext> FindRecogMetas for SubstDetails<O> {
     fn find_recog_metas(&self, acc: &mut Recognised) {

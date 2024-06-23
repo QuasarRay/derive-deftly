@@ -344,6 +344,7 @@ fn check_misplaced_when() {
 
     chk(r#" ${for fields { a ${when true} }} "#);
     chk(r#" a ${when true} "#);
+    chk(r#" ${if approx_equal({}, ${when true}) {}}  "#);
 }
 
 #[test]
