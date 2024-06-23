@@ -557,7 +557,7 @@ where
             }
             SD::when(..) => out.write_error(
                 &kw_span,
-                "${when } only allowed in toplevel of $( )",
+                "internal error - misplaced ${when } detected too late!",
             ),
             SD::If(conds, ..) => conds.expand(ctx, out)?,
             SD::select1(conds, ..) => conds.expand_select1(ctx, out)?,

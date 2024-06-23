@@ -12,6 +12,12 @@ pub use TemplateElement as TE;
 
 #[derive(Debug)]
 pub struct Template<O: SubstParseContext> {
+    /// `TD::Subst` is known not to contain `SD::when`
+    pub elements: Vec<TemplateElement<O>>,
+}
+
+#[derive(Debug)]
+pub struct TemplateWithWhens<O: SubstParseContext> {
     pub elements: Vec<TemplateElement<O>>,
 }
 
@@ -28,6 +34,7 @@ pub enum TemplateElement<O: SubstParseContext> {
         template: Template<O>,
         not_in_paste: O::NotInPaste,
     },
+    /// Might contain `SD::when`
     Subst(Subst<O>),
     Repeat(RepeatedTemplate<O>),
 }
@@ -43,6 +50,7 @@ pub struct RepeatedTemplate<O: SubstParseContext> {
 #[derive(Debug)]
 pub struct Subst<O: SubstParseContext> {
     pub kw_span: Span,
+    /// Might contain `SD::when`
     pub sd: SubstDetails<O>,
 }
 
@@ -358,6 +366,15 @@ impl<O: SubstParseContext> Parse for Template<O> {
 impl<O: SubstParseContext> Template<O> {
     fn parse_special(
         input: ParseStream,
+        special: &mut O::SpecialParseContext,
+    ) -> syn::Result<Self> {
+        TemplateWithWhens::parse_special(input, special)?.try_into()
+    }
+}
+
+impl<O: SubstParseContext> TemplateWithWhens<O> {
+    fn parse_special(
+        input: ParseStream,
         mut special: &mut O::SpecialParseContext,
     ) -> syn::Result<Self> {
         // eprintln!("@@@@@@@@@@ PARSE {}", &input);
@@ -378,7 +395,7 @@ impl<O: SubstParseContext> Template<O> {
                 Ok(special)
             });
         }
-        errors.finish_with(Template { elements: good })
+        errors.finish_with(TemplateWithWhens { elements: good })
     }
 }
 
@@ -1133,9 +1150,10 @@ impl<O: SubstParseContext> RepeatedTemplate<O> {
         span: DelimSpan,
         over: Option<RepeatOver>,
     ) -> Result<RepeatedTemplate<O>, syn::Error> {
-        use Either::*;
+        use TemplateWithWhens as TWW;
 
-        let Template { elements } = Template::parse(input)?;
+        let TWW { elements } =
+            TWW::parse_special(input, &mut Default::default())?;
 
         // split `when` off
         let mut elements = VecDeque::from(elements);
@@ -1155,16 +1173,9 @@ impl<O: SubstParseContext> RepeatedTemplate<O> {
             }
         } {}
 
-        for e in &elements {
-            if let Left((kw_span, _)) = te_extract_when!(e) {
-                return Err(
-                    kw_span.error("${when } must come before other content")
-                );
-            }
-        }
-
         let elements = Vec::from(elements);
-        let template = Template { elements };
+        let template = TemplateWithWhens { elements };
+        let template = Template::try_from(template)?;
 
         let over = match over {
             Some(over) => Ok(over),
@@ -1183,6 +1194,25 @@ impl<O: SubstParseContext> RepeatedTemplate<O> {
             }),
             Err(errs) => Err(errs),
         }
+    }
+}
+
+impl<O> TryFrom<TemplateWithWhens<O>> for Template<O>
+where
+    O: SubstParseContext,
+{
+    type Error = syn::Error;
+
+    fn try_from(unchecked: TemplateWithWhens<O>) -> syn::Result<Template<O>> {
+        let TemplateWithWhens { elements } = unchecked;
+        for e in &elements {
+            if let Left((kw_span, _)) = te_extract_when!(e) {
+                return Err(kw_span.error(
+ "${when } must be at the top-level of a repetition, before other content"
+                ));
+            }
+        }
+        Ok(Template { elements })
     }
 }
 
