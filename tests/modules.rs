@@ -45,7 +45,7 @@ mod has_template {
         Some(super::EnumMarker);
 
     define_derive_deftly! {
-        IsEnum =
+        IsEnum:
 
         // When the template wants to refer to things, it is usually most
         // convenient to expect the template user to bring the needed parts
