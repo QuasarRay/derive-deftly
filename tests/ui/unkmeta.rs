@@ -1,7 +1,7 @@
 use derive_deftly::{define_derive_deftly, Deftly};
 
 define_derive_deftly! {
-    UseSomeAttrs =
+    UseSomeAttrs:
 
     ${for fields { ${ignore {
         ${if tmeta(tnest(by_value)) { ${tmeta(tnest(by_value)) as str} }}

@@ -1,7 +1,7 @@
 use derive_deftly::{define_derive_deftly, derive_deftly_adhoc, Deftly};
 
 define_derive_deftly! {
-    BasicDbgs =
+    BasicDbgs:
 
     ${dbg { fn $<$tdefkwd _fn>() {} }}
     ${dbg "noted" { fn $<$tdefkwd _noted>() {} }}
@@ -17,7 +17,7 @@ define_derive_deftly! {
 }
 
 define_derive_deftly! {
-    Contexts =
+    Contexts:
 
     ${ignore
         $( ${dbg { $vname }} )
@@ -27,7 +27,7 @@ define_derive_deftly! {
 }
 
 define_derive_deftly! {
-    Pastes =
+    Pastes:
 
     fn $<${dbg "paste" { "pasting_" $ttype "_pasted" }}>() {}
 
