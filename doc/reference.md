@@ -776,7 +776,7 @@ expanding `$vdefbody` for each one.
 
 **`${vdefbody VNAME FIELDS}`** expands to the definition of a variant,
 with a appropriate delimiters.
-Usualy, it would contain a `$( )` repeating over the fields,
+Usually, it would contain a `$( )` repeating over the fields,
 using `$fdefine` to introduce each one.
 Specifically:
 
