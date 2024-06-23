@@ -12,6 +12,12 @@ pub use TemplateElement as TE;
 
 #[derive(Debug)]
 pub struct Template<O: SubstParseContext> {
+    /// `TD::Subst` is known not to contain `SD::when`
+    pub elements: Vec<TemplateElement<O>>,
+}
+
+#[derive(Debug)]
+pub struct TemplateWithWhens<O: SubstParseContext> {
     pub elements: Vec<TemplateElement<O>>,
 }
 
@@ -28,6 +34,7 @@ pub enum TemplateElement<O: SubstParseContext> {
         template: Template<O>,
         not_in_paste: O::NotInPaste,
     },
+    /// Might contain `SD::when`
     Subst(Subst<O>),
     Repeat(RepeatedTemplate<O>),
 }
@@ -43,8 +50,16 @@ pub struct RepeatedTemplate<O: SubstParseContext> {
 #[derive(Debug)]
 pub struct Subst<O: SubstParseContext> {
     pub kw_span: Span,
+    /// Might contain `SD::when`
     pub sd: SubstDetails<O>,
 }
+
+/// A condition, as found in `if`.
+//
+// Giving this a separate name is nicer but also helps avoid using
+// `Subst` directly in template syntax tree nodes, which is best
+// avoided because Subst<O> might contain `${when }` inappropriately.
+pub type Condition = Subst<BooleanContext>;
 
 /// Enum representing nature and payload of a substitution
 ///
@@ -109,7 +124,7 @@ pub enum SubstDetails<O: SubstParseContext> {
     ChangeCase(Template<paste::Items>, paste::ChangeCase, O::NotInBool),
 
     // special
-    when(Box<Subst<BooleanContext>>, O::NotInBool),
+    when(Box<Condition>, O::NotInBool),
     define(Definition<DefinitionBody>, O::NotInBool),
     defcond(Definition<DefCondBody>, O::NotInBool),
     UserDefined(DefinitionName),
@@ -117,9 +132,9 @@ pub enum SubstDetails<O: SubstParseContext> {
     // expressions
     False(O::BoolOnly),
     True(O::BoolOnly),
-    not(Box<Subst<BooleanContext>>, O::BoolOnly),
-    any(Punctuated<Subst<BooleanContext>, token::Comma>, O::BoolOnly),
-    all(Punctuated<Subst<BooleanContext>, token::Comma>, O::BoolOnly),
+    not(Box<Condition>, O::BoolOnly),
+    any(Punctuated<Condition, token::Comma>, O::BoolOnly),
+    all(Punctuated<Condition, token::Comma>, O::BoolOnly),
     is_struct(O::BoolOnly),
     is_enum(O::BoolOnly),
     is_union(O::BoolOnly),
@@ -159,7 +174,7 @@ pub enum DefinitionBody {
     Paste(Template<paste::Items>),
 }
 
-pub type DefCondBody = Box<Subst<BooleanContext>>;
+pub type DefCondBody = Box<Condition>;
 
 #[derive(Debug)]
 pub struct ExplicitError {
@@ -172,7 +187,7 @@ pub struct SubstIf<O: SubstParseContext> {
     ///
     /// The test that gives "true"
     /// short-circuits the rest.
-    pub tests: Vec<(Subst<BooleanContext>, Template<O>)>,
+    pub tests: Vec<(Condition, Template<O>)>,
     /// A final element to expand if all tests fail.
     pub otherwise: Option<Box<Template<O>>>,
     pub kw_span: Span,
@@ -358,6 +373,15 @@ impl<O: SubstParseContext> Parse for Template<O> {
 impl<O: SubstParseContext> Template<O> {
     fn parse_special(
         input: ParseStream,
+        special: &mut O::SpecialParseContext,
+    ) -> syn::Result<Self> {
+        TemplateWithWhens::parse_special(input, special)?.try_into()
+    }
+}
+
+impl<O: SubstParseContext> TemplateWithWhens<O> {
+    fn parse_special(
+        input: ParseStream,
         mut special: &mut O::SpecialParseContext,
     ) -> syn::Result<Self> {
         // eprintln!("@@@@@@@@@@ PARSE {}", &input);
@@ -378,7 +402,7 @@ impl<O: SubstParseContext> Template<O> {
                 Ok(special)
             });
         }
-        errors.finish_with(Template { elements: good })
+        errors.finish_with(TemplateWithWhens { elements: good })
     }
 }
 
@@ -1089,6 +1113,21 @@ impl Parse for RawAttrEntry {
     }
 }
 
+/// Matches `$te` looking for `SD::when`
+///
+/// If so, returns `Left(kw_span, Box<Condition>)`.
+/// Otherwise returns Right($e).
+///
+/// `$te: TemplateElement` or `$te: &TemplateElement`
+macro_rules! te_extract_when { { $te:expr } => {
+    match $te {
+        TE::Subst(Subst { kw_span, sd: SD::when(bc, _) }) => {
+            Left((kw_span, bc))
+        }
+        other => Right(other),
+    }
+} }
+
 impl<O: SubstParseContext> RepeatedTemplate<O> {
     fn parse_in_parens(input: ParseStream) -> syn::Result<TemplateElement<O>> {
         let template;
@@ -1118,33 +1157,32 @@ impl<O: SubstParseContext> RepeatedTemplate<O> {
         span: DelimSpan,
         over: Option<RepeatOver>,
     ) -> Result<RepeatedTemplate<O>, syn::Error> {
-        let mut template = Template::parse(input)?;
+        use TemplateWithWhens as TWW;
+
+        let TWW { elements } =
+            TWW::parse_special(input, &mut Default::default())?;
 
         // split `when` off
+        let mut elements = VecDeque::from(elements);
         let mut whens = vec![];
-        let mut elements = Vec::with_capacity(template.elements.len());
-        let mut beginning = true;
-        for elem in template.elements.drain(..) {
-            let not_special = match elem {
-                _ if !beginning => elem,
-                TE::Ident(_) | TE::Literal(..) | TE::Punct(..) => elem,
 
-                TE::Subst(subst) => match subst.sd {
-                    SD::when(when, ..) => {
-                        whens.push(when);
-                        continue;
-                    }
-                    _ => TE::Subst(subst),
-                },
-
-                _ => {
-                    beginning = false;
-                    elem
+        while let Some(()) = {
+            match elements.pop_front().map(|e| te_extract_when!(e)) {
+                Some(Left((_kw_span, bc))) => {
+                    whens.push(bc);
+                    Some(())
                 }
-            };
-            elements.push(not_special);
-        }
-        template.elements = elements;
+                Some(Right(other)) => {
+                    elements.push_front(other);
+                    None
+                }
+                None => None,
+            }
+        } {}
+
+        let elements = Vec::from(elements);
+        let template = TemplateWithWhens { elements };
+        let template = Template::try_from(template)?;
 
         let over = match over {
             Some(over) => Ok(over),
@@ -1163,6 +1201,25 @@ impl<O: SubstParseContext> RepeatedTemplate<O> {
             }),
             Err(errs) => Err(errs),
         }
+    }
+}
+
+impl<O> TryFrom<TemplateWithWhens<O>> for Template<O>
+where
+    O: SubstParseContext,
+{
+    type Error = syn::Error;
+
+    fn try_from(unchecked: TemplateWithWhens<O>) -> syn::Result<Template<O>> {
+        let TemplateWithWhens { elements } = unchecked;
+        for e in &elements {
+            if let Left((kw_span, _)) = te_extract_when!(e) {
+                return Err(kw_span.error(
+ "${when } must be at the top-level of a repetition, before other content"
+                ));
+            }
+        }
+        Ok(Template { elements })
     }
 }
 

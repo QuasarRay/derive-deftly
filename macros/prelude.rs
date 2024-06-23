@@ -5,7 +5,7 @@
 
 pub use std::cell::Cell;
 pub use std::cmp;
-pub use std::collections::HashSet;
+pub use std::collections::{HashSet, VecDeque};
 pub use std::convert::{TryFrom, TryInto};
 pub use std::default::Default;
 pub use std::fmt::{self, Debug, Display, Write as _};
@@ -17,7 +17,7 @@ pub use std::ptr;
 pub use std::str::FromStr;
 pub use std::thread::panicking;
 
-pub use itertools::{chain, izip, Either, EitherOrBoth, Itertools};
+pub use itertools::{chain, izip, Either, Either::*, EitherOrBoth, Itertools};
 pub use proc_macro2::{Delimiter, Ident, Punct};
 pub use proc_macro2::{Span, TokenStream, TokenTree};
 pub use quote::{format_ident, quote, quote_spanned, ToTokens};

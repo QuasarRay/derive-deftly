@@ -546,6 +546,8 @@ where
                 // in a Template.  It is Template.expand() that handles this.
                 // We could possibly use proof tokens to see if this happens
                 // and exclude it, but that would be super invasive.
+                //
+                // (There are some parallels between this and `${when }`)
                 "${define } and ${defcond } only allowed in a full template",
             ),
             SD::UserDefined(name) => name.lookup_expand(ctx, out)?,
@@ -557,7 +559,7 @@ where
             }
             SD::when(..) => out.write_error(
                 &kw_span,
-                "${when } only allowed in toplevel of $( )",
+                "internal error - misplaced ${when } detected too late!",
             ),
             SD::If(conds, ..) => conds.expand(ctx, out)?,
             SD::select1(conds, ..) => conds.expand_select1(ctx, out)?,

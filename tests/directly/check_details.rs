@@ -333,3 +333,16 @@ fn check_details_types() {
         ],
     );
 }
+
+#[test]
+fn check_misplaced_when() {
+    let chk = |s| {
+        check_template_parse_fail(
+            s,
+ "${when } must be at the top-level of a repetition, before other content",
+        );
+    };
+
+    chk(r#" ${for fields { a ${when true} }} "#);
+    chk(r#" a ${when true} "#);
+}
