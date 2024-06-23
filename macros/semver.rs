@@ -44,7 +44,12 @@ impl Parse for SemverCheckInput {
         if nums.next().is_some() {
             return Err(span.error("too many components in version number"));
         }
-        Ok(SemverCheckInput { major, minor, patch, span })
+        Ok(SemverCheckInput {
+            major,
+            minor,
+            patch,
+            span,
+        })
     }
 }
 
