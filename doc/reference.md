@@ -818,7 +818,8 @@ ${tdefvariants $(
 <!--##examples-for-toplevels-concat Tuple Enum##-->
 Expands to (when applied to `Tuple` and `Enum`):
 
-```rust,ignore
+```rust,dd-directly
+# let _ = r##"
 struct TupleCopy<'a, 'l: 'a, T: Display = usize, const C: usize = 1,>(
     &'a &'l T,
 );
@@ -827,6 +828,7 @@ pub enum EnumCopy<'a, 'l: 'a, T: Display = usize, const C: usize = 1,> {
     TupleVariantCopy(std::iter::Once::<T>,),
     NamedVariantCopy { field_copy: &'l &'a T, ... },
 }
+# "##;
 ```
 
 <div id="x:ignore">
@@ -958,7 +960,8 @@ they won't interfere.
 
 ##### Example including a condition
 
-```rust,ignore
+```rust,dd-directly
+# let _ = r##"
 ${define T_FIELDS ${paste $tname Fields}}
 // Note that fvis is not in scope here; that's okay,
 // but we can only _use_ F_ENABLE when fvis _is_ in scope.
@@ -969,12 +972,14 @@ $tvis struct $T_FIELDS { $(
 $tvis const ${shouty_snake_case ALL_ $T_FIELDS}: $T_FIELDS = { $(
     ${when F_ENABLE} $fname: true,
 ) };
+# "##;
 ```
 
 <!--##examples-for-toplevels-concat Unit Tuple Struct##-->
 Expands to (for `Unit`, `Tuple` and `Struct`):
 
-```rust,ignore
+```rust,dd-directly
+# let _ = r##"
 pub struct UnitFields {}
 pub const ALL_UNIT_FIELDS: UnitFields = {};
 struct TupleFields {}
@@ -985,6 +990,7 @@ struct StructFields {
 const ALL_STRUCT_FIELDS: StructFields = {
     field: true,
 };
+# "##;
 ```
 
 <div id="x:error">

@@ -446,6 +446,10 @@ fn examples_section<'i>(
                 options,
                 content,
             } => {
+                // Tests flagged *just* with `rust` are tested by
+                // rustdoc.  For our tests which we don't want to run
+                // that way, we say `rust,dd-directly`, and wrap
+                // the whole thing in invisible `let _ = r#".."#`.
                 if m!(options, r"^rust$") {
                     continue;
                 }
