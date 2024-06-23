@@ -785,13 +785,15 @@ Specifically:
 <!--##examples-possibilities-blockquote##-->
 <!--iiiiiiiiiiiiiiiiiiiiiii fffffffffffffffffffff oooooooooooooooooo ###############-->
 
-```text
+```rust,dd-directly
+# let _ = r##"
  ${vdefbody VNAME FIELDS}   for unit                FIELDS;          [*] ie  ;
  ${vdefbody VNAME FIELDS}   for tuple             ( FIELDS );
  ${vdefbody VNAME FIELDS}   for braced struct     { FIELDS }
  ${vdefbody VNAME FIELDS}   for unit variant      VNAME   FIELDS,    [*] ie  VNAME,
  ${vdefbody VNAME FIELDS}   for tuple variant     VNAME ( FIELDS ),
  ${vdefbody VNAME FIELDS}   for braced variant    VNAME { FIELDS },
+# "##;
 ```
 
 **`${fdefine FNAME}`** expands to `FNAME:` in the context of
@@ -806,13 +808,15 @@ will probably be syntactically invalid in context.
 
 #### Example
 
-```text
+```rust,dd-directly
+# let _ = r##"
 $tvis $tdefkwd $<$tname Copy><$tdefgens>
 ${tdefvariants $(
     ${vdefbody $<$vname Copy> $(
         $fdefvis ${fdefine $<$fname _copy>} $ftype,
     ) }
 ) }
+# "##;
 ```
 
 <!--##examples-for-toplevels-concat Tuple Enum##-->
