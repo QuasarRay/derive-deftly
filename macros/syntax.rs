@@ -813,11 +813,9 @@ impl<O: SubstParseContext> Parse for Subst<O> {
             Ok(inner)
         };
 
-        let parse_def_body = |input: ParseStream<'i>| {
+        let parse_def_body = |input: ParseStream<'i>, m| {
             if input.is_empty() {
-                return Err(kw.error(
-                    "tdefvariants needs to contain the variant definitions",
-                ));
+                return Err(kw.error(m));
             }
             Template::parse(input)
         };
@@ -869,7 +867,10 @@ impl<O: SubstParseContext> Parse for Subst<O> {
         ) }
 
         keyword! { tdefvariants(
-            parse_def_body(input)?,
+            parse_def_body(
+                input,
+                "tdefvariants needs to contain the variant definitions",
+            )?,
             not_in_paste()?, not_in_bool()?,
         ) }
         keyword! { fdefine(
@@ -878,7 +879,10 @@ impl<O: SubstParseContext> Parse for Subst<O> {
         ) }
         keyword! { vdefbody(
             input.parse()?,
-            parse_def_body(input)?,
+            parse_def_body(
+                input,
+                "vdefbody needs to contain the body definition",
+            )?,
             not_in_paste()?, not_in_bool()?,
         ) }
         keyword! { is_empty(bool_only()?, {
