@@ -31,7 +31,7 @@ pub mod a_trait {
     }
 
     define_derive_deftly! {
-        pub IsEnum:
+        export IsEnum:
 
         // When the template wants to refer to things in its own
         // crate, it must use fully qualified names, starting with
@@ -97,7 +97,7 @@ pub mod a_driver {
     /// Anyone who *uses* an exported driver should refer to those docs,
     /// on pain of risking breakages due to `cargo update`.
     #[derive(Deftly)]
-    #[derive_deftly_adhoc(pub)]
+    #[derive_deftly_adhoc(export)]
     pub struct ADriver<T: Default> {
         pub field: AField<T>,
     }
