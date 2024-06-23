@@ -10,7 +10,7 @@ description="driver export compat testing - old part A"
 publish = false
 
 [dependencies]
-derive-deftly = { version = "=0.11.0" }
+derive-deftly = { version = "=0.12.1" }
 
 [lib]
 path = "../../pub-export/pub-a/pub-a.rs"
