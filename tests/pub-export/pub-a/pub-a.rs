@@ -31,7 +31,7 @@ pub mod a_trait {
     }
 
     define_derive_deftly! {
-        pub IsEnum =
+        pub IsEnum:
 
         // When the template wants to refer to things in its own
         // crate, it must use fully qualified names, starting with
