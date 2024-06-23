@@ -394,7 +394,7 @@ pub fn define_derive_deftly(
 /// # use derive_deftly::{derive_deftly_engine};
 /// # fn main(){}
 // We can't make another crate.  Fake up the macro definition
-/// # derive_deftly::define_derive_deftly! { TheirMacro = }
+/// # derive_deftly::define_derive_deftly! { TheirMacro: }
 /// use derive_deftly::{Deftly, derive_deftly_adhoc};
 // and don't really try to import it, then
 /// # #[cfg(any())]
