@@ -4,7 +4,7 @@
 #![allow(dead_code, unused_variables)]
 use derive_deftly::{derive_deftly_adhoc, Deftly};
 type FieldType = ();
-#[derive_deftly_adhoc(export)]
+#[derive_deftly_adhoc]
 struct DataType {
     #[deftly(lit = "42")]
     a: (),

@@ -1,6 +1,6 @@
 //! Very simple example for deriving Clone.
 
-use derive_deftly::{self, define_derive_deftly, Deftly};
+use derive_deftly::{define_derive_deftly, Deftly};
 use std::sync::Arc;
 
 // Very simple `Clone`
@@ -13,7 +13,7 @@ use std::sync::Arc;
 //
 // (This does a small subset of what the educe crate's `Clone` does.)
 define_derive_deftly! {
-    export MyClone:
+    MyClone:
 
     impl<$tgens> Clone for $ttype {
         fn clone(&self) -> Self {
