@@ -925,7 +925,7 @@ see [Precedence considerations](#precedence-considerations).
 
 `NAME` is visible after its definition in the same template or group,
 including in inner templates and groups.
-Definitions may be re-defined by inner scopes.
+Definitions may be re-defined, in the same scope, or inner scopes.
 Scope is dynamic,
 both for derive-deftly built-ins and user definitions:
 `BODY` and `CONDITION` are captured
