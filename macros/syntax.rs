@@ -183,8 +183,8 @@ pub struct DefinitionName(syn::Ident);
 
 #[derive(Debug)]
 pub enum DefinitionBody {
-    Normal(Template<TokenAccumulator>),
-    Paste(Template<paste::Items>),
+    Normal(Argument<TokenAccumulator>),
+    Paste(Argument<paste::Items>),
 }
 
 pub type DefCondBody = Box<Condition>;
@@ -321,25 +321,25 @@ impl Parse for Definition<DefinitionBody> {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let name = input.parse()?;
         let body_span = input.span();
-        let mut body = Template::parse_single_or_braced(input)?;
+        let mut body: Argument<_> = input.parse()?;
 
         // Is it precisely an invocation of ${paste } or $< > ?
         let body = match (|| {
             if body.elements.len() != 1 {
                 return None;
             }
-            let Template { elements } = &mut body;
+            let Template { elements } = &mut body.0;
             // This is tedious.  We really want to move match on a vec.
             match elements.pop().expect("just checked length") {
                 TE::Subst(Subst {
                     kw_span,
                     sd: SD::paste(items, not_in_bool),
-                }) => Some(Template {
+                }) => Some(Argument(Template {
                     elements: vec![TE::Subst(Subst {
                         kw_span,
                         sd: SD::paste(items, not_in_bool),
                     })],
-                }),
+                })),
                 other => {
                     // Oops, put it back
                     elements.push(other);
