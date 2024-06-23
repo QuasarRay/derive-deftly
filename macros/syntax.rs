@@ -1118,33 +1118,52 @@ impl<O: SubstParseContext> RepeatedTemplate<O> {
         span: DelimSpan,
         over: Option<RepeatOver>,
     ) -> Result<RepeatedTemplate<O>, syn::Error> {
-        let mut template = Template::parse(input)?;
+        use Either::*;
+
+        let Template { elements } = Template::parse(input)?;
 
         // split `when` off
+        let mut elements = VecDeque::from(elements);
         let mut whens = vec![];
-        let mut elements = Vec::with_capacity(template.elements.len());
-        let mut beginning = true;
-        for elem in template.elements.drain(..) {
-            let not_special = match elem {
-                _ if !beginning => elem,
-                TE::Ident(_) | TE::Literal(..) | TE::Punct(..) => elem,
 
-                TE::Subst(subst) => match subst.sd {
-                    SD::when(when, ..) => {
-                        whens.push(when);
-                        continue;
-                    }
-                    _ => TE::Subst(subst),
-                },
-
-                _ => {
-                    beginning = false;
-                    elem
+        /// Matches `$e` looking for `SD::when`
+        ///
+        /// If so, returns `Left(kw_span, Box<Subst<BooleanContext>>)`.
+        /// Otherwise returns Right($e).
+        /// Macro so that this can be used with `&TemplateElement` too.
+        macro_rules! extract_when { { $e:expr } => {
+            match $e {
+                TE::Subst(Subst { kw_span, sd: SD::when(bc, _) }) => {
+                    Left((kw_span, bc))
                 }
-            };
-            elements.push(not_special);
+                other => Right(other),
+            }
+        } }
+
+        while let Some(()) = {
+            match elements.pop_front().map(|e| extract_when!(e)) {
+                Some(Left((_kw_span, bc))) => {
+                    whens.push(bc);
+                    Some(())
+                }
+                Some(Right(other)) => {
+                    elements.push_front(other);
+                    None
+                }
+                None => None,
+            }
+        } {}
+
+        for e in &elements {
+            if let Left((kw_span, _)) = extract_when!(e) {
+                return Err(
+                    kw_span.error("${when } must come before other content")
+                );
+            }
         }
-        template.elements = elements;
+
+        let elements = Vec::from(elements);
+        let template = Template { elements };
 
         let over = match over {
             Some(over) => Ok(over),

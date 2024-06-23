@@ -5,7 +5,7 @@
 
 pub use std::cell::Cell;
 pub use std::cmp;
-pub use std::collections::HashSet;
+pub use std::collections::{HashSet, VecDeque};
 pub use std::convert::{TryFrom, TryInto};
 pub use std::default::Default;
 pub use std::fmt::{self, Debug, Display, Write as _};
