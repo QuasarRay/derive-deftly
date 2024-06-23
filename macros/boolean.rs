@@ -183,7 +183,10 @@ impl Subst<BooleanContext> {
 impl DefinitionName {
     fn lookup_eval_bool(&self, ctx: &Context<'_>) -> syn::Result<bool> {
         let (def, ctx) = ctx.find_definition::<DefCondBody>(self)?.ok_or_else(|| {
-            let mut error = self.error(format!("user-defined condition `{}` not found", self));
+            let mut error = self.error(format!(
+                "user-defined condition `{}` not found",
+                self,
+            ));
             if let Some(def) = ctx.definitions.find_raw::<DefinitionBody>(self) {
                 // Condition syntax looks like fine tokens,
                 // so the ${define } wouldn't spot this mistake.

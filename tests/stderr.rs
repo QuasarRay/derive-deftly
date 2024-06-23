@@ -1,3 +1,4 @@
+#![cfg(feature = "ui")]
 //! Tests of output to actual stderr
 //!
 //! Checks that our test cases
@@ -170,13 +171,12 @@ fn one_collection(coll: &str, compiles: Result<(), ()>) {
     }
 }
 
-#[cfg(feature = "ui")]
 #[test]
 fn stderr_main() {
     one_collection("main", Err(()));
 }
 
-#[cfg(all(feature = "ui", feature = "recent"))]
+#[cfg(all(feature = "recent"))]
 #[test]
 fn stderr_recent() {
     one_collection("recent", Ok(()));
