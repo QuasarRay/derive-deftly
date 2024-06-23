@@ -3,7 +3,7 @@
 use derive_deftly::{define_derive_deftly, derive_deftly_adhoc, Deftly};
 
 define_derive_deftly! {
-    DefineAndUseMacroRulesMacro =
+    DefineAndUseMacroRulesMacro:
 
     impl $ttype {
         fn forget(self) {

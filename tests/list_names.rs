@@ -3,7 +3,7 @@
 use derive_deftly::{define_derive_deftly, Deftly};
 
 define_derive_deftly! {
-    ListFields =
+    ListFields:
 
     impl $ttype {
         fn who_are_you() -> &'static str {
@@ -17,7 +17,7 @@ define_derive_deftly! {
 }
 
 define_derive_deftly! {
-    ListVariants =
+    ListVariants:
 
     impl $ttype {
         fn list_variants() -> Vec<&'static str> {

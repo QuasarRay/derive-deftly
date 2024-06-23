@@ -1,7 +1,7 @@
 error: predefined templates must always expand to items
  --> ui/badcontext.rs:5:23
   |
-5 |     FieldNames expect expr =
+5 |     FieldNames expect expr:
   |                       ^^^^
 
 error: macro expansion ignores token `0` and any following

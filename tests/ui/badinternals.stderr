@@ -13,7 +13,7 @@ error: wrong input to derive-deftly template macro derive_deftly_template_Templa
   --> ui/badinternals.rs:13:1
    |
 13 | / define_derive_deftly! {
-14 | |     Template =
+14 | |     Template:
 15 | | }
    | |_^
 ...

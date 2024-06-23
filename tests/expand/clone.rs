@@ -13,7 +13,7 @@ use std::sync::Arc;
 //
 // (This does a small subset of what the educe crate's `Clone` does.)
 define_derive_deftly! {
-    export MyClone =
+    export MyClone:
 
     impl<$tgens> Clone for $ttype {
         fn clone(&self) -> Self {

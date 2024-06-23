@@ -5,7 +5,7 @@
 use derive_deftly::{define_derive_deftly, Deftly};
 
 define_derive_deftly! {
-    PreciseClone =
+    PreciseClone:
 
     impl<$tgens> Clone for $ttype
     // We don't need to $( $( ) ) (ie, twice); it automatically descends.

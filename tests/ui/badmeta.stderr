@@ -428,7 +428,7 @@ error: integer literal comparison with both values >u64 is not supported (compar
 warning: unused macro definition: `derive_deftly_template_WrongRequestSyntax`
    --> ui/badmeta.rs:104:5
     |
-104 |     WrongRequestSyntax =
+104 |     WrongRequestSyntax:
     |     ^^^^^^^^^^^^^^^^^^
     |
     = note: `#[warn(unused_macros)]` on by default

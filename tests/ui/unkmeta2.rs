@@ -1,7 +1,7 @@
 use derive_deftly::{define_derive_deftly, Deftly};
 
 define_derive_deftly! {
-    ShortCircuit =
+    ShortCircuit:
 
     $(
         ${if all(fmeta(value), fmeta(short_circuit))  {
@@ -11,7 +11,7 @@ define_derive_deftly! {
 }
 
 define_derive_deftly! {
-    Require =
+    Require:
 
     $(
         ${if fmeta(require) {

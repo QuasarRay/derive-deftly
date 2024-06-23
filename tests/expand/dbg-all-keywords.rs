@@ -1,6 +1,6 @@
 use derive_deftly::{define_derive_deftly, Deftly};
 
-define_derive_deftly! { Dbg = $dbg_all_keywords }
+define_derive_deftly! { Dbg: $dbg_all_keywords }
 
 #[allow(dead_code)]
 #[derive(Deftly)]

@@ -82,7 +82,7 @@ derive_deftly_adhoc! {
 }
 
 define_derive_deftly! {
-    TestFunkyPath =
+    TestFunkyPath:
     struct ${paste Bad ${tmeta(std::cell::Cell::<String>::ne)w as str}};
 }
 
@@ -101,7 +101,7 @@ derive_deftly_adhoc! {
 struct WithoutfunkyPath;
 
 define_derive_deftly! {
-    WrongRequestSyntax =
+    WrongRequestSyntax:
 
     $tmeta(something)
     ${if tmeta}

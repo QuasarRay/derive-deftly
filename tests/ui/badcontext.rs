@@ -2,7 +2,7 @@ use derive_deftly::{define_derive_deftly, derive_deftly_adhoc, Deftly};
 
 define_derive_deftly! {
     /// This is fundamentally misconceived
-    FieldNames expect expr =
+    FieldNames expect expr:
     [ $( stringify!($fname), ) ]
 }
 

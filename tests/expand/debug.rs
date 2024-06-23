@@ -11,7 +11,7 @@ use derive_deftly::{define_derive_deftly, Deftly};
 use derive_deftly_tests::*;
 
 define_derive_deftly! {
-    MyDebug =
+    MyDebug:
 
     impl Debug for $ttype
     where $(

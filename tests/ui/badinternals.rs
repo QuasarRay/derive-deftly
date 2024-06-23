@@ -11,7 +11,7 @@ use derive_deftly::{define_derive_deftly, Deftly};
 struct Driver;
 
 define_derive_deftly! {
-    Template =
+    Template:
 }
 
 derive_deftly_driver_Driver! { GARBAGE -> DRIVER }

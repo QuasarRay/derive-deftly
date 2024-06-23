@@ -26,7 +26,7 @@ derive_deftly_adhoc! {
 }
 
 define_derive_deftly! {
-    Broken =
+    Broken:
 
     type Alias = ${ttype $junk};
 }

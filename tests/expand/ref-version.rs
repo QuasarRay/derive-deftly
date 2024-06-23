@@ -13,7 +13,7 @@ use derive_deftly::{define_derive_deftly, Deftly};
 
 define_derive_deftly! {
     // The output from this `dbg` is tested via tests/stderr/stderr-lib.rs
-    ReferenceVersion dbg =
+    ReferenceVersion dbg:
 
     ${define REFERENCE $<$tname Reference>}
     ${define IMPL { impl<'reference, $tgens> }}
