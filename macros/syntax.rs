@@ -428,9 +428,10 @@ impl<O: SubstParseContext> Template<O> {
             || la.peek(syn::Lit)
         {
             let element = input.parse()?;
-            Ok(Template {
+            TemplateWithWhens {
                 elements: vec![element],
-            })
+            }
+            .try_into()
         } else {
             Err(la.error())
         }
