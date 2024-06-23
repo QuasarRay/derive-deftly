@@ -553,7 +553,11 @@ However, the likelihood of this breaking a working build seems low.
 
  * Initial release to crates.io, not widely advertised.
 
+<div id="t:stability">
+
 ## Stability and semver policy
+
+</div>
 
 We take a similar approach to stability to Rust upstream,
 but we may make breaking changes, signaled via semver.
