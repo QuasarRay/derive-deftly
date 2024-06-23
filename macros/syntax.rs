@@ -449,14 +449,6 @@ impl<O: SubstParseContext> Deref for Argument<O> {
     }
 }
 
-impl<O: SubstParseContext> Template<O> {
-    /// XXXX remove this, call sites should be using `Argument`
-    fn parse_single_or_braced(input: ParseStream) -> syn::Result<Self> {
-        let arg: Argument<O> = input.parse()?;
-        Ok(arg.0)
-    }
-}
-
 /// Proof token that [`deescape_orig_dollar`] was called
 ///
 /// Demanded by `Subst::parse_after_dollar`.
