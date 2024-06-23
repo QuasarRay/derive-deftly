@@ -27,7 +27,7 @@ pub struct Template<O: SubstParseContext> {
 ///   *  `${EXPN..}`
 ///   *  `{ TEMPLATE }`
 #[derive(Debug)]
-pub struct Argument<O: SubstParseContext>(pub Template<O>);
+pub struct Argument<O: SubstParseContext = TokenAccumulator>(pub Template<O>);
 
 #[derive(Debug)]
 pub struct TemplateWithWhens<O: SubstParseContext> {
@@ -121,7 +121,7 @@ pub enum SubstDetails<O: SubstParseContext> {
 
     tdefvariants(Template<TokenAccumulator>, O::NotInPaste, O::NotInBool),
     fdefine(
-        Option<Argument<TokenAccumulator>>,
+        Option<Argument>,
         O::NotInPaste,
         O::NotInBool,
     ),
@@ -155,7 +155,7 @@ pub enum SubstDetails<O: SubstParseContext> {
     v_is_tuple(O::BoolOnly),
     v_is_named(O::BoolOnly),
     is_empty(O::BoolOnly, Template<TokenAccumulator>),
-    approx_equal(O::BoolOnly, [Argument<TokenAccumulator>; 2]),
+    approx_equal(O::BoolOnly, [Argument; 2]),
 
     // Explicit iteration
     For(RepeatedTemplate<O>, O::NotInBool),
@@ -183,7 +183,7 @@ pub struct DefinitionName(syn::Ident);
 
 #[derive(Debug)]
 pub enum DefinitionBody {
-    Normal(Argument<TokenAccumulator>),
+    Normal(Argument),
     Paste(Argument<paste::Items>),
 }
 
@@ -216,8 +216,8 @@ pub enum SubstVis {
 
 #[derive(Debug)]
 pub struct SubstVType {
-    pub self_: Option<Argument<TokenAccumulator>>,
-    pub vname: Option<Argument<TokenAccumulator>>,
+    pub self_: Option<Argument>,
+    pub vname: Option<Argument>,
 }
 
 #[derive(Debug)]
