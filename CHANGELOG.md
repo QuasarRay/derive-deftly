@@ -33,6 +33,34 @@ again, in a minor version bump.
 
 ## Changelog
 
+### 0.13.0
+
+#### Breaking
+
+ * `${approx_equal }` compares literals (except floats) by value.
+   It can now fail (giving an error) if it can't do the comparison.
+ * `${when }`'s must now come before anything else in their repetition,
+   and this is checked when parsing so enforced even if not expanded.
+ * `${Xmeta as expr}` is now behind a new `meta-as-expr` feature,
+   which is enabled by default but not part of `minimal-1`.
+
+#### Added
+
+ * New `full-msrv-1.56` feature.  `full` may increase MSRV more quickly.
+ * Provide a [stability policy](#t:stability).
+
+#### Fixed
+
+ * Pasting now works correctly when some of the ingredients are
+   raw identifiers.
+
+#### Improved
+
+ * Compatibility with Rust's new
+   [cfg checking scheme](https://blog.rust-lang.org/2024/05/06/check-cfg.html).
+ * Improvements and fixes to reference documentation.
+ * Many improvements to internals and tests.
+
 ### 0.12.1
 
 #### Deprecated
@@ -553,7 +581,11 @@ However, the likelihood of this breaking a working build seems low.
 
  * Initial release to crates.io, not widely advertised.
 
+<div id="t:stability">
+
 ## Stability and semver policy
+
+</div>
 
 We take a similar approach to stability to Rust upstream,
 but we may make breaking changes, signaled via semver.

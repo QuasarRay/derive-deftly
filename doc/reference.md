@@ -650,6 +650,8 @@ which must refer to a path (perhaps with generics, and/or surrounding `( )`).
 Then the pasting will be applied to the final path element identifier,
 and the surroundings reproduced unaltered.
 
+Iff necessary, the result will be a raw identifier.
+
 #### Examples
 
  * `$<Zingy $ftype Builder>` for `TupleVariant`:
