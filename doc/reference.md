@@ -785,13 +785,15 @@ Specifically:
 <!--##examples-possibilities-blockquote##-->
 <!--iiiiiiiiiiiiiiiiiiiiiii fffffffffffffffffffff oooooooooooooooooo ###############-->
 
-```text
+```rust,dd-directly
+# let _ = r##"
  ${vdefbody VNAME FIELDS}   for unit                FIELDS;          [*] ie  ;
  ${vdefbody VNAME FIELDS}   for tuple             ( FIELDS );
  ${vdefbody VNAME FIELDS}   for braced struct     { FIELDS }
  ${vdefbody VNAME FIELDS}   for unit variant      VNAME   FIELDS,    [*] ie  VNAME,
  ${vdefbody VNAME FIELDS}   for tuple variant     VNAME ( FIELDS ),
  ${vdefbody VNAME FIELDS}   for braced variant    VNAME { FIELDS },
+# "##;
 ```
 
 **`${fdefine FNAME}`** expands to `FNAME:` in the context of
@@ -806,19 +808,22 @@ will probably be syntactically invalid in context.
 
 #### Example
 
-```text
+```rust,dd-directly
+# let _ = r##"
 $tvis $tdefkwd $<$tname Copy><$tdefgens>
 ${tdefvariants $(
     ${vdefbody $<$vname Copy> $(
         $fdefvis ${fdefine $<$fname _copy>} $ftype,
     ) }
 ) }
+# "##;
 ```
 
 <!--##examples-for-toplevels-concat Tuple Enum##-->
 Expands to (when applied to `Tuple` and `Enum`):
 
-```rust,ignore
+```rust,dd-directly
+# let _ = r##"
 struct TupleCopy<'a, 'l: 'a, T: Display = usize, const C: usize = 1,>(
     &'a &'l T,
 );
@@ -827,6 +832,7 @@ pub enum EnumCopy<'a, 'l: 'a, T: Display = usize, const C: usize = 1,> {
     TupleVariantCopy(std::iter::Once::<T>,),
     NamedVariantCopy { field_copy: &'l &'a T, ... },
 }
+# "##;
 ```
 
 <div id="x:ignore">
@@ -958,7 +964,8 @@ they won't interfere.
 
 ##### Example including a condition
 
-```rust,ignore
+```rust,dd-directly
+# let _ = r##"
 ${define T_FIELDS ${paste $tname Fields}}
 // Note that fvis is not in scope here; that's okay,
 // but we can only _use_ F_ENABLE when fvis _is_ in scope.
@@ -969,12 +976,14 @@ $tvis struct $T_FIELDS { $(
 $tvis const ${shouty_snake_case ALL_ $T_FIELDS}: $T_FIELDS = { $(
     ${when F_ENABLE} $fname: true,
 ) };
+# "##;
 ```
 
 <!--##examples-for-toplevels-concat Unit Tuple Struct##-->
 Expands to (for `Unit`, `Tuple` and `Struct`):
 
-```rust,ignore
+```rust,dd-directly
+# let _ = r##"
 pub struct UnitFields {}
 pub const ALL_UNIT_FIELDS: UnitFields = {};
 struct TupleFields {}
@@ -985,6 +994,7 @@ struct StructFields {
 const ALL_STRUCT_FIELDS: StructFields = {
     field: true,
 };
+# "##;
 ```
 
 <div id="x:error">
@@ -1452,7 +1462,9 @@ are those generated for the following driver types:
 
 <!--##examples-structs##-->
 
-```ignore
+```rust,dd-directly
+# let _ = r##"
+#
 # use std::fmt::Display;
 # use std::convert::TryInto;
 #
@@ -1499,4 +1511,5 @@ where T: 'l, T: TryInto<u8>
         field_o: Option<i32>,
      },
 }
+# "##;
 ```
