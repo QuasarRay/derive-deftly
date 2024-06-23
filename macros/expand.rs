@@ -77,7 +77,7 @@ impl SubstVType {
     ) -> syn::Result<()> {
         let expand_spec_or_sd =
             |out: &mut _,
-             spec: &Option<Template<TokenAccumulator>>,
+             spec: &Option<Argument<TokenAccumulator>>,
              sd: SubstDetails<TokenAccumulator>| {
                 if let Some(spec) = spec {
                     spec.expand(ctx, out);

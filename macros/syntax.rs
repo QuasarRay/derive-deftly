@@ -216,14 +216,14 @@ pub enum SubstVis {
 
 #[derive(Debug)]
 pub struct SubstVType {
-    pub self_: Option<Template<TokenAccumulator>>,
-    pub vname: Option<Template<TokenAccumulator>>,
+    pub self_: Option<Argument<TokenAccumulator>>,
+    pub vname: Option<Argument<TokenAccumulator>>,
 }
 
 #[derive(Debug)]
 pub struct SubstVPat {
     pub vtype: SubstVType,
-    pub fprefix: Option<Template<paste::Items>>,
+    pub fprefix: Option<Argument<paste::Items>>,
 }
 
 #[derive(Debug, Clone)]
@@ -609,7 +609,7 @@ pub trait ParseOneSubkeyword: Sized {
 /// Helper for `impl_parse_subkeywords!`; parse and store subkw argument
 ///
 /// Parses and stores a template element argument to a subkeyword,
-/// using [`Template::parse_single_or_braced`].
+/// using [`Argument::parse`].
 ///
 /// Detects repeated specification of the same keyword, as an error.
 ///
@@ -618,7 +618,7 @@ pub trait ParseOneSubkeyword: Sized {
 fn subkw_parse_store<KO>(
     subkw: &syn::Ident,
     input: ParseStream,
-    dest: &mut Option<Template<KO>>,
+    dest: &mut Option<Argument<KO>>,
 ) -> syn::Result<()>
 where
     KO: SubstParseContext,
@@ -629,7 +629,7 @@ where
             subkw.error("same argument sub-keyword specified more than once")
         );
     }
-    *dest = Some(input.call(|input| Template::parse_single_or_braced(input))?);
+    *dest = Some(input.parse()?);
     Ok(())
 }
 
