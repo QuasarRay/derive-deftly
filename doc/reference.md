@@ -672,7 +672,7 @@ See [Case changing](#case-changing).
 
 Allowed only within repetitions, and only at the toplevel
 of the repetition,
-before other expansions.
+before other content.
 Skips this repetition if the `CONDITION` is not true.
 
 #### Example
