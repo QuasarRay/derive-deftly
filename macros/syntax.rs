@@ -413,6 +413,10 @@ impl<O: SubstParseContext> Template<O> {
     ///     $EXPN
     ///     ${EXPN..}
     ///     { TEMPLATE }
+    ///
+    /// This is the standard syntax for `ARG` as per
+    /// "Named and positional template arguments"
+    /// in the reference.
     fn parse_single_or_braced(input: ParseStream) -> syn::Result<Self> {
         let la = input.lookahead1();
         if la.peek(token::Brace) {
