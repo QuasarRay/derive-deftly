@@ -121,7 +121,7 @@ pub enum SubstDetails<O: SubstParseContext> {
 
     tdefvariants(Template<TokenAccumulator>, O::NotInPaste, O::NotInBool),
     fdefine(
-        Option<Template<TokenAccumulator>>,
+        Option<Argument<TokenAccumulator>>,
         O::NotInPaste,
         O::NotInBool,
     ),
@@ -873,9 +873,7 @@ impl<O: SubstParseContext> Parse for Subst<O> {
             not_in_paste()?, not_in_bool()?,
         ) }
         keyword! { fdefine(
-            (!input.is_empty()).then(|| {
-                Template::parse_single_or_braced(input)
-            }).transpose()?,
+            (!input.is_empty()).then(|| input.parse()).transpose()?,
             not_in_paste()?, not_in_bool()?
         ) }
         keyword! { vdefbody(
