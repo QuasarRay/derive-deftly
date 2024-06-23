@@ -102,6 +102,9 @@ fn read_preprocess(errs: &mut Errors) -> Preprocessed {
                     drop(l);
                     break;
                 }
+                if m!(l, "^# ") {
+                    continue;
+                }
                 content += &l;
             }
             Some(II::BlockQuote {
