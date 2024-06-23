@@ -54,6 +54,13 @@ pub struct Subst<O: SubstParseContext> {
     pub sd: SubstDetails<O>,
 }
 
+/// A condition, as found in `if`.
+//
+// Giving this a separate name is nicer but also helps avoid using
+// `Subst` directly in template syntax tree nodes, which is best
+// avoided because Subst<O> might contain `${when }` inappropriately.
+pub type Condition = Subst<BooleanContext>;
+
 /// Enum representing nature and payload of a substitution
 ///
 /// This is a single enum, for all of the different lexical contexts
@@ -117,7 +124,7 @@ pub enum SubstDetails<O: SubstParseContext> {
     ChangeCase(Template<paste::Items>, paste::ChangeCase, O::NotInBool),
 
     // special
-    when(Box<Subst<BooleanContext>>, O::NotInBool),
+    when(Box<Condition>, O::NotInBool),
     define(Definition<DefinitionBody>, O::NotInBool),
     defcond(Definition<DefCondBody>, O::NotInBool),
     UserDefined(DefinitionName),
@@ -125,9 +132,9 @@ pub enum SubstDetails<O: SubstParseContext> {
     // expressions
     False(O::BoolOnly),
     True(O::BoolOnly),
-    not(Box<Subst<BooleanContext>>, O::BoolOnly),
-    any(Punctuated<Subst<BooleanContext>, token::Comma>, O::BoolOnly),
-    all(Punctuated<Subst<BooleanContext>, token::Comma>, O::BoolOnly),
+    not(Box<Condition>, O::BoolOnly),
+    any(Punctuated<Condition, token::Comma>, O::BoolOnly),
+    all(Punctuated<Condition, token::Comma>, O::BoolOnly),
     is_struct(O::BoolOnly),
     is_enum(O::BoolOnly),
     is_union(O::BoolOnly),
@@ -167,7 +174,7 @@ pub enum DefinitionBody {
     Paste(Template<paste::Items>),
 }
 
-pub type DefCondBody = Box<Subst<BooleanContext>>;
+pub type DefCondBody = Box<Condition>;
 
 #[derive(Debug)]
 pub struct ExplicitError {
@@ -180,7 +187,7 @@ pub struct SubstIf<O: SubstParseContext> {
     ///
     /// The test that gives "true"
     /// short-circuits the rest.
-    pub tests: Vec<(Subst<BooleanContext>, Template<O>)>,
+    pub tests: Vec<(Condition, Template<O>)>,
     /// A final element to expand if all tests fail.
     pub otherwise: Option<Box<Template<O>>>,
     pub kw_span: Span,
@@ -1108,7 +1115,7 @@ impl Parse for RawAttrEntry {
 
 /// Matches `$te` looking for `SD::when`
 ///
-/// If so, returns `Left(kw_span, Box<Subst<BooleanContext>>)`.
+/// If so, returns `Left(kw_span, Box<Condition>)`.
 /// Otherwise returns Right($e).
 ///
 /// `$te: TemplateElement` or `$te: &TemplateElement`
