@@ -76,11 +76,11 @@ dependencies = [
 
 [[package]]
 name = "derive-deftly"
-version = "0.11.0"
+version = "0.12.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d84d814854b09cb91bfae46872fadba3d010d74d0dc219cb3aec0eadd6fd3ceb"
+checksum = "263064b73d7ae758bc9d355d167546ffc6b57e4416733601d1383d097d166b14"
 dependencies = [
- "derive-deftly-macros 0.11.0",
+ "derive-deftly-macros 0.12.1",
  "heck",
 ]
 
@@ -103,9 +103,9 @@ dependencies = [
 
 [[package]]
 name = "derive-deftly-macros"
-version = "0.11.0"
+version = "0.12.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "aeb3df588a8d4adec5995808ab857dd01905a7fd9925578ca3b1c2657ae2a703"
+checksum = "0d15b810e497b2b54ef49ef77f944b86965cd2fa8e057ba38e54e5dc2c66ce9a"
 dependencies = [
  "heck",
  "indexmap",
@@ -208,14 +208,14 @@ dependencies = [
 name = "edrv-old-a"
 version = "0.0.1"
 dependencies = [
- "derive-deftly 0.11.0",
+ "derive-deftly 0.12.1",
 ]
 
 [[package]]
 name = "edrv-old-b"
 version = "0.0.1"
 dependencies = [
- "derive-deftly 0.11.0",
+ "derive-deftly 0.12.1",
  "pub-a",
 ]
 
@@ -369,14 +369,14 @@ checksum = "51eab148f171aefad295f8cece636fc488b9b392ef544da31ea4b8ef6b9e9c39"
 name = "old-a"
 version = "0.0.1"
 dependencies = [
- "derive-deftly 0.11.0",
+ "derive-deftly 0.12.1",
 ]
 
 [[package]]
 name = "old-b"
 version = "0.0.1"
 dependencies = [
- "derive-deftly 0.11.0",
+ "derive-deftly 0.12.1",
  "pub-a",
 ]
 

@@ -500,7 +500,7 @@ pub fn derive_deftly(
 ///
 /// ```
 /// # use derive_deftly_macros as derive_deftly;
-/// derive_deftly::template_export_semver_check!("0.11.0");
+/// derive_deftly::template_export_semver_check!("0.13.0");
 /// ```
 #[cfg_attr(proc_macro, proc_macro)]
 pub fn template_export_semver_check(

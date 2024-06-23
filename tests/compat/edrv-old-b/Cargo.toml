@@ -11,7 +11,7 @@ publish = false
 
 [dependencies]
 pub-a = { path = "../../pub-export/pub-a", version = "0.0.1" }
-derive-deftly = { version = "=0.11.0" }
+derive-deftly = { version = "=0.12.1" }
 
 [lib]
 path = "../old-b/old-b.rs"
