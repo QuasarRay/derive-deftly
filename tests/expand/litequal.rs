@@ -9,7 +9,7 @@ use derive_deftly::{derive_deftly_adhoc, Deftly};
 type FieldType = ();
 
 #[derive(Deftly)]
-#[derive_deftly_adhoc(export)]
+#[derive_deftly_adhoc]
 struct DataType {
     #[deftly(lit = "42")]
     a: (),
