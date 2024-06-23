@@ -1604,6 +1604,7 @@ macro_rules! impL_find_recog_metas_via_deref { {
         }
     }
 } }
+impL_find_recog_metas_via_deref!((O: SubstParseContext), Argument<O>);
 impL_find_recog_metas_via_deref!((T: FindRecogMetas), Box<T>);
 
 impl<O: SubstParseContext> FindRecogMetas for SubstDetails<O> {

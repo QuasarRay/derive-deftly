@@ -16,6 +16,19 @@ pub struct Template<O: SubstParseContext> {
     pub elements: Vec<TemplateElement<O>>,
 }
 
+/// `ARG` as per
+/// "Named and positional template arguments"
+/// in the reference.
+///
+/// Parses from one of
+///     identifier
+///     literal
+///     $EXPN
+///     ${EXPN..}
+///     { TEMPLATE }
+#[derive(Debug)]
+pub struct Argument<O: SubstParseContext>(pub Template<O>);
+
 #[derive(Debug)]
 pub struct TemplateWithWhens<O: SubstParseContext> {
     pub elements: Vec<TemplateElement<O>>,
@@ -406,18 +419,8 @@ impl<O: SubstParseContext> TemplateWithWhens<O> {
     }
 }
 
-impl<O: SubstParseContext> Template<O> {
-    /// Parses one of
-    ///     identifier
-    ///     literal
-    ///     $EXPN
-    ///     ${EXPN..}
-    ///     { TEMPLATE }
-    ///
-    /// This is the standard syntax for `ARG` as per
-    /// "Named and positional template arguments"
-    /// in the reference.
-    fn parse_single_or_braced(input: ParseStream) -> syn::Result<Self> {
+impl<O: SubstParseContext> Parse for Argument<O> {
+    fn parse(input: ParseStream) -> syn::Result<Self> {
         let la = input.lookahead1();
         if la.peek(token::Brace) {
             let inner;
@@ -435,6 +438,22 @@ impl<O: SubstParseContext> Template<O> {
         } else {
             Err(la.error())
         }
+        .map(Argument)
+    }
+}
+
+impl<O: SubstParseContext> Deref for Argument<O> {
+    type Target = Template<O>;
+    fn deref(&self) -> &Template<O> {
+        &self.0
+    }
+}
+
+impl<O: SubstParseContext> Template<O> {
+    /// XXXX remove this, call sites should be using `Argument`
+    fn parse_single_or_braced(input: ParseStream) -> syn::Result<Self> {
+        let arg: Argument<O> = input.parse()?;
+        Ok(arg.0)
     }
 }
 
