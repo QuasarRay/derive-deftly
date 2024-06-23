@@ -155,7 +155,7 @@ pub enum SubstDetails<O: SubstParseContext> {
     v_is_tuple(O::BoolOnly),
     v_is_named(O::BoolOnly),
     is_empty(O::BoolOnly, Template<TokenAccumulator>),
-    approx_equal(O::BoolOnly, [Template<TokenAccumulator>; 2]),
+    approx_equal(O::BoolOnly, [Argument<TokenAccumulator>; 2]),
 
     // Explicit iteration
     For(RepeatedTemplate<O>, O::NotInBool),
@@ -892,9 +892,8 @@ impl<O: SubstParseContext> Parse for Subst<O> {
         }) }
         keyword! { approx_equal(bool_only()?, {
             let args =
-                Punctuated::<_, Token![,]>::parse_separated_nonempty_with(
+                Punctuated::<_, Token![,]>::parse_separated_nonempty(
                     &in_parens(input)?,
-                    Template::parse_single_or_braced,
                 )?;
             if args.len() != 2 {
                 return Err(kw.error(
