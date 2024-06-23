@@ -780,10 +780,6 @@ Usually, it would contain a `$( )` repeating over the fields,
 using `$fdefine` to introduce each one.
 Specifically:
 
-**`${fdefine FNAME}`** expands to `FNAME:` in the context of
-named fields (a "struct" or "struct variant"),
-or nothing otherwise.
-
 <!--##examples-possibilities-blockquote##-->
 <!--iiiiiiiiiiiiiiiiiiiiiii fffffffffffffffffffff oooooooooooooooooo ###############-->
 
@@ -795,6 +791,10 @@ or nothing otherwise.
  ${vdefbody VNAME FIELDS}   for tuple variant     VNAME ( FIELDS ),
  ${vdefbody VNAME FIELDS}   for braced variant    VNAME { FIELDS },
 ```
+
+**`${fdefine FNAME}`** expands to `FNAME:` in the context of
+named fields (a "struct" or "struct variant"),
+or nothing otherwise.
 
 `[*]`: In the unit and unit variant cases,
 `FIELDS` ought to expand to nothing;
