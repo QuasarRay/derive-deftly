@@ -865,12 +865,15 @@ impl<O: SubstParseContext> Parse for Subst<O> {
             content.parse()?
         }) }
         keyword! { approx_equal(bool_only()?, {
-            let args = Punctuated::<_, Token![,]>::parse_separated_nonempty_with(
-                &in_parens(input)?,
-                Template::parse_single_or_braced,
-            )?;
+            let args =
+                Punctuated::<_, Token![,]>::parse_separated_nonempty_with(
+                    &in_parens(input)?,
+                    Template::parse_single_or_braced,
+                )?;
             if args.len() != 2 {
-                return Err(kw.error("approx_equal() requires two comma-separated arguments"))
+                return Err(kw.error(
+                    "approx_equal() requires two comma-separated arguments"
+                ))
             }
             let mut args = args.into_iter();
             // std::array::from_fn needs MSRV 1.63
