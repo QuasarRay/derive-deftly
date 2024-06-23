@@ -7,6 +7,7 @@ struct SemverCheckInput {
     span: Span,
     major: u32,
     minor: u32,
+    patch: u32,
 }
 
 impl Display for SemverCheckInput {
@@ -39,11 +40,16 @@ impl Parse for SemverCheckInput {
         };
         let major = next_num_must()?;
         let minor = next_num_must()?;
-        let _patch: Option<u32> = next_num()?;
+        let patch = next_num()?.unwrap_or(0);
         if nums.next().is_some() {
             return Err(span.error("too many components in version number"));
         }
-        Ok(SemverCheckInput { major, minor, span })
+        Ok(SemverCheckInput {
+            major,
+            minor,
+            patch,
+            span,
+        })
     }
 }
 
@@ -74,13 +80,15 @@ Search for section titles containing "template export semver"."#,
         ))
     };
 
-    match (version.major, version.minor) {
-        (0, 0..=10) => return too_old(),
+    match (version.major, version.minor, version.patch) {
+        (0, 0..=11, _) => return too_old(),
         // We tolerate "too new" within the same minor version,
         // since otherwise updating the minor version is too tedious.
         // There are tests to catch failure to update this.
-        (0, 11..) => {}
-        (1.., _) => return too_new(),
+        (0, 12, 0) => return too_old(),
+        (0, 12, 1..) => {}
+        (0, 13.., _) => {}
+        (1.., _, _) => return too_new(),
     }
 
     Ok(TokenStream::new())

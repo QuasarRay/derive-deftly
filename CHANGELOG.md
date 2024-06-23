@@ -33,6 +33,15 @@ again, in a minor version bump.
 
 ## Changelog
 
+### UNRELEASED
+
+#### template export semver
+
+ * Versions before 0.12.1 are rejected by `template_export_semver_check!`:
+   Compatibility with them is no longer testable in CI, and may break.
+   (You may be able to keep using older versions, by removing the
+   call to `template_export_semver_check!`, but if so you're on your own.)
+
 ### 0.13.0
 
 #### Breaking
