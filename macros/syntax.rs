@@ -1089,6 +1089,21 @@ impl Parse for RawAttrEntry {
     }
 }
 
+/// Matches `$te` looking for `SD::when`
+///
+/// If so, returns `Left(kw_span, Box<Subst<BooleanContext>>)`.
+/// Otherwise returns Right($e).
+///
+/// `$te: TemplateElement` or `$te: &TemplateElement`
+macro_rules! te_extract_when { { $te:expr } => {
+    match $te {
+        TE::Subst(Subst { kw_span, sd: SD::when(bc, _) }) => {
+            Left((kw_span, bc))
+        }
+        other => Right(other),
+    }
+} }
+
 impl<O: SubstParseContext> RepeatedTemplate<O> {
     fn parse_in_parens(input: ParseStream) -> syn::Result<TemplateElement<O>> {
         let template;
@@ -1126,22 +1141,8 @@ impl<O: SubstParseContext> RepeatedTemplate<O> {
         let mut elements = VecDeque::from(elements);
         let mut whens = vec![];
 
-        /// Matches `$e` looking for `SD::when`
-        ///
-        /// If so, returns `Left(kw_span, Box<Subst<BooleanContext>>)`.
-        /// Otherwise returns Right($e).
-        /// Macro so that this can be used with `&TemplateElement` too.
-        macro_rules! extract_when { { $e:expr } => {
-            match $e {
-                TE::Subst(Subst { kw_span, sd: SD::when(bc, _) }) => {
-                    Left((kw_span, bc))
-                }
-                other => Right(other),
-            }
-        } }
-
         while let Some(()) = {
-            match elements.pop_front().map(|e| extract_when!(e)) {
+            match elements.pop_front().map(|e| te_extract_when!(e)) {
                 Some(Left((_kw_span, bc))) => {
                     whens.push(bc);
                     Some(())
@@ -1155,7 +1156,7 @@ impl<O: SubstParseContext> RepeatedTemplate<O> {
         } {}
 
         for e in &elements {
-            if let Left((kw_span, _)) = extract_when!(e) {
+            if let Left((kw_span, _)) = te_extract_when!(e) {
                 return Err(
                     kw_span.error("${when } must come before other content")
                 );
