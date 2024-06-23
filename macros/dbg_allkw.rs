@@ -93,7 +93,7 @@ fn dump_whole(mut w: &mut Out, ctx: &Context) -> R {
     expand! { c, $tdeftype }
     expand! { c, $tdefgens }
     expand! { c, $tdefkwd }
-    expand! { c, ${tdefvariants VARIANTS} }
+    expand! { c, ${tdefvariants VARIANTS..} }
 
     bool! { c, is_struct }
     bool! { c, is_enum }

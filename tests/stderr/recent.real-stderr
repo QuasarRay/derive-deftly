@@ -9,7 +9,7 @@ top-level:
         $tdeftype    =>  Enum
         $tdefgens    =>  
         $tdefkwd     =>  enum
-        ${tdefvariants VARIANTS} => { VARIANTS }
+        ${tdefvariants VARIANTS ..} => { VARIANTS .. }
         is_struct    =   false
         is_enum      =   true
         is_union     =   false
@@ -75,7 +75,7 @@ top-level:
         $tdeftype    =>  Unit
         $tdefgens    =>  
         $tdefkwd     =>  struct
-        ${tdefvariants VARIANTS} => VARIANTS
+        ${tdefvariants VARIANTS ..} => VARIANTS ..
         is_struct    =   true
         is_enum      =   false
         is_union     =   false
@@ -103,7 +103,7 @@ top-level:
         $tdeftype    =>  Tuple
         $tdefgens    =>  
         $tdefkwd     =>  struct
-        ${tdefvariants VARIANTS} => VARIANTS
+        ${tdefvariants VARIANTS ..} => VARIANTS ..
         is_struct    =   true
         is_enum      =   false
         is_union     =   false
@@ -141,7 +141,7 @@ top-level:
         $tdeftype    =>  Struct
         $tdefgens    =>  
         $tdefkwd     =>  struct
-        ${tdefvariants VARIANTS} => VARIANTS
+        ${tdefvariants VARIANTS ..} => VARIANTS ..
         is_struct    =   true
         is_enum      =   false
         is_union     =   false
@@ -254,7 +254,7 @@ top-level:
         $tdeftype    =>  EnumReference < 'reference, F = (), >
         $tdefgens    =>  'reference, F = (),
         $tdefkwd     =>  enum
-        ${tdefvariants VARIANTS} => { VARIANTS }
+        ${tdefvariants VARIANTS ..} => { VARIANTS .. }
         is_struct    =   false
         is_enum      =   true
         is_union     =   false
