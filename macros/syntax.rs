@@ -126,7 +126,7 @@ pub enum SubstDetails<O: SubstParseContext> {
         O::NotInBool,
     ),
     vdefbody(
-        Template<O>,
+        Argument<O>,
         Template<TokenAccumulator>,
         O::NotInPaste,
         O::NotInBool,
@@ -877,7 +877,7 @@ impl<O: SubstParseContext> Parse for Subst<O> {
             not_in_paste()?, not_in_bool()?
         ) }
         keyword! { vdefbody(
-            Template::parse_single_or_braced(input)?,
+            input.parse()?,
             parse_def_body(input)?,
             not_in_paste()?, not_in_bool()?,
         ) }
