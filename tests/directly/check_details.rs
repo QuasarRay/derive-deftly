@@ -31,7 +31,6 @@ fn tests_using_driver(
     }
 }
 
-#[cfg_attr(not(feature = "full"), allow(dead_code))]
 fn check_template_parse_fail(template: &str, exp: &str) {
     eprintln!("check parsing failure for {:?}", template);
     let got = syn::parse_str::<Template<TokenAccumulator>>(template)
