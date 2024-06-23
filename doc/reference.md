@@ -132,7 +132,7 @@ Each `ARG` must be one of:
  * `LITERAL` (eg, `NUMBER` or `"STRING"`)
  * `$EXPANSION` or `${EXPANSION}` or `${EXPANSION...}` or `$<...>`
  * `{ STUFF }`, where `STUFF` is expanded.
-   (The `{ }` just for delimiting the value, and are discarded).
+   (The `{ }` are just for delimiting the value, and are discarded).
 
 <div id="t:repetition">
 <div id="x:for">
@@ -303,9 +303,9 @@ where `FNAME` is the actual field name (or tuple field number).
    Not expanded for structs.
  * `fprefix`: prefix to use for the local bindings.
    Useful if you need to bind multiple values at once.
+   (Then, reference the bindings with `$<FPREFIX $fname>`;
+   `$fpatname` doesn't take a `fprefix` argument.)
    Default is `f_`.
-   When using this, use pasting (`$<FPREFIX $fname>`)
-   rather than `$fpatname`.
 
 These use derive-deftly's usual
 [syntax for named arguments](#named-and-positional-template-arguments-to-expansions-and-conditions).
@@ -343,16 +343,16 @@ To construct a value, prefer `$vtype` rather than `$ttype`,
 since `$vtype` works with enums too.
 
 `$tdeftype` is
-the top-level driver type name in a form suitable for defining
+the driver type in a form suitable for defining
 a new type with a derived name (eg, using pasting).
 Contains all the necessary generics, with bounds,
 within `<...>` but without an introducing `::`.
 
 The toplevel type expansions, `$ttype` and `$tdeftype`,
-don't contain a path prefix, even if
-the driver type argument to
+don't contain a path prefix, even when
+a driver type argument to
 `derive_deftly_adhoc!`
-had a path prefix.
+has a path prefix.
 
 `$vtype` (and `$ttype` and `$tdeftype`) are not suitable for matching.
 Use `$vpat` for that.
@@ -364,7 +364,7 @@ Use `$vpat` for that.
  * `vname`: variant name.  Default is `$vname`.
    Not expanded for structs.
 
-These can be used with pasting
+These can be specified using pasting `$<...>`
 to name related (derived) types and variants.
 
 They use derive-deftly's usual
@@ -444,7 +444,7 @@ Accesses macro parameters passed via `#[deftly(...)]` attributes.
    `"VALUE"` must be be a string literal,
    which is parsed as a piece of Rust code, and then expanded.
    Normally,
-   `.. as` must be given, to specify how `VALUE` should be parsed;
+   `aa ..` must be given, to specify how `VALUE` should be parsed;
    within `$(paste ..}`, `as str` is the default.
 
  * **`${Xmeta(SUB(NAME))}`**:
@@ -484,7 +484,7 @@ Accesses macro parameters passed via `#[deftly(...)]` attributes.
      so this is suitable for accepting a module path, too.
 
     * **`expr`**:
-     `VALUE` is parsed as an aexpression.
+     `VALUE` is parsed as an expression.
      When expanded, it is surrounded with `( )`
      to ensure correct precedence.
 
@@ -494,7 +494,7 @@ Accesses macro parameters passed via `#[deftly(...)]` attributes.
      `as ident` rejects initial digits, and the empty string.)
 
     * **`items`**:
-     `VALUE` is parsed as zero or more Rust Items.  (`syn::Item`)
+     `VALUE` is parsed as zero or more Rust Items (`syn::Item`).
      Note that the driver must pass the items' source code in `"..."`.
 
     * **`token_stream`**:
@@ -704,7 +704,7 @@ So you can write `${if COND1 { ... } COND2 { ... } else { ... }`.
 
 </div>
 
-Conditionals which insist on expanding exactly one of the branches.
+Conditionals which insist on exactly one of the tests being true.
 Syntax is identical to that of `${if }`.
 *All* of the `COND` are always evaluated.
 Exactly one of them must be true;
@@ -1104,7 +1104,7 @@ Whether and what kind of fields there are.
 Prefer to avoid these explicit tests,
 when writing a template to work with any shape of structure.
 Instead,
-use Rust's universal `Typename { }` syntax,
+match using Rust's universal `Typename { }` syntax,
 possibly via `$vpat` and `$fpatname`,
 or via `$vtype`.
 The `Typename { }` syntax can be used for matching and constructing
@@ -1152,7 +1152,7 @@ Spacing is disregarded, even between punctuation characters.
 For example, `approx_equal` regards `<<` as equal to `< <`.
 This means expansions might count as equal
 even if the Rust compiler would accept one and reject the other;
-and, expansions migtht count as equal
+and, expansions might count as equal
 even if macros could tell the difference.
 
 Also,
@@ -1252,7 +1252,9 @@ the [`dbg` expansion option](#dbg--print-the-expansion-to-stderr-for-debugging).
 </div>
 </div>
 
-`${CASE_CHANGE ...}` makes an identifier
+`${CASE_CHANGE ...}`
+(where `CASE_CHANGE` is one of the keywords in the table, below)
+makes an identifier
 with a different case to the input which produces it.
 This is useful to make identifiers with the natural spelling
 for their kind,
@@ -1399,7 +1401,7 @@ and dumping the expansion to stderr during compilation.
 
 When using
 `${Xmeta as token_stream}`,
-and user-defined expansions,
+and user-defined expansions (`${define ...}`)
 it can be necessary to add `{ }` or `( )`
 to avoid surprising expansions due to operator precedence.
 
