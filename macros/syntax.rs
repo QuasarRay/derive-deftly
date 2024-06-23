@@ -21,11 +21,11 @@ pub struct Template<O: SubstParseContext> {
 /// in the reference.
 ///
 /// Parses from one of
-///     identifier
-///     literal
-///     $EXPN
-///     ${EXPN..}
-///     { TEMPLATE }
+///   *  identifier
+///   *  literal
+///   *  `$EXPN`
+///   *  `${EXPN..}`
+///   *  `{ TEMPLATE }`
 #[derive(Debug)]
 pub struct Argument<O: SubstParseContext>(pub Template<O>);
 
