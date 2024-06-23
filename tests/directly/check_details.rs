@@ -346,3 +346,18 @@ fn check_misplaced_when() {
     chk(r#" ${for fields { a ${when true} }} "#);
     chk(r#" a ${when true} "#);
 }
+
+#[test]
+fn check_redefine() {
+    tests_using_driver(
+        quote! {
+            struct S;
+        },
+        EONG::Explicit,
+        &[
+            ("${define X 1} $X", Ok("1")),
+            ("${define X 1} $X ${define X 2} $X", Ok("1 2")),
+            ("${define X 1} $X { ${define X 2} $X } $X", Ok("1 { 2 } 1")),
+        ],
+    );
+}
