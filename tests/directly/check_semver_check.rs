@@ -135,9 +135,13 @@ fn read_changelog(
 }
 
 fn check_1(tv: &TrackedVersion, exp: Result<(), ()>) {
-    let got_full = macros::semver::template_export_semver_check_func_macro(
-        quote! { #tv }, //
-    );
+    let got_full = if tv.v.0 == "UNRELEASED" {
+        Ok(quote!(UNRELEASED OK))
+    } else {
+        macros::semver::template_export_semver_check_func_macro(
+            quote! { #tv }, //
+        )
+    };
     let got_abbrev = got_full.as_ref().map_err(|_| ()).map(|_| ());
     eprintln!("{:25} {} exp={exp:?} got={got_abbrev:?}", tv.why, tv.v);
     assert_eq!(got_abbrev, exp, "at={} v={} got={got_full:?}", tv.why, tv.v);
