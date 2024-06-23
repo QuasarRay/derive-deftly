@@ -9,7 +9,7 @@ use std::hash::{Hash, Hasher};
 
 define_derive_deftly! {
     /// Derives `Hash`
-    MyHash =
+    MyHash:
 
     ${defcond F_HASH not(fmeta(hash(skip))) }
 

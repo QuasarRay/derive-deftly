@@ -13,7 +13,7 @@ trait Trait {
 }
 
 define_derive_deftly! {
-    Trait =
+    Trait:
 
     impl<$tgens> Trait for $ttype {
         fn shape_top(&self) -> &'static str {
@@ -73,7 +73,7 @@ trait GetUsize {
 }
 
 define_derive_deftly! {
-    GetUsize =
+    GetUsize:
 
     impl GetUsize for $ttype {
         fn get_usize(&self) -> Option<usize> {

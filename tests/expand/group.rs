@@ -37,7 +37,7 @@ impl OurOption {
 }
 
 define_derive_deftly! {
-    UseFieldsLikeOption =
+    UseFieldsLikeOption:
 
     impl $ttype {
         fn construct_each_field() {

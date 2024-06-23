@@ -10,7 +10,7 @@ use std::cmp::Ordering::{self, *};
 use derive_deftly::{define_derive_deftly, Deftly};
 
 define_derive_deftly! {
-    VeryPartialOrd =
+    VeryPartialOrd:
 
     impl<$tgens> PartialOrd for $ttype
     where $( $ftype: PartialOrd, )
