@@ -1456,7 +1456,9 @@ are those generated for the following driver types:
 
 <!--##examples-structs##-->
 
-```ignore
+```rust,dd-directly
+# let _ = r##"
+#
 # use std::fmt::Display;
 # use std::convert::TryInto;
 #
@@ -1503,4 +1505,5 @@ where T: 'l, T: TryInto<u8>
         field_o: Option<i32>,
      },
 }
+# "##;
 ```
