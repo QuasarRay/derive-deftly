@@ -14,8 +14,11 @@
 // (and fast to compile) as possible.
 
 fn main() {
+    // We must use deprecated single colon `cargo:rustc...` syntax,
+    // because otherwise cargo thinks we're violating our MSRV.
+    //  https://github.com/rust-lang/cargo/issues/14147
     println!(
-        r#"cargo::rustc-check-cfg=cfg(derive_deftly_dprint)
-cargo::rustc-check-cfg=cfg(feature, values("bizarre"))"#
+        r#"cargo:rustc-check-cfg=cfg(derive_deftly_dprint)
+cargo:rustc-check-cfg=cfg(feature, values("bizarre"))"#
     );
 }

@@ -42,6 +42,18 @@ again, in a minor version bump.
    (You may be able to keep using older versions, by removing the
    call to `template_export_semver_check!`, but if so you're on your own.)
 
+### 0.13.1
+
+#### Fixed
+
+ * Fixed MSRV violation introduced in 0.13.0.
+   (cargo fails with "error: unsupported output in build script".)
+   See [#103](https://gitlab.torproject.org/Diziet/rust-derive-deftly/-/issues/103).
+
+#### Improved
+
+ * Declare `rust-version` in `derive-deftly-macros`'s `Cargo.toml`, too.
+
 ### 0.13.0
 
 #### Breaking
