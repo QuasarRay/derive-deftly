@@ -7,7 +7,8 @@ but without having to wrestle with the proc macro system.
 **Stability warning**
 
 We intend to make a 1.x release of this crate fairly soon.
-But, before 1.0, we intend to make a number of breaking changes.
+We think we have made all the necessary breaking changes,
+but we may be wrong.
 
 This is the replacement for
 [`derive-adhoc`](https://lib.rs/crates/derive-adhoc).
