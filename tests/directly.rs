@@ -37,6 +37,7 @@ mod check_meta_coding;
 ))]
 mod check_examples;
 
+#[allow(clippy::non_minimal_cfg)] // rust-clippy/issues/13007
 #[cfg(all(
     feature = "recent", // we want toml parser etc.
 ))]

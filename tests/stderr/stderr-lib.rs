@@ -1,3 +1,4 @@
+#![allow(clippy::style, clippy::complexity)]
 // See tests/stderr/Cargo.toml, under `[features]`
 #![cfg(not(feature = "disable"))]
 //! See `tests/stderr.rs`

@@ -1,4 +1,5 @@
 // build script: regenerate chapters.rs
+#![allow(clippy::style, clippy::complexity, clippy::perf)]
 
 use std::{
     env, fs,
