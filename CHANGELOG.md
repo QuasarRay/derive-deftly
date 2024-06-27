@@ -42,6 +42,9 @@ again, in a minor version bump.
    (You may be able to keep using older versions, by removing the
    call to `template_export_semver_check!`, but if so you're on your own.)
 
+   Crates that export templates, and haven't bumped their own semver
+   since before derive-deftly 0.12.1, should probably bump semver now.
+
 ### 0.13.1
 
 #### Fixed
