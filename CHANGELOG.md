@@ -33,7 +33,23 @@ again, in a minor version bump.
 
 ## Changelog
 
-### UNRELEASED
+### 0.14.0
+
+#### Breaking
+
+ * Desupport syntax deprecated in 0.12.x:
+   - Rqquire `define_derive_deftly! { Template: ... }`,
+     no longer tolerating `define_derive_deftly! { Template = ... }`.
+   - Require `export` to export templates (and drivers),
+     no longer tolerating `pub`.
+	 Eg `define_derive_deftly! { export Template: ... }`.
+   - Remove `pub_template_semver_check!` macro,
+     in favour of `template_export_semver_check!`.
+
+#### Improved
+
+ * README now hopes that we've had the last breaking changes before 1.0.
+ * Old syntax is no longer found in various places in the documentation.
 
 #### template export semver
 
