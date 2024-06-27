@@ -52,7 +52,7 @@ pub(super) use super::{dbg_allkw, engine, framework, meta};
 #[allow(unused_imports)] // used in tests
 pub use super::utils::{Concatenated, Discard};
 
-#[allow(non_camel_case_types)] // convenience alias for enum
+//#[allow(non_camel_case_types)] // convenience alias for enum
 pub use meta::CheckUsed as mCU;
 
 // this is used by the dprintln! macro, which can't just use crate
