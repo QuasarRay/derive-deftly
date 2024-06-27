@@ -1,4 +1,5 @@
 #![doc=include_str!("README.md")]
+#![allow(clippy::style, clippy::complexity)]
 //
 // This is the actual proc-macro crate.
 //
