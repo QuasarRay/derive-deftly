@@ -178,6 +178,7 @@ sub grok_document () {
 	my $out = \@{ $out{$in} };
 	my $found = sub {
 	    my ($div_prefix_char, $lno, @l) = @_;
+	    @l = grep { $_ ne 'CASE_CHANGE' } @l;
 	    push @$out, @l;
 	    foreach my $kw (@l) {
 		push @{ $ref_lines{"$div_prefix_char:$kw"} }, $lno;
@@ -420,7 +421,6 @@ __DATA__
 
 # we use placeholders in the docs, and handle case changing
 # with its own combined SubstDetails variant
-E	CASE_CHANGE
 ve	changecase
 
 # These are combined SD variants
