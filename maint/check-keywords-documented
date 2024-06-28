@@ -319,7 +319,7 @@ or the exception table (__DATA__) adjusted.
 END
 }
 
-sub main_mode() {
+sub mode_check() {
     print_divider();
     print "reading source and documentation files\n";
     grok_enum();
@@ -342,9 +342,15 @@ sub main_mode() {
     exit 4;
 }
 
-die "no arguments supported" if @ARGV;
+our $mode = 'check';
 
-main_mode();
+while (@ARGV) {
+    $_ = shift @ARGV;
+    die "unsupported option $_";
+}
+
+my $mode_fn = ${*::}{"mode_$mode"} or die;
+$mode_fn->();
 
 __DATA__
 # Expected exceptions table
