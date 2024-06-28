@@ -3,4 +3,4 @@
 #[cfg(all(
     feature = "recent", // we want toml parser etc.
 ))]
-mod check_semver_check;
+mod inner;
