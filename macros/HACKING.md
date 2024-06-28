@@ -59,7 +59,6 @@ documentation for more implementation.
 To build all the user-facing documentation,
 run `maint/build-docs-local` from the top-level directory,
 and look in the directory it tells you.
-To build just the guide, run `maint/build-mdbook`.
 
 ## Generated and auto-updated files in the git tree
 

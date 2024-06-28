@@ -200,6 +200,7 @@ check-doc-links:
     - apt-get update
     - apt-get -y install python3 linklint
     - maint/build-docs-local
+    - maint/build-docs-local --dev
 
 # Test our MSRV and Cargo.toml minimal versions
 #

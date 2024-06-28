@@ -11,7 +11,14 @@ import subprocess
 import sys
 
 import typing
-from typing import List, Tuple, Callable
+from typing import List, Tuple, Callable, Any, TYPE_CHECKING
+
+#---------- type handling ----------
+
+if TYPE_CHECKING:
+    CompletedProcess = subprocess.CompletedProcess[Any]
+else:
+    CompletedProcess = subprocess.CompletedProcess
 
 #---------- settings that could perhaps become parameters ----------
 
@@ -175,8 +182,16 @@ def massage_mdbook() -> None:
         mdbook_leaf(),
     )
 
-def check_links() -> None:
-    subprocess.run(['maint/check-doc-links'], check=True)
+def check_links_1() -> CompletedProcess:
+    return subprocess.run(['maint/check-doc-links'])
+
+def check_links_2(done: CompletedProcess) -> None:
+    if done.returncode == 1:
+        print('** link check failed - broken doc hyperlinks **\n',
+              file=sys.stderr)
+        sys.exit(1)
+    else:
+        done.check_returncode()
 
 def print_unified_urls() -> None:
     print('''
@@ -206,7 +221,11 @@ def main() -> None:
     massage_rustdocs()
     massage_mdbook()
     if args.linkcheck:
-        check_links()
+        links_checked = check_links_1()
+    else:
+        links_checked = None
     print_unified_urls()
+    if not(links_checked is None):
+        check_links_2(links_checked)
 
 main()
