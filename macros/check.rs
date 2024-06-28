@@ -126,8 +126,9 @@ fn expand_via_file(
         let mut hasher = Sha3_256::new();
         hasher.update(&text);
         let hash = hasher.finalize();
-        hash[0..12].iter().fold(
-            String::new(),
+        const HASH_LEN_BYTES: usize = 12;
+        hash[0..HASH_LEN_BYTES].iter().fold(
+            String::with_capacity(HASH_LEN_BYTES * 2),
             |mut s, b| {
                 write!(s, "{:02x}", b).expect("write to String failed");
                 s
