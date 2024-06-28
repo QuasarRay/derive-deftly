@@ -186,9 +186,8 @@ build-docs-local:
   stage: comprehensive
   script:
     - ./maint/via-cargo-install-in-ci mdbook
-    - ./maint/via-cargo-install-in-ci mdbook-linkcheck
     - apt-get update
-    - apt-get -y install python3 linklint
+    - apt-get -y install python3
     - maint/build-docs-local --dev --no-linkcheck
 
 # Check that our (locally-massaged) docs don't have broken links.
@@ -198,7 +197,6 @@ check-doc-links:
   stage: comprehensive
   script:
     - ./maint/via-cargo-install-in-ci mdbook
-    - ./maint/via-cargo-install-in-ci mdbook-linkcheck
     - apt-get update
     - apt-get -y install python3 linklint
     - maint/build-docs-local
@@ -237,9 +235,7 @@ pages:
     - if: $CI_COMMIT_BRANCH == "main"
   stage: deploy-book
   script:
-    - apt-get update && apt-get install -y python3 linklint
     - ./maint/via-cargo-install-in-ci mdbook
-    - ./maint/via-cargo-install-in-ci mdbook-linkcheck
     - ./maint/build-mdbook
     - mkdir -p public/latest
     - mv book/book/html public/latest/guide
