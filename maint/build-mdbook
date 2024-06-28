@@ -1,6 +1,8 @@
 #!/bin/bash
 #
-# Build our mdbook output
+# Build just our mdbook output
+#
+# This is an internal script, normally run by build-docs-local.
 #
 # nailing-cargo --- maint/build-mdbook
 
