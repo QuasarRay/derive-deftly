@@ -7,6 +7,7 @@
 //!
 //! Currently, this makes a testing version of derive-deftly without any
 //! of the optional features.
+#![allow(clippy::non_minimal_cfg)]
 
 use macros::approx_equal::flatten_none_groups;
 use macros::framework::*;
