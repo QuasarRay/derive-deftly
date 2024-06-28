@@ -160,6 +160,7 @@ sub grok_document () {
     my %out;
     my @case_cols;
     my $lno = 0;
+    my $last_heading_lno;
     while (<F>) {
 	$lno++;
 
@@ -169,13 +170,14 @@ sub grok_document () {
 	}
 	if (m{^\#\# }) {
 	    $in = undef;
+	    $last_heading_lno = $lno;
 	    next;
 	}
 	next unless defined $in;
 
 	my $out = \@{ $out{$in} };
 	my $found = sub {
-	    my ($div_prefix_char, @l) = @_;
+	    my ($div_prefix_char, $lno, @l) = @_;
 	    push @$out, @l;
 	    foreach my $kw (@l) {
 		push @{ $ref_lines{"$div_prefix_char:$kw"} }, $lno;
@@ -196,18 +198,18 @@ sub grok_document () {
 		if ($case_cols[$i] =~ m{\`heck\`}) {
 		    push @{ $out{heck} }, @l;
 		} elsif ($case_cols[$i] =~ m{\`CASE_CHANGE\`}) {
-		    $found->('x', @l);
+		    $found->('x', $last_heading_lno, @l);
 		}
 	    }
 	} elsif ($in eq 'conditions') {
 	    next unless m{^\#\#\# };
-	    $found->('c', m{\`(\w+)[^\`]*\`}g);
+	    $found->('c', $lno, m{\`(\w+)[^\`]*\`}g);
 	} elsif ($in eq 'expansions') {
 	    next unless m{^\#\#\# };
 	    # remove inner { }, repeatedly
 	    while (s{ ( \{ [^{}]* ) \{ [^{}]* \} ( .* \} ) }{$1 $2}x) { }
-	    $found->('x', m{\`\$(\w+)\`}g);
-	    $found->('x', m{\`\$\{(\w+)[^\}]+\}\`}g);
+	    $found->('x', $lno, m{\`\$(\w+)\`}g);
+	    $found->('x', $lno, m{\`\$\{(\w+)[^\}]+\}\`}g);
 	} else {
 	    die "bad maint/check-keywords-documented $in !";
 	}
