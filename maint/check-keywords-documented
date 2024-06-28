@@ -170,6 +170,11 @@ sub grok_document () {
 	next unless defined $in;
 
 	my $out = \@{ $out{$in} };
+	my $found = sub {
+	    my ($div_prefix_char, @l) = @_;
+	    push @$out, @l;
+	};
+
 	if ($in eq 'cases') {
 	    next unless m{^\|};
 	    my @cols = split m{\|};
@@ -184,18 +189,18 @@ sub grok_document () {
 		if ($case_cols[$i] =~ m{\`heck\`}) {
 		    push @{ $out{heck} }, @l;
 		} elsif ($case_cols[$i] =~ m{\`CASE_CHANGE\`}) {
-		    push @$out, @l;
+		    $found->('k', @l);
 		}
 	    }
 	} elsif ($in eq 'conditions') {
 	    next unless m{^\#\#\# };
-	    push @$out, m{\`(\w+)[^\`]*\`}g;
+	    $found->('c', m{\`(\w+)[^\`]*\`}g);
 	} elsif ($in eq 'expansions') {
 	    next unless m{^\#\#\# };
 	    # remove inner { }, repeatedly
 	    while (s{ ( \{ [^{}]* ) \{ [^{}]* \} ( .* \} ) }{$1 $2}x) { }
-	    push @$out, m{\`\$(\w+)\`}g;
-	    push @$out, m{\`\$\{(\w+)[^\}]+\}\`}g;
+	    $found->('x', m{\`\$(\w+)\`}g);
+	    $found->('x', m{\`\$\{(\w+)[^\}]+\}\`}g);
 	} else {
 	    die "bad maint/check-keywords-documented $in !";
 	}
