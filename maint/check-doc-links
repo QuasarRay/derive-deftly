@@ -9,8 +9,6 @@ set -o pipefail
 
 if [ "$#" != 0 ]; then echo >&2 "$0: bad usage"; exit 12; fi
 
-maint/build-docs-local
-
 chk_dir=target/doc-unified.link-check
 
 rm -rf target/doc-unified.link-check
