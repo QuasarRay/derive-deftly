@@ -1,4 +1,3 @@
-#![allow(clippy::style, clippy::complexity)]
 //! Arrangements for testing derive-deftly code directly
 //!
 //! We don't want to include all the exciting test code in
