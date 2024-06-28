@@ -1,3 +1,5 @@
+#![allow(clippy::style, clippy::complexity)]
+#![allow(clippy::doc_lazy_continuation)] // rust-clippy/issues/13001
 #![doc=include_str!("../README.md")]
 
 // This is the "library" crate.
