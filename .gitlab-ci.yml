@@ -201,6 +201,7 @@ check-doc-links:
     - ./maint/via-cargo-install-in-ci mdbook-linkcheck
     - apt-get update
     - apt-get -y install python3 linklint
+    - maint/build-docs-local
     - maint/check-doc-links
 
 # Test our MSRV and Cargo.toml minimal versions
