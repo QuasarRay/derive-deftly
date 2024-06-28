@@ -21,10 +21,18 @@ use strict;
 
 our ($whole, $file);
 
+our $print_progress = 1;
+
+sub progress (@) {
+    if ($print_progress) {
+	print @_;
+    }
+}
+
 sub open_file ($) {
     ($file) = @_;
     open F, '<', $file or die "$file: $!";
-    print "  reading $file\n";
+    progress "  reading $file\n";
 }
 
 sub end_file () {
@@ -43,7 +51,7 @@ our %grokked;
 sub grokked ($$@) {
     my ($info, $note, @out) = @_;
 
-    print "    grokked $info [$note]\n      @out\n\n";
+    progress "    grokked $info [$note]\n      @out\n\n";
     foreach my $kw (@out) {
 	$grokked{$kw} .= $note;
     }
