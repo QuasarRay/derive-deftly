@@ -60,6 +60,13 @@ maint-check-todos:
     - apt-get -y install libtoml-perl git
     - maint/check-blocking-todos
 
+cargo-clippy:
+  stage: test
+  image: "rust:1.79.0"
+  script:
+    - rustup component add clippy
+    - cargo clippy --locked --workspace --all-features --
+
 # Warning-only checks
 check-doc-tocs:
   stage: test

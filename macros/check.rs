@@ -126,7 +126,14 @@ fn expand_via_file(
         let mut hasher = Sha3_256::new();
         hasher.update(&text);
         let hash = hasher.finalize();
-        hash[0..12].iter().map(|b| format!("{:02x}", b)).collect()
+        const HASH_LEN_BYTES: usize = 12;
+        hash[0..HASH_LEN_BYTES].iter().fold(
+            String::with_capacity(HASH_LEN_BYTES * 2),
+            |mut s, b| {
+                write!(s, "{:02x}", b).expect("write to String failed");
+                s
+            },
+        )
     };
 
     let dir: PathBuf = [env!("OUT_DIR"), "derive-deftly~expansions~"]
@@ -167,6 +174,7 @@ fn expand_via_file(
     let mut fh = fs::OpenOptions::new()
         .write(true)
         .create(true)
+        .truncate(false)
         .open(file)
         .map_err(|e| format!("create/open {:?}: {}", &file, e))?;
     fh.write_all(text.as_ref())

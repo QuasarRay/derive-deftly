@@ -18,6 +18,9 @@ and, especially, testing them can be complex.
       * [Expansion keywords with content or arguments](#expansion-keywords-with-content-or-arguments)
       * [Adding a keyword that can appear in `${paste }` and/or `${CASE }`](#adding-a-keyword-that-can-appear-in-paste--andor-case-)
       * [Adding a boolean keyword](#adding-a-boolean-keyword)
+   * [clippy](#clippy)
+      * [Updating the pinned clippy (housekeeping task)](#updating-the-pinned-clippy-housekeeping-task)
+      * [clippy `#[allow]`s - strategy and policy](#clippy-allows---strategy-and-policy)
    * [Updating the pinned Nightly Rust (used in tests and CI)](#updating-the-pinned-nightly-rust-used-in-tests-and-ci)
       * [Choosing which Nightly Rust version to update to](#choosing-which-nightly-rust-version-to-update-to)
       * [Updating the nightly version number](#updating-the-nightly-version-number)
@@ -213,6 +216,51 @@ such as `append_identfrag` or `append_idpath`.
 
 This is fairly straightforward.
 Use `is_enum` (say) as an example.
+
+## clippy
+
+We *do* run clippy, but we turn off all `style` and `complexity` lints.
+
+In CI, we test with a pinned version of clippy, currently 1.79.0,
+because clippy often introduces new lints,
+and we want to handle that breakage in a controlled fashion.
+
+If your MR branch fails the clippy job, you can repro locally with:
+
+```text
+rustup toolchain add 1.79
+rustup component add clippy
+cargo +1.79 clippy --locked --workspace --all-features
+```
+
+### Updating the pinned clippy (housekeeping task)
+
+ * Update the version in `.gitlab-ci.yml`, and above.
+ * Run the new clippy and fix or allow lints as appropriate.
+
+### clippy `#[allow]`s - strategy and policy
+
+We put `#![allow(clippy::style, clippy::complexity)]`
+in every top-level Rust file.
+In tests, we have
+`#![allow(clippy::style, clippy::complexity, clippy::perf)]`.
+
+<!-- At some point we might try to use the `Cargo.toml `[lints]` 
+     feature, but right now that would be a big MSRV violation -->
+
+(Some files which are sufficiently simple to not trigger any lints,
+are lacking these annotations.
+We'll add them as needed.)
+
+Feel free to add an `#[allow]` if it seems like
+clippy wants you to make the code worse.
+We often prefer code which isn't "minimal",
+if it seems clearer, or more consistent with other nearby code,
+or if it might make future edits easier.
+
+For a clippy false positive, link to the upstream bug report,
+eg
+`#[allow(clippy::non_minimal_cfg)] // rust-clippy/issues/13007`
 
 ## Updating the pinned Nightly Rust (used in tests and CI)
 
