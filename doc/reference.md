@@ -135,11 +135,9 @@ Each `ARG` must be one of:
    (The `{ }` are just for delimiting the value, and are discarded).
 
 <div id="t:repetition">
-<div id="x:for">
 
 ## Repetition and nesting
 
-</div>
 </div>
 
 The driving data structure can contain multiple variants,
@@ -720,12 +718,10 @@ otherwise it is an error.
  * `$( ${select1 v_is_named { N } v_is_tuple { T } else { X }} )` for `Enum`: `X T N`
  * `${select1 v_is_unit { U } tmeta(gentype) { GT }}` for `Unit`: rejected, ``multiple conditions matched``
 
-<div id="x:for-fields">
-<div id="x:for-variants">
+<div id="x:for">
 
 ### `${for fields { ... }}`, `${for variants { ... }}`, `$( )` -- repetition
 
-</div>
 </div>
 
 `${for ...}` expands the contents once per field, or once per variant.
