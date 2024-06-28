@@ -3,9 +3,5 @@
 version = 3
 
 [[package]]
-name = "derive-deftly"
-version = "0.14.0"
-
-[[package]]
-name = "derive-deftly-tests"
+name = "test"
 version = "0.0.1"
