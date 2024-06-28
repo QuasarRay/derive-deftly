@@ -175,6 +175,9 @@ def massage_mdbook() -> None:
         mdbook_leaf(),
     )
 
+def check_links() -> None:
+    subprocess.run(['maint/check-doc-links'], check=True)
+
 def print_unified_urls() -> None:
     print('''
 unified docs, links adjusted for local reading, available in:''')
@@ -194,11 +197,16 @@ def main() -> None:
                         help='Pass an option through to cargo doc (rustdoc)')
     parser.add_argument('--mdbook-arg', '-M', action='append', default=[],
                         help='Pass an option through to mdbook')
+    parser.add_argument('--no-linkcheck',
+                        dest='linkcheck', action='store_false', default=True,
+                        help='Do not check internal hyperlinks')
     args = parser.parse_args()
     build_rustdocs(args.rustdoc_arg)
     build_mdbook(args.mdbook_arg)
     massage_rustdocs()
     massage_mdbook()
+    if args.linkcheck:
+        check_links()
     print_unified_urls()
 
 main()

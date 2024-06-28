@@ -1,6 +1,8 @@
 #!/bin/bash
 #
 # Check rustdoc HTML links and anchors
+#
+# This is an internal script, usually run by maint/build-docs-local
 
 set -e
 set -o pipefail
