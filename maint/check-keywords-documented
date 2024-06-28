@@ -327,15 +327,20 @@ or the exception table (__DATA__) adjusted.
 END
 }
 
-sub mode_check() {
-    print_divider();
-    print "reading source and documentation files\n";
+sub grok_all() {
     grok_enum();
     grok_not_in_bool();
     grok_cases();
     grok_bool_only();
     grok_dbg_allkw();
     grok_document();
+}
+
+sub mode_check() {
+    print_divider();
+    print "reading source and documentation files\n";
+
+    grok_all();
 
     correspondences();
 
