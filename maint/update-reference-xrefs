@@ -102,5 +102,17 @@ close O or die $!;
 if ($install) {
     rename "$output", "$input" or die $!;
 } else {
-    exec qw(diff -u), "$input", "$output";
+    $?=$!=0;
+    system qw(diff -u), "$input", "$output";
+    if ($? == 0) {
+    } elsif ($? == 256) {
+	print STDERR <<END or die $!;
+
+Reference manual cross-reference divs mismatch.
+Check output, and rerun maint/update-reference-xrefs.
+END
+	exit 1;
+    } else {
+	die "diff failed: $? / $!" unless $? == 256;
+    }
 }
