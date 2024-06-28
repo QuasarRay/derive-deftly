@@ -174,6 +174,7 @@ fn expand_via_file(
     let mut fh = fs::OpenOptions::new()
         .write(true)
         .create(true)
+        .truncate(false)
         .open(file)
         .map_err(|e| format!("create/open {:?}: {}", &file, e))?;
     fh.write_all(text.as_ref())
