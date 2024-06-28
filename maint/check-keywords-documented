@@ -52,6 +52,7 @@ sub read_file ($) {
 }
 
 our %grokked;
+our %ref_lines;
 
 sub grokked ($$@) {
     my ($info, $note, @out) = @_;
@@ -158,7 +159,10 @@ sub grok_document () {
     my $in;
     my %out;
     my @case_cols;
+    my $lno = 0;
     while (<F>) {
+	$lno++;
+
 	if (m{\#\# maint/check-keywords-documented (\w+) \#\#}) {
 	    $in = $1;
 	    next;
@@ -173,6 +177,9 @@ sub grok_document () {
 	my $found = sub {
 	    my ($div_prefix_char, @l) = @_;
 	    push @$out, @l;
+	    foreach my $kw (@l) {
+		push @{ $ref_lines{"$div_prefix_char:$kw"} }, $lno;
+	    }
 	};
 
 	if ($in eq 'cases') {
@@ -189,7 +196,7 @@ sub grok_document () {
 		if ($case_cols[$i] =~ m{\`heck\`}) {
 		    push @{ $out{heck} }, @l;
 		} elsif ($case_cols[$i] =~ m{\`CASE_CHANGE\`}) {
-		    $found->('k', @l);
+		    $found->('x', @l);
 		}
 	    }
 	} elsif ($in eq 'conditions') {
@@ -370,6 +377,7 @@ sub mode_json() {
     grok_all();
     print to_json({
         grokked => \%grokked,
+        ref_lines => \%ref_lines,
     }) or die $!;
 }
 
