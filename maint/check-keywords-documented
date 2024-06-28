@@ -257,29 +257,6 @@ sub print_divider () {
     print "------------------------------------------------------------\n";
 }
 
-sub main_mode() {
-    print_divider();
-    print "reading source and documentation files\n";
-    grok_enum();
-    grok_not_in_bool();
-    grok_cases();
-    grok_bool_only();
-    grok_dbg_allkw();
-    grok_document();
-
-    correspondences();
-
-    if (!@discrepant) {
-	print "ok.\n";
-	print_divider();
-	exit 0;
-    }
-
-    print_discrepancies();
-
-    exit 4;
-}
-
 sub print_discrepancies() {
     print "discrepancies\n";
     foreach my $disc (@discrepant) {
@@ -342,6 +319,29 @@ END
 Docs and code should be fixed to match up,
 or the exception table (__DATA__) adjusted.
 END
+}
+
+sub main_mode() {
+    print_divider();
+    print "reading source and documentation files\n";
+    grok_enum();
+    grok_not_in_bool();
+    grok_cases();
+    grok_bool_only();
+    grok_dbg_allkw();
+    grok_document();
+
+    correspondences();
+
+    if (!@discrepant) {
+	print "ok.\n";
+	print_divider();
+	exit 0;
+    }
+
+    print_discrepancies();
+
+    exit 4;
 }
 
 main_mode();
