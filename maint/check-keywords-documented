@@ -10,6 +10,10 @@
 # exceptions.
 #
 #
+# With --json it outputs information about what is found where,
+# as a JSON document.  (The schema is not currently documented.)
+# (In this mode it doesn't perform most of the checks.)
+#
 # Implementation note:
 #
 # (I experimented with a more formal approach, including having the
@@ -18,15 +22,22 @@
 # categorise the keyword and the mechanism was confusing and invasive.)
 
 use strict;
-
-die "no arguments supported" if @ARGV;
+use JSON qw(to_json);
 
 our ($whole, $file);
+
+our $print_progress = 1;
+
+sub progress (@) {
+    if ($print_progress) {
+	print @_;
+    }
+}
 
 sub open_file ($) {
     ($file) = @_;
     open F, '<', $file or die "$file: $!";
-    print "  reading $file\n";
+    progress "  reading $file\n";
 }
 
 sub end_file () {
@@ -41,11 +52,12 @@ sub read_file ($) {
 }
 
 our %grokked;
+our %ref_lines;
 
 sub grokked ($$@) {
     my ($info, $note, @out) = @_;
 
-    print "    grokked $info [$note]\n      @out\n\n";
+    progress "    grokked $info [$note]\n      @out\n\n";
     foreach my $kw (@out) {
 	$grokked{$kw} .= $note;
     }
@@ -147,18 +159,32 @@ sub grok_document () {
     my $in;
     my %out;
     my @case_cols;
+    my $lno = 0;
+    my $last_heading_lno;
     while (<F>) {
+	$lno++;
+
 	if (m{\#\# maint/check-keywords-documented (\w+) \#\#}) {
 	    $in = $1;
 	    next;
 	}
 	if (m{^\#\# }) {
 	    $in = undef;
+	    $last_heading_lno = $lno;
 	    next;
 	}
 	next unless defined $in;
 
 	my $out = \@{ $out{$in} };
+	my $found = sub {
+	    my ($div_prefix_char, $lno, @l) = @_;
+	    @l = grep { $_ ne 'CASE_CHANGE' } @l;
+	    push @$out, @l;
+	    foreach my $kw (@l) {
+		push @{ $ref_lines{"$div_prefix_char:$kw"} }, $lno;
+	    }
+	};
+
 	if ($in eq 'cases') {
 	    next unless m{^\|};
 	    my @cols = split m{\|};
@@ -173,18 +199,18 @@ sub grok_document () {
 		if ($case_cols[$i] =~ m{\`heck\`}) {
 		    push @{ $out{heck} }, @l;
 		} elsif ($case_cols[$i] =~ m{\`CASE_CHANGE\`}) {
-		    push @$out, @l;
+		    $found->('x', $last_heading_lno, @l);
 		}
 	    }
 	} elsif ($in eq 'conditions') {
 	    next unless m{^\#\#\# };
-	    push @$out, m{\`(\w+)[^\`]*\`}g;
+	    $found->('c', $lno, m{\`(\w+)[^\`]*\`}g);
 	} elsif ($in eq 'expansions') {
 	    next unless m{^\#\#\# };
 	    # remove inner { }, repeatedly
 	    while (s{ ( \{ [^{}]* ) \{ [^{}]* \} ( .* \} ) }{$1 $2}x) { }
-	    push @$out, m{\`\$(\w+)\`}g;
-	    push @$out, m{\`\$\{(\w+)[^\}]+\}\`}g;
+	    $found->('x', $lno, m{\`\$(\w+)\`}g);
+	    $found->('x', $lno, m{\`\$\{(\w+)[^\}]+\}\`}g);
 	} else {
 	    die "bad maint/check-keywords-documented $in !";
 	}
@@ -257,86 +283,120 @@ sub print_divider () {
     print "------------------------------------------------------------\n";
 }
 
-print_divider();
-print "reading source and documentation files\n";
-grok_enum();
-grok_not_in_bool();
-grok_cases();
-grok_bool_only();
-grok_dbg_allkw();
-grok_document();
-
-correspondences();
-
-if (!@discrepant) {
-    print "ok.\n";
-    print_divider();
-    exit 0;
-}
-
-print "discrepancies\n";
-foreach my $disc (@discrepant) {
-    printf "    keyword %-20s  found %s", $disc->{Kw}, $disc->{Got};
-    if ($disc->{Exp}) {
-	printf " expected %s", $disc->{Exp};
+sub print_discrepancies() {
+    print "discrepancies\n";
+    foreach my $disc (@discrepant) {
+	printf "    keyword %-20s  found %s", $disc->{Kw}, $disc->{Got};
+	if ($disc->{Exp}) {
+	    printf " expected %s", $disc->{Exp};
+	}
+	print "\n";
     }
-    print "\n";
-}
-print_divider();
-flush STDOUT;
+    print_divider();
+    flush STDOUT;
 
-print STDERR <<END;
+    print STDERR <<END;
 |
 ** Discrepancies detected between code and documentation **
 |
 END
 
-foreach my $disc (@discrepant) {
-    printf STDERR "Keyword (or enum variant) `%s`\n", $disc->{Kw};
-    my $print_notes = sub {
-	my ($heading, $notes, $if_none) = @_;
-	if (!$notes) {
-	    printf STDERR "%s\n", $if_none;
-	    return;
-	}
-	printf STDERR "%s\n", $heading;
-	if ($notes) {
-	    foreach my $note (split //, $notes) {
-		printf STDERR "    %s\n",
-		  $note_descriptions{$note} // "UNDESCRIBED `$note`";
+    foreach my $disc (@discrepant) {
+	printf STDERR "Keyword (or enum variant) `%s`\n", $disc->{Kw};
+	my $print_notes = sub {
+	    my ($heading, $notes, $if_none) = @_;
+	    if (!$notes) {
+		printf STDERR "%s\n", $if_none;
+		return;
 	    }
-	    foreach my $note (keys %note_descriptions) {
-		next if $notes =~ m/$note/;
-		# elide "not:" for case changing stuff if there's no
-		# hint that this is going to be relevant
-		next if $note =~ m/[hc]/i and $notes !~ m/[hc]/i;
-		printf STDERR "    not: %s\n", $note_descriptions{$note};
+	    printf STDERR "%s\n", $heading;
+	    if ($notes) {
+		foreach my $note (split //, $notes) {
+		    printf STDERR "    %s\n",
+		      $note_descriptions{$note} // "UNDESCRIBED `$note`";
+		}
+		foreach my $note (keys %note_descriptions) {
+		    next if $notes =~ m/$note/;
+		    # elide "not:" for case changing stuff if there's no
+		    # hint that this is going to be relevant
+		    next if $note =~ m/[hc]/i and $notes !~ m/[hc]/i;
+		    printf STDERR "    not: %s\n", $note_descriptions{$note};
+		}
+	    } else {
+		printf STDERR "    None.\n";
 	    }
-	} else {
-	    printf STDERR "    None.\n";
-	}
-    };
-    $print_notes->(
-		   "Information and properties found in docs and source code:",
-		   $disc->{Got},
-		   'Keyword does not exist.'
-		  );
-    $print_notes->(
-		   "Entry in exceptions table -- expected to find:",
-		   $disc->{Exp},
-		   "No entry in exceptions table.\n",
-		  );
-    printf STDERR "To suppress, add exceptions with note chars `%s`.\n",
-        $disc->{Got}
-	if $disc->{Got};
-    printf STDERR "|\n";
-}
-printf STDERR <<END;
+	};
+	$print_notes->(
+            "Information and properties found in docs and source code:",
+		       $disc->{Got},
+		       'Keyword does not exist.'
+		      );
+	$print_notes->(
+		       "Entry in exceptions table -- expected to find:",
+		       $disc->{Exp},
+		       "No entry in exceptions table.\n",
+		      );
+	printf STDERR "To suppress, add exceptions with note chars `%s`.\n",
+	    $disc->{Got}
+	    if $disc->{Got};
+	printf STDERR "|\n";
+    }
+    printf STDERR <<END;
 Docs and code should be fixed to match up,
 or the exception table (__DATA__) adjusted.
 END
+}
 
-exit 4;
+sub grok_all() {
+    grok_enum();
+    grok_not_in_bool();
+    grok_cases();
+    grok_bool_only();
+    grok_dbg_allkw();
+    grok_document();
+}
+
+sub mode_check() {
+    print_divider();
+    print "reading source and documentation files\n";
+
+    grok_all();
+
+    correspondences();
+
+    if (!@discrepant) {
+	print "ok.\n";
+	print_divider();
+	exit 0;
+    }
+
+    print_discrepancies();
+
+    exit 4;
+}
+
+sub mode_json() {
+    $print_progress = 0;
+    grok_all();
+    print to_json({
+        grokked => \%grokked,
+        ref_lines => \%ref_lines,
+    }) or die $!;
+}
+
+our $mode = 'check';
+
+while (@ARGV) {
+    $_ = shift @ARGV;
+    if (m/^--json$/) {
+	$mode = 'json';
+    } else {
+	die "unsupported option $_";
+    }
+}
+
+my $mode_fn = ${*::}{"mode_$mode"} or die;
+$mode_fn->();
 
 __DATA__
 # Expected exceptions table
@@ -361,7 +421,6 @@ __DATA__
 
 # we use placeholders in the docs, and handle case changing
 # with its own combined SubstDetails variant
-E	CASE_CHANGE
 ve	changecase
 
 # These are combined SD variants

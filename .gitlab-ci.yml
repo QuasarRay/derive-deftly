@@ -72,13 +72,18 @@ check-doc-tocs:
   stage: test
   allow_failure: true
   script:
+    - apt-get -y update
+    - apt-get -y install libjson-perl
     - maint/update-tocs --check
+    - maint/update-reference-xrefs --check
 
 # Warning-only checks
 check-keywords-documented:
   stage: test
   allow_failure: true
   script:
+    - apt-get -y update
+    - apt-get -y install libjson-perl
     - maint/check-keywords-documented >&2
 
 # Actual tests
