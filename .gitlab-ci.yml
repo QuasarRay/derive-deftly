@@ -182,7 +182,7 @@ cargo-doc-all:
 # Check that our (locally-massaged) don't have broken links.
 # This also detects links brokne between rustdoc (on docs.rs)
 # and the guide (on pages.tpo).
-build-local-docs:
+build-docs-local:
   stage: comprehensive
   script:
     - ./maint/via-cargo-install-in-ci mdbook
@@ -196,7 +196,6 @@ build-local-docs:
 # and the guide (on pages.tpo).
 check-doc-links:
   stage: comprehensive
-  allow_failure: true
   script:
     - ./maint/via-cargo-install-in-ci mdbook
     - ./maint/via-cargo-install-in-ci mdbook-linkcheck
@@ -232,14 +231,6 @@ cargo-test-dprint:
   script:
     - RUSTFLAGS="--cfg derive_deftly_dprint" DERIVE_DEFTLY_DPRINT=1 maint/cargo-test-locked --workspace --all-features -- run_pass_expand 3>&2 2>&1 1>&3 3>&- | tee dprint-output
     - grep -m1 'define_derive_deftly! input start' dprint-output
-
-mdbook-tests:
-  stage: comprehensive
-  script:
-    - apt-get update && apt-get install -y python3 linklint
-    - ./maint/via-cargo-install-in-ci mdbook
-    - ./maint/via-cargo-install-in-ci mdbook-linkcheck
-    - ./maint/build-mdbook
 
 pages:
   rules:
