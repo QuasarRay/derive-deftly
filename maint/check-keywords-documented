@@ -275,6 +275,12 @@ sub main_mode() {
 	exit 0;
     }
 
+    print_discrepancies();
+
+    exit 4;
+}
+
+sub print_discrepancies() {
     print "discrepancies\n";
     foreach my $disc (@discrepant) {
 	printf "    keyword %-20s  found %s", $disc->{Kw}, $disc->{Got};
@@ -318,7 +324,7 @@ END
 	    }
 	};
 	$print_notes->(
-		       "Information and properties found in docs and source code:",
+            "Information and properties found in docs and source code:",
 		       $disc->{Got},
 		       'Keyword does not exist.'
 		      );
@@ -336,8 +342,6 @@ END
 Docs and code should be fixed to match up,
 or the exception table (__DATA__) adjusted.
 END
-
-    exit 4;
 }
 
 main_mode();
