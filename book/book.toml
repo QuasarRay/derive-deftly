@@ -5,17 +5,10 @@ multilingual = false
 src = "src"
 title = "Advanced Rust macros with derive-deftly"
 
-[output.html]
+# Link checking is done using a separate script, `maint/check-mdbook-links`,
+# which runs linklint over a combination of this book, and our rustdocs.
 
-[output.linkcheck]
-warning-policy = "error"
-# We effectively disable checking link destinations by excluding
-# all links (`.*`).
-#
-# We're only using linkcheck to validate that reference-style links have *some*
-# definition in the markdown, ensuring that *some* link will be generated. We
-# validate that those links are correct using a separate tool (`maint/check-mdbook-links`)
-exclude = [ '.*' ]
+[output.html]
 
 # The output directories chosen by mdbook depend on whether there
 # is only one `[output]`, or several (!)

@@ -38,18 +38,6 @@ if test $# != 0; then
     exit 1
 fi
 
-# mdbook-linkcheck is a non-obvious dependency, and the mdbook output when it's
-# not found doesn't spell out how to install it.
-if ! command -v mdbook-linkcheck; then
-    echo 'ERROR: mdbook-linkcheck not found. You should probably install it with "cargo install mdbook-linkcheck"'
-    exit 1
-fi
-
-if ! command -v linklint; then
-    echo "ERROR: linklint not found.  You should install it according to platform instructions."
-    exit 1
-fi
-
 if ! test -f ./book/book.toml; then
     echo "ERROR: ./book/book.toml not found.  You need to run this from the toplevel directory."
     exit 1
@@ -59,8 +47,6 @@ fi
 
 cd ./book
 $MDBOOK build
-cd ./book
-../../maint/check-mdbook-links
 
 cat <<END
 formatted mdbook book is here:
