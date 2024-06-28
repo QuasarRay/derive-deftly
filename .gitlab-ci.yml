@@ -196,7 +196,6 @@ build-local-docs:
 # and the guide (on pages.tpo).
 check-doc-links:
   stage: comprehensive
-  allow_failure: true
   script:
     - ./maint/via-cargo-install-in-ci mdbook
     - ./maint/via-cargo-install-in-ci mdbook-linkcheck
