@@ -191,8 +191,8 @@ shown below.
 <!-- ## maint/check-keywords-documented expansions ## -->
 
 <div id="x:fname">
-<div id="x:vname">
 <div id="x:tname">
+<div id="x:vname">
 
 ### `$fname`, `$vname`, `$tname` -- names
 
@@ -217,9 +217,9 @@ or `${paste ... $fname ...}` (`$<... $fname ...>`).
  * `$vname`: `UnitVariant`
  * `$tname`: `Tuple`, `Struct`, `Enum`
 
+<div id="x:fdefvis">
 <div id="x:fvis">
 <div id="x:tvis">
-<div id="x:fdefvis">
 <div id="t:visibility">
 
 ### `$fvis`, `$tvis`, `$fdefvis` -- visibility
@@ -272,8 +272,8 @@ Use `$fdefvis` when defining a new enum.
  * `$fdefvis` for fields in `Enum`: nothing
  * `$fdefvis` for others: nothing
 
-<div id="x:vpat">
 <div id="x:fpatname">
+<div id="x:vpat">
 
 ### `$vpat`, `$fpatname` -- pattern matching and value deconstruction
 
@@ -316,9 +316,9 @@ These use derive-deftly's usual
  * `${vpat self=$<$tname Reference> vname=$<Ref $vname> fprefix=other_}`: `EnumReference::RefNamedVariant { field: other_field, ... }`
 
 <div id="x:ftype">
-<div id="x:vtype">
-<div id="x:ttype">
 <div id="x:tdeftype">
+<div id="x:ttype">
+<div id="x:vtype">
 
 ### `$ftype`, `$vtype`, `$ttype`, `$tdeftype` -- types
 
@@ -379,10 +379,10 @@ They use derive-deftly's usual
    for enum variant:
    `EnumReference::RefTupleVariant::<'a, 'l, T, C>`
 
+<div id="x:tdefgens">
 <div id="x:tgens">
 <div id="x:tgnames">
 <div id="x:twheres">
-<div id="x:tdefgens">
 
 ### `$tgens`, `$tgnames`, `$twheres`, `$tdefgens` -- generics
 
@@ -425,9 +425,9 @@ so for full support of generic types the template must expand both.
  * `$twheres`: `T: 'l, T: TryInto<u8>,`
  * `$tdefgens`: `'a, 'l: 'a, T: Display = usize, const C: usize = 1,`
 
+<div id="x:fmeta">
 <div id="x:tmeta">
 <div id="x:vmeta">
-<div id="x:fmeta">
 
 ### `${tmeta(...)}` `${vmeta(...)}` `${fmeta(...)}` -- `#[deftly]` attributes
 
@@ -558,9 +558,9 @@ These checks are disabled by `#[derive_deftly_adhoc]`.
  * `$<$ttype ${tmeta(simple) as str}>`: `UnitString::<C>`
  * `$<$ttype ${tmeta(simple) as ty}>`: error, ``multiple nontrivial entries``
 
+<div id="x:fattrs">
 <div id="x:tattrs">
 <div id="x:vattrs">
-<div id="x:fattrs">
 
 ### `${fattrs ...}` `${vattrs ...}` `${tattrs ...}` -- other attributes
 
@@ -754,9 +754,9 @@ in `macro_rules!`.
 
 Expands to `struct`, `enum`, or `union`.
 
+<div id="x:fdefine">
 <div id="x:tdefvariants">
 <div id="x:vdefbody">
-<div id="x:fdefine">
 
 ### `$tdefvariants`, `$vdefbody`, `$fdefine` -- tools for defining types
 
@@ -903,8 +903,8 @@ derive_deftly_adhoc! {
 }
 ```
 
-<div id="x:define">
 <div id="x:defcond">
+<div id="x:define">
 
 ### `${define ...}`, `${defcond ...}` -- user-defined expansions and conditions
 
@@ -1014,9 +1014,9 @@ They are found within `${if }`, `${when }`, and `${select1 }`.
 
 <!-- ## maint/check-keywords-documented conditions ## -->
 
+<div id="c:fdefvis">
 <div id="c:fvis">
 <div id="c:tvis">
-<div id="c:fdefvis">
 
 ### `fvis`, `tvis`, `fdefvis` -- test for public visibility
 
@@ -1046,8 +1046,8 @@ And in each case, false for all others.
 (Refer to the [example structs](#structs-used-in-examples), below.)
 
 <div id="c:fmeta">
-<div id="c:vmeta">
 <div id="c:tmeta">
+<div id="c:vmeta">
 
 ### `fmeta(NAME)`, `vmeta(NAME)`, `tmeta(NAME)` -- `#[deftly]` attributes
 
@@ -1078,8 +1078,8 @@ for information about namespacing and handling of unused attributes.
  * `vmeta(value)`: true for `Unit`, and `Enum::UnitVariant`
  * `fmeta(nested)`: true for `field` in `Struct`
 
-<div id="c:is_struct">
 <div id="c:is_enum">
+<div id="c:is_struct">
 <div id="c:is_union">
 
 ### `is_struct`, `is_enum`, `is_union`
@@ -1097,9 +1097,9 @@ use `match` and `$vpat` for deconstructing values,
 and `$vtype` for constructing them.
 Use `$tdefvariants` when defining a derived type.
 
-<div id="c:v_is_unit">
-<div id="c:v_is_tuple">
 <div id="c:v_is_named">
+<div id="c:v_is_tuple">
+<div id="c:v_is_unit">
 
 ### `v_is_unit`, `v_is_tuple`, `v_is_named`
 
@@ -1137,8 +1137,8 @@ Whether the top-level type has generics.
 
  * `tgens`: true for `Unit`, `Tuple`, `Struct`, `Enum`
 
-<div id="c:is_empty">
 <div id="c:approx_equal">
+<div id="c:is_empty">
 
 ### `is_empty(..)`, `approx_equal(ARG1, ARG2)` -- equality comparison (token comparison)
 
@@ -1205,11 +1205,11 @@ even if the designated identifier is the same.
 The `ARG`s are in derive-deftly's usual
 [syntax for positional arguments](#named-and-positional-template-arguments-to-expansions-and-conditions).
 
-<div id="c:false">
-<div id="c:true">
-<div id="c:not">
-<div id="c:any">
 <div id="c:all">
+<div id="c:any">
+<div id="c:false">
+<div id="c:not">
+<div id="c:true">
 
 ### `false`, `true`, `not(CONDITION)`, `any(COND1,COND2,...)`, `all(COND1,COND2,...)` -- boolean logic
 
@@ -1246,11 +1246,11 @@ the [`${dbg ..}` expansion](#dbg--dbg_all_keywords--debugging-output)
 and
 the [`dbg` expansion option](#dbg--print-the-expansion-to-stderr-for-debugging).
 
-<div id="x:pascal_case">
-<div id="x:upper_camel_case">
-<div id="x:snake_case">
-<div id="x:shouty_snake_case">
 <div id="x:lower_camel_case">
+<div id="x:pascal_case">
+<div id="x:shouty_snake_case">
+<div id="x:snake_case">
+<div id="x:upper_camel_case">
 
 ## Case changing
 
