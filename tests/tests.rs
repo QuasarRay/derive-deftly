@@ -1,4 +1,4 @@
-#![allow(clippy::style, clippy::complexity)]
+#![allow(clippy::style, clippy::complexity, clippy::perf)]
 //! Tests for derive-deftly
 //!
 //! **Internal, unpublished crate.**
