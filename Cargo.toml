@@ -5,13 +5,7 @@ edition = "2021"
 license="MIT"
 authors=["Ian Jackson <ijackson@chiark.greenend.org.uk>",
          "and the contributors to Rust derive-deftly"]
-description="An ergonomic way to write derive() macros"
-homepage = "https://gitlab.torproject.org/Diziet/rust-derive-deftly"
-repository = "https://gitlab.torproject.org/Diziet/rust-derive-deftly"
 publish = false
 
 [features]
 recent = []
-[dependencies]
-[lib]
-
