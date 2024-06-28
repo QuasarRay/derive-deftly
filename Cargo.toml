@@ -1,6 +1,6 @@
 [package]
-name = "derive-deftly"
-version = "0.14.0"
+name = "derive-deftly-tests"
+version = "0.0.1"
 edition = "2021"
 license="MIT"
 authors=["Ian Jackson <ijackson@chiark.greenend.org.uk>",
@@ -8,11 +8,10 @@ authors=["Ian Jackson <ijackson@chiark.greenend.org.uk>",
 description="An ergonomic way to write derive() macros"
 homepage = "https://gitlab.torproject.org/Diziet/rust-derive-deftly"
 repository = "https://gitlab.torproject.org/Diziet/rust-derive-deftly"
-rust-version = "1.56"
+publish = false
 
-autotests = false
+[features]
+recent = []
+[dependencies]
+[lib]
 
-[workspace]
-members = [
-	"tests",
-]
