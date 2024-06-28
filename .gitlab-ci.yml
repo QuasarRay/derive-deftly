@@ -182,7 +182,7 @@ cargo-doc-all:
 # Check that our (locally-massaged) don't have broken links.
 # This also detects links brokne between rustdoc (on docs.rs)
 # and the guide (on pages.tpo).
-build-local-docs:
+build-docs-local:
   stage: comprehensive
   script:
     - ./maint/via-cargo-install-in-ci mdbook
