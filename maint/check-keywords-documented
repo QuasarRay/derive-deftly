@@ -10,6 +10,10 @@
 # exceptions.
 #
 #
+# With --json it outputs information about what is found where,
+# as a JSON document.  (The schema is not currently documented.)
+# (In this mode it doesn't perform most of the checks.)
+#
 # Implementation note:
 #
 # (I experimented with a more formal approach, including having the
@@ -18,6 +22,7 @@
 # categorise the keyword and the mechanism was confusing and invasive.)
 
 use strict;
+use JSON qw(to_json);
 
 our ($whole, $file);
 
@@ -355,11 +360,23 @@ sub mode_check() {
     exit 4;
 }
 
+sub mode_json() {
+    $print_progress = 0;
+    grok_all();
+    print to_json({
+        grokked => \%grokked,
+    }) or die $!;
+}
+
 our $mode = 'check';
 
 while (@ARGV) {
     $_ = shift @ARGV;
-    die "unsupported option $_";
+    if (m/^--json$/) {
+	$mode = 'json';
+    } else {
+	die "unsupported option $_";
+    }
 }
 
 my $mode_fn = ${*::}{"mode_$mode"} or die;

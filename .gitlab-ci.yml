@@ -79,6 +79,8 @@ check-keywords-documented:
   stage: test
   allow_failure: true
   script:
+    - apt-get -y update
+    - apt-get -y install libjson-perl
     - maint/check-keywords-documented >&2
 
 # Actual tests
