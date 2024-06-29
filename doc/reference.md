@@ -1511,3 +1511,13 @@ where T: 'l, T: TryInto<u8>
 }
 # "##;
 ```
+
+## Keyword index
+
+### Expansions
+
+<!--## index x ##-->
+
+### Conditions
+
+<!--## index c ##-->

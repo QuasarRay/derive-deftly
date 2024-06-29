@@ -3,6 +3,8 @@
 # Updates the <div id=...> </div> that surround the headings
 # in reference.md, for the ids' x:* (expansions) and c:* (conditions).
 #
+# Also updates the keyword index.
+#
 # With --check, checks that they are all up to date.
 
 use strict;
@@ -107,6 +109,38 @@ foreach my $insn (@instructions) {
     $f[$i+$delta] = $insert_after . $f[$i+$delta];
     1;
 }
+
+#---------- make the indexes ----------
+
+sub mkindex ($$) {
+    my ($kind, $kformat) = @_;
+    my $i = 0;
+    for (;;) {
+	die "missing meta for index $kind" if $i > @f;
+	last if $f[$i] =~ m{^\<\!--\#\# index $kind \#\#--\>.*$};
+	$i++;
+    }
+    for (my $j = $i+1;
+	 $j < @f && $f[$j] =~ m{^\s};
+	 $j++) {
+	$f[$j] = "";
+    }
+    my $l = \ $f[$i];
+    $$l .= "\n";
+    my $ref_lines = $json->{ref_lines};
+    foreach my $az ('a'..'z') {
+	my @ids = grep { m{^$kind:$az} } sort keys %$ref_lines;
+	next unless @ids;
+	$$l .=
+	  " * **".(sprintf $kformat, $az)."**: ".
+	  (join ', ', map { s/^$kind://; "[`$_`](#$kind:$_)" } @ids).
+	  "\n";
+    }
+    $$l .= "\n";
+}
+
+mkindex('x', '$%s…');
+mkindex('c', '%s…');
 
 #---------- write and handle output ----------
 
