@@ -22,11 +22,15 @@ our $output = "doc/reference.md.new";
 our $handled = qr{^[xc]:};
 our $div_id = qr{^\<div id="([^"]+)"\>\s*$};
 
+#---------- Read reference.md ----------
+
 open F, $input or die $!;
 our @f = <F>;
 F->error and die $!;
 close F;
 unshift @f, "";
+
+#---------- read the JSON telling us where the ref headings are ----------
 
 open J, "maint/check-keywords-documented --json |" or die $!;
 our $json;
@@ -41,6 +45,8 @@ foreach my $id (sort keys %{ $json->{ref_lines} }) {
     my ($i) = keys %lno;
     push @{ $targets{$i} }, $id;
 }
+
+#---------- decide what divs need to go where, strip out old ones ----------
 
 foreach my $i (sort { $a <=> $b } keys %targets) {
     eval {
@@ -69,12 +75,16 @@ foreach my $i (sort { $a <=> $b } keys %targets) {
       or die "$input:$i: error: $@";
 }
 
+#---------- check for misplaced divs (not deleted above) ----------
+
 foreach my $i (1..$#f) {
     next unless $f[$i] =~ m{$div_id};
     my $id = $1;
     next unless $id =~ m{$handled};
     die "$input:$i: misplaced div for id=\"$id\"\n";
 }
+
+#---------- (re)insert the keyword divs ----------
 
 foreach my $insn (@instructions) {
     my ($i, $delta) = @$insn;
@@ -92,6 +102,8 @@ foreach my $insn (@instructions) {
     $f[$i+$delta] = $insert_after . $f[$i+$delta];
     1;
 }
+
+#---------- write and handle output ----------
 
 die unless shift(@f) eq '';
 
