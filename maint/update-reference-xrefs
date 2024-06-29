@@ -5,6 +5,7 @@
 #
 # With --check, checks that they are all up to date.
 
+use strict;
 use JSON qw(from_json);
 
 our $install;
@@ -21,6 +22,8 @@ our $input = "doc/reference.md";
 our $output = "doc/reference.md.new";
 our $handled = qr{^[xc]:};
 our $div_id = qr{^\<div id="([^"]+)"\>\s*$};
+
+our %targets; # $targets{$lno} = [ $id, ... ]
 
 #---------- Read reference.md ----------
 
@@ -47,6 +50,8 @@ foreach my $id (sort keys %{ $json->{ref_lines} }) {
 }
 
 #---------- decide what divs need to go where, strip out old ones ----------
+
+our @instructions;
 
 foreach my $i (sort { $a <=> $b } keys %targets) {
     eval {
