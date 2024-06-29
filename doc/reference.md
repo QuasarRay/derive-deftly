@@ -1518,6 +1518,28 @@ where T: 'l, T: TryInto<u8>
 
 <!--## index x ##-->
 
+ * **$c…**: [`crate`](#x:crate)
+ * **$d…**: [`dbg`](#x:dbg), [`dbg_all_keywords`](#x:dbg_all_keywords), [`defcond`](#x:defcond), [`define`](#x:define)
+ * **$e…**: [`error`](#x:error)
+ * **$f…**: [`fattrs`](#x:fattrs), [`fdefine`](#x:fdefine), [`fdefvis`](#x:fdefvis), [`fmeta`](#x:fmeta), [`fname`](#x:fname), [`for`](#x:for), [`fpatname`](#x:fpatname), [`ftype`](#x:ftype), [`fvis`](#x:fvis)
+ * **$i…**: [`if`](#x:if), [`ignore`](#x:ignore)
+ * **$l…**: [`lower_camel_case`](#x:lower_camel_case)
+ * **$p…**: [`pascal_case`](#x:pascal_case), [`paste`](#x:paste)
+ * **$s…**: [`select1`](#x:select1), [`shouty_snake_case`](#x:shouty_snake_case), [`snake_case`](#x:snake_case)
+ * **$t…**: [`tattrs`](#x:tattrs), [`tdefgens`](#x:tdefgens), [`tdefkwd`](#x:tdefkwd), [`tdeftype`](#x:tdeftype), [`tdefvariants`](#x:tdefvariants), [`tgens`](#x:tgens), [`tgnames`](#x:tgnames), [`tmeta`](#x:tmeta), [`tname`](#x:tname), [`ttype`](#x:ttype), [`tvis`](#x:tvis), [`twheres`](#x:twheres)
+ * **$u…**: [`upper_camel_case`](#x:upper_camel_case)
+ * **$v…**: [`vattrs`](#x:vattrs), [`vdefbody`](#x:vdefbody), [`vmeta`](#x:vmeta), [`vname`](#x:vname), [`vpat`](#x:vpat), [`vtype`](#x:vtype)
+ * **$w…**: [`when`](#x:when)
+
 ### Conditions
 
 <!--## index c ##-->
+
+ * **a…**: [`all`](#c:all), [`any`](#c:any), [`approx_equal`](#c:approx_equal)
+ * **d…**: [`dbg`](#c:dbg)
+ * **f…**: [`false`](#c:false), [`fdefvis`](#c:fdefvis), [`fmeta`](#c:fmeta), [`fvis`](#c:fvis)
+ * **i…**: [`is_empty`](#c:is_empty), [`is_enum`](#c:is_enum), [`is_struct`](#c:is_struct), [`is_union`](#c:is_union)
+ * **n…**: [`not`](#c:not)
+ * **t…**: [`tgens`](#c:tgens), [`tmeta`](#c:tmeta), [`true`](#c:true), [`tvis`](#c:tvis)
+ * **v…**: [`v_is_named`](#c:v_is_named), [`v_is_tuple`](#c:v_is_tuple), [`v_is_unit`](#c:v_is_unit), [`vmeta`](#c:vmeta)
+
