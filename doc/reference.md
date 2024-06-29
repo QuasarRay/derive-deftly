@@ -45,6 +45,9 @@
    * [Precedence considerations](#precedence-considerations)
       * [`None`-delimited groups](#none-delimited-groups)
    * [Structs used in examples](#structs-used-in-examples)
+   * [Keyword index](#keyword-index)
+      * [Expansions](#expansions)
+      * [Conditions](#conditions)
 
 **Reference documentation for the actual proc macros** is in
 the [crate-level docs for derive-deftly](../index.html#macros).
