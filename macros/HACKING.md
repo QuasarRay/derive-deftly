@@ -101,6 +101,15 @@ These are inserted at the `<!--##toc##-->` marker.
 
 Checked by CI, but it's only a warning if it's not up to date.
 
+### Cross-references in `reference.md`, updated by `maint/update-reference-xrefs`
+
+There are `x:...` and `c:...` `<div>`s,
+surrounding each heading describing expansions and conditions.
+
+And indexes, at the bottom of the file.
+
+Again, checked by CI, but it's only a warning if it's not up to date.
+
 ## Testing - see `tests/tests.rs`
 
 derive-deftly has comprehensive tests.
