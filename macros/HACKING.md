@@ -11,6 +11,7 @@ and, especially, testing them can be complex.
       * [`Cargo.lock`, updated by `nailing-cargo update`.](#cargolock-updated-by-nailing-cargo-update)
       * [`Cargo.lock.minimal`, updated by `update-minimal-versions`.](#cargolockminimal-updated-by-update-minimal-versions)
       * [Tables of contents in various `*.md`, updated by `maint/update-tocs`.](#tables-of-contents-in-various-md-updated-by-maintupdate-tocs)
+      * [Cross-references in `reference.md`, updated by `maint/update-reference-xrefs`](#cross-references-in-referencemd-updated-by-maintupdate-reference-xrefs)
    * [Testing - see `tests/tests.rs`](#testing---see-teststestsrs)
    * [Reporting errors during template parsing and expansion](#reporting-errors-during-template-parsing-and-expansion)
    * [Adding an expansion keyword](#adding-an-expansion-keyword)
