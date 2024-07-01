@@ -12,9 +12,6 @@ stringified), and string literals (in `" "`).  No un-quoted literal
 text is allowed.  Expansion is a single string literal.  FTAOD
 `${string ${string "y"}}` expands to `r#""y""#`
 
-Do we need this?  Perhaps we should just expect people
-to use `stringify!` from `std`, which works well with derive-deftly.
-
 Would we support case conversion ?
 
 
