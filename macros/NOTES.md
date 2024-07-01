@@ -2,18 +2,133 @@
 
 # Future template features
 
-## String concatenation `${string ...}`
+## Stringification
 
 See
 [#64](https://gitlab.torproject.org/Diziet/rust-derive-deftly/-/issues/64).
 
-Argument can contain any expansions (will be expanded into tokens and
-stringified), and string literals (in `" "`).  No un-quoted literal
-text is allowed.  Expansion is a single string literal.  FTAOD
-`${string ${string "y"}}` expands to `r#""y""#`
+This is a new expansion context, admitting:
 
-Would we support case conversion ?
+ * Literal strings (including raw strings, but not byte strings)
+ * Expansions (inner template code must also be valid in string context)
+ * Doubled dollars `$$`
 
+Not permitted are other kinds of non-expansion tokens,
+including non-string literals, punctuation, or identifiers.
+
+Expansions that are valid in token context are all allowed.
+Leaf expansions expand to their string representation
+(`TokenStream as Display`).
+Expansions that yield types
+are stringified *as types* (which has an impact on spacing).
+
+The precise formatting of the output is not to be relied on.
+
+### Keyword `${string ...}`
+
+Body is a template valid in string context.
+
+When expanded in token context, expands to a string literal,
+whose value is all the content strings, concatenated.
+
+Within `${string ...}`,
+literal strings and
+the results of inner `${string }` expansions (and `$"..."` templates)
+are not re-quoted.
+
+### Case conversion 
+
+Case conversion is allowed inside stringification;
+the contents must be a valid stringification content.
+Case conversion is then applied to the stringified text.
+So inside `${stringify }`,
+case changing doesn't force pasting context.
+
+Identifier pasing `${paste }` and `$< ... >` is also allowed,
+and expands to the string representation of the type.
+
+### Interaction with `$define`
+
+User-defined expansions whose body is precisely `${string }` or `$"..."`
+are not requoted in string context.
+For other user defined expansions, the content is evaluated as tokens,
+and that token stream is converted to a string
+(requoting any string literals it may contain).
+
+This is in semantics similar to `${paste }`,
+and ensures that
+any particular template text is statically
+either string context, or not.
+
+Examples:
+
+```rust,ignore
+${define A { ${string "a"} }}   $A
+${define B { ${string "b"} }}   ${string $B}
+${define C {          "c"  }}   ${string $C}
+```
+
+Expands to:
+
+```rust,ignore
+"a"
+"b"
+r#""c""#
+```
+
+### String templating `$"..."`
+
+This is a convenient syntax for specifying a string template.
+The leading `$` is followed by a (possbily raw) string literal.
+
+The string literal contents is lexed as follows:
+
+ * Literal text
+ * Expansions in the form `$keyword` (or user-defined `$NAME`).
+ * Doubled dollars `$$`
+ * Possibly, at some point `${keyword ARGS...}` but with limitations.
+    Possible limitation producing an initial level of support is:
+     * the characters `"'` cannot appear in the `ARGS...`
+ * Possibly, at some point `$< ... >` with the same limitation.
+
+This template is equivalent to a `${string ...}`
+containing the same elements.
+
+Possibly in the future we might support
+`${"template with $1 positional arguments" $< blarky $fname >}`
+or similar.
+
+### Doc attributes
+
+We could support `$///` and `$//!`.
+The compiler turns these into `#[doc(...)]` and `#![doc(...)]`.
+
+So we would have to recognise `$#[doc` and `$#![doc`.
+(This means we would find it hard (or maybe impossible)
+to use `$#` for anything other than attributes.)
+
+The literal would be processed as for `$"..."`.
+
+### Byte strings
+
+We could support byte literals maybe.
+`${string }` doesn't have a way to request them;
+there would probably have to be `${byte_string }`.
+`$"..."` does have a natural way: `$b"..."`.
+
+Supporting byte strings would mean allowing `b"..."`
+within (the relevant) string context,
+posing the possibility of
+`${string b"non-utf8 bytes"}` which has to be an error.
+
+When is this error checked?
+Is there one kind of string context, or two?
+Do we allow `${string b"valid utf8"}`?
+
+We could detect the invalid utf-8 at expansion time.
+But perhaps we should declare
+that we reserve the right to check this statically,
+and that wouldn't be a breaking change?
 
 ## Splitting off fields and handling subsets of the generics
 
