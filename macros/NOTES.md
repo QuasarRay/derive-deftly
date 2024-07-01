@@ -130,6 +130,133 @@ But perhaps we should declare
 that we reserve the right to check this statically,
 and that wouldn't be a breaking change?
 
+## Scopes (for meta, and loops)
+
+See [discussion in #36](https://gitlab.torproject.org/Diziet/rust-derive-deftly/-/issues/36#note_3015721)
+
+### Demo - cross product, allowing access to outer repetition
+
+```rust,ignore
+ ${for let a = fields {
+   ${for let b = fields {
+     self_cross_product_contains(${a.fname} ${b.fname});
+   }}
+ }}
+```
+
+### Fixing awkwardness re optional meta attributes
+
+[#40](https://gitlab.torproject.org/Diziet/rust-derive-deftly/-/issues/40)
+
+```rust,ignore
+ ${if let m = fmeta(call) {
+   ${m.meta as expr} (&self.$fname);
+ }}
+```
+
+### Handling meta attribute multiplicity
+
+[#36](https://gitlab.torproject.org/Diziet/rust-derive-deftly/-/issues/36)
+
+```rust,ignore
+ ${for let m = fmeta(call) {
+   ${m.meta as expr} (&self.$fname);
+ }}
+```
+
+### Looking for a thing in various places:
+
+```rust,ignore
+ ${if let m = any(fmeta(call), vmeta(fields(call)), tmeta(fields(call))) {..}}
+ ${for let m = all(fmeta(call), vmeta(fields(call)), tmeta(fields(call))) {..}}
+ ${if let m = select1(fmeta(call), fmeta(obsolete_name_for_call)) {..}}
+```
+
+### Meta scope referring to nonexistent meta item?
+
+Can a meta item scope refer to a putative,
+but actually nonexistent, item?
+Not sure if we need this.
+[#62](https://gitlab.torproject.org/Diziet/rust-derive-deftly/-/issues/62)
+I suggest not, in the first instance.
+
+```rust,ignore
+ ${let m = fmeta(call) {
+   ${if ${m.meta} { ... }}
+ }}
+```
+
+### Details of binding in `if ... any` etc.
+
+What about mixed binding and non-binding conditions?
+Options are
+(a) reject this
+(b) on the non-binding arms, bind to nonexistent meta.
+I think I prefer (a).
+It's the more cautious approach, certainly.
+
+```rust,ignore
+ ${if let m = any(fmeta(call), true) {
+   ${if ${m.meta} { ... }}
+}}
+```
+
+### Meta scopes vs repeat scopes
+
+Every scope is either a meta scope or a repeat scope.
+`${scope.meta}` is only allowed for meta scopes.
+Other expansions, including notably `${scope.Xmeta}`,
+are only allowed for repeat scopes.
+
+```rust,ignore
+ ${for let m = fmeta(call) {
+   .. ${m.fmeta(call)} .. // ERROR, user wrote `fmeta`, wanted `meta`
+   .. ${m.meta(call)} .. // OK
+ }}
+ ${for let m = fields {
+   .. ${m.fmeta(call)} .. // OK
+   .. ${m.meta(call)} .. // ERROR, m isn't a meta scope
+                         // user must write ${m.fmeta}
+ }}
+```
+
+#### Alternative
+
+With a meta scope `m`,
+the only legal expansion using it is `${m.meta((call)}`
+or whatever.
+
+(Right now;
+But expansions other than `$Xmeta` might be OK to support.
+Not `$Xmeta` because it has too much scope for error:
+since `${if let m = fmeta(call) { .. ${m.fmeta(..)} .. }}`
+doesn't do at all what the user might expect.)
+
+So, instead, we could say that you don't need to write `.meta`
+and have it be just `${m(call)}`.  But:
+
+ * Now it lives in the same namespace as keywords,
+   and is a user-defined name, so it must be uppercase.
+   `${M(call)}`.
+ * This reduces the similarity between meta scopes and normal scopes.
+ * It would prevent us supporting eg `${m.fname}` in the future,
+   which might be useful with something like
+   `${if let m = find1(field, fmeta(call)) { $m.fname ... }}`.
+   (meaning "find the precisely one field with `#[deftly(call)]`,
+   and then expand stuff with it),
+   or other things I haven't thought of yet.
+ * If we support arguments to user-defined meta items,
+   the syntax for passing them wouldn't look like the meta syntax,
+   so `${M(call)}` is syntactically weird.
+
+### Binding and checking
+
+Binding is dynamic (like `${define }`)
+(despite the use of `let` which is often lexical
+in other languages including Rust).
+
+(Meta attribute checking is dynamic and precise, naturally.)
+
 ## Splitting off fields and handling subsets of the generics
 
 Syntax and semantics TBD.  Some notes:
