@@ -3,7 +3,10 @@
 # Future template features
 
 ## String concatenation `${string ...}`
-		
+
+See
+[#64](https://gitlab.torproject.org/Diziet/rust-derive-deftly/-/issues/64).
+
 Argument can contain any expansions (will be expanded into tokens and
 stringified), and string literals (in `" "`).  No un-quoted literal
 text is allowed.  Expansion is a single string literal.  FTAOD
