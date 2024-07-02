@@ -1,7 +1,7 @@
 # More complicated conditionals
 
 Frequently, we'd like our template
-to behave in different ways different fields.
+to behave in different ways for different fields.
 For example, let's suppose that we want our template
 to be able to set fields to their default values,
 and not take them as arguments.
@@ -39,7 +39,7 @@ struct Foo {
 ```
 
 Here we're using a new construct:
-[`$when`][x:when]
+[`$when`][x:when].
 It's only valid inside a loop like `$( ... )`.
 It causes the output of the loop to be surpressed
 whenever the condition is not true.

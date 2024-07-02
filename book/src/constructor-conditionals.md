@@ -31,7 +31,7 @@ It introduces a new concept: _conditional expansion_.
 The
 [`${if ...}`][x:if]
 keyword checks whether a given _condition_ is true.
-If it is, then it expands to one of its arguments.
+If it is, then the `$if` keyword expands to its second argument.
 Otherwise, it expands to an "else" argument (if any).
 
 > Also, you can chain `$if`s, as in
@@ -39,11 +39,11 @@ Otherwise, it expands to an "else" argument (if any).
 > and so on!
 
 Here, the condition is
-[`tmeta(newfn)`][c:tmeta]
+[`tmeta(newfn)`][c:tmeta] ("toplevel metavalue").
 That condition is true if the current type
 has an `#[deftly(newfn)]` attribute,
 and false otherwise.
-There are also `vmeta` and `fmeta` attributes
+There are also `vmeta` and `fmeta` conditions
 to detect `#[deftly(..)]` attributes
 on variants and fields respectively.
 

@@ -6,8 +6,8 @@ it can sometimes be hard to figure out compiler errors.
 
 #### Syntax checking the expansion
 
-You can
-[tell derive-deftly what your macro is supposed to produce][eo:expect]
+You can use the [`expect`][eo:expect] option
+to tell derive-deftly what your macro is supposed to produce:
 
 ```rust
 # use derive_deftly::{Deftly, define_derive_deftly};
@@ -27,7 +27,7 @@ If the expansion fails to syntax check,
 you'll get not only an error pointing at
 the part of the template or structure which seems wrong,
 but also error messages pointing into a *copy of the actual expansion*.
-Hopefully you'll be able to see what's wrong, there.
+Hopefully you'll be able to see what's wrong there.
 
 If your macro is supposed to expand to an expression,
 you can write `expect expr` instead of `expect items`.
@@ -49,8 +49,8 @@ struct MyStruct { /* ... */ }
 Sometimes, the expansion syntax checks,
 but is wrong in some other way.
 
-You can ask derive-deftly to simply
-[print a copy of the expansion][eo:dbg].
+You can use the [`dbg`][eo:dbg] option to tell derive-deftly to
+[print a copy of the expansion].
 
 ```rust
 # use derive_deftly::{Deftly, define_derive_deftly};

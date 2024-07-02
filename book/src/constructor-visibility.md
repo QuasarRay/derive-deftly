@@ -3,7 +3,7 @@
 Our `Constructor` template above doesn't really make sense
 if it's applied to a non-public type:
 Rust may even complain that we're declaring
-a public function that ruturns a private type!
+a public function that returns a private type!
 
 Let's fix this, and have it give our constructor
 the same visibility as the type itself:
@@ -30,11 +30,12 @@ The
 keyword will expand
 to the visibility of the top-level type.
 
-There is a similar similar
+There is a similar keyword
 [`$fvis`][x:fvis]
 that expands to the visibility of the current field.
 
-(Since enums variants are always visible, there is no `$vvis`.)
+(Since enum variants are always visible,
+there is no such keyword as `$vvis`.)
 
 [x:tvis]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#x:tvis
 [x:fvis]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#x:fvis

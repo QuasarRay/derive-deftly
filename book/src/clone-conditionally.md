@@ -1,6 +1,6 @@
 # Making MyClone apply conditionally
 
-Now, for the first time, we will make MyClone do something
+Now, for the first time, we will make `MyClone` do something
 that Rust's `#[derive(Clone)]` does not:
 it will apply only when the fields of a struct are `Clone`.
 
@@ -16,8 +16,8 @@ the compiler will generate code something like this:
 impl<T: Clone> Clone for Indirect<T> { ... }
 ```
 
-But that `T: Clone` constraint isn't necessary: `Arc<T>` always
-implements `Clone`, so your struct could be clone unconditionally.
+But that `T: Clone` constraint isn't strictly necessary: `Arc<T>` always
+implements `Clone`, so your struct could have been be `Clone` unconditionally.
 
 But using derive-deftly,
 you can define a template
@@ -25,7 +25,7 @@ that derives `Clone` only for the cases
 where the _actual_ required constraints are met:
 
 ```rust
-# use derive_deftly::define_derive_deftly;
+# use derive_deftly::{define_derive_deftly,Deftly};
 define_derive_deftly! {
     MyClone:
 
@@ -40,11 +40,22 @@ define_derive_deftly! {
         }
     }
 }
+# use std::{sync::Arc, fmt::Debug} ;
+# #[derive(Deftly)]
+# #[derive_deftly(MyClone[dbg])]
+# struct Example<T> where T: Debug {
+#   arc: Arc<T>
+# }
+# #[derive(Deftly)]
+# #[derive_deftly(MyClone[dbg])]
+# struct Example2<T> {
+#   arc: Arc<T>
+# }
 ```
 
 Here, we are using
 [`$ftype`][x:ftype].
-the type of a field.
+("field type") to get the actual type of each field.
 Since we're repeating it with `$( ... )`,
 we are requiring every field to be `Clone`.
 
@@ -69,10 +80,12 @@ where
 > `derive_deftly` has exactly _one_ piece cleverness at work.
 > It makes sure that either `$twheres` is empty,
 > or that it ends with a comma.
-> That way, your template won't expand to something like
+> That way, when your template expands
+> `where $twheres $( $ftype : Clone , )`
+> it won't produce
 > `where U: Debug + Clone T: Clone`
-> (which is a syntax eror)
-> or soemthing like
+> (which is a syntax error)
+> or
 > `where ,`
 > (which is also a syntax error).
 

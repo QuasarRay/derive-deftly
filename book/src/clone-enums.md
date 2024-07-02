@@ -1,4 +1,4 @@
-# Deriving for enumerations
+# Making MyClone apply to enumerations
 
 At this point, you've probably noticed
 that we've defined `MyClone` to apply to `struct`s only,
@@ -18,7 +18,7 @@ We want to make sure that
 MyClone can recognize and re-construct
 each of the three variants.
 
-We can do that as follow
+We can do that as follows.
 (For simplicity, we're going to ignore generics for now.)
 ```rust
 # use derive_deftly::define_derive_deftly;
@@ -50,17 +50,17 @@ Then we match once for each field of each variant.
 
 Let's go over the new expansions here.
 First, we have
-[`$vpat`][x:vpat]:
+[`$vpat`][x:vpat] ("variant pattern"):
 that expands to a pattern that can match and deconstruct
 a single variant.
 Then, we have
-[`$vtype`][x:vtype]:
+[`$vtype`][x:vtype] ("variant type"):
 that's the type of the variant,
 suitable for use as a constructor.
 Then, inside the variant, we have `$fname`:
 that's our field name, which we've seen it before.
 Finally, we have
-[`$fpatname`][x:fpatname]:
+[`$fpatname`][x:fpatname] ("field pattern name"):
 that is the name of the variable that we used for this field
 in the pattern that deconstructed it.
 
@@ -93,7 +93,7 @@ impl Clone for AllTypes {
 
 Note that our template above will still work fine on a regular struct,
 even though it's written for an `enum`.
-If we apply `MyClone` above
+If we apply the version of `MyClone` above
 to `struct Example { a: u8, b: String }`,
 we get this:
 
