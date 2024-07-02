@@ -162,9 +162,9 @@ Sometimes, if you do something subtle,
 derive-deftly may not be able to figure
 out what you're trying to repeat over.
 You can use
-[`${for ...}`][x:for]
-to specifiy explicitly:
-so, above, instead, we could have written
+[`${for fields {...}}`][x:for] or [`${for variants {...}}`][x:for]
+to specify explicitly what you want to repeat.
+So, above, instead, we could have written
 ```rust
 # use derive_deftly::{Deftly, derive_deftly_adhoc};
 # #[derive(Deftly)]
@@ -180,6 +180,30 @@ ${for fields { $ftype: Clone, }}
 You can also use `${for ...}` rather than `$(...)`
 in cases where you feel
 it makes your macro code clearer.
+For example, we could have used `${for}`
+to write our `MyClone` example more explicitly like this:
+
+```rust
+# use derive_deftly::define_derive_deftly;
+define_derive_deftly! {
+    MyClone:
+
+    impl Clone for $ttype
+    {
+        fn clone(&self) -> Self {
+            match self {
+                ${for variants {
+                    $vpat => $vtype {
+                        ${for fields {
+                            $fname: $fpatname.clone(),
+                        }}
+                    },
+                }}
+            }
+        }
+    }
+}
+```
 
 [t:repetition]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#t:repetition
 [x:for]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#x:for
