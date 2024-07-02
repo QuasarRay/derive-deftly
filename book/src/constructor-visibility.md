@@ -8,7 +8,7 @@ a public function that ruturns a private type!
 Let's fix this, and have it give our constructor
 the same visibility as the type itself:
 
-```
+```rust
 # use derive_deftly::define_derive_deftly;
 define_derive_deftly! {
    Constructor for struct:

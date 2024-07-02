@@ -5,7 +5,7 @@ that Rust's `#[derive(Clone)]` does not:
 it will apply only when the fields of a struct are `Clone`.
 
 For example, suppose have a struct like this:
-```
+```rust
 # use std::sync::Arc;
 struct Indirect<T>(Arc<T>, u16);
 ```
@@ -24,7 +24,7 @@ you can define a template
 that derives `Clone` only for the cases
 where the _actual_ required constraints are met:
 
-```
+```rust
 # use derive_deftly::define_derive_deftly;
 define_derive_deftly! {
     MyClone:

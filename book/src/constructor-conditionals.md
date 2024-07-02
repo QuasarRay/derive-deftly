@@ -9,7 +9,7 @@ the `#[deftly(newfn)]` attribute,
 the template won't make a function name at all!
 
 Let's show how to fix that:
-```
+```rust
 # use derive_deftly::define_derive_deftly;
 define_derive_deftly! {
    Constructor for struct:

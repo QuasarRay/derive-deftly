@@ -6,7 +6,7 @@ we'd like to be able to give the `new` function a different name.
 
 We could do this as follows:
 
-```
+```rust
 # use derive_deftly::define_derive_deftly;
 define_derive_deftly! {
    Constructor for struct:

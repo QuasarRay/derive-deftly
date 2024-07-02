@@ -5,7 +5,7 @@ we didn't have `derive-deftly`,
 and we had to write Clone from scratch
 for a simple structure like this:
 
-```
+```rust
 struct GiftBasket {
    n_apples: u8,
    n_oranges: u8,
@@ -15,7 +15,7 @@ struct GiftBasket {
 ```
 
 We'd probably write something like this:
-```
+```rust
 # struct GiftBasket {
 #   n_apples: u8,
 #   n_oranges: u8,
@@ -61,7 +61,7 @@ impl Clone for ⟪Your struct⟫ {
 And here's how that pseudocode translates into
 a derive-deftly template:
 
-```
+```rust
 use derive_deftly::define_derive_deftly;
 
 define_derive_deftly! {

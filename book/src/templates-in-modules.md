@@ -23,7 +23,7 @@ With this method, you use
 to define the scope for a macro,
 and allow it to be accessed by its path.
 
-```
+```rust
 pub mod hello_world {
     use derive_deftly::define_derive_deftly;
     define_derive_deftly! {
@@ -60,7 +60,7 @@ If you do this, the module defining the macro
 must come before the module where you use the macro.
 (Also, the macro's name is never scoped within the module.)
 
-```
+```rust
 #[macro_use] // make HelloWorld visible outside the module (within the crate)
 mod hello_world {
     use derive_deftly::define_derive_deftly;

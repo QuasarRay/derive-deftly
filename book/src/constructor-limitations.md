@@ -13,7 +13,7 @@ we want our template to be struct-only.
 We can tell derive-deftly about this restriction,
 to help it generate more useful error messages:
 
-```
+```rust
 # use derive_deftly::define_derive_deftly;
 define_derive_deftly! {
    Constructor for struct: // (1)

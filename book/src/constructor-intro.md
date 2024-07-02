@@ -10,7 +10,7 @@ without having to write out all of its arguments.
 
 Let's start with the following (struct-only) template:
 
-```
+```rust
 # use derive_deftly::define_derive_deftly;
 define_derive_deftly! {
    Constructor:
@@ -27,7 +27,7 @@ define_derive_deftly! {
 
 When you apply the above template to a type like this:
 
-```
+```rust
 # use derive_deftly::define_derive_deftly;
 # define_derive_deftly! {
 #   Constructor:
@@ -51,7 +51,7 @@ struct Ex<A> {
 ```
 
 You'll get a constructor like this:
-```
+```rust
 # struct Ex<A> { a: f64, b: A, c: String }
 impl<A> Ex<A> {
     pub fn new( a: f64, b: A, c: String ) -> Self {

@@ -3,7 +3,7 @@
 But here's a structure where our current `MyClone` implementation
 will fall flat:
 
-```
+```rust
 # use std::fmt::Debug;
 struct MyItems<T:Clone, U>
     where U: Clone + Debug
@@ -27,7 +27,7 @@ impl<T:Clone, U> Clone for MyItems<T,U>
 
 We can expand our `MyClone` definition to look that way:
 
-```
+```rust
 # use derive_deftly::define_derive_deftly;
 define_derive_deftly! {
     MyClone:

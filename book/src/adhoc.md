@@ -11,7 +11,7 @@ Supposing that you wanted to apply the template above to `MyStruct`
 and `MyStruct` alone,
 you could have said:
 
-```
+```rust
 use derive_deftly::{Deftly, derive_deftly_adhoc};
 
 #[derive(Clone, Debug, Deftly)]

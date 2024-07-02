@@ -16,7 +16,7 @@ While you're at it, you want to add an `is_` function
 to detect each variant.
 
 You can do that like this:
-```
+```rust
 # use derive_deftly::define_derive_deftly;
 define_derive_deftly! {
     Discriminant:
