@@ -5,7 +5,7 @@ so that people can use it from any crate.
 
 To do this, you use
 [`export` before the name of your macro][exporting-a-template]:
-```
+```rust
 pub trait HelloWorld {
     fn greet();
 }

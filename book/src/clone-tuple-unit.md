@@ -20,7 +20,7 @@ the `MyClone` template we wrote above will expand
 to code like this...
 which happens to be valid syntax!
 
-```
+```rust
 struct TupleStruct(String, Option<String>);
 impl Clone for TupleStruct {
     fn clone(&self) -> Self {

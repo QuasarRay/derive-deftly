@@ -7,7 +7,7 @@ to be able to set fields to their default values,
 and not take them as arguments.
 
 We could do this with an explicit conditional for each field:
-```
+```rust
 # use derive_deftly::define_derive_deftly;
 define_derive_deftly! {
    Constructor:

@@ -7,7 +7,7 @@ Let's fix that!
 
 Suppose that we have enumeration defined like this:
 
-```
+```rust
 enum AllTypes {
     NoData,
     Tuple(u8, u16),
@@ -20,7 +20,7 @@ each of the three variants.
 
 We can do that as follow
 (For simplicity, we're going to ignore generics for now.)
-```
+```rust
 # use derive_deftly::define_derive_deftly;
 define_derive_deftly! {
     MyClone:
@@ -66,7 +66,7 @@ in the pattern that deconstructed it.
 
 When we apply `MyClone` to our enumeration,
 we get something like this:
-```
+```rust
 # enum AllTypes { NoData, Tuple(u8, u16), Struct { a: String, b: String } }
 impl Clone for AllTypes {
     fn clone(&self) -> Self {
@@ -97,7 +97,7 @@ If we apply `MyClone` above
 to `struct Example { a: u8, b: String }`,
 we get this:
 
-```
+```rust
 # struct Example { a: u8, b: String }
 impl Clone for Example {
     fn clone(&self) -> Self {
@@ -123,7 +123,7 @@ that worked for both `struct`s and enum`s.
 Now let's see how it works when we try to handle generics again.
 (It's surprisingly straightforward!)
 
-```
+```rust
 # use derive_deftly::{Deftly, define_derive_deftly};
 define_derive_deftly! {
     MyClone:
@@ -165,7 +165,7 @@ You can use
 [`${for ...}`][x:for]
 to specifiy explicitly:
 so, above, instead, we could have written
-```
+```rust
 # use derive_deftly::{Deftly, derive_deftly_adhoc};
 # #[derive(Deftly)]
 # #[derive_deftly_adhoc]

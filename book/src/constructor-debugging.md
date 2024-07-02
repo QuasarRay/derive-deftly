@@ -9,7 +9,7 @@ it can sometimes be hard to figure out compiler errors.
 You can
 [tell derive-deftly what your macro is supposed to produce][eo:expect]
 
-```
+```rust
 # use derive_deftly::{Deftly, define_derive_deftly};
 define_derive_deftly! {
    Constructor for struct, expect items:
@@ -52,7 +52,7 @@ but is wrong in some other way.
 You can ask derive-deftly to simply
 [print a copy of the expansion][eo:dbg].
 
-```
+```rust
 # use derive_deftly::{Deftly, define_derive_deftly};
 # define_derive_deftly! { Constructor: }
 #[derive(Deftly)]

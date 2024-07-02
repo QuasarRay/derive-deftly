@@ -60,7 +60,7 @@ on which you're applying your template.)
 Later on, you can apply `HelloWorld` to your own type
 with [`#[derive(Deftly)]`[derive-Deftly], as in:
 
-```
+```rust
 # use derive_deftly::define_derive_deftly;
 # define_derive_deftly! {
 #    HelloWorld:
