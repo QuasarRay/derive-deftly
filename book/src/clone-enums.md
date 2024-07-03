@@ -18,8 +18,8 @@ We want to make sure that
 MyClone can recognize and re-construct
 each of the three variants.
 
-We can do that as follows.
-(For simplicity, we're going to ignore generics for now.)
+We can do that as follows:
+
 ```rust
 # use derive_deftly::define_derive_deftly;
 define_derive_deftly! {
@@ -118,95 +118,6 @@ So (in this case at least)
 we were able to write a single template expansion
 that worked for both `struct`s and enum`s.
 
-#### Putting the generics back into our enumeration-friendly template
-
-Now let's see how it works when we try to handle generics again.
-(It's surprisingly straightforward!)
-
-```rust
-# use derive_deftly::{Deftly, define_derive_deftly};
-define_derive_deftly! {
-    MyClone:
-
-    impl<$tgens> Clone for $ttype
-    where $( $ftype: Clone, )
-          $twheres
-    {
-        fn clone(&self) -> Self {
-            match self {
-                $(
-                    $vpat => $vtype {
-                        $(
-                            $fname: $fpatname.clone(),
-                        )
-                    },
-                )
-            }
-        }
-    }
-}
-# #[derive(Deftly)]
-# #[derive_deftly(MyClone)]
-# enum TestCase<A> { Variant(A) }
-```
-
-##### A further note on repetition
-
-Note that when we define our additional `where` clauses,
-we don't have to specify separate of repetition
-for variants and fields:
-if we just have `$ftype` in a top-level repetition,
-`derive_deftly` will iterate over all fields in all variants.
-
-Sometimes, if you do something subtle,
-derive-deftly may not be able to figure
-out what you're trying to repeat over.
-You can use
-[`${for fields {...}}`][x:for] or [`${for variants {...}}`][x:for]
-to specify explicitly what you want to repeat.
-So, above, instead, we could have written
-```rust
-# use derive_deftly::{Deftly, derive_deftly_adhoc};
-# #[derive(Deftly)]
-# #[derive_deftly_adhoc]
-# enum TestCase<A> { Variant(A) }
-# derive_deftly_adhoc! { TestCase:
-#     fn testcase<$tgens>() where
-${for fields { $ftype: Clone, }}
-#     {}
-# }
-```
-
-You can also use `${for ...}` rather than `$(...)`
-in cases where you feel
-it makes your macro code clearer.
-For example, we could have used `${for}`
-to write our `MyClone` example more explicitly like this:
-
-```rust
-# use derive_deftly::define_derive_deftly;
-define_derive_deftly! {
-    MyClone:
-
-    impl Clone for $ttype
-    {
-        fn clone(&self) -> Self {
-            match self {
-                ${for variants {
-                    $vpat => $vtype {
-                        ${for fields {
-                            $fname: $fpatname.clone(),
-                        }}
-                    },
-                }}
-            }
-        }
-    }
-}
-```
-
-[t:repetition]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#t:repetition
-[x:for]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#x:for
 [x:vpat]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#x:vpat
 [x:vtype]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#x:vtype
 [x:fpatname]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#x:fpatname

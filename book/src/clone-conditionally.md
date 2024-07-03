@@ -31,11 +31,19 @@ define_derive_deftly! {
 
     impl<$tgens> Clone for $ttype
     where $twheres
+          // This is the new part:
           $( $ftype : Clone , )
     {
+        // (The rest is as before...)
         fn clone(&self) -> Self {
-            Self {
-                $( $fname : self.$fname.clone() , )
+            match self {
+                $(
+                    $vpat => $vtype {
+                        $(
+                            $fname: $fpatname.clone(),
+                        )
+                    },
+                )
             }
         }
     }
@@ -75,19 +83,86 @@ where
 }
 ```
 
+## What about that comma?
 
-> This time,
-> `derive_deftly` has exactly _one_ piece cleverness at work.
-> It makes sure that either `$twheres` is empty,
-> or that it ends with a comma.
-> That way, when your template expands
-> `where $twheres $( $ftype : Clone , )`
-> it won't produce
-> `where U: Debug + Clone T: Clone`
-> (which is a syntax error)
-> or
-> `where ,`
-> (which is also a syntax error).
+If you're paying close attention, you might have thought
+we had a syntax error above
+when we didn't use an explicit comma
+after `where $twheres`.
 
+This time,
+`derive_deftly` has exactly _one_ piece of cleverness at work.
+It makes sure that either `$twheres` is empty,
+or that it ends with a comma.
+That way, when your template expands
+`where $twheres $( $ftype : Clone , )`
+it won't produce
+where U: Debug + Clone T: Clone`
+(which is a syntax error)
+or
+`where ,`
+(which is also a syntax error).
+
+##### A further note on repetition
+
+Note that when we define our additional `where` clauses above, we said
+`where $( $ftype: Clone, )`
+at the top level.
+We didn't have to specify separate of repetition
+for variants and fields:
+if we have only `$ftype` in a top-level repetition,
+`derive_deftly` will iterate over all fields in all variants.
+
+Sometimes, if you do something subtle,
+derive-deftly may not be able to figure
+out what you're trying to repeat over.
+You can use
+[`${for fields {...}}`][x:for] or [`${for variants {...}}`][x:for]
+to specify explicitly what you want to repeat.
+So, above, instead, we could have written
+```rust
+# use derive_deftly::{Deftly, derive_deftly_adhoc};
+# #[derive(Deftly)]
+# #[derive_deftly_adhoc]
+# enum TestCase<A> { Variant(A) }
+# derive_deftly_adhoc! { TestCase:
+#     fn testcase<$tgens>() where
+${for fields { $ftype: Clone, }}
+#     {}
+# }
+```
+
+You can also use `${for ...}` rather than `$(...)`
+in cases where you feel
+it makes your macro code clearer.
+For example, we could have used `${for}`
+to write our `MyClone` example more explicitly like this:
+
+```rust
+# use derive_deftly::define_derive_deftly;
+define_derive_deftly! {
+    MyClone:
+
+    impl<$tgens> Clone for $ttype
+    where $twheres
+          ${for fields { $ftype: Clone , }}
+    {
+        fn clone(&self) -> Self {
+            match self {
+                ${for variants {
+                    $vpat => $vtype {
+                        ${for fields {
+                            $fname: $fpatname.clone(),
+                        }}
+                    },
+                }}
+            }
+        }
+    }
+}
+```
+
+[t:repetition]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#t:repetition
+[x:for]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#x:for
 
 [x:ftype]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#x:ftype

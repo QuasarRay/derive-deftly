@@ -12,9 +12,9 @@
 - [A brief tutorial: Writing your own Clone](clone-intro.md)
   - [Working with structs and fields](clone-fields.md)
     - [Tuple and unit structs](clone-tuple-unit.md)
+  - [Making MyClone apply to enumerations](clone-enums.md)
   - [Making MyClone apply to generics](clone-generics.md)
   - [Making MyClone apply conditionally](clone-conditionally.md)
-  - [Making MyClone apply to enumerations](clone-enums.md)
 
 - [Some more advanced topics](advanced-intro.md)
   - [Transforming names and strings](paste-and-case.md)

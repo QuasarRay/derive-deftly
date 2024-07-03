@@ -119,4 +119,4 @@ on [naming conventions](./expansions-naming.md).
 
 [t:repetition]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#t:repetition
 [x:fname]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#x:fname
-[repetition]: clone-enums.md#a-further-note-on-repetition
+[repetition]: clone-conditionally.md#a-further-note-on-repetition
