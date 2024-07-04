@@ -370,3 +370,19 @@ fn check_redefine() {
         ],
     );
 }
+
+#[test]
+fn check_paste() {
+    tests_using_driver(
+        quote! {
+            struct S;
+        },
+        EONG::Explicit,
+        &[
+            (r#"${define P {    "a" $tname }} $P"#, Ok(r#""a" S"#)),
+            (r#"${paste         "a" $tname  }"#, Ok(r#"aS"#)),
+            (r#"${define P   $< "a" $tname >} $< $P >"#, Ok(r#"aS"#)),
+            (r#"${define P { $< "a" $tname >}} $< $P >"#, Ok(r#"aS"#)),
+        ],
+    );
+}
