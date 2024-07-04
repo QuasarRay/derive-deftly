@@ -1,15 +1,5 @@
 # **Notes and plans (`NOTES.md`)**
 
-# Future improvements which are (currently) difficult
-
-(Should this section be tickets instead?)
-
- * Ideally we would check the case of reuseable derive names.
-   These should be in Pascal case.
-   But we only want to *lint* for this (and, suppressably), not fail,
-   and that's hard.
-
-
 # Future template features
 
 ## String concatenation `${string ...}`
