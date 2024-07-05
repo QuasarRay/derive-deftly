@@ -4,11 +4,12 @@ use std::fmt::Error as E;
 use std::fmt::Result as R;
 use std::fmt::Write;
 
-struct Out {
+struct Out<'c> {
     out: String,
+    subset_only: Option<&'c WithinVariant<'c>>,
 }
 
-impl Write for Out {
+impl Write for Out<'_> {
     fn write_str(&mut self, s: &str) -> fmt::Result {
         self.out.write_str(s)
     }
@@ -17,7 +18,13 @@ impl Write for Out {
 pub fn dump(ctx: &Context) {
     let w = (|| {
         let out = String::new();
-        let mut w = Out { out };
+        let subset_only = match ctx.within_loop {
+            WithinLoop::None => None,
+            WithinLoop::When | WithinLoop::Body => {
+                Some(ctx.variant.expect("within loop, but not variant!"))
+            }
+        };
+        let mut w = Out { out, subset_only };
 
         let description =
             format!("derive-deftly expansions dump {}", ctx.display_for_dbg());
@@ -150,7 +157,11 @@ fn dump_whole(mut w: &mut Out, ctx: &Context) -> R {
         bool! { c, false }
     }
 
-    WithinVariant::for_each(ctx, |ctx, wv| dump_variant(w, ctx, wv))?;
+    if let Some(wv) = w.subset_only {
+        dump_variant(w, ctx, wv)?;
+    } else {
+        WithinVariant::for_each(ctx, |ctx, wv| dump_variant(w, ctx, wv))?;
+    }
 
     Ok(())
 }
@@ -179,15 +190,23 @@ fn dump_variant(mut w: &mut Out, ctx: &Context, wv: &WithinVariant) -> R {
 
     expand! { c, $vattrs }
 
-    WithinField::for_each(ctx, |ctx, wf| dump_field(w, ctx, wf))?;
+    if let Some(_) = w.subset_only {
+        dump_field(w, ctx, ctx.field)?;
+    } else {
+        WithinField::for_each(ctx, |ctx, wf| dump_field(w, ctx, Some(wf)))?;
+    }
 
     Ok(())
 }
 
-fn dump_field(mut w: &mut Out, ctx: &Context, wf: &WithinField) -> R {
-    variant_heading(w, ctx.variant.expect("in field but not variant!"))?;
-    let fname = wf.fname(Span::call_site()).to_token_stream();
-    writeln!(w, ", field {}:", fname)?;
+fn dump_field(mut w: &mut Out, ctx: &Context, wf: Option<&WithinField>) -> R {
+    variant_heading(w, ctx.variant.expect("heading but not variant!"))?;
+    if let Some(wf) = wf {
+        let fname = wf.fname(Span::call_site()).to_token_stream();
+        writeln!(w, ", field {}:", fname)?;
+    } else {
+        writeln!(w, ", no field:")?;
+    }
     let c = (&mut w, ctx);
 
     expand! { c, $fname }

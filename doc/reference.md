@@ -872,6 +872,8 @@ for identification purposes.
 It prints a listing of all the available expansion keywords,
 and conditions,
 along with their expansions and values.
+When invoked at the toplevel,
+it prints a report for each variant and field.
 (The output goes to the compiler's stderr;
 the actual expansion is empty.)
 
