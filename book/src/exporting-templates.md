@@ -19,7 +19,6 @@ derive_deftly::define_derive_deftly! {
         }
     }
 }
-
 # fn main() {}
 ```
 

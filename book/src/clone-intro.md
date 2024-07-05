@@ -1,4 +1,4 @@
-# A brief tutorial: How to write your own Clone
+# A brief tutorial: Writing your own Clone
 
 In the previous chapters,
 we've learned how to define a simple `derive-deftly` template,

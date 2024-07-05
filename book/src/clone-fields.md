@@ -1,8 +1,7 @@
 # Working with structs and fields
 
 Let's start by imagining that
-we didn't have `derive-deftly`,
-and we had to write Clone from scratch
+we had to write Clone from scratch
 for a simple structure like this:
 
 ```rust
@@ -22,7 +21,6 @@ We'd probably write something like this:
 #   given_from: Option<String>,
 #   given_to: String,
 # }
-
 impl Clone for GiftBasket {
     fn clone(&self) -> Self {
         Self {
@@ -38,12 +36,12 @@ impl Clone for GiftBasket {
 (In reality,
 since `n_apples` and `n_oranges` both implement `Copy`,
 you wouldn't actually call `clone()` on them.
-But since the compiler knows their types,
-it should be smart enough to
-optimize the Clone away for you.)
+But the compiler
+should be smart enough to
+optimize the `clone()` away.)
 
 If you imagine generalizing this
-to any simple struct struct with named fields,
+to any simple struct with named fields,
 you might come up with a pseudocode template
 like this one:
 
@@ -79,28 +77,29 @@ define_derive_deftly! {
 
 Let's look at that template piece by piece.
 Certain marked "expansion keywords" in the contents
-(those marked with `$`)
+(those starting with `$`)
 are replaced with a value that depends on the struct
-that the template is beling applied to.
+we are applying the template to.
 
-You've already seen `$ttype`: it expands
+You've already seen `$ttype` ("top-level type"):
+it expands
 to the type on which you are applying the macro.  There are two new
 pieces of syntax here, though:
 [`$( ... )`][t:repetition]
 and
 [`$fname`][x:fname].
 
-In derive-deftly templates, `$( ... )`  denotes repetition:
+In derive-deftly templates, `$( ... )` denotes repetition:
 it repeats what is inside it
 an "appropriate" number of times.
-(We'll give a definition of "appropriate" later on.)
+(We'll give a definition of "appropriate" [later on][repetition].)
 Since we want to clone every field in our struct,
 we are repating the `field: self.field.clone() ,`
 part of our implementation
 once for each field.
 
-The `$fname` expansion means "the name of a field".
-Which field?
+The `$fname` ("field name") expansion means "the name of the current field".
+Which field is that?
 Since `$fname` occurs inside `$( ... )`,
 we will repeat the body of the `$( ... )` once for each
 field, and expand `$fname`
@@ -108,15 +107,16 @@ to the name of a different field each time.
 
 (Again, more advanced repetition is possible;
 there's
-[more to come](clone-enums.md#a-further-note-on-repetition).)
+[more to come][repetition].)
 
 ## An aside on naming
 
 At this point, you've seen expansions with names like `$ttype`
-and `$fname`, and you may be wondering where they come from.
+and `$fname`, and you may be wondering where these names come from.
 If you want to know more,
 you can skip ahead to the section
 on [naming conventions](./expansions-naming.md).
 
 [t:repetition]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#t:repetition
 [x:fname]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#x:fname
+[repetition]: clone-conditionally.md#a-further-note-on-repetition

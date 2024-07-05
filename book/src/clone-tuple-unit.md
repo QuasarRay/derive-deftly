@@ -1,24 +1,25 @@
 # Will MyClone apply to tuple and unit structs?
 
 Rust defines several kinds of struct:
-structs with fields (`struct Foo {...};`),
-tuple structs (`struct Foo(...);`),
-and unit structs (`struct Foo;`).
 
-If you try to apply the `MyClone` template above
-to a struct with fields,
-it will work just fine.
+* structs with fields like `struct Foo {...};`
+* tuple structs like `struct Foo(...);`
+* and unit structs like `struct Foo;`
+
+So far, you've only applied your `MyClone` template
+to a struct with fields.
 But with a tuple struct, or a unit struct,
 you might expect it to fail.
 
-Surprisingly, it will still work fine!
+Surprisingly, our template still works fine!
 This isn't because of any clever trickery
 from derive-deftly:
 it's just how Rust works.
-When you use it on tuple or unit structs,
-the `MyClone` template we wrote above will expand
-to code like this...
-which happens to be valid syntax!
+When you use `MyClone` on tuple or unit struct,
+it will expand to code like this the example below.
+And this syntax,
+though not the normal way to work with these types,
+is still valid Rust!
 
 ```rust
 struct TupleStruct(String, Option<String>);
@@ -40,7 +41,7 @@ impl Clone for UnitStruct {
 }
 ```
 
-This will be a common theme in what follows:
-Rust often lets you use a slightly unidiomatic syntax
+This will be a common theme when using derive-deftly:
+Rust often lets you use a slightly unidiomatic syntax,
 so that you can handle many different cases
 in the same way.

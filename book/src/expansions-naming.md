@@ -4,13 +4,14 @@ Here we discuss some naming conventions
 used in the naming of derive-deftly expansions.
 
 Many derive-deftly expansions'
-[names start with][keyword-initial-letters]
-`t` for **top-level**
-(whatever you are applying the template to),
-`v` for **variant**
-(a variant of an `enum`),
-or `f` for **field**
-(a single field of a struct or variant).
+names start with [a single letter][keyword-initial-letters]
+to indicate what information they use:
+* `t` for **top-level**
+  (the `struct`, `enum`, or `union` you are applying the template to),
+* `v` for **variant**
+  (a variant of an `enum`),
+* or `f` for **field**
+  (a single field of a struct or variant).
 
 For example, there is `$ttype` for "top-level type" and `$fname` for
 "field name".

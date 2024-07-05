@@ -1,26 +1,36 @@
 # More complicated conditionals
 
-Frequently, we'd like our template
-to behave in different ways different fields.
-For example, let's suppose that we want our template
+Sometimes, we'd like to make a template template
+that behave in different ways for different fields.
+For example, let's suppose that we want our `Constructor` template
 to be able to set fields to their default values,
 and not take them as arguments.
 
-We could do this with an explicit conditional for each field:
+We can do this with an explicit conditional for each field:
 ```rust
 # use derive_deftly::define_derive_deftly;
 define_derive_deftly! {
    Constructor:
 
    impl<$tgens> $ttype where $twheres {
-     pub fn new
-     ( $(
-          ${when not(fmeta(Constructor(default))) } // (1)
+     $tvis fn
+        // This is the function name, same as before.
+        ${if tmeta(constructor(newfn)) {
+            ${tmeta(constructor(newfn)) as ident}
+          } else {
+            new
+          }
+        }
+     (
+       // These are the function arguments:
+       $(
+          ${when not(fmeta(constructor(default))) } // (1)
           $fname: $ftype ,
-        ) ) -> Self {
+        )
+     ) -> Self {
           Self {
               $( $fname:
-                  ${if fmeta(Constructor(default)) { Default::default() }
+                  ${if fmeta(constructor(default)) { Default::default() }
                   else { $fname } }
                  , )
           }
@@ -32,21 +42,22 @@ use derive_deftly::Deftly;
 #[derive(Deftly)]
 #[derive_deftly(Constructor)]
 struct Foo {
-    #[deftly(Constructor(default))]
+    #[deftly(constructor(default))]
     s: Vec<String>,
     n: u32,
 }
 ```
 
 Here we're using a new construct:
-[`$when`][x:when]
-It's only valid inside a loop like `$( ... )`.
-It causes the output of the loop to be surpressed
+[`$when`][x:when].
+It's only valid inside a loop like `$( ... )` or `${for ...}`.
+It causes the output of the loop to be suppressed
 whenever the condition is not true.
 
-The condition in this cases is `not(fmeta(Constructor(default)))`.
+The condition in this cases is `not(fmeta(constructor(default)))`.
 You've seen `fmeta` before;
-[`not`][c:not]
+it's true when a given attribute is present on the current field.
+The [`not`][c:not] condition
 is just how we express negation.
 All together, this `$when` keyword causes each field
 that has `#[deftly(Constructor(default))]` applied to it

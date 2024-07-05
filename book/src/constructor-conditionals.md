@@ -1,4 +1,4 @@
-# Getting started with conditionals
+# Getting started with if/then/else conditionals
 
 In the example above,
 we made it possible to rename the "new" function
@@ -15,8 +15,15 @@ define_derive_deftly! {
    Constructor for struct:
 
    impl<$tgens> $ttype where $twheres {
-   pub fn
-        ${if tmeta(newfn) { ${tmeta(newfn)} } else { new } } // (1)
+   $tvis fn
+        // (1) This "if" defines the function name:
+        ${if tmeta(constructor(newfn)) {
+            ${tmeta(constructor(newfn)) as ident}
+          } else {
+            new
+          }
+        }
+        // The rest is as before:
      ( $( $fname: $ftype , ) ) -> Self {
           Self {
               $( $fname , )
@@ -24,14 +31,29 @@ define_derive_deftly! {
       }
    }
 }
+#
+# use derive_deftly::Deftly;
+# #[derive(Deftly)]
+# #[derive_deftly(Constructor)]
+# #[deftly(constructor(newfn="construct_example"))]
+# struct Example {
+#    a: f64,
+#    b: String
+# }
+# #[derive(Deftly)]
+# #[derive_deftly(Constructor)]
+# struct Example2 {
+#    a: f64,
+#    b: String
+# }
 ```
 
-Have a look at the line marked with `// (1)`.
+Have a look at the part of the template marked with `// (1)`.
 It introduces a new concept: _conditional expansion_.
 The
-[`${if ...}`][x:if]
+[`${if cond {expansion}}`][x:if]
 keyword checks whether a given _condition_ is true.
-If it is, then it expands to one of its arguments.
+If it is, then the `$if` keyword expands to the expansion second argument.
 Otherwise, it expands to an "else" argument (if any).
 
 > Also, you can chain `$if`s, as in
@@ -39,13 +61,21 @@ Otherwise, it expands to an "else" argument (if any).
 > and so on!
 
 Here, the condition is
-[`tmeta(newfn)`][c:tmeta]
+[`tmeta(constructor(newfn))`][c:tmeta] ("toplevel metavalue").
 That condition is true if the current type
 has an `#[deftly(newfn)]` attribute,
 and false otherwise.
-There are also `vmeta` and `fmeta` attributes
+There are also `vmeta` and `fmeta` conditions
 to detect `#[deftly(..)]` attributes
 on variants and fields respectively.
+
+> Note: Don't confuse conditions with expansions!
+> As we use it here, `tmeta(x)` is a condition (true or false),
+> whereas `${tmeta(x) as ident}` is an expansion.
+>
+> Even though the names are similar in this case,
+> conditions and expansions have separate namespaces;
+> you cannot (in general) use them interchangeably.
 
 [x:if]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#x:if
 [c:tmeta]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#c:tmeta
