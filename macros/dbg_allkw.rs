@@ -4,12 +4,20 @@ use std::fmt::Error as E;
 use std::fmt::Result as R;
 use std::fmt::Write;
 
-/// Type alias for our output text accumulator, in case we want to change it
-type Out = String;
+struct Out {
+    out: String,
+}
+
+impl Write for Out {
+    fn write_str(&mut self, s: &str) -> fmt::Result {
+        self.out.write_str(s)
+    }
+}
 
 pub fn dump(ctx: &Context) {
     let w = (|| {
-        let mut w = String::new();
+        let out = String::new();
+        let mut w = Out { out };
 
         let description =
             format!("derive-deftly expansions dump {}", ctx.display_for_dbg());
@@ -18,7 +26,7 @@ pub fn dump(ctx: &Context) {
         dump_whole(&mut w, ctx)?;
         writeln!(w, "---------- {} (end) ----------", description)?;
 
-        Ok::<_, E>(w)
+        Ok::<_, E>(w.out)
     })()
     .expect("write to String failed");
 
