@@ -1,13 +1,13 @@
-# Marking a template's limitations
+# Limiting a template to one kind of type.
 
-The template above doesn't work for enumerations.
+The `Constructor` template above doesn't work for enumerations.
 If you try to apply it to one, you'll get
 a not-entirely-helpful error message.
 
 In earlier examples,
 we've shown how to make templates
 that apply to enums as well as structs.
-But let's say that in this case,
+But let's suppose that in this case,
 we want our template to be struct-only.
 
 We can tell derive-deftly about this restriction,
@@ -18,6 +18,7 @@ to help it generate more useful error messages:
 define_derive_deftly! {
    Constructor for struct: // (1)
 
+   // The rest is unchanged
    impl<$tgens> $ttype where $twheres {
       pub fn new( $( $fname: $ftype , ) ) -> Self {
           Self {

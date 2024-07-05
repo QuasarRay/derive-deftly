@@ -21,11 +21,11 @@
   - [Naming conventions for derive-deftly expansions](expansions-naming.md)
 
 - [Another example: Defining a constructor function](constructor-intro.md)
-  - [Marking a template's limitations](constructor-limitations.md)
+  - [Limiting a template to one kind of type](constructor-limitations.md)
   - [Debugging templates](constructor-debugging.md)
   - [Working with visibility](constructor-visibility.md)
   - [Using attributes to make a template take arguments](constructor-attrs.md)
-  - [Getting started with conditionals](constructor-conditionals.md)
+  - [Getting started if/then/else conditionals](constructor-conditionals.md)
   - [More complicated conditionals](constructor-advanced-conditionals.md)
 
 - [Other features](other-features.md)

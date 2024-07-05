@@ -1,11 +1,13 @@
 # Working with visibility
 
 Our `Constructor` template above doesn't really make sense
-if it's applied to a non-public type:
-Rust may even complain that we're declaring
-a public function that returns a private type!
+if it's applied to a non-public type;
+It would define the `new()` function as public,
+when the type is not meant to be exposed outside the crate.
+(Rust may even complain that we're declaring
+a public function that returns a private type!)
 
-Let's fix this, and have it give our constructor
+Let's fix this, and have our template give our constructor
 the same visibility as the type itself:
 
 ```rust
@@ -14,6 +16,7 @@ define_derive_deftly! {
    Constructor for struct:
 
    impl<$tgens> $ttype where $twheres {
+      // (this "$tvis" is new)
       $tvis fn new( $( $fname: $ftype , ) ) -> Self {
           Self {
               $( $fname , )
