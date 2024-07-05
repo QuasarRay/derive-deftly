@@ -64,6 +64,272 @@ variant Struct, field field:
         fdefvis      =   false
         $fattrs      =>  
 ---------- derive-deftly expansions dump for Enum from Dbg (end) ----------
+---------- derive-deftly expansions dump for Enum::Unit from DbgVariants (start) ----------
+top-level:
+        $tname       =>  Enum
+        $ttype       =>  Enum
+        $tvis        =>  
+        $tgens       =>  
+        $tgnames     =>  
+        $twheres     =>  
+        $tdeftype    =>  Enum
+        $tdefgens    =>  
+        $tdefkwd     =>  enum
+        ${tdefvariants VARIANTS ..} => { VARIANTS .. }
+        is_struct    =   false
+        is_enum      =   true
+        is_union     =   false
+        tvis         =   false
+        tgens        =   false
+        $tattrs      =>  #[allow(dead_code)]
+variant Unit:
+        $vname       =>  Unit
+        $vtype       =>  Enum :: Unit
+        $vpat        =>  Enum :: Unit {}
+        ${vdefbody VNAME FIELDS ..} => VNAME FIELDS .. ,
+        v_is_unit    =   true
+        v_is_tuple   =   false
+        v_is_named   =   false
+        $vattrs      =>  
+variant Unit, no field:
+        $fname       =>  <error>
+        $ftype       =>  <error>
+        $fvis        =>  <error>
+        $fdefvis     =>  <error>
+        $fpatname    =>  <error>
+        $fdefine     =>  <error>
+        fvis         =   <error>
+        fdefvis      =   <error>
+        $fattrs      =>  <error>
+---------- derive-deftly expansions dump for Enum::Unit from DbgVariants (end) ----------
+---------- derive-deftly expansions dump for Enum::Tuple from DbgVariants (start) ----------
+top-level:
+        $tname       =>  Enum
+        $ttype       =>  Enum
+        $tvis        =>  
+        $tgens       =>  
+        $tgnames     =>  
+        $twheres     =>  
+        $tdeftype    =>  Enum
+        $tdefgens    =>  
+        $tdefkwd     =>  enum
+        ${tdefvariants VARIANTS ..} => { VARIANTS .. }
+        is_struct    =   false
+        is_enum      =   true
+        is_union     =   false
+        tvis         =   false
+        tgens        =   false
+        $tattrs      =>  #[allow(dead_code)]
+variant Tuple:
+        $vname       =>  Tuple
+        $vtype       =>  Enum :: Tuple
+        $vpat        =>  Enum :: Tuple { 0 : f_0, }
+        ${vdefbody VNAME FIELDS ..} => VNAME(FIELDS ..),
+        v_is_unit    =   false
+        v_is_tuple   =   true
+        v_is_named   =   false
+        $vattrs      =>  
+variant Tuple, no field:
+        $fname       =>  <error>
+        $ftype       =>  <error>
+        $fvis        =>  <error>
+        $fdefvis     =>  <error>
+        $fpatname    =>  <error>
+        $fdefine     =>  <error>
+        fvis         =   <error>
+        fdefvis      =   <error>
+        $fattrs      =>  <error>
+---------- derive-deftly expansions dump for Enum::Tuple from DbgVariants (end) ----------
+---------- derive-deftly expansions dump for Enum::Struct from DbgVariants (start) ----------
+top-level:
+        $tname       =>  Enum
+        $ttype       =>  Enum
+        $tvis        =>  
+        $tgens       =>  
+        $tgnames     =>  
+        $twheres     =>  
+        $tdeftype    =>  Enum
+        $tdefgens    =>  
+        $tdefkwd     =>  enum
+        ${tdefvariants VARIANTS ..} => { VARIANTS .. }
+        is_struct    =   false
+        is_enum      =   true
+        is_union     =   false
+        tvis         =   false
+        tgens        =   false
+        $tattrs      =>  #[allow(dead_code)]
+variant Struct:
+        $vname       =>  Struct
+        $vtype       =>  Enum :: Struct
+        $vpat        =>  Enum :: Struct { field : f_field, }
+        ${vdefbody VNAME FIELDS ..} => VNAME { FIELDS .. },
+        v_is_unit    =   false
+        v_is_tuple   =   false
+        v_is_named   =   true
+        $vattrs      =>  
+variant Struct, no field:
+        $fname       =>  <error>
+        $ftype       =>  <error>
+        $fvis        =>  <error>
+        $fdefvis     =>  <error>
+        $fpatname    =>  <error>
+        $fdefine     =>  <error>
+        fvis         =   <error>
+        fdefvis      =   <error>
+        $fattrs      =>  <error>
+---------- derive-deftly expansions dump for Enum::Struct from DbgVariants (end) ----------
+---------- derive-deftly expansions dump for Enum::Tuple.0 from DbgFields (start) ----------
+top-level:
+        $tname       =>  Enum
+        $ttype       =>  Enum
+        $tvis        =>  
+        $tgens       =>  
+        $tgnames     =>  
+        $twheres     =>  
+        $tdeftype    =>  Enum
+        $tdefgens    =>  
+        $tdefkwd     =>  enum
+        ${tdefvariants VARIANTS ..} => { VARIANTS .. }
+        is_struct    =   false
+        is_enum      =   true
+        is_union     =   false
+        tvis         =   false
+        tgens        =   false
+        $tattrs      =>  #[allow(dead_code)]
+variant Tuple:
+        $vname       =>  Tuple
+        $vtype       =>  Enum :: Tuple
+        $vpat        =>  Enum :: Tuple { 0 : f_0, }
+        ${vdefbody VNAME FIELDS ..} => VNAME(FIELDS ..),
+        v_is_unit    =   false
+        v_is_tuple   =   true
+        v_is_named   =   false
+        $vattrs      =>  
+variant Tuple, field 0:
+        $fname       =>  0
+        $ftype       =>  usize
+        $fvis        =>  
+        $fdefvis     =>  
+        $fpatname    =>  f_0
+        $fdefine     =>  
+        fvis         =   false
+        fdefvis      =   false
+        $fattrs      =>  
+---------- derive-deftly expansions dump for Enum::Tuple.0 from DbgFields (end) ----------
+---------- derive-deftly expansions dump for Enum::Struct.field from DbgFields (start) ----------
+top-level:
+        $tname       =>  Enum
+        $ttype       =>  Enum
+        $tvis        =>  
+        $tgens       =>  
+        $tgnames     =>  
+        $twheres     =>  
+        $tdeftype    =>  Enum
+        $tdefgens    =>  
+        $tdefkwd     =>  enum
+        ${tdefvariants VARIANTS ..} => { VARIANTS .. }
+        is_struct    =   false
+        is_enum      =   true
+        is_union     =   false
+        tvis         =   false
+        tgens        =   false
+        $tattrs      =>  #[allow(dead_code)]
+variant Struct:
+        $vname       =>  Struct
+        $vtype       =>  Enum :: Struct
+        $vpat        =>  Enum :: Struct { field : f_field, }
+        ${vdefbody VNAME FIELDS ..} => VNAME { FIELDS .. },
+        v_is_unit    =   false
+        v_is_tuple   =   false
+        v_is_named   =   true
+        $vattrs      =>  
+variant Struct, field field:
+        $fname       =>  field
+        $ftype       =>  String
+        $fvis        =>  
+        $fdefvis     =>  
+        $fpatname    =>  f_field
+        $fdefine     =>  field :
+        fvis         =   false
+        fdefvis      =   false
+        $fattrs      =>  
+---------- derive-deftly expansions dump for Enum::Struct.field from DbgFields (end) ----------
+---------- derive-deftly expansions dump for Enum::Tuple.0 from DbgNested (start) ----------
+top-level:
+        $tname       =>  Enum
+        $ttype       =>  Enum
+        $tvis        =>  
+        $tgens       =>  
+        $tgnames     =>  
+        $twheres     =>  
+        $tdeftype    =>  Enum
+        $tdefgens    =>  
+        $tdefkwd     =>  enum
+        ${tdefvariants VARIANTS ..} => { VARIANTS .. }
+        is_struct    =   false
+        is_enum      =   true
+        is_union     =   false
+        tvis         =   false
+        tgens        =   false
+        $tattrs      =>  #[allow(dead_code)]
+variant Tuple:
+        $vname       =>  Tuple
+        $vtype       =>  Enum :: Tuple
+        $vpat        =>  Enum :: Tuple { 0 : f_0, }
+        ${vdefbody VNAME FIELDS ..} => VNAME(FIELDS ..),
+        v_is_unit    =   false
+        v_is_tuple   =   true
+        v_is_named   =   false
+        $vattrs      =>  
+variant Tuple, field 0:
+        $fname       =>  0
+        $ftype       =>  usize
+        $fvis        =>  
+        $fdefvis     =>  
+        $fpatname    =>  f_0
+        $fdefine     =>  
+        fvis         =   false
+        fdefvis      =   false
+        $fattrs      =>  
+---------- derive-deftly expansions dump for Enum::Tuple.0 from DbgNested (end) ----------
+---------- derive-deftly expansions dump for Enum::Struct.field from DbgNested (start) ----------
+top-level:
+        $tname       =>  Enum
+        $ttype       =>  Enum
+        $tvis        =>  
+        $tgens       =>  
+        $tgnames     =>  
+        $twheres     =>  
+        $tdeftype    =>  Enum
+        $tdefgens    =>  
+        $tdefkwd     =>  enum
+        ${tdefvariants VARIANTS ..} => { VARIANTS .. }
+        is_struct    =   false
+        is_enum      =   true
+        is_union     =   false
+        tvis         =   false
+        tgens        =   false
+        $tattrs      =>  #[allow(dead_code)]
+variant Struct:
+        $vname       =>  Struct
+        $vtype       =>  Enum :: Struct
+        $vpat        =>  Enum :: Struct { field : f_field, }
+        ${vdefbody VNAME FIELDS ..} => VNAME { FIELDS .. },
+        v_is_unit    =   false
+        v_is_tuple   =   false
+        v_is_named   =   true
+        $vattrs      =>  
+variant Struct, field field:
+        $fname       =>  field
+        $ftype       =>  String
+        $fvis        =>  
+        $fdefvis     =>  
+        $fpatname    =>  f_field
+        $fdefine     =>  field :
+        fvis         =   false
+        fdefvis      =   false
+        $fattrs      =>  
+---------- derive-deftly expansions dump for Enum::Struct.field from DbgNested (end) ----------
 ---------- derive-deftly expansions dump for Unit from Dbg (start) ----------
 top-level:
         $tname       =>  Unit
