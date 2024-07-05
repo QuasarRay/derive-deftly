@@ -122,6 +122,8 @@ every-commit:
   stage: comprehensive
   image: rustlang/rust@sha256:aaee57e8fa29c2809494ec71ffab6fcfa241b765c2a78d781e4de17fe38f060e
   script:
+    - apt-get -y update
+    - apt-get -y install libtoml-perl git
     - ./maint/via-cargo-install-in-ci cargo-expand --version=1.0.67 --features=prettyplease
     - maint/for-every-commit maint/cargo-test-locked --workspace --all-features -- --skip directly::check_examples
   cache:
