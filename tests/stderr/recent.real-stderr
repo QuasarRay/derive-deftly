@@ -291,6 +291,10 @@ variant Tuple, field 0:
         fvis         =   false
         fdefvis      =   false
         $fattrs      =>  
+user-defined expansions:
+        $FNAME       =>  0
+user-defined conditions:
+        IS_ENUM      =   true
 ---------- derive-deftly expansions dump for Enum::Tuple.0 from DbgNested (end) ----------
 ---------- derive-deftly expansions dump for Enum::Struct.field from DbgNested (start) ----------
 top-level:
@@ -329,6 +333,10 @@ variant Struct, field field:
         fvis         =   false
         fdefvis      =   false
         $fattrs      =>  
+user-defined expansions:
+        $FNAME       =>  field
+user-defined conditions:
+        IS_ENUM      =   true
 ---------- derive-deftly expansions dump for Enum::Struct.field from DbgNested (end) ----------
 ---------- derive-deftly expansions dump for Unit from Dbg (start) ----------
 top-level:

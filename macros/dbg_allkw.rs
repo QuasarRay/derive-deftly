@@ -159,6 +159,7 @@ fn dump_whole(mut w: &mut Out, ctx: &Context) -> R {
 
     if let Some(wv) = w.subset_only {
         dump_variant(w, ctx, wv)?;
+        dump_user_defined(w, ctx)?;
     } else {
         WithinVariant::for_each(ctx, |ctx, wv| dump_variant(w, ctx, wv))?;
     }
@@ -220,6 +221,40 @@ fn dump_field(mut w: &mut Out, ctx: &Context, wf: Option<&WithinField>) -> R {
     bool! { c, fdefvis }
 
     expand! { c, $fattrs }
+
+    Ok(())
+}
+
+fn dump_user_defined(mut w: &mut Out, ctx: &Context) -> R {
+    // evade macro hygiene
+    let mut c;
+    let mut name;
+
+    macro_rules! print_definitions { {
+        $heading:expr, $B:ty, $body:stmt,
+    } => { {
+        let mut set = BTreeSet::new();
+        for def in ctx.definitions.iter::<$B>().flatten() {
+            set.insert(&def.name);
+        }
+        if !set.is_empty() {
+            writeln!(w, "{}", $heading)?;
+            c = (&mut w, ctx);
+            for n in set {
+                name = n;
+                $body
+            }
+        }
+    } } }
+
+    print_definitions! {
+        "user-defined expansions:", DefinitionBody,
+        expand! { c, $#name },
+    }
+    print_definitions! {
+        "user-defined conditions:", DefCondBody,
+        bool! { c, #name },
+    }
 
     Ok(())
 }
