@@ -1,4 +1,4 @@
----------- derive-deftly expansions dump for Enum (start) ----------
+---------- derive-deftly expansions dump for Enum from Dbg (start) ----------
 top-level:
         $tname       =>  Enum
         $ttype       =>  Enum
@@ -63,8 +63,8 @@ variant Struct, field field:
         fvis         =   false
         fdefvis      =   false
         $fattrs      =>  
----------- derive-deftly expansions dump for Enum (end) ----------
----------- derive-deftly expansions dump for Unit (start) ----------
+---------- derive-deftly expansions dump for Enum from Dbg (end) ----------
+---------- derive-deftly expansions dump for Unit from Dbg (start) ----------
 top-level:
         $tname       =>  Unit
         $ttype       =>  Unit
@@ -91,8 +91,8 @@ value:
         v_is_tuple   =   false
         v_is_named   =   false
         $vattrs      =>  
----------- derive-deftly expansions dump for Unit (end) ----------
----------- derive-deftly expansions dump for Tuple (start) ----------
+---------- derive-deftly expansions dump for Unit from Dbg (end) ----------
+---------- derive-deftly expansions dump for Tuple from Dbg (start) ----------
 top-level:
         $tname       =>  Tuple
         $ttype       =>  Tuple
@@ -129,8 +129,8 @@ value, field 0:
         fvis         =   false
         fdefvis      =   false
         $fattrs      =>  
----------- derive-deftly expansions dump for Tuple (end) ----------
----------- derive-deftly expansions dump for Struct (start) ----------
+---------- derive-deftly expansions dump for Tuple from Dbg (end) ----------
+---------- derive-deftly expansions dump for Struct from Dbg (start) ----------
 top-level:
         $tname       =>  Struct
         $ttype       =>  Struct
@@ -167,7 +167,7 @@ value, field field:
         fvis         =   false
         fdefvis      =   false
         $fattrs      =>  
----------- derive-deftly expansions dump for Struct (end) ----------
+---------- derive-deftly expansions dump for Struct from Dbg (end) ----------
 ---------- derive-deftly expansion of ReferenceVersion for Tuple (start) ----------
 #[derive(Deftly)] #[derive_deftly_adhoc] struct TupleReference < 'reference, F
 = (), > (& 'reference F,); impl < 'reference, F, > From < & 'reference Tuple
