@@ -144,9 +144,11 @@ sub grok_dbg_allkw () {
 	} else {
 	    next;
 	}
+	my $name_re = qr{\#?\w+};
 	die "couldn't grok dbg_allkw macro invocation ($dollar_re) $_ ?" unless
-	  m/^\ * \w+\! \ * \{ \ * c, \ * $dollar_re (\w+) \ * \}$/x ||
-	  m/^\ * \w+\! \ * \{ \ * c, \ * $dollar_re \{ (\w+) [^{}]* \} \ * \}$/x;
+   m/^\ * \w+\! \ * \{ \ * c, \ * $dollar_re    ($name_re)    \ * \}$/x ||
+   m/^\ * \w+\! \ * \{ \ * c, \ * $dollar_re \{ ($name_re) [^{}]* \} \ * \}$/x;
+	next if $1 =~ m{^\#};
 	push @$out, $1;
     }
     grokked 'dbg_all_keywords (expand!)', 'd', @out_kw;

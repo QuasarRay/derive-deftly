@@ -231,7 +231,7 @@ fn dump_user_defined(mut w: &mut Out, ctx: &Context) -> R {
     let mut name;
 
     macro_rules! print_definitions { {
-        $heading:expr, $B:ty, $body:stmt,
+        $heading:expr, $B:ty, $body:stmt
     } => { {
         let mut set = BTreeSet::new();
         for def in ctx.definitions.iter::<$B>().flatten() {
@@ -249,11 +249,11 @@ fn dump_user_defined(mut w: &mut Out, ctx: &Context) -> R {
 
     print_definitions! {
         "user-defined expansions:", DefinitionBody,
-        expand! { c, $#name },
+        expand! { c, $#name }
     }
     print_definitions! {
         "user-defined conditions:", DefCondBody,
-        bool! { c, #name },
+        bool! { c, #name }
     }
 
     Ok(())
