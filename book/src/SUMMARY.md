@@ -20,7 +20,7 @@
   - [Transforming names and strings](paste-and-case.md)
   - [Naming conventions for derive-deftly expansions](expansions-naming.md)
 
-- [Another example: Defining a constructor function.](constructor-intro.md)
+- [Another example: Defining a constructor function](constructor-intro.md)
   - [Marking a template's limitations](constructor-limitations.md)
   - [Debugging templates](constructor-debugging.md)
   - [Working with visibility](constructor-visibility.md)

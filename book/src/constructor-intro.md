@@ -1,4 +1,4 @@
-# Another example: Defining a constructor function.
+# Another example: Defining a constructor function
 
 In this section,
 we'll be using another example to demonstrate
