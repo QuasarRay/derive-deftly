@@ -36,7 +36,7 @@ Alternatively,
 you can request this syntax check
 [when you invoke the macro][expansion-options]:
 
-```
+```rust
 # use derive_deftly::{Deftly, define_derive_deftly};
 # define_derive_deftly! { Constructor: }
 #[derive(Deftly)]
