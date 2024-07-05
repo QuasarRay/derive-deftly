@@ -92,15 +92,15 @@ variant Unit:
         v_is_named   =   false
         $vattrs      =>  
 variant Unit, no field:
-        $fname       =>  <error>
-        $ftype       =>  <error>
-        $fvis        =>  <error>
-        $fdefvis     =>  <error>
-        $fpatname    =>  <error>
-        $fdefine     =>  <error>
-        fvis         =   <error>
-        fdefvis      =   <error>
-        $fattrs      =>  <error>
+        $fname       =>  <error: must be within a field (so, in a repeat group)>
+        $ftype       =>  <error: must be within a field (so, in a repeat group)>
+        $fvis        =>  <error: must be within a field (so, in a repeat group)>
+        $fdefvis     =>  <error: must be within a field (so, in a repeat group)>
+        $fpatname    =>  <error: must be within a field (so, in a repeat group)>
+        $fdefine     =>  <error: must be within a field (so, in a repeat group)>
+        fvis         =   <error: must be within a field (so, in a repeat group)>
+        fdefvis      =   <error: must be within a field (so, in a repeat group)>
+        $fattrs      =>  <error: must be within a field (so, in a repeat group)>
 ---------- derive-deftly expansions dump for Enum::Unit from DbgVariants (end) ----------
 ---------- derive-deftly expansions dump for Enum::Tuple from DbgVariants (start) ----------
 top-level:
@@ -130,15 +130,15 @@ variant Tuple:
         v_is_named   =   false
         $vattrs      =>  
 variant Tuple, no field:
-        $fname       =>  <error>
-        $ftype       =>  <error>
-        $fvis        =>  <error>
-        $fdefvis     =>  <error>
-        $fpatname    =>  <error>
-        $fdefine     =>  <error>
-        fvis         =   <error>
-        fdefvis      =   <error>
-        $fattrs      =>  <error>
+        $fname       =>  <error: must be within a field (so, in a repeat group)>
+        $ftype       =>  <error: must be within a field (so, in a repeat group)>
+        $fvis        =>  <error: must be within a field (so, in a repeat group)>
+        $fdefvis     =>  <error: must be within a field (so, in a repeat group)>
+        $fpatname    =>  <error: must be within a field (so, in a repeat group)>
+        $fdefine     =>  <error: must be within a field (so, in a repeat group)>
+        fvis         =   <error: must be within a field (so, in a repeat group)>
+        fdefvis      =   <error: must be within a field (so, in a repeat group)>
+        $fattrs      =>  <error: must be within a field (so, in a repeat group)>
 ---------- derive-deftly expansions dump for Enum::Tuple from DbgVariants (end) ----------
 ---------- derive-deftly expansions dump for Enum::Struct from DbgVariants (start) ----------
 top-level:
@@ -168,15 +168,15 @@ variant Struct:
         v_is_named   =   true
         $vattrs      =>  
 variant Struct, no field:
-        $fname       =>  <error>
-        $ftype       =>  <error>
-        $fvis        =>  <error>
-        $fdefvis     =>  <error>
-        $fpatname    =>  <error>
-        $fdefine     =>  <error>
-        fvis         =   <error>
-        fdefvis      =   <error>
-        $fattrs      =>  <error>
+        $fname       =>  <error: must be within a field (so, in a repeat group)>
+        $ftype       =>  <error: must be within a field (so, in a repeat group)>
+        $fvis        =>  <error: must be within a field (so, in a repeat group)>
+        $fdefvis     =>  <error: must be within a field (so, in a repeat group)>
+        $fpatname    =>  <error: must be within a field (so, in a repeat group)>
+        $fdefine     =>  <error: must be within a field (so, in a repeat group)>
+        fvis         =   <error: must be within a field (so, in a repeat group)>
+        fdefvis      =   <error: must be within a field (so, in a repeat group)>
+        $fattrs      =>  <error: must be within a field (so, in a repeat group)>
 ---------- derive-deftly expansions dump for Enum::Struct from DbgVariants (end) ----------
 ---------- derive-deftly expansions dump for Enum::Tuple.0 from DbgFields (start) ----------
 top-level:
@@ -349,7 +349,7 @@ top-level:
         tgens        =   false
         $tattrs      =>  #[allow(dead_code)]
 value:
-        $vname       =>  <error>
+        $vname       =>  <error: expansion only valid in enums>
         $vtype       =>  Unit
         $vpat        =>  Unit {}
         ${vdefbody VNAME FIELDS ..} => FIELDS .. ;
@@ -377,7 +377,7 @@ top-level:
         tgens        =   false
         $tattrs      =>  #[allow(dead_code)]
 value:
-        $vname       =>  <error>
+        $vname       =>  <error: expansion only valid in enums>
         $vtype       =>  Tuple
         $vpat        =>  Tuple { 0 : f_0, }
         ${vdefbody VNAME FIELDS ..} => (FIELDS ..);
@@ -415,7 +415,7 @@ top-level:
         tgens        =   false
         $tattrs      =>  #[allow(dead_code)]
 value:
-        $vname       =>  <error>
+        $vname       =>  <error: expansion only valid in enums>
         $vtype       =>  Struct
         $vpat        =>  Struct { field : f_field, }
         ${vdefbody VNAME FIELDS ..} => { FIELDS .. }

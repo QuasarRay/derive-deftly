@@ -51,7 +51,7 @@ fn template_result(ctx: &Context, templ: TokenStream) -> String {
     })();
     match result {
         Ok(result) => result.to_string(),
-        Err(_) => "<error>".into(),
+        Err(e) => format!("<error: {}>", e),
     }
 }
 
