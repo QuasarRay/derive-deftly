@@ -174,7 +174,7 @@ pub struct Definition<B> {
     pub body: B,
 }
 
-#[derive(Debug, Eq, PartialEq)]
+#[derive(Debug, Eq, PartialEq, Ord, PartialOrd)]
 pub struct DefinitionName(syn::Ident);
 
 #[derive(Debug)]
@@ -269,9 +269,9 @@ pub struct DbgDumpRequest<O: SubstParseContext> {
 /// Error returned by `DefinitionName::try_from(syn::Ident)`
 pub struct InvalidDefinitionName;
 
-impl Spanned for DefinitionName {
-    fn span(&self) -> Span {
-        self.0.span()
+impl ToTokens for DefinitionName {
+    fn to_tokens(&self, out: &mut TokenStream) {
+        self.0.to_tokens(out)
     }
 }
 

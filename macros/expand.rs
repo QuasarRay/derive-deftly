@@ -734,8 +734,11 @@ impl<O: ExpansionOutput> RepeatedTemplate<O> {
         Template<O>: ExpandInfallible<O>,
         O: ExpansionOutput,
     {
+        let mut ctx = ctx.clone();
+        ctx.within_loop = WithinLoop::When;
+
         for when in &self.whens {
-            match when.eval_bool(ctx) {
+            match when.eval_bool(&ctx) {
                 Ok(true) => continue,
                 Ok(false) => return,
                 Err(e) => {
@@ -744,6 +747,8 @@ impl<O: ExpansionOutput> RepeatedTemplate<O> {
                 }
             }
         }
-        self.template.expand(ctx, out)
+
+        ctx.within_loop = WithinLoop::Body;
+        self.template.expand(&ctx, out)
     }
 }

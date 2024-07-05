@@ -4,21 +4,36 @@ use std::fmt::Error as E;
 use std::fmt::Result as R;
 use std::fmt::Write;
 
-/// Type alias for our output text accumulator, in case we want to change it
-type Out = String;
+struct Out<'c> {
+    out: String,
+    subset_only: Option<&'c WithinVariant<'c>>,
+}
+
+impl Write for Out<'_> {
+    fn write_str(&mut self, s: &str) -> fmt::Result {
+        self.out.write_str(s)
+    }
+}
 
 pub fn dump(ctx: &Context) {
     let w = (|| {
-        let mut w = String::new();
+        let out = String::new();
+        let subset_only = match ctx.within_loop {
+            WithinLoop::None => None,
+            WithinLoop::When | WithinLoop::Body => {
+                Some(ctx.variant.expect("within loop, but not variant!"))
+            }
+        };
+        let mut w = Out { out, subset_only };
 
         let description =
-            format!("derive-deftly expansions dump for {}", ctx.top.ident);
+            format!("derive-deftly expansions dump {}", ctx.display_for_dbg());
 
         writeln!(w, "---------- {} (start) ----------", description)?;
         dump_whole(&mut w, ctx)?;
         writeln!(w, "---------- {} (end) ----------", description)?;
 
-        Ok::<_, E>(w)
+        Ok::<_, E>(w.out)
     })()
     .expect("write to String failed");
 
@@ -36,7 +51,7 @@ fn template_result(ctx: &Context, templ: TokenStream) -> String {
     })();
     match result {
         Ok(result) => result.to_string(),
-        Err(_) => "<error>".into(),
+        Err(e) => format!("<error: {}>", e),
     }
 }
 
@@ -142,7 +157,12 @@ fn dump_whole(mut w: &mut Out, ctx: &Context) -> R {
         bool! { c, false }
     }
 
-    WithinVariant::for_each(ctx, |ctx, wv| dump_variant(w, ctx, wv))?;
+    if let Some(wv) = w.subset_only {
+        dump_variant(w, ctx, wv)?;
+        dump_user_defined(w, ctx)?;
+    } else {
+        WithinVariant::for_each(ctx, |ctx, wv| dump_variant(w, ctx, wv))?;
+    }
 
     Ok(())
 }
@@ -171,15 +191,23 @@ fn dump_variant(mut w: &mut Out, ctx: &Context, wv: &WithinVariant) -> R {
 
     expand! { c, $vattrs }
 
-    WithinField::for_each(ctx, |ctx, wf| dump_field(w, ctx, wf))?;
+    if let Some(_) = w.subset_only {
+        dump_field(w, ctx, ctx.field)?;
+    } else {
+        WithinField::for_each(ctx, |ctx, wf| dump_field(w, ctx, Some(wf)))?;
+    }
 
     Ok(())
 }
 
-fn dump_field(mut w: &mut Out, ctx: &Context, wf: &WithinField) -> R {
-    variant_heading(w, ctx.variant.expect("in field but not variant!"))?;
-    let fname = wf.fname(Span::call_site()).to_token_stream();
-    writeln!(w, ", field {}:", fname)?;
+fn dump_field(mut w: &mut Out, ctx: &Context, wf: Option<&WithinField>) -> R {
+    variant_heading(w, ctx.variant.expect("heading but not variant!"))?;
+    if let Some(wf) = wf {
+        let fname = wf.fname(Span::call_site()).to_token_stream();
+        writeln!(w, ", field {}:", fname)?;
+    } else {
+        writeln!(w, ", no field:")?;
+    }
     let c = (&mut w, ctx);
 
     expand! { c, $fname }
@@ -193,6 +221,40 @@ fn dump_field(mut w: &mut Out, ctx: &Context, wf: &WithinField) -> R {
     bool! { c, fdefvis }
 
     expand! { c, $fattrs }
+
+    Ok(())
+}
+
+fn dump_user_defined(mut w: &mut Out, ctx: &Context) -> R {
+    // evade macro hygiene
+    let mut c;
+    let mut name;
+
+    macro_rules! print_definitions { {
+        $heading:expr, $B:ty, $body:stmt,
+    } => { {
+        let mut set = BTreeSet::new();
+        for def in ctx.definitions.iter::<$B>().flatten() {
+            set.insert(&def.name);
+        }
+        if !set.is_empty() {
+            writeln!(w, "{}", $heading)?;
+            c = (&mut w, ctx);
+            for n in set {
+                name = n;
+                $body
+            }
+        }
+    } } }
+
+    print_definitions! {
+        "user-defined expansions:", DefinitionBody,
+        expand! { c, $#name },
+    }
+    print_definitions! {
+        "user-defined conditions:", DefCondBody,
+        bool! { c, #name },
+    }
 
     Ok(())
 }

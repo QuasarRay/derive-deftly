@@ -27,6 +27,7 @@ pub struct Context<'c> {
     pub pmetas: &'c meta::PreprocessedMetas,
     pub variant: Option<&'c WithinVariant<'c>>,
     pub field: Option<&'c WithinField<'c>>,
+    pub within_loop: WithinLoop,
     pub pvariants: &'c [PreprocessedVariant<'c>],
     pub definitions: Definitions<'c>,
     pub nesting_depth: u16,
@@ -58,6 +59,23 @@ pub struct WithinField<'c> {
     pub field: &'c syn::Field,
     pub pfield: &'c PreprocessedField,
     pub index: u32,
+}
+
+/// Whether we're in a loop, and if so, its details
+///
+/// Set only for expansions of a `RepeatedTemplate`,
+/// not any kind of implicit looping eg `dbg_all_keywords`, `vpat`, etc.
+///
+/// At some future point this may have enough information
+/// to provide `$loop_index`, etc.
+/// Right now it's only used for `dbg_all_keywords`.
+#[derive(Debug, Clone, Copy)]
+pub enum WithinLoop {
+    None,
+    /// Evaluating `${when }` clauses
+    When,
+    /// Evaluating the body
+    Body,
 }
 
 #[derive(Debug, Clone, Copy, Default)]
