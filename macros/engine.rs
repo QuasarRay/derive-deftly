@@ -263,6 +263,7 @@ impl<'c> Context<'c> {
             definitions: Default::default(),
             nesting_depth: 0,
             nesting_parent: None,
+            within_loop: WithinLoop::None,
         };
 
         f(ctx)
