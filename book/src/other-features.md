@@ -26,10 +26,6 @@ For example:
    can help with writing careful templates
    that will reject incoherent inputs.
 
- * [`#{define }` and `${defcond }`](https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#define--defcond---user-defined-expansions-and-conditions)
-   to make user-defined reuseable template keywords,
-   to save repetition in templates.
-
 Full details are in the [reference],
 which also has a brief example demonstrating each construct.
 

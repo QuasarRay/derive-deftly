@@ -27,5 +27,6 @@
   - [Using attributes to make a template take arguments](constructor-attrs.md)
   - [Getting started if/then/else conditionals](constructor-conditionals.md)
   - [More complicated conditionals](constructor-advanced-conditionals.md)
+  - [Managing complexity with $define](constructor-define.md)
 
 - [Other features](other-features.md)
