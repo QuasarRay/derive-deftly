@@ -22,7 +22,8 @@ case "$CI_PROJECT_URL" in
 	ORIGIN=upstream
 	;;
     '')
-	# a guess
+	# Not running in CI, use a guess at the baseline:
+	# $BASE_BRANCHES at whatever `origin` points to.
 	ORIGIN=origin
 	;;
     *)
