@@ -77,6 +77,55 @@ on variants and fields respectively.
 > conditions and expansions have separate namespaces;
 > you cannot (in general) use them interchangeably.
 
+## Multiple exclusive options with `$select1`
+
+Sometimes you want to make sure _exactly one_
+condition matches.
+
+This is a good choice when you have multiple options
+for controlling some feature, and you want to make sure
+that the user has specified exactly one
+(or maybe, no more than one).
+
+You can do this using the `${select1}` keyword:
+
+`${select1 COND1 { ... } else if COND2 { ... } ... else { ... }`
+
+Its syntax is nearly the same as `${if}`,
+except that _all_ conditions are checked.
+If more than one condition is true,
+then `${select1}` fails to expand,
+and emits an error.
+If no conditions are true,
+and there is no `else` clause,
+then `${select1}` also fails to expand,
+and emits an error.
+
+Here's an example of how we could use `${select1}`
+if we wanted to allow `constructor(default_name)`,
+as a synonym for our default behavior.
+In this case, we enforce that the user has specified
+`constructor(newfn(X))` _or_ `constructor(default_name)` _or_ neither,
+but not both:
+
+```rust
+# use derive_deftly::define_derive_deftly;
+# define_derive_deftly! {
+#   Constructor for struct:
+#
+#   impl<$tgens> $ttype where $twheres {
+# pub fn
+   ${select1
+       tmeta(constructor(newfn)) { ${tmeta(constructor(newfn))} }
+       tmeta(constructor(default_name)) { new }
+       else { new }
+    }
+# () {}
+#   }
+# }
+```
+
+
 [x:if]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#x:if
 [c:tmeta]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#c:tmeta
 

@@ -22,10 +22,6 @@ For example:
    [`$Xattrs`](https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#fattrs--vattrs--tattrs---other-attributes)
    for passing through attributes.
 
- * [`${select1}`](https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#select1-cond1----else-if-cond2----else-----expect-precisely-one-predicate)
-   can help with writing careful templates
-   that will reject incoherent inputs.
-
 Full details are in the [reference],
 which also has a brief example demonstrating each construct.
 
