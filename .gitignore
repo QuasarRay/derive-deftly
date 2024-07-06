@@ -3,3 +3,4 @@
 /target
 /doc/*.md.new
 /book/book
+/linklint.errors
