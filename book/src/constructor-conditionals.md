@@ -77,6 +77,10 @@ on variants and fields respectively.
 > conditions and expansions have separate namespaces;
 > you cannot (in general) use them interchangeably.
 
+There is a
+[complete list of recognized conditions][ref:conditions]
+in the reference.
+
 ## Multiple exclusive options with `$select1`
 
 Sometimes you want to make sure _exactly one_
@@ -128,4 +132,4 @@ but not both:
 
 [x:if]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#x:if
 [c:tmeta]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#c:tmeta
-
+[ref:conditions]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#conditions

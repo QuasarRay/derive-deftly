@@ -75,7 +75,8 @@ to the `new()` function.
 <!-- TODO: Write a further section about hardening macros against weird
       environments, then link to it here. -->
 
-You can use other boolean operators in conditions too:
+Besides `$not`,
+you can use other boolean operators in conditions too:
 there is an
 [`any(...)`][c:any]
 that is true
@@ -84,7 +85,6 @@ and an
 [`all(...)`][c:all]
 that is true
 when _all_ of its arguments are true.
-
 
 [c:all]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#c:all
 [c:any]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#c:any
