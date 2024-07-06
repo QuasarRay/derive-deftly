@@ -30,7 +30,7 @@ define_derive_deftly! {
    // (3)
    ${define F_INITIALIZER
        ${if F_DFLT {
-          Default::default()
+          ::std::default::Default::default()
        } else {
           $fname
        }}
