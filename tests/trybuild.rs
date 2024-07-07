@@ -35,5 +35,12 @@ pub fn run_pass_expand() {
 #[test]
 pub fn ui() {
     let t = trybuild::TestCases::new();
-    t.compile_fail("ui/*.rs");
+
+    #[allow(unused_variables)]
+    let pat = "minimal-ui/*.rs";
+
+    #[cfg(feature = "full")]
+    let pat = "ui/*.rs";
+
+    t.compile_fail(pat);
 }

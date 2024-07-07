@@ -143,7 +143,7 @@ cargo-test-minfeatures:
   stage: comprehensive
   image: rustlang/rust@sha256:aaee57e8fa29c2809494ec71ffab6fcfa241b765c2a78d781e4de17fe38f060e
   script:
-    - maint/cargo-test-locked  -p derive-deftly-tests --no-default-features --features=derive-deftly-tests/recent -- --skip directly::check_examples
+    - maint/cargo-test-locked  -p derive-deftly-tests --no-default-features --features=derive-deftly-tests/recent,derive-deftly-tests/ui -- --skip directly::check_examples
 
 # Test on Stable Rust
 #
