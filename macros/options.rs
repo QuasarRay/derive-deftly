@@ -39,7 +39,9 @@ pub enum OpContext {
 ///
 /// This also helps with cross-crate compatibility.
 #[derive(Default, Debug, Clone)]
-pub struct UnprocessedOptions(TokenStream);
+pub struct UnprocessedOptions {
+    ts: TokenStream,
+}
 
 /// Template options, semantically resolved
 #[derive(Default, Debug, Clone)]
@@ -215,7 +217,7 @@ impl UnprocessedOptions {
             let tt: TokenTree = input.parse()?;
             out.extend([tt]);
         }
-        Ok(UnprocessedOptions(out))
+        Ok(UnprocessedOptions { ts: out })
     }
 }
 
@@ -306,14 +308,14 @@ impl<V: FromStr + DdOptValDescribable> Parse for DdOptVal<V> {
 
 impl ToTokens for UnprocessedOptions {
     fn to_tokens(&self, out: &mut TokenStream) {
-        out.extend(self.0.clone());
+        out.extend(self.ts.clone());
     }
 }
 
 impl UnprocessedOptions {
     #[allow(dead_code)] // Currently unused, retain it in case we need it
     pub fn is_empty(&self) -> bool {
-        self.0.is_empty()
+        self.ts.is_empty()
     }
 }
 
