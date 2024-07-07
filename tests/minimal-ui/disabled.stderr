@@ -1,0 +1,21 @@
+error: proc macro panicked
+  --> minimal-ui/disabled.rs:14:1
+   |
+14 | / derive_deftly_adhoc! {
+15 | |     S expect items:
+16 | | }
+   | |_^
+   |
+   = help: message: output syntax checking not supported, enable `expect` feature of `derive-deftly`
+
+error: ${Xmeta as expr} used but cargo feature meta-as-expr disabled
+  --> minimal-ui/disabled.rs:19:33
+   |
+19 |     const X: () = ${tmeta(d) as expr};
+   |                                 ^^^^
+
+error: ${Xmeta as items} used but cargo feature meta-as-items disabled
+  --> minimal-ui/disabled.rs:23:19
+   |
+23 |     ${tmeta(i) as items};
+   |                   ^^^^^
