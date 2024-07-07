@@ -104,6 +104,7 @@ struct BorrowedDesig<'p> {
 pub struct SubstMeta<O: SubstParseContext> {
     pub desig: Desig,
     pub as_: Option<SubstAs<O>>,
+    pub default: Option<(Argument<O>, O::NotInBool, beta::Enabled)>,
 }
 
 #[derive(Debug, Clone, AsRefStr, Display)]
@@ -321,13 +322,19 @@ impl<O: SubstParseContext> SubstMeta<O> {
         }
 
         let mut as_ = None::<(Span, SubstAs<O>)>;
+        let mut default = None;
 
         while !O::IS_BOOL && !input.is_empty() {
             let keyword = Ident::parse_any(input)?;
             let kw_span = keyword.span();
             let nb = O::not_in_bool(&kw_span).expect("checked already");
+            let ue = || beta::Enabled::new_for_syntax(kw_span);
             if keyword == "as" {
                 store(kw_span, &mut as_, || SubstAs::parse(input, nb))?;
+            } else if keyword == "default" {
+                store(kw_span, &mut default, || {
+                    Ok((input.parse()?, nb, ue()?))
+                })?;
             } else {
                 return Err(keyword.error("unknown option in `${Xmeta }`"));
             }
@@ -346,6 +353,7 @@ impl<O: SubstParseContext> SubstMeta<O> {
 
         Ok(ret! {
             as_
+            default
         })
     }
 }
@@ -792,7 +800,7 @@ where
         out: &mut O,
         pmetas: &PreprocessedMetas,
     ) -> syn::Result<()> {
-        let SubstMeta { desig, as_ } = self;
+        let SubstMeta { desig, as_, default } = self;
         let mut found = None::<FoundNode>;
         let mut hint = None::<FoundNearbyNode>;
         let span_whole = self.span_whole(kw_span);
@@ -817,6 +825,10 @@ where
                 Ok(())
             },
         )?;
+
+        if let (None, Some((def, ..))) = (&found, default) {
+            return Ok(def.expand(ctx, out));
+        }
 
         let found = found.ok_or_else(|| {
             if let Some(hint) = hint {

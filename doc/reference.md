@@ -65,6 +65,9 @@ the [crate-level docs for derive-deftly](../index.html#macros).
 
 -->
 
+[**beta**]: ../doc_changelog/index.html#t:beta
+[positional argument]: #t:arguments
+
 <div id="t:syntax">
 
 ## Template syntax overview
@@ -509,6 +512,13 @@ Accesses macro parameters passed via `#[deftly(...)]` attributes.
      When using this option, be careful about operator precedence:
      see [Precedence considerations](#precedence-considerations).
 
+ * **`${Xmeta(...) .. , default DEFAULT}`** ([**beta**]):
+   If there is no `VALUE` expands
+   the [positional argument] `DEFAULT` instead.
+   NB: in this case the expansions of `DEFAULT` is used as is,
+   *not* surrounded with additional `( )` (for `as expr`),
+   nor any additional [`None`-delimited group](#t:none-delimiters).
+
 When expanding `${Xmeta}`,
 it is an error if the value was not specified in the driver,
 and also an error if multiple values were specified.
@@ -517,6 +527,11 @@ For a struct, both `$tmeta` and `$vmeta`
 look in the top-level attributes.
 This allows a template to have uniform handling of attributes
 which should affect how a set of fields should be processed.
+
+Within `${Xmeta ..}`,
+options (`as` and `default`)
+are each introduced with a keyword,
+and separated by commas.
 
 #### Attribute namespacing
 
@@ -546,6 +561,7 @@ These checks are disabled by `#[derive_deftly_adhoc]`.
 #### Examples
 
  * `${tmeta(simple) as ty}`: `« String »`
+ * `${tmeta(missing) as ty, default String}`: `String`
  * `${tmeta(simple) as path}`: `« String »`
  * `${tmeta(simple) as str}`: `"String"`
  * `${tmeta(simple) as token_stream}`: `String`
