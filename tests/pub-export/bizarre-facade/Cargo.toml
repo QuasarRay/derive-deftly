@@ -33,6 +33,7 @@ case = ["derive-deftly-macros/case", "heck"]
 expect = ["derive-deftly-macros/expect"]
 meta-as-expr = ["derive-deftly-macros/meta-as-expr"]
 meta-as-items = ["derive-deftly-macros/meta-as-items"]
+beta = ["derive-deftly-macros/beta"]
 
 [dependencies]
 derive-deftly-macros = { package = "bizarre-derive-deftly-macros", path = "../bizarre-macros", version = "0.0.666" }

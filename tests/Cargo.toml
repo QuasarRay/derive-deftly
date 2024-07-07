@@ -14,7 +14,8 @@ publish = false
 ui = []
 recent = [] # We're not running with the MWRV compiler
 default = []
-full = ["derive-deftly/full"]
+full = ["derive-deftly/full", "beta"]
+beta = ["derive-deftly/beta"]
 # We can't make macrotest, ui, recent and full default features because
 # in 1.54 (which is why we want this) --no-default-features doesn't work.
 

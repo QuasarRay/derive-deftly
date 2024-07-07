@@ -89,6 +89,7 @@
 //!
 //! As above, but used when feature `full` isn't enabled.
 //! This just tests errors from features being disabled.
+//! (In the tests, we include `beta` in `full`.)
 //!
 //! ### `tests/stderr/`
 //!
