@@ -12,7 +12,7 @@ use adviseable::*;
 struct EngineExpandInput {
     driver: syn::DeriveInput,
     options: DdOptions,
-    template: Template<TokenAccumulator>,
+    template: TopTemplate,
     template_crate: syn::Path,
     template_name: Option<syn::Path>,
     chain_next: Option<ChainNext>,

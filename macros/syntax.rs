@@ -16,6 +16,11 @@ pub struct Template<O: SubstParseContext> {
     pub elements: Vec<TemplateElement<O>>,
 }
 
+#[derive(Debug)]
+pub struct TopTemplate {
+    pub content: Template<TokenAccumulator>,
+}
+
 /// `ARG` as per
 /// "Named and positional template arguments"
 /// in the reference.
@@ -370,6 +375,22 @@ impl Parse for Definition<DefCondBody> {
 impl<O: SubstParseContext> Spanned for Subst<O> {
     fn span(&self) -> Span {
         self.kw_span
+    }
+}
+
+impl Parse for TopTemplate {
+    fn parse(
+        input: ParseStream,
+    ) -> syn::Result<Self> {
+        let content = input.parse()?;
+        Ok(TopTemplate { content })
+    }
+}
+
+impl Deref for TopTemplate {
+    type Target = Template<TokenAccumulator>;
+    fn deref(&self) -> &Template<TokenAccumulator> {
+        &self.content
     }
 }
 
