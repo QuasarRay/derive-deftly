@@ -306,21 +306,46 @@ impl<O: SubstParseContext> SubstMeta<O> {
 
         let label: Label = input.parse()?;
 
-        let as_;
-
-        if input.peek(Token![as]) {
-            let as_token: Token![as] = input.parse()?;
-            let nb = O::not_in_bool(&as_token).map_err(|_| {
-                as_token.error("`Xmeta as ...` not allowed in conditions")
-            })?;
-            as_ = Some(SubstAs::parse(input, nb)?);
-        } else {
-            as_ = None;
+        fn store<V>(
+            kw: Span,
+            already: &mut Option<(Span, V)>,
+            call: impl FnOnce() -> syn::Result<V>,
+        ) -> syn::Result<()> {
+            if let Some((already, _)) = already {
+                return Err([(*already, "first"), (kw, "second")]
+                    .error("`${Xmeta ..}` option repeated"));
+            }
+            let v = call()?;
+            *already = Some((kw, v));
+            Ok(())
         }
 
-        Ok(SubstMeta {
-            desig: Desig { label, scope },
-            as_,
+        let mut as_ = None::<(Span, SubstAs<O>)>;
+
+        while !O::IS_BOOL && !input.is_empty() {
+            let keyword = Ident::parse_any(input)?;
+            let kw_span = keyword.span();
+            let nb = O::not_in_bool(&kw_span).expect("checked already");
+            if keyword == "as" {
+                store(kw_span, &mut as_, || SubstAs::parse(input, nb))?;
+            } else {
+                return Err(keyword.error("unknown option in `${Xmeta }`"));
+            }
+            if input.is_empty() {
+                break;
+            }
+            let _: Token![,] = input.parse()?;
+        }
+
+        macro_rules! ret { { $( $f:ident )* } => {
+            SubstMeta {
+                desig: Desig { label, scope },
+                $( $f: $f.map(|(_span, v)| v), )*
+            }
+        } }
+
+        Ok(ret! {
+            as_
         })
     }
 }

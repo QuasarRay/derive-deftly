@@ -360,7 +360,7 @@ error: missing parameters to condition
 107 |     ${if tmeta}
     |          ^^^^^
 
-error: unexpected arguments to expansion keyword
+error: unknown option in `${Xmeta }`
    --> ui/badmeta.rs:109:24
     |
 109 |     ${tmeta(something) unknown_option}
