@@ -783,6 +783,7 @@ impl ToTokens for MetaUnsupported {
 impl<O> SubstMeta<O>
 where
     O: ExpansionOutput,
+    TemplateElement<O>: Expand<O>,
 {
     pub fn expand(
         &self,
