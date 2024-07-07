@@ -100,7 +100,7 @@ struct BorrowedDesig<'p> {
 
 //---------- substitutions in a template ----------
 
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct SubstMeta<O: SubstParseContext> {
     pub desig: Desig,
     pub as_: Option<SubstAs<O>>,
