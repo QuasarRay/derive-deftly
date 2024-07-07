@@ -29,6 +29,9 @@ pub(crate) mod paste;
 pub(crate) mod repeat;
 pub(crate) mod syntax;
 
+#[cfg_attr(not(feature = "beta"), path = "beta_disabled.rs")]
+pub(crate) mod beta;
+
 // Implementations of each proc-macros
 pub(crate) mod adhoc;
 pub(crate) mod define;
