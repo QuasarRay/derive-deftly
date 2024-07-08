@@ -425,6 +425,12 @@ error: integer literal comparison with both values >u64 is not supported (compar
 125 |     ${if approx_equal(0x12345678_12345678_12345678_aaaaaaaa,
     |          ^^^^^^^^^^^^
 
+error: beta derive-deftly feature used, without `beta_deftly` template option
+   --> ui/badmeta.rs:130:22
+    |
+130 |     ${fmeta(missing) default { 42 }}
+    |                      ^^^^^^^
+
 warning: unused macro definition: `derive_deftly_template_WrongRequestSyntax`
    --> ui/badmeta.rs:104:5
     |
