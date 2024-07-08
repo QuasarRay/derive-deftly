@@ -78,4 +78,11 @@ impl Enabled {
             }),
         }
     }
+
+    /// Makes `new_for_syntax` work properly within `f`, in test cases
+    #[cfg(test)]
+    #[allow(dead_code)]
+    pub fn test_with_parsing<R>(f: impl FnOnce() -> R) -> R {
+        with_maybe_enabled(Some(Enabled {}), f)
+    }
 }
