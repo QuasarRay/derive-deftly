@@ -21,8 +21,10 @@ Features are provided to allow for a build with reduced dependencies.
    handling attributes containing (syntax-checked) expressions and items via
    [`${Xmeta(...) as expr / items}`](../doc_reference/index.html#tmeta-vmeta-fmeta--deftly-attributes)
  * `minimal-1`: Minimal feature set.  Must be enabled.
+ * <span id="cargo-feature:beta">`beta`</span>: Enable
+   [beta features](#t:beta).
 
-All of the above features are enabled by default.
+All of the above features except `beta` are enabled by default.
 
 ## MSRV and MSRV policy
 
@@ -660,3 +662,33 @@ of exported templates,
 to help you manage the semver implications for the exporting crate.
 This is set out in the
 [relevant documentation](../macro.define_derive_deftly.html#exporting-a-template-for-use-by-other-crates).
+
+<div id="t:beta">
+
+### Beta features
+
+derive-deftly has some features which we are still experimenting with,
+and whose syntax and semantics might change.
+
+To use these, you must
+enable the [`beta`](#cargo-feature:beta) cargo feature,
+and,
+pass the [`beta_deftly`](../doc_reference/index.html#eo:beta_deftly)
+template option.
+
+Beta features may
+change their syntax or semantics or be removed,
+without notice.
+This would just be a patchlevel version bump,
+(after 1.x, a minor version bump).
+So you should pin your derive-deftly version:
+
+```toml
+// Cargo.toml
+derive-deftly = { version = "=0.14.0", features = ["full", "beta"] }
+// after derive-deftly 1.x,  { version = "~1.x.y" ... }
+```
+
+The `beta` cargo feature may imply a higher MSRV.
+
+</div>

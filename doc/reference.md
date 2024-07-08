@@ -41,6 +41,7 @@
       * [`expect items`, `expect expr` -- syntax check the expansion](#expect-items-expect-expr--syntax-check-the-expansion)
       * [`for struct`, `for enum`, `for union` -- Insist on a particular driver kind](#for-struct-for-enum-for-union--insist-on-a-particular-driver-kind)
       * [`dbg` -- Print the expansion to stderr, for debugging](#dbg--print-the-expansion-to-stderr-for-debugging)
+      * [`beta_deftly` -- Enable unstable template features](#beta_deftly--enable-unstable-template-features)
       * [Expansion options example](#expansion-options-example)
    * [Precedence considerations](#precedence-considerations)
       * [`None`-delimited groups](#none-delimited-groups)
@@ -1392,6 +1393,18 @@ See also
 the [`${dbg ..}` expansion](#dbg--dbg_all_keywords--debugging-output),
 the [`dbg` condition](#dbg--debug-dump-of-condition-value),
 the [`$dbg_all_keywords` expansion](#dbg--dbg_all_keywords--debugging-output).
+
+<div id="eo:beta_deftly">
+
+### `beta_deftly` -- Enable unstable template features
+
+</div>
+
+Enables
+[beta template features](../doc_changelog/index.html#t:beta).
+
+This option is only allowed in a template,
+not in a driver's `#[derive_deftly]` attribute.
 
 ### Expansion options example
 
