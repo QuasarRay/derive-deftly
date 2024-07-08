@@ -175,7 +175,12 @@ impl EngineExpandInput {
 
         let _: TokenStream = input.parse()?;
 
-        let template = parse_unadvised! { template };
+        let template = parse_unadvised! {
+            template => || TopTemplate::parse(
+                template,
+                options.beta_enabled,
+            )
+        };
 
         Ok(AOk(EngineExpandInput {
             driver,
@@ -278,8 +283,12 @@ impl EngineExpandInput {
             dbg,
             driver_kind,
             expect_target,
+            beta_enabled,
             //
         } = self.options;
+
+        // This was used when parsing EngineExpandInput.template
+        let _: Option<_> = beta_enabled;
 
         if let Some(exp) = driver_kind {
             macro_rules! got_kind { { $($kind:ident)* } => {

@@ -41,6 +41,7 @@ pub enum OpContext {
 #[derive(Default, Debug, Clone)]
 pub struct UnprocessedOptions {
     ts: TokenStream,
+    pub beta_enabled: Option<beta::Enabled>,
 }
 
 /// Template options, semantically resolved
@@ -49,6 +50,7 @@ pub struct DdOptions {
     pub dbg: bool,
     pub driver_kind: Option<DdOptVal<ExpectedDriverKind>>,
     pub expect_target: Option<DdOptVal<check::Target>>,
+    pub beta_enabled: Option<beta::Enabled>,
 }
 
 /// A single template option
@@ -65,6 +67,7 @@ enum OptionDetails {
     dbg,
     For(DdOptVal<ExpectedDriverKind>),
     expect(DdOptVal<check::Target>),
+    beta_deftly(beta::Enabled),
 }
 
 /// Value for an option
@@ -138,6 +141,7 @@ impl OpContext {
             OD::dbg => return Ok(()),
             OD::expect(v) => return check::check_expect_opcontext(v, self),
             OD::For(..) => {}
+            OD::beta_deftly(..) => {}
         }
         match self {
             OC::TemplateDefinition => Ok(()),
@@ -208,9 +212,14 @@ impl UnprocessedOptions {
         input: ParseStream,
         opcontext: OpContext,
     ) -> syn::Result<Self> {
-        // Scan ahead for a syntax check
+        let mut beta_enabled = None;
+
+        // Scan ahead for a syntax check (and beta enablement)
         DdOption::parse_several(&input.fork(), opcontext, |opt| {
-            let _ = opt;
+            match &opt.od {
+                OD::beta_deftly(be) => beta_enabled = Some(*be),
+                _ => {}
+            };
             Ok(())
         })?;
 
@@ -220,7 +229,7 @@ impl UnprocessedOptions {
             let tt: TokenTree = input.parse()?;
             out.extend([tt]);
         }
-        Ok(UnprocessedOptions { ts: out })
+        Ok(UnprocessedOptions { ts: out, beta_enabled })
     }
 }
 
@@ -291,6 +300,7 @@ impl Parse for DdOption {
         keyword! { dbg }
         keyword! { "for": For(input.parse()?) }
         keyword! { expect(input.parse()?) }
+        keyword! { beta_deftly(beta::Enabled::new_for_dd_option(kw.span())?) }
 
         Err(kw.error("unknown derive-deftly option"))
     }
@@ -355,6 +365,7 @@ impl DdOptions {
             OD::dbg => self.dbg = true,
             OD::expect(spec) => store(&mut self.expect_target, spec)?,
             OD::For(spec) => store(&mut self.driver_kind, spec)?,
+            OD::beta_deftly(be) => self.beta_enabled = Some(be),
         })
     }
 }

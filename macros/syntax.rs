@@ -378,11 +378,16 @@ impl<O: SubstParseContext> Spanned for Subst<O> {
     }
 }
 
-impl Parse for TopTemplate {
-    fn parse(
+impl TopTemplate {
+    pub fn parse(
         input: ParseStream,
+        beta_enabled: Option<beta::Enabled>,
     ) -> syn::Result<Self> {
-        let content = input.parse()?;
+        let content = beta::with_maybe_enabled(
+            //
+            beta_enabled,
+            || input.parse(),
+        )?;
         Ok(TopTemplate { content })
     }
 }
