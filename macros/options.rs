@@ -209,7 +209,10 @@ impl UnprocessedOptions {
         opcontext: OpContext,
     ) -> syn::Result<Self> {
         // Scan ahead for a syntax check
-        DdOption::parse_several(&input.fork(), opcontext, |_| Ok(()))?;
+        DdOption::parse_several(&input.fork(), opcontext, |opt| {
+            let _ = opt;
+            Ok(())
+        })?;
 
         // Collect everything until the : or =
         let mut out = TokenStream::new();
