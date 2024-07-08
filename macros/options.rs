@@ -229,7 +229,10 @@ impl UnprocessedOptions {
             let tt: TokenTree = input.parse()?;
             out.extend([tt]);
         }
-        Ok(UnprocessedOptions { ts: out, beta_enabled })
+        Ok(UnprocessedOptions {
+            ts: out,
+            beta_enabled,
+        })
     }
 }
 

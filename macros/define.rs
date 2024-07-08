@@ -175,22 +175,21 @@ pub fn define_derive_deftly_func_macro(
 
     let (template, parsed_template) = {
         let mut template = template;
-        let parsed =
-            Parser::parse2(
-                {
-                    let ue = options.beta_enabled;
-                    move |input: ParseStream| TopTemplate::parse(input, ue)
-                },
-                template.clone(),
-            )
-                .map_err(|e| {
-                    // Make sure the error is emitted
-                    e.into_compile_error().to_tokens(&mut output);
-                    // But from now on, let's just use an empty template
-                    template = TokenStream::new();
-                    // parsed_template becomes Err(())
-                    ()
-                });
+        let parsed = Parser::parse2(
+            {
+                let ue = options.beta_enabled;
+                move |input: ParseStream| TopTemplate::parse(input, ue)
+            },
+            template.clone(),
+        )
+        .map_err(|e| {
+            // Make sure the error is emitted
+            e.into_compile_error().to_tokens(&mut output);
+            // But from now on, let's just use an empty template
+            template = TokenStream::new();
+            // parsed_template becomes Err(())
+            ()
+        });
         (template, parsed)
     };
 
