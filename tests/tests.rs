@@ -85,6 +85,11 @@
 //!
 //! Some of these `.rs` files are reused for `tests/stderr/`.
 //!
+//! #### `tests/minimal-ui/*.rs`
+//!
+//! As above, but used when feature `full` isn't enabled.
+//! This just tests errors from features being disabled.
+//!
 //! ### `tests/stderr/`
 //!
 //! Test cases listed in `tests/stderr/stderr-lib.rs`.
