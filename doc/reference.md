@@ -46,8 +46,8 @@
       * [`None`-delimited groups](#none-delimited-groups)
    * [Structs used in examples](#structs-used-in-examples)
    * [Keyword index](#keyword-index)
-      * [Expansions](#expansions)
-      * [Conditions](#conditions)
+      * [Expansions index](#expansions-index)
+      * [Conditions index](#conditions-index)
 
 **Reference documentation for the actual proc macros** is in
 the [crate-level docs for derive-deftly](../index.html#macros).
@@ -114,7 +114,11 @@ since all of the punctuation is already taken.)
 Inner attributes (`#![...]` and `//!...`)
 are not allowed in templates.
 
+<div id="t:arguments">
+
 ### Named and positional template arguments to expansions and conditions
+
+</div>
 
 Some expansions and conditions take
 (possibly optional)
@@ -1440,7 +1444,11 @@ Rust demands that *types* are expressed unambiguously,
 so precedence problems, and lack of `( )` (or `< >`),
 are detected by the compiler, and rejected.
 
+<div id="t:none-delimiters">
+
 ### `None`-delimited groups
+
+</div>
 
 In theory Rust has a feature that would help with this:
 syntactic groups
@@ -1519,7 +1527,7 @@ where T: 'l, T: TryInto<u8>
 
 ## Keyword index
 
-### Expansions
+### Expansions index
 
 <!--## index x ##-->
 
@@ -1536,7 +1544,7 @@ where T: 'l, T: TryInto<u8>
  * **$v…**: [`vattrs`](#x:vattrs), [`vdefbody`](#x:vdefbody), [`vmeta`](#x:vmeta), [`vname`](#x:vname), [`vpat`](#x:vpat), [`vtype`](#x:vtype)
  * **$w…**: [`when`](#x:when)
 
-### Conditions
+### Conditions index
 
 <!--## index c ##-->
 
