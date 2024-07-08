@@ -114,7 +114,11 @@ since all of the punctuation is already taken.)
 Inner attributes (`#![...]` and `//!...`)
 are not allowed in templates.
 
+<div id="t:arguments">
+
 ### Named and positional template arguments to expansions and conditions
+
+</div>
 
 Some expansions and conditions take
 (possibly optional)
@@ -1440,7 +1444,11 @@ Rust demands that *types* are expressed unambiguously,
 so precedence problems, and lack of `( )` (or `< >`),
 are detected by the compiler, and rejected.
 
+<div id="t:none-delimiters">
+
 ### `None`-delimited groups
+
+</div>
 
 In theory Rust has a feature that would help with this:
 syntactic groups

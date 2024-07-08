@@ -1,6 +1,10 @@
 # Changelog, MSRV policy and cargo features
 
+<div id="t:cargo-features">
+
 ## cargo features
+
+</div>
 
 Features are provided to allow for a build with reduced dependencies.
 
