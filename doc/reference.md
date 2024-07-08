@@ -46,8 +46,8 @@
       * [`None`-delimited groups](#none-delimited-groups)
    * [Structs used in examples](#structs-used-in-examples)
    * [Keyword index](#keyword-index)
-      * [Expansions](#expansions)
-      * [Conditions](#conditions)
+      * [Expansions index](#expansions-index)
+      * [Conditions index](#conditions-index)
 
 **Reference documentation for the actual proc macros** is in
 the [crate-level docs for derive-deftly](../index.html#macros).
@@ -1527,7 +1527,7 @@ where T: 'l, T: TryInto<u8>
 
 ## Keyword index
 
-### Expansions
+### Expansions index
 
 <!--## index x ##-->
 
@@ -1544,7 +1544,7 @@ where T: 'l, T: TryInto<u8>
  * **$v…**: [`vattrs`](#x:vattrs), [`vdefbody`](#x:vdefbody), [`vmeta`](#x:vmeta), [`vname`](#x:vname), [`vpat`](#x:vpat), [`vtype`](#x:vtype)
  * **$w…**: [`when`](#x:when)
 
-### Conditions
+### Conditions index
 
 <!--## index c ##-->
 
