@@ -22,5 +22,8 @@ derive_deftly_adhoc! {
     S:
     ${tmeta(i) as items};
 }
+derive_deftly_adhoc! {
+    S beta_deftly:
+}
 
 fn main() {}
