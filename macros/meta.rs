@@ -800,7 +800,11 @@ where
         out: &mut O,
         pmetas: &PreprocessedMetas,
     ) -> syn::Result<()> {
-        let SubstMeta { desig, as_, default } = self;
+        let SubstMeta {
+            desig,
+            as_,
+            default,
+        } = self;
         let mut found = None::<FoundNode>;
         let mut hint = None::<FoundNearbyNode>;
         let span_whole = self.span_whole(kw_span);
