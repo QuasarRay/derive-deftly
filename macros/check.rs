@@ -78,6 +78,25 @@ impl Target {
             expr => quote! { include!( #file ) },
         }
     }
+
+    /// Make a single output, syntactically a `self.target`, out of pieces
+    ///
+    /// `err` is a `compile_error!` call,
+    /// and `expansion` is typically the template expansion output.
+    fn combine_outputs(
+        self,
+        mut err: TokenStream,
+        expansion: TokenStream,
+    ) -> TokenStream {
+        use Target::*;
+        match self {
+            items => {
+                err.extend(expansion);
+                err
+            }
+            expr => quote!( ( #err, #expansion ) ),
+        }
+    }
 }
 
 impl Checking<'_> {
@@ -92,7 +111,8 @@ impl Checking<'_> {
             None => return,
         };
 
-        let broken = mem::replace(self.output, err.into_compile_error());
+        let broken = mem::take(self.output);
+        let err = err.into_compile_error();
 
         let expansion = expand_via_file(self.ctx, self.target.value, broken)
             .map_err(|e| {
@@ -102,8 +122,10 @@ impl Checking<'_> {
                     e
                 ))
                     .into_compile_error()
-            });
-        self.output.extend(expansion);
+            })
+            .unwrap_or_else(|e| e);
+
+        *self.output = self.target.value.combine_outputs(err, expansion);
     }
 }
 

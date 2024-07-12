@@ -108,20 +108,14 @@ error: reference involved in too-deep expansion/condition, depth 0
 61 |     $DEF
    |      ^^^
 
-error: macro expansion ignores token `include` and any following
-  --> ui/badoptions.rs:10:10
-   |
-10 | #[derive(Deftly)]
-   |          ^^^^^^ caused by the macro expansion here
-   |
-   = note: the usage of `::derive_deftly::derive_deftly_engine!` is likely invalid in expression context
-help: you might be missing a semicolon here
-   |
-10 | #[derive(Deftly;)]
-   |                +
-
 error: unexpected end of input, expected an expression
   --> ui/badoptions.rs:66:5
    |
 66 |     (*)
    |     ^
+
+error: expected expression, found `)`
+ --> $OUT_DIR[derive-deftly-macros]/derive-deftly~expansions~/dd-dcf00f905fa65b88f127c9d9.rs
+  |
+  | (*)
+  |   ^ expected expression
