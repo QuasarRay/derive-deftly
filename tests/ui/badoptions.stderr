@@ -119,3 +119,17 @@ error: reference involved in too-deep expansion/condition, depth 0
    |
 66 |     $DEF
    |      ^^^
+
+error: unexpected token
+  --> ui/badoptions.rs:71:6
+   |
+71 |     1,
+   |      ^
+
+error: include macro expected single expression in source
+ --> $OUT_DIR[derive-deftly-macros]/derive-deftly~expansions~/dd-9bb48b2e4ab54bba44238094.rs
+  |
+  | 1,
+  |  ^
+  |
+  = note: `#[deny(incomplete_include)]` on by default
