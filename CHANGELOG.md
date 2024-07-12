@@ -37,6 +37,21 @@ again, in a minor version bump.
 
 ## Changelog
 
+### 0.14.1
+
+#### Fixed
+
+ * Failing `expect expr` now successfully points to the error in
+   a copy of the template expansion, as intended.
+
+#### Improved
+
+ * Reference now has indices of expansion and condition keywords.
+ * Substantial improvements and additions to the Guide.
+ * Inproved `dbg_all_keywords`; now includes user defined expansions.
+ * Various new `<div>` anchors in the Reference and this changelog.
+ * Many internal and testing improvements.
+
 ### 0.14.0
 
 #### Breaking
