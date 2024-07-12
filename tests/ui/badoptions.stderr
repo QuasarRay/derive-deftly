@@ -66,56 +66,70 @@ error: expected expression, found `)`
   | (*)
   |   ^ expected expression
 
-error: contradictory values for expected driver kind (in `for` option) (first)
-  --> ui/badoptions.rs:42:31
+error: unexpected token
+  --> ui/badoptions.rs:43:6
    |
-42 |     BadOptionsDriver dbg, for struct, for union:
+43 |     1,
+   |      ^
+
+error: contradictory values for expected driver kind (in `for` option) (first)
+  --> ui/badoptions.rs:47:31
+   |
+47 |     BadOptionsDriver dbg, for struct, for union:
    |                               ^^^^^^
 
 error: contradictory values for expected driver kind (in `for` option) (second)
-  --> ui/badoptions.rs:42:43
+  --> ui/badoptions.rs:47:43
    |
-42 |     BadOptionsDriver dbg, for struct, for union:
+47 |     BadOptionsDriver dbg, for struct, for union:
    |                                           ^^^^^
 
 error: only doc attributes are supported
-  --> ui/badoptions.rs:46:7
+  --> ui/badoptions.rs:51:7
    |
-46 |     #[allow(dead_code)]
+51 |     #[allow(dead_code)]
    |       ^^^^^
 
 error: user-defined expansion `COND` not found
-  --> ui/badoptions.rs:57:6
+  --> ui/badoptions.rs:62:6
    |
-57 |     $COND
+62 |     $COND
    |      ^^^^
 
 error: user-defined condition `DEF` not found
-  --> ui/badoptions.rs:59:10
+  --> ui/badoptions.rs:64:10
    |
-59 |     ${if DEF {}}
+64 |     ${if DEF {}}
    |          ^^^
 
 error: this user-defined expansion used as a condition (perhaps you meant ${defcond ?}
-  --> ui/badoptions.rs:53:14
+  --> ui/badoptions.rs:58:14
    |
-53 |     ${define DEF {}}
+58 |     ${define DEF {}}
    |              ^^^
 
 error: probably-recursive user-defined expansion/condition (more than 100 deep)
-  --> ui/badoptions.rs:65:14
+  --> ui/badoptions.rs:70:14
    |
-65 |     ${define DEF $DEF}
+70 |     ${define DEF $DEF}
    |              ^^^
 
 error: reference involved in too-deep expansion/condition, depth 1
-  --> ui/badoptions.rs:65:19
+  --> ui/badoptions.rs:70:19
    |
-65 |     ${define DEF $DEF}
+70 |     ${define DEF $DEF}
    |                   ^^^
 
 error: reference involved in too-deep expansion/condition, depth 0
-  --> ui/badoptions.rs:66:6
+  --> ui/badoptions.rs:71:6
    |
-66 |     $DEF
+71 |     $DEF
    |      ^^^
+
+error: include macro expected single expression in source
+ --> $OUT_DIR[derive-deftly-macros]/derive-deftly~expansions~/dd-9bb48b2e4ab54bba44238094.rs
+  |
+  | 1,
+  |  ^
+  |
+  = note: `#[deny(incomplete_include)]` on by default

@@ -38,6 +38,11 @@ const K: () = derive_deftly_adhoc! {
     (*)
 };
 
+const K2: () = derive_deftly_adhoc! {
+    BadOptionsDriver expect expr:
+    1,
+};
+
 derive_deftly_adhoc! {
     BadOptionsDriver dbg, for struct, for union:
 }
