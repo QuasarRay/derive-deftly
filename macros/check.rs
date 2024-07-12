@@ -142,7 +142,11 @@ fn expand_via_file(
     use sha3::{Digest as _, Sha3_256};
     use std::{fs, io, io::Write as _, path::PathBuf};
 
-    let text = format!("// {}:\n{}\n", ctx.expansion_description(), broken);
+    let text = format!(
+        "// {}:\n{}\n",
+        ctx.expansion_description(),
+        broken,
+    );
 
     let hash: String = {
         let mut hasher = Sha3_256::new();
