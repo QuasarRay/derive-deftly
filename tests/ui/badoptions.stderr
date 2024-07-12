@@ -49,61 +49,73 @@ error: expected `!`
    |            ^^^^^
 
 error: expected one of `!` or `::`, found `error`
- --> $OUT_DIR[derive-deftly-macros]/derive-deftly~expansions~/dd-6af46d698f4b6716c94ce06a.rs
+ --> $OUT_DIR[derive-deftly-macros]/derive-deftly~expansions~/dd-f29bf7103472ec5bb186263b.rs
   |
   | syntax error;
   |        ^^^^^ expected one of `!` or `::`
 
-error: contradictory values for expected driver kind (in `for` option) (first)
-  --> ui/badoptions.rs:37:31
+error: unexpected end of input, expected an expression
+  --> ui/badoptions.rs:38:5
    |
-37 |     BadOptionsDriver dbg, for struct, for union:
+38 |     (*)
+   |     ^
+
+error: expected expression, found `)`
+ --> $OUT_DIR[derive-deftly-macros]/derive-deftly~expansions~/dd-2e1c4810a8f15c56049b9d53.rs
+  |
+  | (*)
+  |   ^ expected expression
+
+error: contradictory values for expected driver kind (in `for` option) (first)
+  --> ui/badoptions.rs:42:31
+   |
+42 |     BadOptionsDriver dbg, for struct, for union:
    |                               ^^^^^^
 
 error: contradictory values for expected driver kind (in `for` option) (second)
-  --> ui/badoptions.rs:37:43
+  --> ui/badoptions.rs:42:43
    |
-37 |     BadOptionsDriver dbg, for struct, for union:
+42 |     BadOptionsDriver dbg, for struct, for union:
    |                                           ^^^^^
 
 error: only doc attributes are supported
-  --> ui/badoptions.rs:41:7
+  --> ui/badoptions.rs:46:7
    |
-41 |     #[allow(dead_code)]
+46 |     #[allow(dead_code)]
    |       ^^^^^
 
 error: user-defined expansion `COND` not found
-  --> ui/badoptions.rs:52:6
+  --> ui/badoptions.rs:57:6
    |
-52 |     $COND
+57 |     $COND
    |      ^^^^
 
 error: user-defined condition `DEF` not found
-  --> ui/badoptions.rs:54:10
+  --> ui/badoptions.rs:59:10
    |
-54 |     ${if DEF {}}
+59 |     ${if DEF {}}
    |          ^^^
 
 error: this user-defined expansion used as a condition (perhaps you meant ${defcond ?}
-  --> ui/badoptions.rs:48:14
+  --> ui/badoptions.rs:53:14
    |
-48 |     ${define DEF {}}
+53 |     ${define DEF {}}
    |              ^^^
 
 error: probably-recursive user-defined expansion/condition (more than 100 deep)
-  --> ui/badoptions.rs:60:14
+  --> ui/badoptions.rs:65:14
    |
-60 |     ${define DEF $DEF}
+65 |     ${define DEF $DEF}
    |              ^^^
 
 error: reference involved in too-deep expansion/condition, depth 1
-  --> ui/badoptions.rs:60:19
+  --> ui/badoptions.rs:65:19
    |
-60 |     ${define DEF $DEF}
+65 |     ${define DEF $DEF}
    |                   ^^^
 
 error: reference involved in too-deep expansion/condition, depth 0
-  --> ui/badoptions.rs:61:6
+  --> ui/badoptions.rs:66:6
    |
-61 |     $DEF
+66 |     $DEF
    |      ^^^
