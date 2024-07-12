@@ -61,4 +61,9 @@ derive_deftly_adhoc! {
     $DEF
 }
 
+const K: () = derive_deftly_adhoc! {
+    BadOptionsDriver expect expr:
+    (*)
+};
+
 fn main() {}
