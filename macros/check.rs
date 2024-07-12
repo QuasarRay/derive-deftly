@@ -143,8 +143,9 @@ fn expand_via_file(
     use std::{fs, io, io::Write as _, path::PathBuf};
 
     let text = format!(
-        "// {}:\n{}\n",
+        "// {}, should have been {}:\n{}\n",
         ctx.expansion_description(),
+        target,
         broken,
     );
 

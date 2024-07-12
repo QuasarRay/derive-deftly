@@ -49,7 +49,7 @@ error: expected `!`
    |            ^^^^^
 
 error: expected one of `!` or `::`, found `error`
- --> $OUT_DIR[derive-deftly-macros]/derive-deftly~expansions~/dd-6af46d698f4b6716c94ce06a.rs
+ --> $OUT_DIR[derive-deftly-macros]/derive-deftly~expansions~/dd-f29bf7103472ec5bb186263b.rs
   |
   | syntax error;
   |        ^^^^^ expected one of `!` or `::`
@@ -115,7 +115,7 @@ error: unexpected end of input, expected an expression
    |     ^
 
 error: expected expression, found `)`
- --> $OUT_DIR[derive-deftly-macros]/derive-deftly~expansions~/dd-dcf00f905fa65b88f127c9d9.rs
+ --> $OUT_DIR[derive-deftly-macros]/derive-deftly~expansions~/dd-2e1c4810a8f15c56049b9d53.rs
   |
   | (*)
   |   ^ expected expression
