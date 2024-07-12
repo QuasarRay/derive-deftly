@@ -54,64 +54,10 @@ error: expected one of `!` or `::`, found `error`
   | syntax error;
   |        ^^^^^ expected one of `!` or `::`
 
-error: contradictory values for expected driver kind (in `for` option) (first)
-  --> ui/badoptions.rs:37:31
-   |
-37 |     BadOptionsDriver dbg, for struct, for union:
-   |                               ^^^^^^
-
-error: contradictory values for expected driver kind (in `for` option) (second)
-  --> ui/badoptions.rs:37:43
-   |
-37 |     BadOptionsDriver dbg, for struct, for union:
-   |                                           ^^^^^
-
-error: only doc attributes are supported
-  --> ui/badoptions.rs:41:7
-   |
-41 |     #[allow(dead_code)]
-   |       ^^^^^
-
-error: user-defined expansion `COND` not found
-  --> ui/badoptions.rs:52:6
-   |
-52 |     $COND
-   |      ^^^^
-
-error: user-defined condition `DEF` not found
-  --> ui/badoptions.rs:54:10
-   |
-54 |     ${if DEF {}}
-   |          ^^^
-
-error: this user-defined expansion used as a condition (perhaps you meant ${defcond ?}
-  --> ui/badoptions.rs:48:14
-   |
-48 |     ${define DEF {}}
-   |              ^^^
-
-error: probably-recursive user-defined expansion/condition (more than 100 deep)
-  --> ui/badoptions.rs:60:14
-   |
-60 |     ${define DEF $DEF}
-   |              ^^^
-
-error: reference involved in too-deep expansion/condition, depth 1
-  --> ui/badoptions.rs:60:19
-   |
-60 |     ${define DEF $DEF}
-   |                   ^^^
-
-error: reference involved in too-deep expansion/condition, depth 0
-  --> ui/badoptions.rs:61:6
-   |
-61 |     $DEF
-   |      ^^^
-
 error: unexpected end of input, expected an expression
-  --> ui/badoptions.rs:66:5
+  --> ui/badoptions.rs:38:5
    |
-66 |     (*)
+38 |     (*)
    |     ^
 
 error: expected expression, found `)`
@@ -119,3 +65,57 @@ error: expected expression, found `)`
   |
   | (*)
   |   ^ expected expression
+
+error: contradictory values for expected driver kind (in `for` option) (first)
+  --> ui/badoptions.rs:42:31
+   |
+42 |     BadOptionsDriver dbg, for struct, for union:
+   |                               ^^^^^^
+
+error: contradictory values for expected driver kind (in `for` option) (second)
+  --> ui/badoptions.rs:42:43
+   |
+42 |     BadOptionsDriver dbg, for struct, for union:
+   |                                           ^^^^^
+
+error: only doc attributes are supported
+  --> ui/badoptions.rs:46:7
+   |
+46 |     #[allow(dead_code)]
+   |       ^^^^^
+
+error: user-defined expansion `COND` not found
+  --> ui/badoptions.rs:57:6
+   |
+57 |     $COND
+   |      ^^^^
+
+error: user-defined condition `DEF` not found
+  --> ui/badoptions.rs:59:10
+   |
+59 |     ${if DEF {}}
+   |          ^^^
+
+error: this user-defined expansion used as a condition (perhaps you meant ${defcond ?}
+  --> ui/badoptions.rs:53:14
+   |
+53 |     ${define DEF {}}
+   |              ^^^
+
+error: probably-recursive user-defined expansion/condition (more than 100 deep)
+  --> ui/badoptions.rs:65:14
+   |
+65 |     ${define DEF $DEF}
+   |              ^^^
+
+error: reference involved in too-deep expansion/condition, depth 1
+  --> ui/badoptions.rs:65:19
+   |
+65 |     ${define DEF $DEF}
+   |                   ^^^
+
+error: reference involved in too-deep expansion/condition, depth 0
+  --> ui/badoptions.rs:66:6
+   |
+66 |     $DEF
+   |      ^^^

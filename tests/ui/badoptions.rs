@@ -33,6 +33,11 @@ derive_deftly_adhoc! {
     syntax error;
 }
 
+const K: () = derive_deftly_adhoc! {
+    BadOptionsDriver expect expr:
+    (*)
+};
+
 derive_deftly_adhoc! {
     BadOptionsDriver dbg, for struct, for union:
 }
@@ -60,10 +65,5 @@ derive_deftly_adhoc! {
     ${define DEF $DEF}
     $DEF
 }
-
-const K: () = derive_deftly_adhoc! {
-    BadOptionsDriver expect expr:
-    (*)
-};
 
 fn main() {}
