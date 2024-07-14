@@ -74,3 +74,18 @@ It will walk you through derive-deftly's most important features,
 with a number of worked examples.
 
 [user guide]: https://diziet.pages.torproject.net/rust-derive-deftly/latest/guide/
+
+## Reporting issues in derive-deftly
+
+We can't wait to hear from you!
+
+In order to submit a bug to
+[the derive-deftly issue tracker][tracker]
+you will need an account on <https://gitlab.torproject.org>.
+
+You can request an account via
+[anonticket](https://anonticket.torproject.org/),
+or via the [account request form].
+
+[tracker]: https://gitlab.torproject.org/Diziet/rust-derive-deftly/-/issues
+[account request form]]: https://anonticket.torproject.org/user/gitlab-account/create/
