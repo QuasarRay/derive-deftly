@@ -13,7 +13,6 @@ Unmentioned keywords and conditions from the reference:
  - $dbg_all_keywords
  - $error
  - $Xattrs
- - $select1
  - $ignore
  - $tdefkwd
  - $tdefgens
@@ -41,7 +40,7 @@ Concepts to explain:
  - Generating rustdoc documentation for your generated things.
  - Debugging (more detail)
  - Examples to stress-test your template.
-
+ - Fancy use of vpat to implement a cross-product style destructuring.
  - The complete syntax for expansions, conditions
  - The complete template syntax
  - Silly prelude tricks.
