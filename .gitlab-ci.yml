@@ -178,7 +178,6 @@ cargo-doc:
 # Check that the complete docs build without any warnings
 cargo-doc-all:
   stage: comprehensive
-  allow_failure: true
   script:
     - apt-get update
     - apt-get -y install jq
