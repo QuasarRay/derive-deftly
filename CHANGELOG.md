@@ -35,7 +35,7 @@ Future cargo features might imply a higher MSRV.
 Such features might be added to the metafeature `full`,
 again, in a minor version bump.
 
-## Reporting issues in derive-deftly
+## Reporting issues
 
 We can't wait to hear from you!
 
