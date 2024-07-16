@@ -35,6 +35,21 @@ Future cargo features might imply a higher MSRV.
 Such features might be added to the metafeature `full`,
 again, in a minor version bump.
 
+## Reporting issues
+
+We can't wait to hear from you!
+
+In order to submit a bug to
+[the derive-deftly issue tracker][tracker]
+you will need an account on <https://gitlab.torproject.org>.
+
+You can request an account via
+[anonticket](https://anonticket.torproject.org/),
+or via the [account request form].
+
+[tracker]: https://gitlab.torproject.org/Diziet/rust-derive-deftly/-/issues
+[account request form]: https://anonticket.torproject.org/user/gitlab-account/create/
+
 ## Changelog
 
 ### 0.14.1
