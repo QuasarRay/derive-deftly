@@ -48,7 +48,7 @@ You can request an account via
 or via the [account request form].
 
 [tracker]: https://gitlab.torproject.org/Diziet/rust-derive-deftly/-/issues
-[account request form]]: https://anonticket.torproject.org/user/gitlab-account/create/
+[account request form]: https://anonticket.torproject.org/user/gitlab-account/create/
 
 ## Changelog
 
