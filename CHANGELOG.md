@@ -52,6 +52,13 @@ or via the [account request form].
 
 ## Changelog
 
+### 0.14.2
+
+#### Improved
+
+ * Improvements to the Guide.
+ * New "Reporting issues" docs, currently in CHANGELOG.md.
+
 ### 0.14.1
 
 #### Fixed
