@@ -515,7 +515,8 @@ Accesses macro parameters passed via `#[deftly(...)]` attributes.
  * **`${Xmeta(...) .. , default DEFAULT}`** ([**beta**]):
    If there is no `VALUE` expands
    the [positional argument] `DEFAULT` instead.
-   NB: in this case the expansions of `DEFAULT` is used as is,
+   NB: in this case the expansions of `DEFAULT` is used as is:
+   *not* affected by any `as ..` clause;
    *not* surrounded with additional `( )` (for `as expr`),
    nor any additional [`None`-delimited group](#t:none-delimiters).
 
