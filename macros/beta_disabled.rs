@@ -1,4 +1,6 @@
 //! Version of `mod beta` for when the cargo feature is disabled
+//!
+//! See `beta.rs` for dev documentation.
 
 use super::prelude::*;
 

@@ -1,5 +1,8 @@
 //! Handle `beta_deftly` template option, when `beta` cargo feature enabled
 //!
+//! For instructions on adding a beta feature,
+//! see [`beta::Enabled`].
+//!
 //! This is a bit annoying.  It has to be an ambient property,
 //! so that the syn `Parse` trait can be implemented.
 
@@ -8,6 +11,20 @@ use super::prelude::*;
 use std::panic::{catch_unwind, resume_unwind, AssertUnwindSafe};
 
 /// Token indicating that beta feature(s) are or can be enabled
+///
+/// When adding a new beta feature:
+///
+///  * Put an instance of [`beta::Enabled`]
+///    in the appropriate piece of parsed template syntax,
+///    For example, in the [`SubstDetails`](super::syntax::SubstDetails)
+///    along with the `O::` markers.
+///
+///  * When parsing, obtain the value from [`Enabled::new_for_syntax`].
+///
+///  * Add a test case to `tests/minimal-ui/disabled.rs`
+///    which *omits* the `beta_deftly` option, and therefore fails,
+///    thus demonstrating that the feature gate works as intended.
+///
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
 #[non_exhaustive]
 pub struct Enabled {}
