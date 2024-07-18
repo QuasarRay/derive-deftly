@@ -14,7 +14,7 @@ struct IgnoredThings {
 }
 
 derive_deftly_adhoc! {
-    IgnoredThings:
+    IgnoredThings beta_deftly:
 
   $(
     // normal fmeta parsing
@@ -33,6 +33,8 @@ derive_deftly_adhoc! {
     // Ignores the mixed = "no" and finds the inner
     fn $<mixed_ ${fmeta(mixed(inner))}>() {}
   )
+
+    fn ${tmeta(absent) as ident, default { defaulted }}() {}
 }
 
 fn main() {}

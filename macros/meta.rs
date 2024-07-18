@@ -100,10 +100,11 @@ struct BorrowedDesig<'p> {
 
 //---------- substitutions in a template ----------
 
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct SubstMeta<O: SubstParseContext> {
     pub desig: Desig,
     pub as_: Option<SubstAs<O>>,
+    pub default: Option<(Argument<O>, O::NotInBool, beta::Enabled)>,
 }
 
 #[derive(Debug, Clone, AsRefStr, Display)]
@@ -306,21 +307,53 @@ impl<O: SubstParseContext> SubstMeta<O> {
 
         let label: Label = input.parse()?;
 
-        let as_;
-
-        if input.peek(Token![as]) {
-            let as_token: Token![as] = input.parse()?;
-            let nb = O::not_in_bool(&as_token).map_err(|_| {
-                as_token.error("`Xmeta as ...` not allowed in conditions")
-            })?;
-            as_ = Some(SubstAs::parse(input, nb)?);
-        } else {
-            as_ = None;
+        fn store<V>(
+            kw: Span,
+            already: &mut Option<(Span, V)>,
+            call: impl FnOnce() -> syn::Result<V>,
+        ) -> syn::Result<()> {
+            if let Some((already, _)) = already {
+                return Err([(*already, "first"), (kw, "second")]
+                    .error("`${Xmeta ..}` option repeated"));
+            }
+            let v = call()?;
+            *already = Some((kw, v));
+            Ok(())
         }
 
-        Ok(SubstMeta {
-            desig: Desig { label, scope },
-            as_,
+        let mut as_ = None::<(Span, SubstAs<O>)>;
+        let mut default = None;
+
+        while !O::IS_BOOL && !input.is_empty() {
+            let keyword = Ident::parse_any(input)?;
+            let kw_span = keyword.span();
+            let nb = O::not_in_bool(&kw_span).expect("checked already");
+            let ue = || beta::Enabled::new_for_syntax(kw_span);
+            if keyword == "as" {
+                store(kw_span, &mut as_, || SubstAs::parse(input, nb))?;
+            } else if keyword == "default" {
+                store(kw_span, &mut default, || {
+                    Ok((input.parse()?, nb, ue()?))
+                })?;
+            } else {
+                return Err(keyword.error("unknown option in `${Xmeta }`"));
+            }
+            if input.is_empty() {
+                break;
+            }
+            let _: Token![,] = input.parse()?;
+        }
+
+        macro_rules! ret { { $( $f:ident )* } => {
+            SubstMeta {
+                desig: Desig { label, scope },
+                $( $f: $f.map(|(_span, v)| v), )*
+            }
+        } }
+
+        Ok(ret! {
+            as_
+            default
         })
     }
 }
@@ -758,6 +791,7 @@ impl ToTokens for MetaUnsupported {
 impl<O> SubstMeta<O>
 where
     O: ExpansionOutput,
+    TemplateElement<O>: Expand<O>,
 {
     pub fn expand(
         &self,
@@ -766,7 +800,11 @@ where
         out: &mut O,
         pmetas: &PreprocessedMetas,
     ) -> syn::Result<()> {
-        let SubstMeta { desig, as_ } = self;
+        let SubstMeta {
+            desig,
+            as_,
+            default,
+        } = self;
         let mut found = None::<FoundNode>;
         let mut hint = None::<FoundNearbyNode>;
         let span_whole = self.span_whole(kw_span);
@@ -791,6 +829,10 @@ where
                 Ok(())
             },
         )?;
+
+        if let (None, Some((def, ..))) = (&found, default) {
+            return Ok(def.expand(ctx, out));
+        }
 
         let found = found.ok_or_else(|| {
             if let Some(hint) = hint {

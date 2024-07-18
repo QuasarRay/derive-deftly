@@ -41,6 +41,7 @@
       * [`expect items`, `expect expr` -- syntax check the expansion](#expect-items-expect-expr--syntax-check-the-expansion)
       * [`for struct`, `for enum`, `for union` -- Insist on a particular driver kind](#for-struct-for-enum-for-union--insist-on-a-particular-driver-kind)
       * [`dbg` -- Print the expansion to stderr, for debugging](#dbg--print-the-expansion-to-stderr-for-debugging)
+      * [`beta_deftly` -- Enable unstable template features](#beta_deftly--enable-unstable-template-features)
       * [Expansion options example](#expansion-options-example)
    * [Precedence considerations](#precedence-considerations)
       * [`None`-delimited groups](#none-delimited-groups)
@@ -63,6 +64,9 @@ the [crate-level docs for derive-deftly](../index.html#macros).
     We use eo:foo for a top-level expansion option "foo".
 
 -->
+
+[**beta**]: ../doc_changelog/index.html#t:beta
+[positional argument]: #t:arguments
 
 <div id="t:syntax">
 
@@ -508,6 +512,14 @@ Accesses macro parameters passed via `#[deftly(...)]` attributes.
      When using this option, be careful about operator precedence:
      see [Precedence considerations](#precedence-considerations).
 
+ * **`${Xmeta(...) .. , default DEFAULT}`** ([**beta**]):
+   If there is no `VALUE` expands
+   the [positional argument] `DEFAULT` instead.
+   NB: in this case the expansions of `DEFAULT` is used as is:
+   *not* affected by any `as ..` clause;
+   *not* surrounded with additional `( )` (for `as expr`),
+   nor any additional [`None`-delimited group](#t:none-delimiters).
+
 When expanding `${Xmeta}`,
 it is an error if the value was not specified in the driver,
 and also an error if multiple values were specified.
@@ -516,6 +528,11 @@ For a struct, both `$tmeta` and `$vmeta`
 look in the top-level attributes.
 This allows a template to have uniform handling of attributes
 which should affect how a set of fields should be processed.
+
+Within `${Xmeta ..}`,
+options (`as` and `default`)
+are each introduced with a keyword,
+and separated by commas.
 
 #### Attribute namespacing
 
@@ -545,6 +562,7 @@ These checks are disabled by `#[derive_deftly_adhoc]`.
 #### Examples
 
  * `${tmeta(simple) as ty}`: `« String »`
+ * `${tmeta(missing) as ty, default String}`: `String`
  * `${tmeta(simple) as path}`: `« String »`
  * `${tmeta(simple) as str}`: `"String"`
  * `${tmeta(simple) as token_stream}`: `String`
@@ -1392,6 +1410,18 @@ See also
 the [`${dbg ..}` expansion](#dbg--dbg_all_keywords--debugging-output),
 the [`dbg` condition](#dbg--debug-dump-of-condition-value),
 the [`$dbg_all_keywords` expansion](#dbg--dbg_all_keywords--debugging-output).
+
+<div id="eo:beta_deftly">
+
+### `beta_deftly` -- Enable unstable template features
+
+</div>
+
+Enables
+[beta template features](../doc_changelog/index.html#t:beta).
+
+This option is only allowed in a template,
+not in a driver's `#[derive_deftly]` attribute.
 
 ### Expansion options example
 

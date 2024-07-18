@@ -76,7 +76,12 @@ impl Subst<BooleanContext> {
                 let meta::SubstMeta {
                     desig: meta::Desig { label, scope: _ },
                     as_,
+                    default,
                 } = sm;
+                match default {
+                    None => {}
+                    Some((_, nb, _)) => void::unreachable(*nb),
+                };
                 use meta::SubstAs as mSA;
                 if let Some(as_) = as_ {
                     match as_ {

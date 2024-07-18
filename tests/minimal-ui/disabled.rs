@@ -22,5 +22,12 @@ derive_deftly_adhoc! {
     S:
     ${tmeta(i) as items};
 }
+derive_deftly_adhoc! {
+    S beta_deftly:
+}
+derive_deftly_adhoc! {
+    S:
+    ${fmeta(missing) default { 42 }}
+}
 
 fn main() {}

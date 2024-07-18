@@ -39,7 +39,10 @@ pub enum OpContext {
 ///
 /// This also helps with cross-crate compatibility.
 #[derive(Default, Debug, Clone)]
-pub struct UnprocessedOptions(TokenStream);
+pub struct UnprocessedOptions {
+    ts: TokenStream,
+    pub beta_enabled: Option<beta::Enabled>,
+}
 
 /// Template options, semantically resolved
 #[derive(Default, Debug, Clone)]
@@ -47,6 +50,7 @@ pub struct DdOptions {
     pub dbg: bool,
     pub driver_kind: Option<DdOptVal<ExpectedDriverKind>>,
     pub expect_target: Option<DdOptVal<check::Target>>,
+    pub beta_enabled: Option<beta::Enabled>,
 }
 
 /// A single template option
@@ -63,6 +67,7 @@ enum OptionDetails {
     dbg,
     For(DdOptVal<ExpectedDriverKind>),
     expect(DdOptVal<check::Target>),
+    beta_deftly(beta::Enabled),
 }
 
 /// Value for an option
@@ -136,6 +141,7 @@ impl OpContext {
             OD::dbg => return Ok(()),
             OD::expect(v) => return check::check_expect_opcontext(v, self),
             OD::For(..) => {}
+            OD::beta_deftly(..) => {}
         }
         match self {
             OC::TemplateDefinition => Ok(()),
@@ -206,8 +212,16 @@ impl UnprocessedOptions {
         input: ParseStream,
         opcontext: OpContext,
     ) -> syn::Result<Self> {
-        // Scan ahead for a syntax check
-        DdOption::parse_several(&input.fork(), opcontext, |_| Ok(()))?;
+        let mut beta_enabled = None;
+
+        // Scan ahead for a syntax check (and beta enablement)
+        DdOption::parse_several(&input.fork(), opcontext, |opt| {
+            match &opt.od {
+                OD::beta_deftly(be) => beta_enabled = Some(*be),
+                _ => {}
+            };
+            Ok(())
+        })?;
 
         // Collect everything until the : or =
         let mut out = TokenStream::new();
@@ -215,7 +229,10 @@ impl UnprocessedOptions {
             let tt: TokenTree = input.parse()?;
             out.extend([tt]);
         }
-        Ok(UnprocessedOptions(out))
+        Ok(UnprocessedOptions {
+            ts: out,
+            beta_enabled,
+        })
     }
 }
 
@@ -286,6 +303,7 @@ impl Parse for DdOption {
         keyword! { dbg }
         keyword! { "for": For(input.parse()?) }
         keyword! { expect(input.parse()?) }
+        keyword! { beta_deftly(beta::Enabled::new_for_dd_option(kw.span())?) }
 
         Err(kw.error("unknown derive-deftly option"))
     }
@@ -306,14 +324,14 @@ impl<V: FromStr + DdOptValDescribable> Parse for DdOptVal<V> {
 
 impl ToTokens for UnprocessedOptions {
     fn to_tokens(&self, out: &mut TokenStream) {
-        out.extend(self.0.clone());
+        out.extend(self.ts.clone());
     }
 }
 
 impl UnprocessedOptions {
     #[allow(dead_code)] // Currently unused, retain it in case we need it
     pub fn is_empty(&self) -> bool {
-        self.0.is_empty()
+        self.ts.is_empty()
     }
 }
 
@@ -350,6 +368,7 @@ impl DdOptions {
             OD::dbg => self.dbg = true,
             OD::expect(spec) => store(&mut self.expect_target, spec)?,
             OD::For(spec) => store(&mut self.driver_kind, spec)?,
+            OD::beta_deftly(be) => self.beta_enabled = Some(be),
         })
     }
 }

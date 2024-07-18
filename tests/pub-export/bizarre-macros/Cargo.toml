@@ -23,6 +23,7 @@ case = ["heck"]
 expect = ["sha3", "syn/full"]
 meta-as-expr = ["syn/full"]
 meta-as-items = ["syn/full"]
+beta = []
 
 [dependencies]
 indexmap = ">=1.8, <3"
