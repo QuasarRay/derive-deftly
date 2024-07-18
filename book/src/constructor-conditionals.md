@@ -98,12 +98,14 @@ You can do this using the `${select1}` keyword:
 Its syntax is nearly the same as `${if}`,
 except that _all_ conditions are checked.
 If more than one condition is true,
-then `${select1}` fails to expand,
-and emits an error.
+then derive-deftly rejects `${select1}`:
+it fails to expand, and
+emits an error.
 If no conditions are true,
 and there is no `else` clause,
-then `${select1}` also fails to expand,
-and emits an error.
+then `${select1}` is also rejected
+(it fails to expand,
+and emits an error).
 
 Here's an example of how we could use `${select1}`
 if we wanted to allow `constructor(default_name)`,
