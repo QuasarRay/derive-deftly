@@ -123,7 +123,7 @@ but not both:
 # pub fn
    ${select1
        tmeta(constructor(newfn)) { ${tmeta(constructor(newfn))} }
-       tmeta(constructor(default_name)) { new }
+       else if tmeta(constructor(default_name)) { new }
        else { new }
     }
 # () {}
