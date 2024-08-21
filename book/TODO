@@ -9,22 +9,15 @@ Refactoring the book:
  - "Naming conventions" is not exactly an "advanced topic".
 
 Unmentioned keywords and conditions from the reference:
- - $crate
  - $dbg_all_keywords
- - $error
  - $Xattrs
  - $ignore
- - $tdefkwd
- - $tdefgens
  - $tgnames
- - $vdefbody ?
 
  - approx_eq
  - dbg
- - fdefvis
  - is_empty
- - is_struct, is_enum, is_union
- - v_is_named, v_is_tuple, v_is_unit
+
 
 Mentioned but unused in examples:
  - all, any
@@ -40,7 +33,6 @@ Concepts to explain:
  - Generating rustdoc documentation for your generated things.
  - Debugging (more detail)
  - Examples to stress-test your template.
- - Fancy use of vpat to implement a cross-product style destructuring.
  - The complete syntax for expansions, conditions
  - The complete template syntax
  - Silly prelude tricks.
