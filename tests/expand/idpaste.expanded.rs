@@ -27,6 +27,7 @@ struct PreTopNamePost<F> {
 }
 impl<F> std::panic::RefUnwindSafe for PreTopNamePost<F> {}
 #[derive_deftly_adhoc]
+#[deftly(t_frag = "TFrag")]
 struct ExpandName {
     #[deftly(prefix = "attr", suffix = "24")]
     f: FieldType,
@@ -43,6 +44,7 @@ struct PreExpandNamePost {
     pub_r_: u32,
 }
 struct WomExpandNameBat;
+struct ViaDefineTFrag;
 #[derive_deftly_adhoc]
 enum EdgeCases {
     Tuple(u32),
