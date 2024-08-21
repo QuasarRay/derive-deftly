@@ -50,6 +50,7 @@ derive_deftly_adhoc! {
 
 #[derive(Deftly)]
 #[derive_deftly_adhoc]
+#[deftly(t_frag = "TFrag")]
 struct ExpandName {
     #[deftly(prefix = "attr", suffix = "24")]
     f: FieldType,
@@ -66,6 +67,8 @@ struct ExpandName {
 derive_deftly_adhoc! {
     ExpandName:
 
+    ${define VIA_DEFINE ${paste ${tmeta(t_frag) as ident}}}
+
     struct ${paste "Pre" $tdeftype "Post"} {
         $(
             ${paste
@@ -79,6 +82,8 @@ derive_deftly_adhoc! {
 
     struct ${pascal_case ${paste wom_ ${shouty_snake_case $tname}
                            ${if true { _bat } else { _noise }}}};
+
+    struct $<ViaDefine $VIA_DEFINE>;
 }
 
 #[derive(Deftly)]

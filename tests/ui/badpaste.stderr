@@ -33,3 +33,15 @@ error: expected one of `!` or `::`, found `Broken`
    |
 35 |     ${paste tdefkwed} Broken { }
    |                       ^^^^^^ expected one of `!` or `::`
+
+error: not allowed in within ${paste ...} (or case_changing)
+  --> ui/badpaste.rs:45:25
+   |
+45 |     struct $<ViaDefine $VIA_DEFINE>;
+   |                         ^^^^^^^^^^
+
+error: user-defined expansion is not pasteable because it isn't, itself, ${paste }
+  --> ui/badpaste.rs:43:25
+   |
+43 |     ${define VIA_DEFINE ${tmeta(t_frag) as ident}}
+   |                         ^
