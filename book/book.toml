@@ -20,4 +20,4 @@ title = "Advanced Rust macros with derive-deftly"
 # Add a dummy `[output]` entry so that if we change the number outputs,
 # things don't move about.
 [output.null]
-command = "true"
+command = "wc"
