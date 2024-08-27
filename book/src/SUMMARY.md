@@ -29,4 +29,9 @@
   - [Making Constructor set fields with Default](constructor-advanced-conditionals.md)
   - [Managing complexity with $define](constructor-define.md)
 
+- [Example 3: A type to track the differences between objects](difference-intro.md)
+  - [Some difficulties when creating a Diff type](difference-problems.md)
+  - [A brute-force approach for applying to structs and enums](difference-if-enum.md)
+  - [A better solution to our Diff problems](difference-solving.md)
+
 - [Other features](other-features.md)

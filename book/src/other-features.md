@@ -4,22 +4,15 @@
 that aren't yet explained in this tutorial.
 For example:
 
- * [`is_enum`, `is_struct`, `is_union`](https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#is_struct-is_enum-is_union);
-   [`v_is_unit`, `is_named`, `is_tuple`](https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#v_is_unit-v_is_tuple-v_is_named);
-   [`fvis`, `tvis`](https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#fvis-tvis-fdefvis--test-for-public-visibility):
-   and [`approx_equal`](https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#is_empty-approx_equalarg1-arg2--equality-comparison-token-comparison):
+ * [`fvis`][c:fvis], [`tvis`][c:tvis],
+   and [`approx_equal`][c:approx_equal],
    more conditions for dealing with various cases by hand.
 
- * [`$tdefkwd`](https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#tdefkwd--keyword-introducing-the-new-data-structure);
-   [`$tdeftype`](https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#ftype-vtype-ttype-tdeftype--types);
-   [`$fdefvis`](https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#fvis-tvis-fdefvis--visibility);
-   [`$fdefgens`](https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#tgens-tgnames-twheres-tdefgens--generics);
-   and
-   [`$tdefvariants`, `$vdefbody`, `$fdefine`](https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#tdefvariants-vdefbody-fdefine--tools-for-defining-types)
+ * [`$tdeftype`][x:tdeftype]
    for defining a new data structure
    in terms of features of the input data structure,
    and
-   [`$Xattrs`](https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#fattrs--vattrs--tattrs---other-attributes)
+   [`$Xattrs`][x:fattrs]
    for passing through attributes.
 
 Full details are in the [reference],
@@ -35,6 +28,9 @@ which also has a brief example demonstrating each construct.
 
 -->
 
-[reference]: crate::doc_reference
-[README]: crate
-[`paste`]: https://docs.rs/paste/latest/paste/
+[reference]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html
+[c:fvis]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#c:fvis
+[c:tvis]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#c:tvis
+[c:approx_equal]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#c:approx_equal
+[x:tdeftype]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#x:tdeftype
+[x:fattrs]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#x:fattrs

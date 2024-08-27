@@ -38,7 +38,9 @@ There is a similar keyword
 that expands to the visibility of the current field.
 
 (Since enum variants are always visible,
-there is no such keyword as `$vvis`.)
+there is no such keyword as `$vvis`.
+Since enum fields are always visible,
+`$fvis` in an enum always expands to `pub`.)
 
 [x:tvis]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#x:tvis
 [x:fvis]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#x:fvis

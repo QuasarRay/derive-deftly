@@ -81,7 +81,7 @@ There is a
 [complete list of recognized conditions][ref:conditions]
 in the reference.
 
-## Multiple exclusive options with `$select1`
+## Multiple exclusive options with `$select1` {#select1}
 
 Sometimes you want to make sure _exactly one_
 condition matches.
