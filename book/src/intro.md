@@ -165,7 +165,7 @@ reliable templates that handle a broad range of situations.
 
 There are other resources on derive-deftly:
 
-* The [Reference] tries to provide is a terse but complete
+* The [Reference] tries provides a terse but complete
   (and farily rigorous)
   guide to derive-deftly's behavior and features.
 * The [rustdoc] describes the exposed members of the `derive-deftly` crate,
