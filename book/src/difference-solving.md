@@ -40,7 +40,7 @@ We needed some way to
 [wrap our enum variants in braces](difference-problems.md#enum-braces),
 but leave our structs unwrapped.
 
-Derive-deftly solves this problem with
+derive-deftly solves this problem with
 the [`$tdefvariants`][x:tdefvariants] expansion,
 which adds braces only when the top-level type is an enum.
 In other words, `${tdefvariance ARG}` expands to `{ARG}` for an enum,
