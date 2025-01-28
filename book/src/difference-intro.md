@@ -50,6 +50,16 @@ macro_rules! assert_no_difference {
 }
 ```
 
+<!-- TODO a real macro of this kind might want to use
+       $crate::Diff::diff(&$a, &$b)
+    to avoid trait method dispatch depending on
+	what traits are used in the calling scope.
+	This is not a derive-deftly-specific point, though.
+
+    In -solving, the example uses Diff:diff rather than $crate::Diff:diff,
+    which is almost the same issue.
+    -->
+
 We'll also assume that we've implemented our `Diff` trait
 on a wide array of types from `std`.
 
