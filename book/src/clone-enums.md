@@ -118,6 +118,10 @@ So (in this case at least)
 we were able to write a single template expansion
 that worked for both `struct`s and enum`s.
 
+<!-- TODO It might be worth mentioning why we have the f_ here,
+     which is also related to the difference
+	 between $fname and $fpatname -->
+
 [x:vpat]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#x:vpat
 [x:vtype]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#x:vtype
 [x:fpatname]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html#x:fpatname
