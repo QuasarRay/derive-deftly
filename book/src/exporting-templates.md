@@ -98,6 +98,9 @@ In the next session, we'll start working on a `Clone` example,
 and we'll learn how to work with
 structs, enums, fields, variants, and more.
 
+<!-- TODO ^ this isn't really true any more;
+     the next section is about truly-adhoc templates. -->
+
 
 
 [`derive_deftly::template_export_semver_check`]: https://docs.rs/derive-deftly/latest/derive_deftly/macro.template_export_semver_check.html
