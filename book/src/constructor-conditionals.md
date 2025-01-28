@@ -74,7 +74,7 @@ on variants and fields respectively.
 > As we use it here, `tmeta(x)` is a condition (true or false),
 > whereas `${tmeta(x) as ident}` is an expansion.
 >
-> Even though the names are similar in this case,
+> They are similar for memorability and consistency, but
 > conditions and expansions have separate namespaces;
 > you cannot (in general) use them interchangeably.
 
