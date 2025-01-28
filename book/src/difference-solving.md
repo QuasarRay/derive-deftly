@@ -43,13 +43,13 @@ but leave our structs unwrapped.
 derive-deftly solves this problem with
 the [`$tdefvariants`][x:tdefvariants] expansion,
 which adds braces only when the top-level type is an enum.
-In other words, `${tdefvariance ARG}` expands to `{ARG}` for an enum,
+In other words, `${tdefvariants ARG}` expands to `{ARG}` for an enum,
 but `ARG` otherwise.
 
 ### Solving problem 4: `$vdefbody` and `$fdefine` for struct/variant types
 
 We needed some way to make
-[approprite type and field declarations](difference-problems.md#defining)
+[appropriate type and field declarations](difference-problems.md#defining)
 no matter whether the current struct or variant
 is a unit struct/variant, a tuple struct/variant,
 or a struct with named fields/fields.
