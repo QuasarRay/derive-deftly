@@ -351,7 +351,7 @@ impl<'c> Context<'c> {
     ///
     /// Demands that there actually is a current container `W`.
     /// If we aren't, calls it an error.
-    fn within_level<W>(&'c self, why: &dyn Spanned) -> syn::Result<&W>
+    fn within_level<W>(&'c self, why: &dyn Spanned) -> syn::Result<&'c W>
     where
         W: WithinRepeatLevel<'c>,
     {
