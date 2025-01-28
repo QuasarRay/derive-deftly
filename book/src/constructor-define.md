@@ -32,7 +32,7 @@ define_derive_deftly! {
        ${if F_DFLT {
           ::std::default::Default::default()
        } else {
-          $fname
+          $fpatname
        }}
    }
 
@@ -40,7 +40,7 @@ define_derive_deftly! {
   impl<$tgens> $ttype where $twheres {
      $tvis fn $FUNC_NAME(
        $(
-          ${when not(F_DFLT)}  $fname: $ftype ,
+          ${when not(F_DFLT)}  $fpatname: $ftype ,
         )
      ) -> Self {
           Self {
