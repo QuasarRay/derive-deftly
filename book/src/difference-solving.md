@@ -135,7 +135,7 @@ define_derive_deftly!{
             }
         )
         ${if is_enum {
-            TypeChanged {
+            VariantChanged {
                 original_value: $ttype,
                 new_value: $ttype,
             },
@@ -154,7 +154,7 @@ define_derive_deftly!{
                         }
                     }
                 )
-                ${if is_enum { Self::TypeChanged{..} => {} }}
+                ${if is_enum { Self::VariantChanged{..} => {} }}
             }
             return Some(self);
         }
@@ -180,7 +180,7 @@ define_derive_deftly!{
                 ) // End variants.
                 ${if is_enum {
                     (original_value, new_value) => {
-                        Self::Difference::TypeChanged {
+                        Self::Difference::VariantChanged {
                             original_value: original_value.clone(),
                             new_value: new_value.clone(),
                         }
