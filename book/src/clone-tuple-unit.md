@@ -7,7 +7,7 @@ Rust defines several kinds of struct:
 * and unit structs like `struct Foo;`
 
 So far, you've only applied your `MyClone` template
-to a struct with fields.
+to a struct with named fields.
 But with a tuple struct, or a unit struct,
 you might expect it to fail.
 
