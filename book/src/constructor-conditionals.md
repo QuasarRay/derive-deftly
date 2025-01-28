@@ -96,8 +96,8 @@ You can do this using the `${select1}` keyword:
 
 `${select1 COND1 { ... } else if COND2 { ... } ... else { ... }`
 
-Its syntax is nearly the same as `${if}`,
-except that _all_ conditions are checked.
+Its syntax is identical to `${if}`.
+But the behaviour is different: _all_ conditions are checked.
 If more than one condition is true,
 then derive-deftly rejects `${select1}`:
 it fails to expand, and
