@@ -19,6 +19,11 @@ Full details are in the [reference],
 which also has a brief example demonstrating each construct.
 
 <!--
+  TODO $tdeftype could be used in difference-solving.md
+  but it might be less illustrative if we did.
+  -->
+
+<!--
 
  TODO:
 
