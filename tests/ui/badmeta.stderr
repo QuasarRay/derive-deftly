@@ -1,18 +1,3 @@
-error: this file contains an unclosed delimiter
-  --> ui/badmeta.rs:3:10
-   |
-3  |   #[derive(Deftly)]
-   |            ^^^^^^ unclosed delimiter
-...
-14 | / derive_deftly_adhoc! {
-15 | |     DataType:
-16 | |
-17 | |     const K: () = ${tmeta(wrong) as expr}
-18 | | }
-   | |_- in this macro invocation
-   |
-   = note: this error originates in the macro `::derive_deftly::derive_deftly_engine` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
-
 error: cannot parse string into token stream
   --> ui/badmeta.rs:3:10
    |
