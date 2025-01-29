@@ -177,6 +177,8 @@ cargo-doc:
 
 # Check that the complete docs build without any warnings
 cargo-doc-all:
+  # We turn warnings into errors; pin to avoid getting new ones willy-nilly
+  image: "rust:1.79.0"
   stage: comprehensive
   script:
     - apt-get update
