@@ -1,5 +1,7 @@
 # **Template syntax (and expansion options) reference**
 
+> \[ _docs: [crate top-level]() | [overall toc, macros]() | **template etc. reference** | [guide/tutorial]()_ \]
+
 **Table of contents**
 
 <!--##toc##-->

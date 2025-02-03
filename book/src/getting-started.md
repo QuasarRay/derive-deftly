@@ -1,3 +1,5 @@
+\[ _docs: [crate top-level]() | [overall toc, macros]() | [template etc. reference]() | [**guide/tutorial**]()_ \]
+
 # Getting started
 
 In this short chapter,

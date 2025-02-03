@@ -1,5 +1,7 @@
 # derive-deftly: An ergonomic replacement for (some) proc macros
 
+> \[ _docs: **crate top-level** | [overall toc, macros](#overall-toc) | [template etc. reference](doc_reference) | [guide/tutorial](https://diziet.pages.torproject.net/rust-derive-deftly/latest/guide/)_ \]
+
 `derive-deftly` allows you to write macros which are driven
 by Rust data structures, just like proc macro derive macros,
 but without having to wrestle with the proc macro system.
@@ -74,3 +76,20 @@ It will walk you through derive-deftly's most important features,
 with a number of worked examples.
 
 [user guide]: https://diziet.pages.torproject.net/rust-derive-deftly/latest/guide/
+
+</div>
+
+<h1 class="section-header main-heading" id="overall-toc"><a class="doc-anchor" href="#overall-toc">§</a><strong>derive-deftly documentation, overall table of contents</strong></h1>
+
+<div class="docblock">
+
+\[ _docs: [crate top-level]() | **overall toc, macros** | [template etc. reference]() | [guide/tutorial]()_ \]
+
+</div>
+<div>
+<p style="margin-top: 25px"></p>
+
+<ul class="item-table"><li>
+<div class="item-name"><a href="">Guide</a></div>
+<div class="desc docblock-short">Tutorial and walkthrough, in book form</div>
+</li></ul>

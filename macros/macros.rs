@@ -184,6 +184,8 @@ pub fn derive_deftly_adhoc(
 
 /// Define a reuseable template
 ///
+/// > \[ _docs: [crate top-level]() | [overall toc, **macros**]() | [template etc. reference]() | [guide/tutorial]()_ \]
+///
 /// ```text
 /// define_derive_deftly! {
 ///     [/// DOCS]
@@ -299,6 +301,8 @@ pub fn define_derive_deftly(
 }
 
 /// Perform ad-hoc templating driven by a data structure
+///
+/// > \[ _docs: [crate top-level]() | [overall toc, **macros**]() | [template etc. reference]() | [guide/tutorial]()_ \]
 ///
 /// This macro does two things:
 ///

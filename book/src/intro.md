@@ -1,3 +1,5 @@
+\[ _docs: [crate top-level]() | [overall toc, macros]() | [template etc. reference]() | **guide/tutorial**_ \]
+
 # Introduction: Using derive-deftly for easy derive macros.
 
 **derive-deftly** is a Rust package

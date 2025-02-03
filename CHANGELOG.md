@@ -1,5 +1,9 @@
 # Changelog, MSRV policy and cargo features
 
+> \[ _docs: [crate top-level]() | [overall toc, macros]() | [template etc. reference]() | [guide/tutorial]()_ \]
+
+<!-- XXXX ^ need machinery to maintain these everywhere -->
+
 <div id="t:cargo-features">
 
 ## cargo features
