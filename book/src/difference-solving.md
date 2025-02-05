@@ -40,16 +40,16 @@ We needed some way to
 [wrap our enum variants in braces](difference-problems.md#enum-braces),
 but leave our structs unwrapped.
 
-Derive-deftly solves this problem with
+derive-deftly solves this problem with
 the [`$tdefvariants`][x:tdefvariants] expansion,
 which adds braces only when the top-level type is an enum.
-In other words, `${tdefvariance ARG}` expands to `{ARG}` for an enum,
+In other words, `${tdefvariants ARG}` expands to `{ARG}` for an enum,
 but `ARG` otherwise.
 
 ### Solving problem 4: `$vdefbody` and `$fdefine` for struct/variant types
 
 We needed some way to make
-[approprite type and field declarations](difference-problems.md#defining)
+[appropriate type and field declarations](difference-problems.md#defining)
 no matter whether the current struct or variant
 is a unit struct/variant, a tuple struct/variant,
 or a struct with named fields/fields.
@@ -135,7 +135,7 @@ define_derive_deftly!{
             }
         )
         ${if is_enum {
-            TypeChanged {
+            VariantChanged {
                 original_value: $ttype,
                 new_value: $ttype,
             },
@@ -154,7 +154,7 @@ define_derive_deftly!{
                         }
                     }
                 )
-                ${if is_enum { Self::TypeChanged{..} => {} }}
+                ${if is_enum { Self::VariantChanged{..} => {} }}
             }
             return Some(self);
         }
@@ -180,7 +180,7 @@ define_derive_deftly!{
                 ) // End variants.
                 ${if is_enum {
                     (original_value, new_value) => {
-                        Self::Difference::TypeChanged {
+                        Self::Difference::VariantChanged {
                             original_value: original_value.clone(),
                             new_value: new_value.clone(),
                         }

@@ -52,7 +52,7 @@ struct Foo {
 Here we're using a new construct:
 [`$when`][x:when].
 It's only valid inside a loop like `$( ... )` or `${for ...}`.
-It causes the output of the loop to be suppressed
+It causes the expansion of the loop body to be suppressed
 whenever the condition is not true.
 
 The condition in this cases is `not(fmeta(constructor(default)))`.

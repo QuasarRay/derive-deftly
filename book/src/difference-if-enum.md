@@ -81,7 +81,7 @@ define_derive_deftly!{
                 }} // end select1
             ) // end iteration over variants
 
-            TypeChanged {
+            VariantChanged {
                 original_value: $ttype,
                 new_value: $ttype,
             },

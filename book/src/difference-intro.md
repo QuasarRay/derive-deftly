@@ -120,7 +120,7 @@ enum MyEnumDiff {
     // The two items are different variants of MyEnum.
     //
     // (This assumes that MyEnum implements Debug and Clone.)
-    TypeChanged {
+    VariantChanged {
         original_value: MyEnum,
         new_value: MyEnum,
     }

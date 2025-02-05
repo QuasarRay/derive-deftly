@@ -47,7 +47,7 @@ which will appear in the public API documentation for our crate.
 Additionally,
 [we need to re-export `derive_deftly`][must-re-export]
 from our crate, so that when our template is applied to user types,
-a compatible derive-deftly driver is used.
+a compatible derive-deftly engine is used.
 And we should also invoke
 [`derive_deftly::template_export_semver_check`]
 once,

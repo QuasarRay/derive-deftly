@@ -70,7 +70,7 @@ we are requiring every field to be `Clone`.
 Will this work with non-generic fields,
 or if the same field is used more than once?
 Once again, yes!
-To Rust, this is a perfectly valid example:
+To Rust, this is perfectly valid:
 
 ```rust,ignore
 impl<T> Clone for Direct
