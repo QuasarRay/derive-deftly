@@ -25,14 +25,14 @@ define_derive_deftly! {
        // These are the function arguments:
        $(
           ${when not(fmeta(constructor(default))) } // (1)
-          $fname: $ftype ,
+          $fpatname: $ftype ,
         )
      ) -> Self {
           Self {
               $( $fname:
                   ${if fmeta(constructor(default)) {
                     ::std::default::Default::default() // (2)
-                  } else { $fname } }
+                  } else { $fpatname } }
                  , )
           }
       }

@@ -16,9 +16,9 @@ define_derive_deftly! {
    Constructor:
 
    impl<$tgens> $ttype where $twheres {
-      pub fn new( $( $fname: $ftype , ) ) -> Self {
+      pub fn new( $( $fpatname: $ftype , ) ) -> Self {
           Self {
-              $( $fname , )
+              $( $fname: $fpatname , )
           }
       }
    }
@@ -33,9 +33,9 @@ When you apply the above template to a type like this:
 #   Constructor:
 #
 #   impl<$tgens> $ttype where $twheres {
-#       pub fn new( $( $fname: $ftype , ) ) -> Self {
+#       pub fn new( $( $fpatname: $ftype , ) ) -> Self {
 #           Self {
-#               $( $fname , )
+#               $( $fname: $fpatname , )
 #           }
 #       }
 #   }
@@ -54,8 +54,8 @@ You'll get a constructor like this:
 ```rust
 # struct Ex<A> { a: f64, b: A, c: String }
 impl<A> Ex<A> {
-    pub fn new( a: f64, b: A, c: String ) -> Self {
-        Self { a, b, c }
+    pub fn new( f_a: f64, f_b: A, f_c: String ) -> Self {
+        Self { a: f_a, b: f_b, c: f_c }
     }
 }
 ```
@@ -63,4 +63,7 @@ impl<A> Ex<A> {
 So far, there aren't any new techniques at work here.
 We'll add some more down below.
 
-
+Note the use of `$fpatname` for the function arguments, rather than `$fname`.
+This makes the macro work with tuple structs:
+a tuple struct has field "names" like `0` and `1`,
+which aren't useable as variable names.
