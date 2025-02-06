@@ -93,10 +93,8 @@ You may still need `#[macro_use]`.
 ## What's next
 
 Now that we've explained how to expose a template,
-it's time to learn about more features from derive-deftly.
-In the next session, we'll start working on a `Clone` example,
-and we'll learn how to work with
-structs, enums, fields, variants, and more.
+it's time to learn about a simpler syntax,
+for template we only want to use once.
 
 
 
