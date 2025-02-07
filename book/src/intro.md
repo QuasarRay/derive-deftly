@@ -9,8 +9,26 @@ but powerful enough to implement macros of
 [significant](https://gitlab.torproject.org/nickm/build-deftly)
 [complexity](https://gitlab.torproject.org/nickm/serde-deftly).
 
-Here's a simple example,
+Just below is a simple example,
 to help you get a feel for the system.
+
+### Reference documentation
+
+<!-- This section is aimed primarily at a different audience to the book:
+     it's the redirects for readers who want less discursive
+     and more formal material.
+	 So it is deliberately in a different prose style. -->
+
+There is also comprehensive and rigorous reference material:
+
+* **[Template language reference manual][Reference]**
+   (terse, but complete).
+
+* **[rustdoc top-level][rustdoc]**:
+  Documents macros exposed by the `derive-deftly` crate.
+  Also has links to all the other documentation.
+
+* **[Changelog, MSRV policy and cargo features][Changelog]**.
 
 ## Example: deriving field accessor functions
 
@@ -161,16 +179,7 @@ We'll try to explain each of its features,
 and how to use it to make correct,
 reliable templates that handle a broad range of situations.
 
-## Other resources
-
-There are other resources on derive-deftly:
-
-* The [Reference] tries to provide is a terse but complete
-  (and farily rigorous)
-  guide to derive-deftly's behavior and features.
-* The [rustdoc] describes the exposed members of the `derive-deftly` crate,
-  along with other useful information.
-
 
 [Reference]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html
 [rustdoc]: https://docs.rs/derive-deftly/latest/derive_deftly/
+[Changelog]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_changelog/index.html
