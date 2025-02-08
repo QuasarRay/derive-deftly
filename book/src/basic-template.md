@@ -5,6 +5,10 @@ with a simple `derive-deftly` template.
 Our template won't do much,
 but it will get us started using the system.
 
+<!-- TODO BOOK? The reader likely knows how to make a crate,
+     but the text is short and they can skip over
+     the parts they already know. -->
+
 To begin with, we'll create a new project:
 
 > ```shell
@@ -14,15 +18,9 @@ To begin with, we'll create a new project:
 
 Next, we'll add the `derive-deftly` crate as a new dependency:
 
-> Note: You could also add the dependency
-> by adding a line like this to the `[dependencies]` section
-> in your `Cargo.toml`:
->
-> ```toml
-> derive-deftly = "0.10"
-> ```
->
-> (You should replace `0.10` with the real latest version.)
+```shell
+$ cargo add derive-deftly
+```
 
 Now we can edit `src/lib.rs` in our project
 to define and use a new template.
