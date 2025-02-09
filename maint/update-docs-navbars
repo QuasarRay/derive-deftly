@@ -73,7 +73,7 @@ sub make_navbar ($) {
 
     my $o = '';
     $o .= "<!-- this line automatically maintained by update-navbars -->";
-    $o .= '<nav style="text-align: center; margin-bottom: 12px;">[ <em>';
+    $o .= '';
     my $e;
 
     open N, '<', $navbar_file or confess $!;
@@ -102,19 +102,19 @@ sub make_navbar ($) {
 	    } else {
 		$o .= $_;
 	    }
-	} elsif (m{^\|$}) {
+	} elsif (m{^[|\$]$}) {
 	    $o .= $e;
 	    $e = undef;
-	    $o .= " | ";
+	    $o .= " | " if $_ =~ m/\|/;
 	} else {
 	    die "$navbar_file:$.: bad instruction in navbar\n";
 	}
     }
     N->error and confess $!;
 
-    $o .= $e;
+    $o .= $e if defined $e;
     $e = undef;
-    $o .= "</em> ]</nav>\n";
+    $o .= "\n";
     return $o;
 }
 
