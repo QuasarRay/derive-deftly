@@ -84,7 +84,8 @@ with a number of worked examples.
 
 <div class="docblock">
 
-\[ _docs: [crate top-level]() | **overall toc, macros** | [template etc. reference]() | [guide/tutorial]()_ \]
+<? dd-navbar overall-toc . ?>
+<!-- this line automatically maintained by update-navbars --><nav style="text-align: center; margin-bottom: 12px;">[ <em>docs: <a href="index.html">crate top-level</a> | <strong>overall toc, macros</strong> | <a href="doc_reference/index.html">template etc. reference</a> | <a href="https://diziet.pages.torproject.net/rust-derive-deftly/latest/guide/">guide/tutorial</a></em> ]</nav>
 
 </div>
 <div>

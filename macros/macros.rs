@@ -184,7 +184,8 @@ pub fn derive_deftly_adhoc(
 
 /// Define a reuseable template
 ///
-/// > \[ _docs: [crate top-level]() | [overall toc, **macros**]() | [template etc. reference]() | [guide/tutorial]()_ \]
+/// <? dd-navbar macros . ?>
+/// <!-- this line automatically maintained by update-navbars --><nav style="text-align: center; margin-bottom: 12px;">[ <em>docs: <a href="index.html">crate top-level</a> | <a href="index.html#overall-toc">overall toc, <strong>macros</strong></a> | <a href="doc_reference/index.html">template etc. reference</a> | <a href="https://diziet.pages.torproject.net/rust-derive-deftly/latest/guide/">guide/tutorial</a></em> ]</nav>
 ///
 /// ```text
 /// define_derive_deftly! {
@@ -302,8 +303,9 @@ pub fn define_derive_deftly(
 
 /// Perform ad-hoc templating driven by a data structure
 ///
-/// > \[ _docs: [crate top-level]() | [overall toc, **macros**]() | [template etc. reference]() | [guide/tutorial]()_ \]
-///
+/// <? dd-navbar macros . ?>
+/// <!-- this line automatically maintained by update-navbars --><nav style="text-align: center; margin-bottom: 12px;">[ <em>docs: <a href="index.html">crate top-level</a> | <a href="index.html#overall-toc">overall toc, <strong>macros</strong></a> | <a href="doc_reference/index.html">template etc. reference</a> | <a href="https://diziet.pages.torproject.net/rust-derive-deftly/latest/guide/">guide/tutorial</a></em> ]</nav>
+/// 
 /// This macro does two things:
 ///
 ///  1. If `#[derive_deftly(MyMacro)]` attributes are also specified,
