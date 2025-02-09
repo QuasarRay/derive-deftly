@@ -1,0 +1,14 @@
+text = docs: $
+url toplevel = index.html
+text = crate top-level
+|
+url overall-toc = index.html#overall-toc
+subanchor toc = overall toc
+text = , $
+subanchor macros = macros
+|
+url reference = doc_reference/index.html
+text = template etc. reference
+|
+url book = https://diziet.pages.torproject.net/rust-derive-deftly/latest/guide/
+text = guide/tutorial

@@ -1,0 +1,180 @@
+#!/usr/bin/perl -w
+#
+# Idempotently updates the following files:
+#
+#   **.md
+#   **.rs
+#      looks for <!-- @navbar --> (manualal
+#   book/**.md
+#      unconditionally ensures a navbar at the top of every file
+#
+# The manually maintainer marker instructions
+#     <!-- @navbar IDENT RELATIVE --> XXXX
+
+use strict;
+
+use Carp;
+use Getopt::Long;
+
+our $check;
+our $debug;
+our $found_differences = 0;
+
+our $navbar_file = "maint/navbar";
+
+GetOptions(
+	   "check" => \$check,
+	   "debug|D" => \$debug,
+	  )
+  or die("$0: bad usage\n");
+
+our $file;
+
+use Data::Dumper;
+
+sub command_read ($) {
+  my ($cmd) = @_;
+  $!=0; $?=0;
+  my $output = qx{$cmd};
+  confess "$cmd: ?=$? !=$!" if $! or $?;
+  chomp $output or die "$cmd: no final newline (no files matched?)";
+  split /\n/, $output;
+}
+
+sub process_file ($$) {
+    my ($call);
+    ($file, $call) = @_;
+    print STDERR "processing $file\n" if $debug;
+    open I, "<", $file or confess "input: $file: $!";
+    open O, ">", "$file.new" or confess "$file.new: $!";
+    $. = 0;
+    $call->();
+    I->error and confess $!; 
+    O->error and confess $!;
+    close O or confess $!;
+    my @cmd = $check ? qw(diff -u) : qw(cmp --quiet);
+    push @cmd, qw(--), "$file", "$file.new";
+    my $r = system @cmd;
+    $r == 0 || $r == 256 || confess '@cmd: failed';
+    if (!$r) {
+	unlink "$file.new" or confess $!;
+    } elsif ($check) {
+	$found_differences ||= 1;
+    } else {
+	print "installed new $file\n";
+	rename "$file.new", "$file" or confess $!;
+    }
+    $file = undef;
+}
+
+sub make_navbar ($) {
+    my ($d) = @_;
+    local ($_, $.);
+
+    my $o = '';
+    $o .= "<!-- this line automatically maintained by update-navbars -->";
+    $o .= '<blockquote><p>[ <em>';
+    my $e;
+
+    open N, '<', $navbar_file or confess $!;
+    while (<N>) {
+	next if m{^\#};
+	next unless m{\S};
+	chomp;
+	s{\s*$}{};
+	s{\$$}{};
+	if (m{^url (\S+) = (\S+)$}) {
+	    confess if defined $e;
+	    if ($d->{This} eq $1) {
+		$o .= "<strong>";
+		$e = "</strong>";
+	    } else {
+		my $url = $2;
+		$url = $d->{Up} . $2 unless $url =~ m{^\w+:};
+		$o .= sprintf '<a href="%s">', $url;
+		$e = "</a>";
+	    }
+	} elsif (s{^text = }{}) {
+	    $o .= $_;
+	} elsif (s{^subanchor (\S+) = }{}) {
+	    if ($d->{This} eq $1) {
+		$o .= "<strong>$_</strong>";
+	    } else {
+		$o .= $_;
+	    }
+	} elsif (m{^\|$}) {
+	    $o .= $e;
+	    $e = undef;
+	    $o .= " | ";
+	} else {
+	    die "$navbar_file:$.: bad instruction in navbar\n";
+	}
+    }
+    N->error and confess $!;
+
+    $o .= $e;
+    $e = undef;
+    $o .= "</em> ]</p></blockquote>\n";
+    return $o;
+}
+
+sub filter_rustdoc () {
+    my $navbar_details;
+
+    while (<I>) {
+	my $orig_line = $_;
+	my $line_prefix = '';
+
+	if ($file =~ m{\.rs$}) {
+	    if (s{^(//[/!]) ?}{}) {
+		$line_prefix = "$1 ";
+	    } else {
+		die "$file:$.: navbar indicator at end of rustdoc\n"
+		  if $navbar_details;
+		print O;
+		next;
+	    }
+	}
+	if ($navbar_details) {
+	    my $navbar = $line_prefix.make_navbar($navbar_details);
+	    if (m{^\Q<!-- }) {
+		$_ = $navbar;
+	    } elsif (!m/\S/ && m/\n/) {
+		$_ = $navbar.$line_prefix."\n";
+	    } else {
+		die "$file:$.: unexpected content after navbar indicator,".
+		  " wanted blank line or <!--...\n";
+	    }
+	    print O;
+	    $navbar_details = undef;
+	    next;
+	}
+	print O $orig_line;
+
+	$navbar_details = undef;
+
+	if (m{^\<\?\s*dd-navbar}) {
+	    print STDERR "    line $.: processing navbar\n";
+	    die "$file:$.: bad navbar instruction"
+	      unless m{^\<\? dd-navbar (\S+) (\S+) \?\>\s*$};
+	    $navbar_details = {
+		This => $1,
+		Up => $2 eq '.' ? '' : "$2/",
+            };
+	}
+    }
+}
+
+sub process_rustdocs () {
+    foreach my $doc (command_read q{
+        git grep -l dd-navbar ':*.rs' ':*.md' :!book/
+    }) {
+      process_file $doc, \&filter_rustdoc;
+  }
+}
+
+process_rustdocs();
+
+if ($found_differences) {
+    die "$0: --check, found differences.  Rerun $0 and commit.";
+}
