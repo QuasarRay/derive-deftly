@@ -7,9 +7,33 @@
 #      looks for <!-- @navbar --> (manualal
 #   book/**.md
 #      unconditionally ensures a navbar at the top of every file
+#      XXXX we don't yet
 #
 # The manually maintainer marker instructions
-#     <!-- @navbar IDENT RELATIVE --> XXXX
+#     <!-- @navbar IDENT RELATIVE -->
+# IDENT identifies this navbar instance and ends up being compared with
+# IDENTs from maint/navbar.  It need not be unique, here.
+# RELATIVE is . or .. or something, to go back to the rustdoc toplevel.
+#
+# The file maint/navbar contains the contents of the navbar.
+#     divider =          raw HTML output between entries
+#     text =             raw HTML
+#     |                  ends the entry and prepares to start a new one
+#     url IDENT = URL    starts an entry
+#                        generally produces <a href="...">
+#                        in an IDENT navbar itself, <strong>
+#                        the closing tag is done by |
+#                        If URL has no scheme, it is rel to rustdoc toplevel
+#                        IDENT in url should be unique.
+#     subanchor IDENT = text
+#                        in a navbar instance IDENT itself, <strong>
+#                        IDENT should be different to any IDENTs in url
+#     $$                 indicates end of the entries
+#                        so that `text` is for the trailer
+#                        actually the instruction $ (see below)
+# Must be a single space around ` = `, since we want to be able to
+# control spaces.
+# Lines ending `$` have the `$` stripped off; the `$` protects trailing ws.
 
 use strict;
 
