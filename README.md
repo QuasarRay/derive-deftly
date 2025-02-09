@@ -1,6 +1,6 @@
 # derive-deftly: An ergonomic replacement for (some) proc macros
 
-<blockquote><p>[ <em>docs: <strong>crate top-level</strong> | <a href="#overall-toc">overall toc, macros</a> | <a href="doc_reference/index.html" title="mod derive_deftly::doc_reference">template etc. reference</a> | <a href="https://diziet.pages.torproject.net/rust-derive-deftly/latest/guide/">guide/tutorial</a></em> ]</p></blockquote>
+<blockquote><p>[ <em>docs: <strong>crate top-level</strong> | <a href="index.html#overall-toc">overall toc, macros</a> | <a href="doc_reference/index.html" title="mod derive_deftly::doc_reference">template etc. reference</a> | <a href="https://diziet.pages.torproject.net/rust-derive-deftly/latest/guide/">guide/tutorial</a></em> ]</p></blockquote>
 
 `derive-deftly` allows you to write macros which are driven
 by Rust data structures, just like proc macro derive macros,
