@@ -73,7 +73,7 @@ sub make_navbar ($) {
 
     my $o = '';
     $o .= "<!-- this line automatically maintained by update-navbars -->";
-    $o .= '<blockquote><p>[ <em>';
+    $o .= '<nav style="text-align: center; margin-bottom: 12px;">[ <em>';
     my $e;
 
     open N, '<', $navbar_file or confess $!;
@@ -114,7 +114,7 @@ sub make_navbar ($) {
 
     $o .= $e;
     $e = undef;
-    $o .= "</em> ]</p></blockquote>\n";
+    $o .= "</em> ]</nav>\n";
     return $o;
 }
 
