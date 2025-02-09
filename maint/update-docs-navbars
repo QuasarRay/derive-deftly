@@ -75,6 +75,7 @@ sub make_navbar ($) {
     $o .= "<!-- this line automatically maintained by update-navbars -->";
     $o .= '';
     my $e;
+    my $divider;
 
     open N, '<', $navbar_file or confess $!;
     while (<N>) {
@@ -96,6 +97,8 @@ sub make_navbar ($) {
 	    }
 	} elsif (s{^text = }{}) {
 	    $o .= $_;
+	} elsif (s{^divider = }{}) {
+	    $divider .= $_;
 	} elsif (s{^subanchor (\S+) = }{}) {
 	    if ($d->{This} eq $1) {
 		$o .= "<strong>$_</strong>";
@@ -105,7 +108,7 @@ sub make_navbar ($) {
 	} elsif (m{^[|\$]$}) {
 	    $o .= $e;
 	    $e = undef;
-	    $o .= " | " if $_ =~ m/\|/;
+	    $o .= $divider if $_ =~ m/\|/;
 	} else {
 	    die "$navbar_file:$.: bad instruction in navbar\n";
 	}
