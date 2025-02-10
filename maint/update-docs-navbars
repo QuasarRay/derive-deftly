@@ -188,7 +188,7 @@ sub filter_rustdoc () {
 	$navbar_details = undef;
 
 	if (m{$any_our_pi_re}) {
-	    print STDERR "    line $.: processing navbar\n";
+	    print STDERR "    line $.: processing navbar\n" if $debug;
 	    m{^\<\? dd-navbar (\S+) (\S+) \?\>\s*$}
 	      or die "$file:$.: bad navbar instruction";
 	    $navbar_details = {
