@@ -36,12 +36,16 @@ But soon, we'll see how to write more interesting templates,
 and how to use them to create much more interesting code.
 
 
-The rest of this document will focus
-on how to use derive_deftly's template features
-to your fullest advantage.
-If you're the kind of person who wants to skip
+## What's next
+
+In the next session, we'll start working on a `Clone` example,
+and we'll learn how to work with
+structs, enums, fields, variants, and more.
+
+(But if you're the kind of person who wants to skip
 straight to the reference manual,
-you can find it [over here][reference].
+you can find it [over here][reference].)
+
 
 [adhoc]: https://docs.rs/derive-deftly/latest/derive_deftly/macro.derive_deftly_adhoc.html
 [reference]: https://docs.rs/derive-deftly/latest/derive_deftly/doc_reference/index.html

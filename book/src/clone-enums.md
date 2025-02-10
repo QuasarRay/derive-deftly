@@ -91,7 +91,12 @@ impl Clone for AllTypes {
 }
 ```
 
-Note that our template above will still work fine on a regular struct,
+Note the `f_` prefixes on the variables in our patterns,
+and in our `$fpatname` expansions:
+without them, our tuple variants would contain invalid patterns
+like `0: 0`.
+
+Note also that our template above will still work fine on a regular struct,
 even though it's written for an `enum`.
 If we apply the version of `MyClone` above
 to `struct Example { a: u8, b: String }`,
