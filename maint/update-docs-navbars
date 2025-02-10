@@ -9,7 +9,7 @@
 #      unconditionally ensures a navbar at the top of every file
 #
 # The manually maintainer marker instructions
-#     <!-- @navbar IDENT RELATIVE -->
+#     <!-- @dd-navbar IDENT RELATIVE -->
 # IDENT identifies this navbar instance and ends up being compared with
 # IDENTs from maint/navbar.  It need not be unique, here.
 # RELATIVE is . or .. or something, to go back to the rustdoc toplevel.
@@ -66,7 +66,11 @@ GetOptions(
 our $file;
 
 our $html_comment_start_re = qr{^\Q<!-- };
-our $any_our_pi_re = qr{^\<\?\s*dd-navbar};
+
+# Ideally we would use an XML Processing Instruction, like this
+#     <? dd-navbar ... ?>
+# but pandoc renders those as if it were literal text!
+our $any_our_pi_re = qr{^\<!--\s*\@dd-navbar};
 
 sub command_read ($) {
   my ($cmd) = @_;
@@ -200,7 +204,7 @@ sub filter_rustdoc () {
 
 	if (m{$any_our_pi_re}) {
 	    print STDERR "    line $.: processing navbar\n" if $debug;
-	    m{^\<\? dd-navbar (\S+) (\S+) \?\>\s*$}
+	    m{^\<!-- \@dd-navbar (\S+) (\S+) --\>\s*$}
 	      or die "$file:$.: bad navbar instruction";
 	    my $up = $2;
 	    if ($up eq '.') {
@@ -228,9 +232,9 @@ sub filter_mdbook () {
     };
 
     if (!m{$any_our_pi_re}) {
-	print O "<? dd-navbar ?>\n", $make_navbar->('book-chapter'), "\n", $_;
+	print O "<!-- \@dd-navbar -->\n", $make_navbar->('book-chapter'), "\n", $_;
     } else {
-	m{^\<\? dd-navbar(?: (\S+))? \?\>\s*$}
+	m{^\<!-- \@dd-navbar(?: (\S+))? --\>\s*$}
 	  or die "$file:$.: bad book navbar instruction";
 	my $ident = $1 // 'book-chapter';
 	print O;
@@ -258,7 +262,7 @@ sub read_toml () {
 
 sub process_rustdocs () {
     foreach my $doc (command_read q{
-        git grep -l dd-navbar ':*.rs' ':*.md' :!book/
+        git grep -l '@dd-navbar' ':*.rs' ':*.md' :!book/
     }) {
       process_file $doc, \&filter_rustdoc;
   }
