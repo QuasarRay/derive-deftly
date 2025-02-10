@@ -57,6 +57,12 @@ or via the [account request form].
 
 ## Changelog
 
+### 0.14.6
+
+#### Improved
+
+ * docs: Fixed some version numbers in version-specific xref links.
+
 ### 0.14.5
 
 #### Improved
