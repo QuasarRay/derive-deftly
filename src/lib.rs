@@ -41,7 +41,7 @@
 // This does mean this doesn't render precisely right on Stable right now.
 //
 //! <dl class="item-table">
-//! <dt><a href="">Guide</a></dt>
+//! <dt><a href="https://diziet.pages.torproject.net/rust-derive-deftly/latest/guide/">Guide</a></dt>
 //! <dd>Tutorial and walkthrough, in book form</dd>
 //! </dl>
 
