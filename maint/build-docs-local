@@ -147,9 +147,17 @@ def build_rustdocs(cli_rustdoc_arg: List[str]) -> None:
         cmd += ['-p', p]
     subprocess.run(cmd, check=True)
 
-def massage_rustdocs() -> None:
+def build_massager() -> Massager:
     massager = Massager();
     massager.add(mdbook_url, mdbook_leaf())
+    # Quadratic in rustdoc_packages, but it will do
+    for p in rustdoc_packages:
+        for p_rustc in rustdoc_rustc_packages:
+            massager.add(docsrs_url_pat % (p, p_rustc), p_rustc)
+    return massager
+
+def massage_rustdocs() -> None:
+    massager = build_massager()
 
     for d in rustdoc_rustc_packages:
         massager.process_tree(
@@ -172,11 +180,7 @@ def build_mdbook(cli_mdbook_arg: List[str]) -> None:
     subprocess.run(['sh', '-xec', '"$@"', 'x'] + cmd, check=True)
 
 def massage_mdbook() -> None:
-    massager = Massager()
-    # Quadratic in rustdoc_packages, but it will do
-    for p in rustdoc_packages:
-        for p_rustc in rustdoc_rustc_packages:
-            massager.add(docsrs_url_pat % (p, p_rustc), p_rustc)
+    massager = build_massager()
     massager.process_tree(
         mdbook_input_dir,
         mdbook_leaf(),
