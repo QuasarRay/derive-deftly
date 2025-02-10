@@ -23,10 +23,10 @@ and, especially, testing them can be complex.
       * [Updating the pinned clippy (housekeeping task)](#updating-the-pinned-clippy-housekeeping-task)
       * [clippy `#[allow]`s - strategy and policy](#clippy-allows---strategy-and-policy)
    * [Updating the pinned Nightly Rust (used in tests and CI)](#updating-the-pinned-nightly-rust-used-in-tests-and-ci)
-      * [Choosing which Nightly Rust version to update to](#choosing-which-nightly-rust-version-to-update-to)
-      * [Updating the nightly version number](#updating-the-nightly-version-number)
-      * [Updating the cargo-expand version](#updating-the-cargo-expand-version)
-      * [Preparing and merging the changes](#preparing-and-merging-the-changes)
+      * [Choose which Nightly Rust version to update to](#choose-which-nightly-rust-version-to-update-to)
+      * [Update the nightly version number](#update-the-nightly-version-number)
+      * [Update the cargo-expand version](#update-the-cargo-expand-version)
+      * [Prepare and merge the changes](#prepare-and-merge-the-changes)
    * [Compatibility testing (and semver updates)](#compatibility-testing-and-semver-updates)
 
 ## Required reading
@@ -276,7 +276,7 @@ eg
 The docker image and the nightly version number `+nightly-YYYY-MM-DD`
 must be kept in sync.  `cargo expand` will probably need updating too.
 
-### Choosing which Nightly Rust version to update to
+### Choose which Nightly Rust version to update to
 
 Use this to select a corresponding Nightly Rust and container image:
 <br>
@@ -287,8 +287,9 @@ To parse the json, You can use a rune like this:
 `curl https://www.chiark.greenend.org.uk/~ian/docker-tags-history/rustlang,rust/tags.2025-02-10T13:08+00:00.gz | zcat | jq -r '.results[] | select(.name | match("^nightly-bookworm$")) | .images[] | select(.architecture | match("^amd64"))'`
 
 Pick a date just before upstream Rust branched for a release, since that way
-we'll maybe have a less-buggy nightly.  Note the date `YYYY-MM-DD` and
-use the `jq` rune in that `README.txt` to get the sha256 image digest.
+we'll maybe have a less-buggy nightly.
+Note the date `YYYY-MM-DD` (from the `tags.` part of the URL) and
+use the `jq` rune to get the sha256 image digest.
 
 (The Docker official way seems to be to visit
   <https://hub.docker.com/r/rustlang/rust/tags>
@@ -296,7 +297,7 @@ and look for the `nightly-bookworm` tag, or whatever.
 However, as far as I can tell historical information is not available,
 even though the images *are* retained!)
 
-### Updating the nightly version number
+### Update the nightly version number
 
 Install the chosen nightly: `rustup toolchain add nightly-YYYY-MM-DD`
 
@@ -309,7 +310,7 @@ cargo +nightly-YYYY-MM-DD test --workspace --all-features
 **Inspect the output carefully** before committing.
 Use `git-grep` on the old nightly date string and fix all the instances.
 
-### Updating the cargo-expand version
+### Update the cargo-expand version
 
 Quite likely, you'll need to update cargo-expand too, since it may not
 build with the new nightly.
@@ -321,7 +322,7 @@ Run the overwriting test rune, above.
 **Inspect the output carefully** before committing.
 Edit `.gitlab-ci.yml` with search-and-replace to fix all the occurrences.
 
-### Preparing and merging the changes
+### Prepare and merge the changes
 
  1. Make an MR of any preparatory fixes you found you needed to make.
     Such changes ought to work with all compiler versions, and should be
