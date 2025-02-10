@@ -57,6 +57,13 @@ or via the [account request form].
 
 ## Changelog
 
+### 0.14.5
+
+#### Improved
+
+ * Improvements to documentation cross-references and linking.
+ * Relaxed upper dependency bounds for `strum`.
+
 ### 0.14.4
 
 #### Fixed
