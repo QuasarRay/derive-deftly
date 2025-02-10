@@ -23,10 +23,10 @@ and, especially, testing them can be complex.
       * [Updating the pinned clippy (housekeeping task)](#updating-the-pinned-clippy-housekeeping-task)
       * [clippy `#[allow]`s - strategy and policy](#clippy-allows---strategy-and-policy)
    * [Updating the pinned Nightly Rust (used in tests and CI)](#updating-the-pinned-nightly-rust-used-in-tests-and-ci)
-      * [Choosing which Nightly Rust version to update to](#choosing-which-nightly-rust-version-to-update-to)
-      * [Updating the nightly version number](#updating-the-nightly-version-number)
-      * [Updating the cargo-expand version](#updating-the-cargo-expand-version)
-      * [Preparing and merging the changes](#preparing-and-merging-the-changes)
+      * [Choose which Nightly Rust version to update to](#choose-which-nightly-rust-version-to-update-to)
+      * [Update the nightly version number](#update-the-nightly-version-number)
+      * [Update the cargo-expand version](#update-the-cargo-expand-version)
+      * [Prepare and merge the changes](#prepare-and-merge-the-changes)
    * [Compatibility testing (and semver updates)](#compatibility-testing-and-semver-updates)
 
 ## Required reading
