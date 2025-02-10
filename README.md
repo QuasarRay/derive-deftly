@@ -1,4 +1,4 @@
-# derive-deftly: An ergonomic replacement for (some) proc macros
+# derive-deftly: An ergonomic replacement for many proc macros
 
 <!-- @dd-navbar toplevel https://docs.rs/derive-deftly/@version@/derive_deftly -->
 <!-- this line automatically maintained by update-navbars --><nav style="text-align: right; margin-bottom: 12px;">[ <em>docs: <strong>crate top-level</strong> | <a href="https://docs.rs/derive-deftly/0.14.4/derive_deftly/index.html#overall-toc">overall toc, macros</a> | <a href="https://docs.rs/derive-deftly/0.14.4/derive_deftly/doc_reference/index.html">template etc. reference</a> | <a href="https://diziet.pages.torproject.net/rust-derive-deftly/latest/guide/">guide/tutorial</a></em> ]</nav>
