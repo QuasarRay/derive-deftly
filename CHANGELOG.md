@@ -1,6 +1,6 @@
 # Changelog, MSRV policy and cargo features
 
-<? dd-navbar toc .. ?>
+<!-- @dd-navbar toc .. -->
 <!-- this line automatically maintained by update-navbars --><nav style="text-align: right; margin-bottom: 12px;">[ <em>docs: <a href="../index.html">crate top-level</a> | <a href="../index.html#overall-toc"><strong>overall toc</strong>, macros</a> | <a href="../doc_reference/index.html">template etc. reference</a> | <a href="https://diziet.pages.torproject.net/rust-derive-deftly/latest/guide/">guide/tutorial</a></em> ]</nav>
 
 <div id="t:cargo-features">
