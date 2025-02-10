@@ -62,7 +62,7 @@ maint-check-todos:
 
 cargo-clippy:
   stage: test
-  image: "rust:1.79.0"
+  image: "rust:1.84.0"
   script:
     - rustup component add clippy
     - cargo clippy --locked --workspace --all-features --
@@ -179,7 +179,7 @@ cargo-doc:
 # Check that the complete docs build without any warnings
 cargo-doc-all:
   # We turn warnings into errors; pin to avoid getting new ones willy-nilly
-  image: "rust:1.79.0"
+  image: "rust:1.84.0"
   stage: comprehensive
   script:
     - apt-get update
