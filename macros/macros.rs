@@ -115,6 +115,9 @@ where
 
 /// Template expansion engine, internal
 ///
+/// <? dd-navbar macros . ?>
+/// <!-- this line automatically maintained by update-navbars --><nav style="text-align: right; margin-bottom: 12px;">[ <em>docs: <a href="index.html">crate top-level</a> | <a href="index.html#overall-toc">overall toc, <strong>macros</strong></a> | <a href="doc_reference/index.html">template etc. reference</a> | <a href="https://diziet.pages.torproject.net/rust-derive-deftly/latest/guide/">guide/tutorial</a></em> ]</nav>
+///
 /// Normally you do not need to mention this macro.
 ///
 /// derive-deftly does its work by
@@ -134,6 +137,9 @@ pub fn derive_deftly_engine(
 }
 
 /// Expand an ad-hoc template, on a data structure decorated `#[derive_deftly_adhoc]`
+///
+/// <? dd-navbar macros . ?>
+/// <!-- this line automatically maintained by update-navbars --><nav style="text-align: right; margin-bottom: 12px;">[ <em>docs: <a href="index.html">crate top-level</a> | <a href="index.html#overall-toc">overall toc, <strong>macros</strong></a> | <a href="doc_reference/index.html">template etc. reference</a> | <a href="https://diziet.pages.torproject.net/rust-derive-deftly/latest/guide/">guide/tutorial</a></em> ]</nav>
 ///
 /// ```
 // We're in the macro crate, where the facade crate is not available.
@@ -183,6 +189,9 @@ pub fn derive_deftly_adhoc(
 }
 
 /// Define a reuseable template
+///
+/// <? dd-navbar macros . ?>
+/// <!-- this line automatically maintained by update-navbars --><nav style="text-align: right; margin-bottom: 12px;">[ <em>docs: <a href="index.html">crate top-level</a> | <a href="index.html#overall-toc">overall toc, <strong>macros</strong></a> | <a href="doc_reference/index.html">template etc. reference</a> | <a href="https://diziet.pages.torproject.net/rust-derive-deftly/latest/guide/">guide/tutorial</a></em> ]</nav>
 ///
 /// ```text
 /// define_derive_deftly! {
@@ -299,6 +308,9 @@ pub fn define_derive_deftly(
 }
 
 /// Perform ad-hoc templating driven by a data structure
+///
+/// <? dd-navbar macros . ?>
+/// <!-- this line automatically maintained by update-navbars --><nav style="text-align: right; margin-bottom: 12px;">[ <em>docs: <a href="index.html">crate top-level</a> | <a href="index.html#overall-toc">overall toc, <strong>macros</strong></a> | <a href="doc_reference/index.html">template etc. reference</a> | <a href="https://diziet.pages.torproject.net/rust-derive-deftly/latest/guide/">guide/tutorial</a></em> ]</nav>
 ///
 /// This macro does two things:
 ///
@@ -452,6 +464,9 @@ pub fn derive_deftly(
 }
 
 /// Check semver compatibility, for a crate which exports macros
+///
+/// <? dd-navbar macros . ?>
+/// <!-- this line automatically maintained by update-navbars --><nav style="text-align: right; margin-bottom: 12px;">[ <em>docs: <a href="index.html">crate top-level</a> | <a href="index.html#overall-toc">overall toc, <strong>macros</strong></a> | <a href="doc_reference/index.html">template etc. reference</a> | <a href="https://diziet.pages.torproject.net/rust-derive-deftly/latest/guide/">guide/tutorial</a></em> ]</nav>
 ///
 /// Causes a compilation error
 /// if and only if the specified version of `derive-deftly`
