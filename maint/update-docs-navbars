@@ -155,11 +155,13 @@ sub filter_rustdoc () {
 
     while (<I>) {
 	my $orig_line = $_;
-	my $line_prefix = '';
+	my $line_prefix_bare = '';
+	my $line_prefix_spc = '';
 
 	if ($file =~ m{\.rs$}) {
 	    if (s{^(//[/!]) ?}{}) {
-		$line_prefix = "$1 ";
+		$line_prefix_bare = "$1";
+		$line_prefix_spc = "$1 ";
 	    } else {
 		die "$file:$.: navbar instruction at end of rustdoc\n"
 		  if $navbar_details;
@@ -168,11 +170,11 @@ sub filter_rustdoc () {
 	    }
 	}
 	if ($navbar_details) {
-	    my $navbar = $line_prefix.make_navbar($navbar_details);
+	    my $navbar = $line_prefix_spc.make_navbar($navbar_details);
 	    if (m{$html_comment_start_re}) {
 		$_ = $navbar;
 	    } elsif (!m/\S/ && m/\n/) {
-		$_ = $navbar.$line_prefix."\n";
+		$_ = $navbar.$line_prefix_bare."\n";
 	    } else {
 		die "$file:$.: unexpected content after navbar instruction,".
 		  " wanted blank line or <!--...\n";
