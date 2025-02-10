@@ -276,7 +276,7 @@ eg
 The docker image and the nightly version number `+nightly-YYYY-MM-DD`
 must be kept in sync.  `cargo expand` will probably need updating too.
 
-### Choosing which Nightly Rust version to update to
+### Choose which Nightly Rust version to update to
 
 Use this to select a corresponding Nightly Rust and container image:
 <br>
@@ -297,7 +297,7 @@ and look for the `nightly-bookworm` tag, or whatever.
 However, as far as I can tell historical information is not available,
 even though the images *are* retained!)
 
-### Updating the nightly version number
+### Update the nightly version number
 
 Install the chosen nightly: `rustup toolchain add nightly-YYYY-MM-DD`
 
@@ -310,7 +310,7 @@ cargo +nightly-YYYY-MM-DD test --workspace --all-features
 **Inspect the output carefully** before committing.
 Use `git-grep` on the old nightly date string and fix all the instances.
 
-### Updating the cargo-expand version
+### Update the cargo-expand version
 
 Quite likely, you'll need to update cargo-expand too, since it may not
 build with the new nightly.
@@ -322,7 +322,7 @@ Run the overwriting test rune, above.
 **Inspect the output carefully** before committing.
 Edit `.gitlab-ci.yml` with search-and-replace to fix all the occurrences.
 
-### Preparing and merging the changes
+### Prepare and merge the changes
 
  1. Make an MR of any preparatory fixes you found you needed to make.
     Such changes ought to work with all compiler versions, and should be
