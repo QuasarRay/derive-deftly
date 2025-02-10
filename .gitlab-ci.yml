@@ -68,7 +68,7 @@ cargo-clippy:
     - cargo clippy --locked --workspace --all-features --
 
 # Warning-only checks
-check-doc-tocs:
+check-doc-tocs-links:
   stage: test
   allow_failure: true
   script:
@@ -76,6 +76,7 @@ check-doc-tocs:
     - apt-get -y install libjson-perl
     - maint/update-tocs --check
     - maint/update-reference-xrefs --check
+    - maint/update-docs-navbars --check
 
 # Warning-only checks
 check-keywords-documented:
