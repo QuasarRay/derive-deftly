@@ -43,6 +43,13 @@
 # Must be a single space around ` = `, since we want to be able to
 # control spaces.
 # Lines ending `$` have the `$` stripped off; the `$` protects trailing ws.
+#
+# Additionally, markdown defined anchors which look like this
+#   [navbar-versioned-url-ANCHOR]: SOME-URL
+# have the URL replaced.  The URL is computed from the first
+# URL in an @dd-navbar directive that contains @version@,
+# with /index.html#ANCHOR appended.  This is used to provide a versioned
+# link to the overall TOC in running text in the README.md.
 
 use strict;
 
@@ -167,6 +174,7 @@ sub make_navbar ($) {
 
 sub filter_rustdoc () {
     my $navbar_details;
+    my $versioned_base;
 
     while (<I>) {
 	my $orig_line = $_;
@@ -200,6 +208,14 @@ sub filter_rustdoc () {
 	}
 	$navbar_details = undef;
 
+	if (m{^\[navbar-versioned-url-([^:]+)\]:}) {
+	    print O $line_prefix_spc, $&, " ",
+	            ($versioned_base //
+		     die "$file:$.: no versioned URL previously?\n"),
+		    "/index.html#$1\n";
+	    next;
+	}
+
 	print O $orig_line;
 
 	if (m{$any_our_pi_re}) {
@@ -210,7 +226,8 @@ sub filter_rustdoc () {
 	    if ($up eq '.') {
 		$up = '';
 	    } else {
-		$up =~ s{\@version\@}{ $toml->{package}{version} }ge;
+		$versioned_base //= $up if
+		  $up =~ s{\@version\@}{ $toml->{package}{version} }ge;
 		$up .= '/';
 	    }
 	    $navbar_details = {
