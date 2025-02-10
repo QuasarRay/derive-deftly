@@ -54,7 +54,8 @@ GetOptions(
 
 our $file;
 
-use Data::Dumper;
+our $html_comment_start_re = qr{^\Q<!-- };
+our $any_our_pi_re = qr{^\<\?\s*dd-navbar};
 
 sub command_read ($) {
   my ($cmd) = @_;
@@ -156,7 +157,7 @@ sub filter_rustdoc () {
 	    if (s{^(//[/!]) ?}{}) {
 		$line_prefix = "$1 ";
 	    } else {
-		die "$file:$.: navbar indicator at end of rustdoc\n"
+		die "$file:$.: navbar instruction at end of rustdoc\n"
 		  if $navbar_details;
 		print O;
 		next;
@@ -164,12 +165,12 @@ sub filter_rustdoc () {
 	}
 	if ($navbar_details) {
 	    my $navbar = $line_prefix.make_navbar($navbar_details);
-	    if (m{^\Q<!-- }) {
+	    if (m{$html_comment_start_re}) {
 		$_ = $navbar;
 	    } elsif (!m/\S/ && m/\n/) {
 		$_ = $navbar.$line_prefix."\n";
 	    } else {
-		die "$file:$.: unexpected content after navbar indicator,".
+		die "$file:$.: unexpected content after navbar instruction,".
 		  " wanted blank line or <!--...\n";
 	    }
 	    print O;
@@ -180,10 +181,10 @@ sub filter_rustdoc () {
 
 	$navbar_details = undef;
 
-	if (m{^\<\?\s*dd-navbar}) {
+	if (m{$any_our_pi_re}) {
 	    print STDERR "    line $.: processing navbar\n";
-	    die "$file:$.: bad navbar instruction"
-	      unless m{^\<\? dd-navbar (\S+) (\S+) \?\>\s*$};
+	    m{^\<\? dd-navbar (\S+) (\S+) \?\>\s*$}
+	      or die "$file:$.: bad navbar instruction";
 	    $navbar_details = {
 		This => $1,
 		Up => $2 eq '.' ? '' : "$2/",
