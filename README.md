@@ -7,11 +7,10 @@
 by Rust data structures, just like proc macro derive macros,
 but without having to wrestle with the proc macro system.
 
-**Stability warning**
+**Stability**
 
-We intend to make a 1.x release of this crate fairly soon.
-We think we have made all the necessary breaking changes,
-but we may be wrong.
+We intend to make a 1.x release of this crate very soon.
+We expect that derive-deftly 1.x will be compatible with 0.14.x.
 
 ## Overview
 
