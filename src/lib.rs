@@ -1,4 +1,5 @@
 #![allow(clippy::style, clippy::complexity)]
+#![allow(rustdoc::invalid_html_tags)] // @derive-deftly invalid-html-tags
 #![doc=include_str!("../README.md")]
 
 // This is the "library" crate.
@@ -23,12 +24,15 @@ pub use derive_deftly_macros::{
 
 // We (ab)use the module system as places to hang our documentation.
 
+#[deny(rustdoc::invalid_html_tags)]
 #[doc=include_str!("../doc/reference.md")]
 pub mod doc_reference {}
 
+#[deny(rustdoc::invalid_html_tags)]
 #[doc=include_str!("../doc/implementation.md")]
 pub mod doc_implementation {}
 
+#[deny(rustdoc::invalid_html_tags)]
 #[doc=include_str!("../CHANGELOG.md")]
 pub mod doc_changelog {}
 

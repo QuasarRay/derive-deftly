@@ -78,7 +78,7 @@ with a number of worked examples.
 
 [user guide]: https://diziet.pages.torproject.net/rust-derive-deftly/latest/guide/
 
-</div>
+</div><!-- @derive-deftly invalid-html-tags -->
 
 <h1 class="section-header main-heading" id="overall-toc"><a class="doc-anchor" href="#overall-toc">§</a><strong>derive-deftly documentation, overall table of contents</strong></h1>
 
@@ -88,7 +88,7 @@ with a number of worked examples.
 <!-- this line automatically maintained by update-navbars --><nav style="text-align: center; margin-bottom: 12px;">[ <em>docs: <a href="index.html">crate top-level</a> | <strong>overall toc, macros</strong> | <a href="doc_reference/index.html">template etc. reference</a> | <a href="https://diziet.pages.torproject.net/rust-derive-deftly/latest/guide/">guide/tutorial</a></em> ]</nav>
 
 </div>
-<div>
+<div><!-- @derive-deftly invalid-html-tags -->
 <p style="margin-top: 25px"></p>
 
 <ul class="item-table"><li>

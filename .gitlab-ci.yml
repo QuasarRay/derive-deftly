@@ -183,6 +183,7 @@ cargo-doc-all:
   script:
     - apt-get update
     - apt-get -y install jq
+    - maint/fudge-for-docs-test-build
     - cargo doc --locked --workspace --features=full --document-private-items --message-format=json >rustdoc.json
     - jq --raw-output '. | select(.message.level) | .message.rendered' <rustdoc.json |tee rustdoc.errors
     - test ! -s rustdoc.errors
