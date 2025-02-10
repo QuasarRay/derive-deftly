@@ -116,7 +116,7 @@ sub make_navbar ($) {
 		$o .= "<strong>";
 		$e = "</strong>";
 	    } else {
-		my $up = $d->{FromBook} ? $book_to_rustdoc : $d->{Up};
+		my $up = $d->{UpInRustdoc} // $book_to_rustdoc;
 		my $url = $2;
 		$url = $up . $2 unless $url =~ m{^\w+:};
 		$o .= sprintf '<a href="%s">', $url;
@@ -193,7 +193,7 @@ sub filter_rustdoc () {
 	      or die "$file:$.: bad navbar instruction";
 	    $navbar_details = {
 		This => $1,
-		Up => $2 eq '.' ? '' : "$2/",
+		UpInRustdoc => $2 eq '.' ? '' : "$2/",
             };
 	}
     }
@@ -206,7 +206,6 @@ sub filter_mdbook () {
 	my ($ident) = @_;
 	make_navbar {
 	    This => $ident,
-	    FromBook => 1,
         }
     };
 
