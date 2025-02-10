@@ -29,7 +29,7 @@ rustdoc_packages = [
 ]
 rustdoc_opts = ['--all-features']
 
-docsrs_url_pat = 'https://docs.rs/%s/latest/%s'
+docsrs_url_pat = 'https://docs.rs/%s/%s/%s'
 
 mdbook_dir = 'book'
 mdbook_url = 'https://diziet.pages.torproject.net/rust-derive-deftly/latest/guide'
@@ -153,7 +153,7 @@ def build_massager() -> Massager:
     # Quadratic in rustdoc_packages, but it will do
     for p in rustdoc_packages:
         for p_rustc in rustdoc_rustc_packages:
-            massager.add(docsrs_url_pat % (p, p_rustc), p_rustc)
+            massager.add(docsrs_url_pat % (p, 'latest', p_rustc), p_rustc)
     return massager
 
 def massage_rustdocs() -> None:
