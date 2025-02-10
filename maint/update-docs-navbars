@@ -7,7 +7,6 @@
 #      looks for <!-- @navbar --> (manualal
 #   book/**.md
 #      unconditionally ensures a navbar at the top of every file
-#      XXXX we don't yet
 #
 # The manually maintainer marker instructions
 #     <!-- @navbar IDENT RELATIVE -->
@@ -17,6 +16,7 @@
 #
 # The file maint/navbar contains the contents of the navbar.
 #     divider =          raw HTML output between entries
+#     book-to-rustdoc =  URL for the rustdocs, from the book
 #     text =             raw HTML
 #     |                  ends the entry and prepares to start a new one
 #     url IDENT = URL    starts an entry
@@ -101,6 +101,7 @@ sub make_navbar ($) {
     $o .= '';
     my $e;
     my $divider;
+    my $book_to_rustdoc;
 
     open N, '<', $navbar_file or confess $!;
     while (<N>) {
@@ -115,8 +116,9 @@ sub make_navbar ($) {
 		$o .= "<strong>";
 		$e = "</strong>";
 	    } else {
+		my $up = $d->{FromBook} ? $book_to_rustdoc : $d->{Up};
 		my $url = $2;
-		$url = $d->{Up} . $2 unless $url =~ m{^\w+:};
+		$url = $up . $2 unless $url =~ m{^\w+:};
 		$o .= sprintf '<a href="%s">', $url;
 		$e = "</a>";
 	    }
@@ -124,6 +126,8 @@ sub make_navbar ($) {
 	    $o .= $_;
 	} elsif (s{^divider = }{}) {
 	    $divider .= $_;
+	} elsif (s{^book-to-rustdoc = }{}) {
+	    $book_to_rustdoc = $_;
 	} elsif (s{^subanchor (\S+) = }{}) {
 	    if ($d->{This} eq $1) {
 		$o .= "<strong>$_</strong>";
@@ -193,6 +197,39 @@ sub filter_rustdoc () {
     }
 }
 
+sub filter_mdbook () {
+    $_ = <I> // confess "$file eof? $!";
+
+    my $make_navbar = sub {
+	my ($ident) = @_;
+	make_navbar {
+	    This => $ident,
+	    FromBook => 1,
+        }
+    };
+
+    if (!m{$any_our_pi_re}) {
+	print O "<? dd-navbar ?>\n", $make_navbar->('book-chapter'), "\n", $_;
+    } else {
+	m{^\<\? dd-navbar(?: (\S+))? \?\>\s*$}
+	  or die "$file:$.: bad book navbar instruction";
+	my $ident = $1 // 'book-chapter';
+	print O;
+	$_ = <I> // confess "$file eof? $!";
+	if (m{$html_comment_start_re}) {
+	    print O $make_navbar->($ident);
+	} elsif (!m{\S}) {
+	    print O $make_navbar->($ident), $_;
+	} else {
+	    die "$file:$.:".
+	      " unexpected content after navbar instruction in book\n";
+	  }
+    }
+    while (<I>) {
+	print O;
+    }
+}
+
 sub process_rustdocs () {
     foreach my $doc (command_read q{
         git grep -l dd-navbar ':*.rs' ':*.md' :!book/
@@ -201,7 +238,16 @@ sub process_rustdocs () {
   }
 }
 
+sub process_book () {
+    foreach my $doc (command_read q{
+        git ls-files ':book/*.md' ':!book/src/SUMMARY.md'
+    }) {
+      process_file $doc, \&filter_mdbook;
+  }
+}
+
 process_rustdocs();
+process_book();
 
 if ($found_differences) {
     die "$0: --check, found differences.  Rerun $0 and commit.";
