@@ -70,7 +70,8 @@ It will walk you through derive-deftly's most important features,
 with a number of worked examples.
 
 Alternatively, there is comprehensive
-[reference documentation][overall-toc].
+[reference documentation][navbar-versioned-url-overall-toc].
 
 [user guide]: https://diziet.pages.torproject.net/rust-derive-deftly/latest/guide/
-[overall-toc]: https://docs.rs/derive-deftly/0.14.4/derive_deftly/index.html#overall-toc
+<!-- next line is automatically maintained by update-docs-navbars -->
+[navbar-versioned-url-overall-toc]: https://docs.rs/derive-deftly/0.14.4/derive_deftly/index.html#overall-toc
