@@ -57,6 +57,21 @@ or via the [account request form].
 
 ## Changelog
 
+### 0.14.3
+
+#### Added
+
+ * `beta` cargo feature, for unstable derive-deftly features.
+ * BETA: `${Xmeta ... default ...}`.
+
+#### Improved
+
+ * docs: Improvements to the Guide.
+ * docs: Other documentation improvements.
+ * docs: New experimental navbars for traversing derive-deftly docs.
+ * Relaxed upper dependency bounds for `educe`, `itertools`.
+ * Internal and testing improvements.
+
 ### 0.14.2
 
 #### Improved
