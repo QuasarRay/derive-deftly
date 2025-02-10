@@ -73,7 +73,7 @@ check-doc-tocs-xrefs-navbars:
   allow_failure: true
   script:
     - apt-get -y update
-    - apt-get -y install libjson-perl
+    - apt-get -y install libjson-perl libtoml-perl
     - maint/update-tocs --check
     - maint/update-reference-xrefs --check
     - maint/update-docs-navbars --check

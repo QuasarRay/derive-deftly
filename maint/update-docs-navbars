@@ -13,6 +13,15 @@
 # IDENT identifies this navbar instance and ends up being compared with
 # IDENTs from maint/navbar.  It need not be unique, here.
 # RELATIVE is . or .. or something, to go back to the rustdoc toplevel.
+# In the book, RELATIVE is absent and the book's own URL is used.
+#
+# RELATIVE can also be an absolute URL containing `@version@` which will be
+# replaced with the toplevel crate's actual version number.  (This allows the
+# navbar at the top of our README.md, which is formatted in forges, crates.io,
+# etc., to refer to the correctg version, so the user doesn't get willy-nilly
+# teleported to a different version.  (That still happens if they visit the
+# guide, which isn't version.ed)   Some background:
+#    https://github.com/rust-lang/crates.io/issues/10541
 #
 # The file maint/navbar contains the contents of the navbar.
 #     divider =          raw HTML output between entries
@@ -39,11 +48,13 @@ use strict;
 
 use Carp;
 use Getopt::Long;
+use TOML;
 
 our $check;
 our $debug;
 our $found_differences = 0;
 
+our $toml;
 our $navbar_file = "maint/navbar";
 
 GetOptions(
@@ -191,9 +202,16 @@ sub filter_rustdoc () {
 	    print STDERR "    line $.: processing navbar\n" if $debug;
 	    m{^\<\? dd-navbar (\S+) (\S+) \?\>\s*$}
 	      or die "$file:$.: bad navbar instruction";
+	    my $up = $2;
+	    if ($up eq '.') {
+		$up = '';
+	    } else {
+		$up =~ s{\@version\@}{ $toml->{package}{version} }ge;
+		$up .= '/';
+	    }
 	    $navbar_details = {
 		This => $1,
-		UpInRustdoc => $2 eq '.' ? '' : "$2/",
+		UpInRustdoc => $up,
             };
 	}
     }
@@ -231,6 +249,13 @@ sub filter_mdbook () {
     }
 }
 
+sub read_toml () {
+    local $/ = undef;
+    open TOML, 'Cargo.toml' or die $!;
+    $toml = from_toml(<TOML>);
+    die $! if TOML->error;
+}
+
 sub process_rustdocs () {
     foreach my $doc (command_read q{
         git grep -l dd-navbar ':*.rs' ':*.md' :!book/
@@ -247,6 +272,7 @@ sub process_book () {
   }
 }
 
+read_toml();
 process_rustdocs();
 process_book();
 
