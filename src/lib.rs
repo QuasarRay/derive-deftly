@@ -15,6 +15,12 @@
 #![allow(clippy::style, clippy::complexity)]
 #![allow(rustdoc::invalid_html_tags)] // @derive-deftly invalid-html-tags
 #![doc=include_str!("../README.md")]
+//
+// We take some serious liberties with rustdoc's HTML, here.
+// We want this "overall TOC" to be an h1 heading
+// and we want it *not* to be within the div
+// that rustdoc puts this this whole toplevel docs in.
+// So we *close that div* and reopen a new one.
 //!
 //! </div><!-- @derive-deftly invalid-html-tags -->
 //!
