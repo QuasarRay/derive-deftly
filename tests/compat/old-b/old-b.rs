@@ -1,5 +1,5 @@
-/// Forward/backward compatibility tests
-/// See tests/compat/README.md
+//! Forward/backward compatibility tests
+//! See tests/compat/README.md
 
 #[cfg(not(feature = "skip_imported_driver"))]
 pub mod adhoc_template {
