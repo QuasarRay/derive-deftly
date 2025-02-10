@@ -9,4 +9,4 @@
 
 set -e
 perl -i~ -pe 's{.* \@derive-deftly invalid-html-tags.*}{}' \
-    src/lib.rs README.md
+    src/lib.rs
