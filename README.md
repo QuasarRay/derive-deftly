@@ -7,16 +7,10 @@
 by Rust data structures, just like proc macro derive macros,
 but without having to wrestle with the proc macro system.
 
-**Stability warning**
+**Stability**
 
-We intend to make a 1.x release of this crate fairly soon.
-We think we have made all the necessary breaking changes,
-but we may be wrong.
-
-This is the replacement for
-[`derive-adhoc`](https://lib.rs/crates/derive-adhoc).
-We recommend that existing `derive-adhoc` users upgrade to `derive-deftly`,
-at some time that is convenient.
+We intend to make a 1.x release of this crate very soon.
+We expect that derive-deftly 1.x will be compatible with 0.14.x.
 
 ## Overview
 
