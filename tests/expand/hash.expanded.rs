@@ -52,7 +52,7 @@ where
 fn main() {
     let v = DataType {
         foo: 23,
-        bar: <[_]>::into_vec(#[rustc_box] ::alloc::boxed::Box::new(["hi".into()])),
+        bar: <[_]>::into_vec(::alloc::boxed::box_new(["hi".into()])),
     };
     let mut hasher = std::collections::hash_map::DefaultHasher::new();
     v.hash(&mut hasher);

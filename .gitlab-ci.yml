@@ -94,10 +94,10 @@ check-keywords-documented:
 cargo-test:
   stage: test
   # See "Using the proper Nightly Rust" in tests/tests.rs
-  image: rustlang/rust@sha256:aaee57e8fa29c2809494ec71ffab6fcfa241b765c2a78d781e4de17fe38f060e
-  # ^ this is from tags.2024-06-06T13:08+00:00.gz (see HACKING.md)
+  image: rustlang/rust@sha256:b3ddf3e263f50345cd3693a93f59f0ba2cc5575a430553b71db48487a5f541dc
+  # ^ this is from tags.2025-02-10T14:08+00:00.gz (see HACKING.md)
   script:
-    - ./maint/via-cargo-install-in-ci cargo-expand --version=1.0.88 --features=prettyplease
+    - ./maint/via-cargo-install-in-ci cargo-expand --version=1.0.100 --features=prettyplease
     - maint/cargo-test-locked --workspace --all-features -- --skip directly::check_examples
   cache:
     when: 'always'
@@ -109,7 +109,7 @@ cargo-test:
 # is rather baroque and ad-hco).
 test-doc-examples:
   stage: comprehensive
-  image: rustlang/rust@sha256:aaee57e8fa29c2809494ec71ffab6fcfa241b765c2a78d781e4de17fe38f060e
+  image: rustlang/rust@sha256:b3ddf3e263f50345cd3693a93f59f0ba2cc5575a430553b71db48487a5f541dc
   allow_failure: true
   script:
     - maint/cargo-test-locked -p derive-deftly-tests --all-features -- --nocapture directly::check_examples
@@ -121,7 +121,7 @@ test-doc-examples:
 # the only commit in an MR will still work.
 every-commit:
   stage: comprehensive
-  image: rustlang/rust@sha256:aaee57e8fa29c2809494ec71ffab6fcfa241b765c2a78d781e4de17fe38f060e
+  image: rustlang/rust@sha256:b3ddf3e263f50345cd3693a93f59f0ba2cc5575a430553b71db48487a5f541dc
   script:
     - apt-get -y update
     - apt-get -y install libtoml-perl git
@@ -142,7 +142,7 @@ python3-mypy:
 
 cargo-test-minfeatures:
   stage: comprehensive
-  image: rustlang/rust@sha256:aaee57e8fa29c2809494ec71ffab6fcfa241b765c2a78d781e4de17fe38f060e
+  image: rustlang/rust@sha256:b3ddf3e263f50345cd3693a93f59f0ba2cc5575a430553b71db48487a5f541dc
   script:
     - maint/cargo-test-locked  -p derive-deftly-tests --no-default-features --features=derive-deftly-tests/recent,derive-deftly-tests/ui -- --skip directly::check_examples
 
