@@ -68,7 +68,7 @@ cargo-clippy:
     - cargo clippy --locked --workspace --all-features --
 
 # Warning-only checks
-check-doc-tocs-links:
+check-doc-tocs-xrefs-navbars:
   stage: test
   allow_failure: true
   script:
