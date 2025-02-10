@@ -12,7 +12,7 @@ import sys
 import toml.decoder
 
 import typing
-from typing import List, Tuple, Callable, Any, TYPE_CHECKING
+from typing import Dict, List, Tuple, Callable, Any, TYPE_CHECKING
 
 #---------- type handling ----------
 
@@ -39,6 +39,8 @@ mdbook_slug = 'guide'
 
 target_dir = 'target'
 out_unified = 'doc-unified' # lives in target/
+
+toml_data: Dict[str, Any]
 
 #---------- preparation and utilities ----------
 
