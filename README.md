@@ -13,11 +13,6 @@ We intend to make a 1.x release of this crate fairly soon.
 We think we have made all the necessary breaking changes,
 but we may be wrong.
 
-This is the replacement for
-[`derive-adhoc`](https://lib.rs/crates/derive-adhoc).
-We recommend that existing `derive-adhoc` users upgrade to `derive-deftly`,
-at some time that is convenient.
-
 ## Overview
 
 You can write an ad-hoc template,
