@@ -9,6 +9,7 @@ import os
 import re
 import subprocess
 import sys
+import toml.decoder
 
 import typing
 from typing import List, Tuple, Callable, Any, TYPE_CHECKING
@@ -154,6 +155,13 @@ def build_massager() -> Massager:
     for p in rustdoc_packages:
         for p_rustc in rustdoc_rustc_packages:
             massager.add(docsrs_url_pat % (p, 'latest', p_rustc), p_rustc)
+
+    main_p_rustdoc = rustdoc_packages[0]
+    main_p_rustc = rustdoc_rustc_packages[0]
+    main_p_versioned_url = docsrs_url_pat % (
+        main_p_rustdoc, toml['package']['version'], main_p_rustc
+    )
+    massager.add(main_p_versioned_url, main_p_rustc)
     return massager
 
 def massage_rustdocs() -> None:
@@ -222,6 +230,8 @@ def main() -> None:
     args = parser.parse_args()
     build_rustdocs(args.rustdoc_arg)
     build_mdbook(args.mdbook_arg)
+    global toml
+    toml = toml.decoder.load('Cargo.toml')
     massage_rustdocs()
     massage_mdbook()
     if args.linkcheck:
