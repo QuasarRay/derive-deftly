@@ -35,10 +35,15 @@
 //! <div><!-- @derive-deftly invalid-html-tags -->
 //! <p style="margin-top: 25px"></p>
 //!
-//! <ul class="item-table"><li>
-//! <div class="item-name"><a href="">Guide</a></div>
-//! <div class="desc docblock-short">Tutorial and walkthrough, in book form</div>
-//! </li></ul>
+// This next part is is also unwarranted chumminess with rustdoc.
+// Some time between Rust 1.85 and 1.86, rustdoc changed from using
+// <ul> and a pair of <div> with <class>, to this <dd>, which is better.
+// This does mean this doesn't render precisely right on Stable right now.
+//
+//! <dl class="item-table">
+//! <dt><a href="https://diziet.pages.torproject.net/rust-derive-deftly/latest/guide/">Guide</a></dt>
+//! <dd>Tutorial and walkthrough, in book form</dd>
+//! </dl>
 
 pub use derive_deftly_macros::derive_deftly_engine;
 pub use derive_deftly_macros::{
