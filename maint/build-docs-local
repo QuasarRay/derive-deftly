@@ -9,9 +9,10 @@ import os
 import re
 import subprocess
 import sys
+import toml.decoder
 
 import typing
-from typing import List, Tuple, Callable, Any, TYPE_CHECKING
+from typing import Dict, List, Tuple, Callable, Any, TYPE_CHECKING
 
 #---------- type handling ----------
 
@@ -29,7 +30,7 @@ rustdoc_packages = [
 ]
 rustdoc_opts = ['--all-features']
 
-docsrs_url_pat = 'https://docs.rs/%s/latest/%s'
+docsrs_url_pat = 'https://docs.rs/%s/%s/%s'
 
 mdbook_dir = 'book'
 mdbook_url = 'https://diziet.pages.torproject.net/rust-derive-deftly/latest/guide'
@@ -38,6 +39,8 @@ mdbook_slug = 'guide'
 
 target_dir = 'target'
 out_unified = 'doc-unified' # lives in target/
+
+toml_data: Dict[str, Any]
 
 #---------- preparation and utilities ----------
 
@@ -147,9 +150,24 @@ def build_rustdocs(cli_rustdoc_arg: List[str]) -> None:
         cmd += ['-p', p]
     subprocess.run(cmd, check=True)
 
-def massage_rustdocs() -> None:
+def build_massager() -> Massager:
     massager = Massager();
     massager.add(mdbook_url, mdbook_leaf())
+    # Quadratic in rustdoc_packages, but it will do
+    for p in rustdoc_packages:
+        for p_rustc in rustdoc_rustc_packages:
+            massager.add(docsrs_url_pat % (p, 'latest', p_rustc), p_rustc)
+
+    main_p_rustdoc = rustdoc_packages[0]
+    main_p_rustc = rustdoc_rustc_packages[0]
+    main_p_versioned_url = docsrs_url_pat % (
+        main_p_rustdoc, toml_data['package']['version'], main_p_rustc
+    )
+    massager.add(main_p_versioned_url, main_p_rustc)
+    return massager
+
+def massage_rustdocs() -> None:
+    massager = build_massager()
 
     for d in rustdoc_rustc_packages:
         massager.process_tree(
@@ -172,11 +190,7 @@ def build_mdbook(cli_mdbook_arg: List[str]) -> None:
     subprocess.run(['sh', '-xec', '"$@"', 'x'] + cmd, check=True)
 
 def massage_mdbook() -> None:
-    massager = Massager()
-    # Quadratic in rustdoc_packages, but it will do
-    for p in rustdoc_packages:
-        for p_rustc in rustdoc_rustc_packages:
-            massager.add(docsrs_url_pat % (p, p_rustc), p_rustc)
+    massager = build_massager()
     massager.process_tree(
         mdbook_input_dir,
         mdbook_leaf(),
@@ -218,6 +232,8 @@ def main() -> None:
     args = parser.parse_args()
     build_rustdocs(args.rustdoc_arg)
     build_mdbook(args.mdbook_arg)
+    global toml_data
+    toml_data = toml.decoder.load('Cargo.toml')
     massage_rustdocs()
     massage_mdbook()
     if args.linkcheck:
