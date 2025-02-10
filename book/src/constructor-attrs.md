@@ -21,7 +21,7 @@ define_derive_deftly! {
    Constructor for struct:
 
    impl<$tgens> $ttype where $twheres {
-      $tvis fn ${tmeta(constructor(newfn)) as path} // (1)
+      $tvis fn ${tmeta(constructor(newfn)) as ident} // (1)
       ( $( $fname: $ftype , ) ) -> Self {
           Self {
               $( $fname , )
@@ -42,19 +42,19 @@ struct Example {
 
 Here, instead of specifying "`new`"
 for the method name in our template,
-we give the name as `${tmeta(constructor(newfn))} as path`.
+we give the name as `${tmeta(constructor(newfn))} as ident`.
 This tells the template to look for an
 [`#[deftly(constructor(newfn="..."))]`][deftly-attribute]
 attribute on the type,
-to interpret that attribute as a path (eg, an identifier),
+to interpret that attribute as an identifier,
 and to use the value of that attribute
 in place of the keyword.
 
-The `as path` portion is mandatory;
+The `as ident` portion is mandatory;
 without it, derive-deftly can't tell
 how to parse the argument to the argument.
-Instead of `path`, you can describe other kinds syntactical types,
-such as `str`, `ty`, `ident`, or `expr`.
+Instead of `ident`, you can describe other kinds syntactical types,
+such as `str`, `ty`, `path`, or `expr`.
 See the [reference][x:tmeta] for a complete list.
 
 <span id="meta-attr-scope">Note that we explicitly
