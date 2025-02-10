@@ -1,6 +1,6 @@
 [package]
 name = "derive-deftly"
-version = "0.14.2"
+version = "0.14.3"
 edition = "2021"
 license="MIT"
 authors=["Ian Jackson <ijackson@chiark.greenend.org.uk>",
@@ -56,6 +56,6 @@ meta-as-items = ["derive-deftly-macros/meta-as-items"]
 beta = ["derive-deftly-macros/beta"]
 
 [dependencies]
-derive-deftly-macros = { path = "macros", version = "=0.14.2", default-features = false }
+derive-deftly-macros = { path = "macros", version = "=0.14.3", default-features = false }
 # This dependency is *here* only for the link to `heck` in the docs.
 heck = { version = ">=0.4, <0.6", optional = true }
