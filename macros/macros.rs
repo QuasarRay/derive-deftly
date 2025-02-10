@@ -115,6 +115,8 @@ where
 
 /// Template expansion engine, internal
 ///
+/// <? dd-navbar macros . ?>
+///
 /// Normally you do not need to mention this macro.
 ///
 /// derive-deftly does its work by
@@ -134,6 +136,8 @@ pub fn derive_deftly_engine(
 }
 
 /// Expand an ad-hoc template, on a data structure decorated `#[derive_deftly_adhoc]`
+///
+/// <? dd-navbar macros . ?>
 ///
 /// ```
 // We're in the macro crate, where the facade crate is not available.
@@ -458,6 +462,8 @@ pub fn derive_deftly(
 }
 
 /// Check semver compatibility, for a crate which exports macros
+///
+/// <? dd-navbar macros . ?>
 ///
 /// Causes a compilation error
 /// if and only if the specified version of `derive-deftly`
