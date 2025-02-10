@@ -57,6 +57,12 @@ or via the [account request form].
 
 ## Changelog
 
+### 0.14.4
+
+#### Fixed
+
+ * Removed ill-nested divs from README.md.
+
 ### 0.14.3
 
 #### Added
