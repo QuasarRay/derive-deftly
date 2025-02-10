@@ -198,9 +198,9 @@ sub filter_rustdoc () {
 	    $navbar_details = undef;
 	    next;
 	}
-	print O $orig_line;
-
 	$navbar_details = undef;
+
+	print O $orig_line;
 
 	if (m{$any_our_pi_re}) {
 	    print STDERR "    line $.: processing navbar\n" if $debug;
