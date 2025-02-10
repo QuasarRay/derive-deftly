@@ -287,8 +287,9 @@ To parse the json, You can use a rune like this:
 `curl https://www.chiark.greenend.org.uk/~ian/docker-tags-history/rustlang,rust/tags.2024-06-06T13:08+00:00.gz | zcat | jq -r '.results[] | select(.name | match("^nightly-bookworm$")) | .images[] | select(.architecture | match("^amd64"))'`
 
 Pick a date just before upstream Rust branched for a release, since that way
-we'll maybe have a less-buggy nightly.  Note the date `YYYY-MM-DD` and
-use the `jq` rune in that `README.txt` to get the sha256 image digest.
+we'll maybe have a less-buggy nightly.
+Note the date `YYYY-MM-DD` (from the `tags.` part of the URL) and
+use the `jq` rune to get the sha256 image digest.
 
 (The Docker official way seems to be to visit
   <https://hub.docker.com/r/rustlang/rust/tags>
