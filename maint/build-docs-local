@@ -159,7 +159,7 @@ def build_massager() -> Massager:
     main_p_rustdoc = rustdoc_packages[0]
     main_p_rustc = rustdoc_rustc_packages[0]
     main_p_versioned_url = docsrs_url_pat % (
-        main_p_rustdoc, toml['package']['version'], main_p_rustc
+        main_p_rustdoc, toml_data['package']['version'], main_p_rustc
     )
     massager.add(main_p_versioned_url, main_p_rustc)
     return massager
@@ -230,8 +230,8 @@ def main() -> None:
     args = parser.parse_args()
     build_rustdocs(args.rustdoc_arg)
     build_mdbook(args.mdbook_arg)
-    global toml
-    toml = toml.decoder.load('Cargo.toml')
+    global toml_data
+    toml_data = toml.decoder.load('Cargo.toml')
     massage_rustdocs()
     massage_mdbook()
     if args.linkcheck:
