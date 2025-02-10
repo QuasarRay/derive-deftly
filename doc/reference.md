@@ -1,7 +1,7 @@
 # **Template syntax (and expansion options) reference**
 
 <? dd-navbar reference .. ?>
-<!-- this line automatically maintained by update-navbars --><nav style="text-align: center; margin-bottom: 12px;">[ <em>docs: <a href="../index.html">crate top-level</a> | <a href="../index.html#overall-toc">overall toc, macros</a> | <strong>template etc. reference</strong> | <a href="https://diziet.pages.torproject.net/rust-derive-deftly/latest/guide/">guide/tutorial</a></em> ]</nav>
+<!-- this line automatically maintained by update-navbars --><nav style="text-align: right; margin-bottom: 12px;">[ <em>docs: <a href="../index.html">crate top-level</a> | <a href="../index.html#overall-toc">overall toc, macros</a> | <strong>template etc. reference</strong> | <a href="https://diziet.pages.torproject.net/rust-derive-deftly/latest/guide/">guide/tutorial</a></em> ]</nav>
 
 **Table of contents**
 

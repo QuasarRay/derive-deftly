@@ -1,7 +1,7 @@
 # derive-deftly: An ergonomic replacement for (some) proc macros
 
 <? dd-navbar toplevel . ?>
-<!-- this line automatically maintained by update-navbars --><nav style="text-align: center; margin-bottom: 12px;">[ <em>docs: <strong>crate top-level</strong> | <a href="index.html#overall-toc">overall toc, macros</a> | <a href="doc_reference/index.html">template etc. reference</a> | <a href="https://diziet.pages.torproject.net/rust-derive-deftly/latest/guide/">guide/tutorial</a></em> ]</nav>
+<!-- this line automatically maintained by update-navbars --><nav style="text-align: right; margin-bottom: 12px;">[ <em>docs: <strong>crate top-level</strong> | <a href="index.html#overall-toc">overall toc, macros</a> | <a href="doc_reference/index.html">template etc. reference</a> | <a href="https://diziet.pages.torproject.net/rust-derive-deftly/latest/guide/">guide/tutorial</a></em> ]</nav>
 
 `derive-deftly` allows you to write macros which are driven
 by Rust data structures, just like proc macro derive macros,
@@ -85,7 +85,7 @@ with a number of worked examples.
 <div class="docblock">
 
 <? dd-navbar overall-toc . ?>
-<!-- this line automatically maintained by update-navbars --><nav style="text-align: center; margin-bottom: 12px;">[ <em>docs: <a href="index.html">crate top-level</a> | <strong>overall toc, macros</strong> | <a href="doc_reference/index.html">template etc. reference</a> | <a href="https://diziet.pages.torproject.net/rust-derive-deftly/latest/guide/">guide/tutorial</a></em> ]</nav>
+<!-- this line automatically maintained by update-navbars --><nav style="text-align: right; margin-bottom: 12px;">[ <em>docs: <a href="index.html">crate top-level</a> | <strong>overall toc, macros</strong> | <a href="doc_reference/index.html">template etc. reference</a> | <a href="https://diziet.pages.torproject.net/rust-derive-deftly/latest/guide/">guide/tutorial</a></em> ]</nav>
 
 </div>
 <div><!-- @derive-deftly invalid-html-tags -->
