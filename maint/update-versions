@@ -17,8 +17,8 @@ END
 # We're not using cargo-edit or cargo-version because our
 # multi-version tests make things weird.
 
-# CARGO='nailing-cargo -u' maint/update-versions VERSION
-# CARGO='nailing-cargo -u' maint/update-versions
+# CARGO='nailing-cargo -Eu' maint/update-versions VERSION
+# CARGO='nailing-cargo -Eu' maint/update-versions
 
 set -e -o pipefail
 
