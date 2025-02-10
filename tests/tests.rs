@@ -12,8 +12,8 @@
 //! When running the full test suite,
 //! you should use a particular version of Nightly Rust:
 //! ```text
-//! rustup toolchain add nightly-2024-06-06
-//! cargo +nightly-2024-06-06 test --locked --workspace --all-features
+//! rustup toolchain add nightly-2025-02-10
+//! cargo +nightly-2025-02-10 test --locked --workspace --all-features
 //! ```
 //! With other versions, the pretty printing of the macro expansions,
 //! or the results of standard library macros, can change,
@@ -21,7 +21,7 @@
 //!
 //! After your first run, it will probably be helpful to say
 //! ```text
-//! CARGO_NET_OFFLINE=true cargo +nightly-2024-06-06 test --locked --workspace --all-features
+//! CARGO_NET_OFFLINE=true cargo +nightly-2025-02-10 test --locked --workspace --all-features
 //!```
 //! This is because otherwise cargo
 //! will uselessly re-update the cargo index,
@@ -38,7 +38,7 @@
 //!
 //! ```text
 //! TRYBUILD=overwrite MACROTEST=overwrite STDERRTEST=overwrite \
-//! CARGO_NET_OFFLINE=true cargo +nightly-2024-06-06 test --locked --workspace --all-features
+//! CARGO_NET_OFFLINE=true cargo +nightly-2025-02-10 test --locked --workspace --all-features
 //! ```
 //!
 //! *Check that the actual output is as desired!*

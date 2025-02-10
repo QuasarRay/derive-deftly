@@ -11,7 +11,6 @@ error: multiple conditions matched (in this field)
 26 | |
 27 | |     #[derive(Default, Debug)]
 ...  |
-44 | |     }
 45 | | }
    | |_- in this macro invocation
    |
@@ -41,7 +40,6 @@ error: no conditions matched, and no else clause (in this field)
 26 | |
 27 | |     #[derive(Default, Debug)]
 ...  |
-44 | |     }
 45 | | }
    | |_- in this macro invocation
    |
@@ -61,11 +59,11 @@ error[E0433]: failed to resolve: use of undeclared type `Left`
    |
 help: there is an enum variant `core::fmt::Alignment::Left` and 4 others; try using the variant's enum
    |
-48 |     assert_eq!(format!("{:?}", &core::fmt::Alignment()), "Left { a: 0 }",)
+48 |     assert_eq!(format!("{:?}", &core::fmt::Alignment::default()), "Left { a: 0 }",)
    |                                 ~~~~~~~~~~~~~~~~~~~~
-48 |     assert_eq!(format!("{:?}", &itertools::Either()), "Left { a: 0 }",)
+48 |     assert_eq!(format!("{:?}", &itertools::Either::default()), "Left { a: 0 }",)
    |                                 ~~~~~~~~~~~~~~~~~
-48 |     assert_eq!(format!("{:?}", &itertools::EitherOrBoth()), "Left { a: 0 }",)
+48 |     assert_eq!(format!("{:?}", &itertools::EitherOrBoth::default()), "Left { a: 0 }",)
    |                                 ~~~~~~~~~~~~~~~~~~~~~~~
-48 |     assert_eq!(format!("{:?}", &std::fmt::Alignment()), "Left { a: 0 }",)
+48 |     assert_eq!(format!("{:?}", &std::fmt::Alignment::default()), "Left { a: 0 }",)
    |                                 ~~~~~~~~~~~~~~~~~~~

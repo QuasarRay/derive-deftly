@@ -284,7 +284,7 @@ Use this to select a corresponding Nightly Rust and container image:
 
 To parse the json, You can use a rune like this:
 <br>
-`curl https://www.chiark.greenend.org.uk/~ian/docker-tags-history/rustlang,rust/tags.2024-06-06T13:08+00:00.gz | zcat | jq -r '.results[] | select(.name | match("^nightly-bookworm$")) | .images[] | select(.architecture | match("^amd64"))'`
+`curl https://www.chiark.greenend.org.uk/~ian/docker-tags-history/rustlang,rust/tags.2025-02-10T13:08+00:00.gz | zcat | jq -r '.results[] | select(.name | match("^nightly-bookworm$")) | .images[] | select(.architecture | match("^amd64"))'`
 
 Pick a date just before upstream Rust branched for a release, since that way
 we'll maybe have a less-buggy nightly.  Note the date `YYYY-MM-DD` and
