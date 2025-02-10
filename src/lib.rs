@@ -1,3 +1,17 @@
+// This is the "library" crate.
+//
+// It is conventional for proc macro crates to be wrapped up
+// in a library crate, which reexport the proc macros, mostly because
+// a proc macro crate cannot contain anything else.
+//
+// Currently our plans do not appear to include any items other than
+// proc macros.  But we shouldn't foreclose that.  So for now
+// this library crate ought to declare a dependency on the macro crate
+// and reexport the macros.
+//
+// Also this crate is where the docs live, right here as crate-level
+// docs.
+
 #![allow(clippy::style, clippy::complexity)]
 #![allow(rustdoc::invalid_html_tags)] // @derive-deftly invalid-html-tags
 #![doc=include_str!("../README.md")]
@@ -19,20 +33,6 @@
 //! <div class="item-name"><a href="">Guide</a></div>
 //! <div class="desc docblock-short">Tutorial and walkthrough, in book form</div>
 //! </li></ul>
-
-// This is the "library" crate.
-//
-// It is conventional for proc macro crates to be wrapped up
-// in a library crate, which reexport the proc macros, mostly because
-// a proc macro crate cannot contain anything else.
-//
-// Currently our plans do not appear to include any items other than
-// proc macros.  But we shouldn't foreclose that.  So for now
-// this library crate ought to declare a dependency on the macro crate
-// and reexport the macros.
-//
-// Also this crate is where the docs live, right here as crate-level
-// docs.
 
 pub use derive_deftly_macros::derive_deftly_engine;
 pub use derive_deftly_macros::{
