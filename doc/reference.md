@@ -200,7 +200,7 @@ For [example enum `Enum`](#structs-used-in-examples):
 
 Each expansion keyword is described in this section.
 The examples each show the expansions for (elements of)
-the same example `Unit`, `Tuple`, `Struct` and `Enum`,
+[the same example `Unit`, `Tuple`, `Struct` and `Enum`](#t:example-structs),
 shown below.
 
 <!-- ## maint/check-keywords-documented expansions ## -->
@@ -1500,7 +1500,11 @@ This is done for
  * `$ftype`
  * `$Xmeta as ty`
 
+<div id="t:example-structs">
+
 ## Structs used in examples
+
+</div>
 
 The example expansions in the syntax reference 
 are those generated for the following driver types:
