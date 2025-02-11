@@ -489,7 +489,7 @@ pub fn derive_deftly(
 ///
 /// ## When and how to call this
 ///
-/// If you export templates, with `define_derive_deftly! { export ...`,
+/// If you export templates, with `define_derive_deftly! { export ... }`,
 /// call this macro too, once in your crate.
 ///
 /// Pass it the version of `derive-deftly` that was current,
