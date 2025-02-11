@@ -347,13 +347,6 @@ pub fn define_derive_deftly(
 /// [does not impose any namespacing](doc_reference/index.html#attribute-namespacing)
 /// within `#[deftly]`:
 ///
-/// ## Captured data structure definition `derive_deftly_driver_TYPE`
-///
-/// The data structure is captured by defining
-/// a `macro_rules` macro called `derive_deftly_driver_TYPE`,
-/// where `TYPE` is the name of the type
-/// that `#[derive(Deftly)]` is applied to.
-///
 /// ## Scoping and ordering within the same crate
 ///
 /// **Summary of required ordering**
@@ -412,6 +405,13 @@ pub fn define_derive_deftly(
 /// struct MyStruct { // ...
 /// # }
 /// ```
+///
+/// ## Captured data structure definition `derive_deftly_driver_TYPE`
+///
+/// The data structure is captured by defining
+/// a `macro_rules` macro called `derive_deftly_driver_TYPE`,
+/// where `TYPE` is the name of the type
+/// that `#[derive(Deftly)]` is applied to.
 ///
 /// ## Exporting the driver for downstream crates' templates
 ///
