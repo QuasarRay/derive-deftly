@@ -764,14 +764,13 @@ template option.
 Beta features may
 change their syntax or semantics or be removed,
 without notice.
-This would just be a patchlevel version bump,
-(after 1.x, a minor version bump).
-So you should pin your derive-deftly version:
+This would just be a minor version bump
+(i.e., increasing x in 1.x.y),.
+So you should pin your derive-deftly minor version:
 
 ```toml
 // Cargo.toml
-derive-deftly = { version = "=0.14.0", features = ["full", "beta"] }
-// after derive-deftly 1.x,  { version = "~1.x.y" ... }
+derive-deftly = { version = "~1.0.0", features = ["full", "beta"] }
 ```
 
 The `beta` cargo feature may imply a higher MSRV.
