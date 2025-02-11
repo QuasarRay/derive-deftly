@@ -31,7 +31,8 @@ but you don't have to write the "matcher" part:
 derive-deftly parses the input data structure for you,
 and makes the pieces available via predefined expansion variables.
 
-Further documentation is available in the `doc_` module(s)
+[Full documentation][navbar-versioned-url-overall-toc]
+is available in the `doc_` module(s),
 and the docs for the individual proc macros.
 
 ## Simple example - providing `Vec` containing enum variant names
