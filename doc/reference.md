@@ -144,7 +144,7 @@ Each `ARG` must be one of:
 
  * `IDENTIFIER`
  * `LITERAL` (eg, `NUMBER` or `"STRING"`)
- * `$EXPANSION` or `${EXPANSION}` or `${EXPANSION...}` or `$<...>`
+ * `$EXPANSION` (including `${KEYWORD...}`, `$<...>`, etc.)
  * `{ STUFF }`, where `STUFF` is expanded.
    (The `{ }` are just for delimiting the value, and are discarded).
 
