@@ -7,11 +7,6 @@
 by Rust data structures, just like proc macro derive macros,
 but without having to wrestle with the proc macro system.
 
-**Stability**
-
-We intend to make a 1.x release of this crate very soon.
-We expect that derive-deftly 1.x will be compatible with 0.14.x.
-
 ## Overview
 
 You can write an ad-hoc template,
