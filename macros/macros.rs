@@ -297,7 +297,7 @@ pub fn derive_deftly_adhoc(
 /// including from the standard library e.g., `std::option::Option`,
 /// you may rely on the context which uses the template
 /// to have a reasonable namespace,
-/// or use a explicit paths starting with `std` or `core`
+/// or use a explicit paths starting with `std` or `::std` or `::core`
 /// or `$crate` (perhaps naming a re-export).
 ///
 /// Overall, the situation is similar to defining
