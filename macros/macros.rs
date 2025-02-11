@@ -393,7 +393,7 @@ pub fn define_derive_deftly(
 /// ```
 // See the doc comment for `derive_deftly_adhoc`.
 /// # use derive_deftly_macros as derive_deftly;
-/// # use derive_deftly::{derive_deftly_engine};
+/// # use derive_deftly::derive_deftly_engine;
 /// # fn main(){}
 // We can't make another crate.  Fake up the macro definition
 /// # derive_deftly::define_derive_deftly! { TheirMacro: }
