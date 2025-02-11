@@ -33,7 +33,8 @@ and makes the pieces available via predefined expansion variables.
 
 [Full documentation][navbar-versioned-url-overall-toc]
 is available in the `doc_` module(s),
-and the docs for the individual proc macros.
+the docs for the individual proc macros,
+and the [Guide][user guide].
 
 ## Simple example - providing `Vec` containing enum variant names
 
