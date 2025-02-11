@@ -408,12 +408,19 @@ pub fn define_derive_deftly(
 ///
 /// ## Captured data structure definition `derive_deftly_driver_TYPE`
 ///
-/// The data structure is captured by defining
+/// With `#[derive_deftly_adhoc]`,
+/// the data structure is captured
+/// for use by
+/// [`derive_deftly_adhoc!`](macro@crate::derive_deftly_adhoc).
+///
+/// Specifically, by defining
 /// a `macro_rules` macro called `derive_deftly_driver_TYPE`,
 /// where `TYPE` is the name of the type
 /// that `#[derive(Deftly)]` is applied to.
 ///
-/// ## Exporting the driver for downstream crates' templates
+/// 
+///
+/// ### Exporting the driver for downstream crates' templates
 ///
 // Really, the documentation about this in `pub-a.rs` and `pub-b.rs`,
 // should be somewhere in our rustdoc output.
@@ -429,6 +436,8 @@ pub fn define_derive_deftly(
 /// `#[derive_deftly_adhoc(export)]`.
 /// The driver can then be derived from in other crates,
 /// with `derive_deftly_adhoc! { exporting_crate::DriverStruct: ... }`.
+///
+/// #### Semver hazards
 ///
 /// This is a tricky feature,
 /// which should only be used by experts
