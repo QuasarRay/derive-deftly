@@ -290,7 +290,8 @@ pub fn derive_deftly_adhoc(
 /// ## Namespacing within a template
 ///
 /// Within the template,
-/// items within your crate can be referred to with `$crate`.
+/// items within your crate can be referred to with
+/// [`$crate`](doc_reference/index.html#x:crate).
 ///
 /// For other items,
 /// including from the standard library e.g., `std::option::Option`,
