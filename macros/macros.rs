@@ -174,6 +174,7 @@ pub fn derive_deftly_engine(
 ///
 /// The definition of `DdtaStructureType` must have been decorated
 /// with [`#[derive(Deftly)]`](crate::Deftly),
+/// and `#[derive_deftly_adhoc]`,
 /// and the resulting `derive_deftly_driver_TYPE` macro must be
 /// available in scope.
 ///
