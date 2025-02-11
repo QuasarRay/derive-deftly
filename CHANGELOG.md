@@ -57,6 +57,17 @@ or via the [account request form].
 
 ## Changelog
 
+### 1.0.0
+
+No breaking changes since 0.14.x.
+
+#### Improved
+
+ * **Declare derive-deftly 1.x, and therefore stable.**
+ * Minor docs tidying.
+ * CI: Routine updates for pinned test dependencies.
+ * Improvements to internal HACKING.md.
+
 ### 0.14.6
 
 #### Improved
