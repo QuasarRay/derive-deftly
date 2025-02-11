@@ -11,7 +11,7 @@ text = , $
 subanchor macros = macros
 |
 url reference = doc_reference/index.html
-text = template etc. reference
+subanchor in-reference = template etc. reference
 |
 url book-start = https://diziet.pages.torproject.net/rust-derive-deftly/latest/guide/
 subanchor book-chapter = guide/tutorial

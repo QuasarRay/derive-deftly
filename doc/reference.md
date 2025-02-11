@@ -1565,6 +1565,9 @@ where T: 'l, T: TryInto<u8>
 
 </div>
 
+<!-- @dd-navbar in-reference .. -->
+<!-- this line automatically maintained by update-navbars --><nav style="text-align: right; margin-bottom: 12px;">[ <em>docs: <a href="../index.html">crate top-level</a> | <a href="../index.html#overall-toc">overall toc, macros</a> | <a href="../doc_reference/index.html"><strong>template etc. reference</strong></a> | <a href="https://diziet.pages.torproject.net/rust-derive-deftly/latest/guide/">guide/tutorial</a></em> ]</nav>
+
 ### Expansions index
 
 <!--## index x ##-->
