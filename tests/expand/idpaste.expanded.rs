@@ -25,7 +25,7 @@ struct TopName<F> {
 struct PreTopNamePost<F> {
     TopNameField: F,
 }
-impl<F> std::panic::RefUnwindSafe for PreTopNamePost<F> {}
+impl<F> ::std::panic::RefUnwindSafe for PreTopNamePost<F> {}
 #[derive_deftly_adhoc]
 #[deftly(t_frag = "TFrag")]
 struct ExpandName {
