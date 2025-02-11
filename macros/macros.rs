@@ -174,6 +174,7 @@ pub fn derive_deftly_engine(
 ///
 /// The definition of `DdtaStructureType` must have been decorated
 /// with [`#[derive(Deftly)]`](crate::Deftly),
+/// and `#[derive_deftly_adhoc]`,
 /// and the resulting `derive_deftly_driver_TYPE` macro must be
 /// available in scope.
 ///
@@ -289,13 +290,14 @@ pub fn derive_deftly_adhoc(
 /// ## Namespacing within a template
 ///
 /// Within the template,
-/// items within your crate can be referred to with `$crate`.
+/// items within your crate can be referred to with
+/// [`$crate`](doc_reference/index.html#x:crate).
 ///
 /// For other items,
 /// including from the standard library e.g., `std::option::Option`,
 /// you may rely on the context which uses the template
 /// to have a reasonable namespace,
-/// or use a explicit paths starting with `std` or `core`
+/// or use a explicit paths starting with `std` or `::std` or `::core`
 /// or `$crate` (perhaps naming a re-export).
 ///
 /// Overall, the situation is similar to defining
@@ -347,13 +349,6 @@ pub fn define_derive_deftly(
 /// [does not impose any namespacing](doc_reference/index.html#attribute-namespacing)
 /// within `#[deftly]`:
 ///
-/// ## Captured data structure definition `derive_deftly_driver_TYPE`
-///
-/// The data structure is captured by defining
-/// a `macro_rules` macro called `derive_deftly_driver_TYPE`,
-/// where `TYPE` is the name of the type
-/// that `#[derive(Deftly)]` is applied to.
-///
 /// ## Scoping and ordering within the same crate
 ///
 /// **Summary of required ordering**
@@ -399,11 +394,11 @@ pub fn define_derive_deftly(
 /// ```
 // See the doc comment for `derive_deftly_adhoc`.
 /// # use derive_deftly_macros as derive_deftly;
-/// # use derive_deftly::{derive_deftly_engine};
+/// # use derive_deftly::derive_deftly_engine;
 /// # fn main(){}
 // We can't make another crate.  Fake up the macro definition
 /// # derive_deftly::define_derive_deftly! { TheirMacro: }
-/// use derive_deftly::{Deftly, derive_deftly_adhoc};
+/// use derive_deftly::Deftly;
 // and don't really try to import it, then
 /// # #[cfg(any())]
 /// use other_crate::derive_deftly_template_TheirMacro;
@@ -413,7 +408,21 @@ pub fn define_derive_deftly(
 /// # }
 /// ```
 ///
-/// ## Exporting the driver for downstream crates' templates
+/// ## Captured data structure definition `derive_deftly_driver_TYPE`
+///
+/// With `#[derive_deftly_adhoc]`,
+/// the data structure is captured
+/// for use by
+/// [`derive_deftly_adhoc!`](macro@crate::derive_deftly_adhoc).
+///
+/// Specifically, by defining
+/// a `macro_rules` macro called `derive_deftly_driver_TYPE`,
+/// where `TYPE` is the name of the type
+/// that `#[derive(Deftly)]` is applied to.
+///
+///
+///
+/// ### Exporting the driver for downstream crates' templates
 ///
 // Really, the documentation about this in `pub-a.rs` and `pub-b.rs`,
 // should be somewhere in our rustdoc output.
@@ -429,6 +438,8 @@ pub fn define_derive_deftly(
 /// `#[derive_deftly_adhoc(export)]`.
 /// The driver can then be derived from in other crates,
 /// with `derive_deftly_adhoc! { exporting_crate::DriverStruct: ... }`.
+///
+/// #### Semver hazards
 ///
 /// This is a tricky feature,
 /// which should only be used by experts
@@ -478,7 +489,7 @@ pub fn derive_deftly(
 ///
 /// ## When and how to call this
 ///
-/// If you export templates, with `define_derive_deftly! { export ...`,
+/// If you export templates, with `define_derive_deftly! { export ... }`,
 /// call this macro too, once in your crate.
 ///
 /// Pass it the version of `derive-deftly` that was current,

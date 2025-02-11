@@ -3,7 +3,8 @@
 <!-- @dd-navbar reference .. -->
 <!-- this line automatically maintained by update-navbars --><nav style="text-align: right; margin-bottom: 12px;">[ <em>docs: <a href="../index.html">crate top-level</a> | <a href="../index.html#overall-toc">overall toc, macros</a> | <strong>template etc. reference</strong> | <a href="https://diziet.pages.torproject.net/rust-derive-deftly/latest/guide/">guide/tutorial</a></em> ]</nav>
 
-**Table of contents**
+**Table of contents** <br>
+(see also the [Index](#t:index))
 
 <!--##toc##-->
    * [Template syntax overview](#template-syntax-overview)
@@ -144,7 +145,7 @@ Each `ARG` must be one of:
 
  * `IDENTIFIER`
  * `LITERAL` (eg, `NUMBER` or `"STRING"`)
- * `$EXPANSION` or `${EXPANSION}` or `${EXPANSION...}` or `$<...>`
+ * `$EXPANSION` (including `${KEYWORD...}`, `$<...>`, etc.)
  * `{ STUFF }`, where `STUFF` is expanded.
    (The `{ }` are just for delimiting the value, and are discarded).
 
@@ -199,7 +200,7 @@ For [example enum `Enum`](#structs-used-in-examples):
 
 Each expansion keyword is described in this section.
 The examples each show the expansions for (elements of)
-the same example `Unit`, `Tuple`, `Struct` and `Enum`,
+[the same example `Unit`, `Tuple`, `Struct` and `Enum`](#t:example-structs),
 shown below.
 
 <!-- ## maint/check-keywords-documented expansions ## -->
@@ -1499,7 +1500,11 @@ This is done for
  * `$ftype`
  * `$Xmeta as ty`
 
+<div id="t:example-structs">
+
 ## Structs used in examples
+
+</div>
 
 The example expansions in the syntax reference 
 are those generated for the following driver types:
@@ -1558,7 +1563,14 @@ where T: 'l, T: TryInto<u8>
 # "##;
 ```
 
+<div id="t:index">
+
 ## Keyword index
+
+</div>
+
+<!-- @dd-navbar in-reference .. -->
+<!-- this line automatically maintained by update-navbars --><nav style="text-align: right; margin-bottom: 12px;">[ <em>docs: <a href="../index.html">crate top-level</a> | <a href="../index.html#overall-toc">overall toc, macros</a> | <a href="../doc_reference/index.html"><strong>template etc. reference</strong></a> | <a href="https://diziet.pages.torproject.net/rust-derive-deftly/latest/guide/">guide/tutorial</a></em> ]</nav>
 
 ### Expansions index
 

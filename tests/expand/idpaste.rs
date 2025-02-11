@@ -45,7 +45,7 @@ derive_deftly_adhoc! {
         $( ${pascal_case $fname}: $ftype )
     }
 
-    impl<$tgens> std::panic::RefUnwindSafe for ${paste Pre $ttype Post} {}
+    impl<$tgens> ::std::panic::RefUnwindSafe for ${paste Pre $ttype Post} {}
 }
 
 #[derive(Deftly)]
