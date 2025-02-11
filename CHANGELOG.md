@@ -57,6 +57,17 @@ or via the [account request form].
 
 ## Changelog
 
+### 1.0.0
+
+No breaking changes since 0.14.x.
+
+#### Improved
+
+ * **Declare derive-deftly 1.x, and therefore stable.**
+ * Minor docs tidying.
+ * CI: Routine updates for pinned test dependencies.
+ * Improvements to internal HACKING.md.
+
 ### 0.14.6
 
 #### Improved
@@ -753,14 +764,13 @@ template option.
 Beta features may
 change their syntax or semantics or be removed,
 without notice.
-This would just be a patchlevel version bump,
-(after 1.x, a minor version bump).
-So you should pin your derive-deftly version:
+This would just be a minor version bump
+(i.e., increasing x in 1.x.y),.
+So you should pin your derive-deftly minor version:
 
 ```toml
 // Cargo.toml
-derive-deftly = { version = "=0.14.0", features = ["full", "beta"] }
-// after derive-deftly 1.x,  { version = "~1.x.y" ... }
+derive-deftly = { version = "~1.0.0", features = ["full", "beta"] }
 ```
 
 The `beta` cargo feature may imply a higher MSRV.

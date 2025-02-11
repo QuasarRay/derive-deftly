@@ -24,7 +24,7 @@ set -e -o pipefail
 
 case "$#/$1" in
     0/) ;;
-    1/0.*) ;;
+    1/1.*) ;;
     *) usage; exit 12;;
 esac
 
