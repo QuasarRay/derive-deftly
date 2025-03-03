@@ -57,6 +57,12 @@ or via the [account request form].
 
 ## Changelog
 
+### 1.0.1
+
+#### Improved
+
+ * Trivial fixes to copyright notice in LICENCE.
+
 ### 1.0.0
 
 No breaking changes since 0.14.x.
