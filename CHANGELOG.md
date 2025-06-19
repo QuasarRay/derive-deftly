@@ -57,6 +57,12 @@ or via the [account request form].
 
 ## Changelog
 
+### 1.1.0
+
+#### Added
+
+ * BETA: `$findex` and `$vindex`.
+
 ### 1.0.1
 
 #### Improved
