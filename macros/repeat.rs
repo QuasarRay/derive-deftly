@@ -243,27 +243,30 @@ impl<'w> WithinRepeatLevel<'w> for WithinVariant<'w> {
         'c: 'w,
         F: FnMut(&Context, &WithinVariant<'w>) -> Result<(), E>,
     {
-        let mut within_variant = |index, variant, ppv: &'c PreprocessedVariant| {
-            let fields = &ppv.fields;
-            let pmetas = &ppv.pmetas;
-            let pfields = &ppv.pfields;
-            let wv = WithinVariant {
-                variant,
-                fields,
-                pmetas,
-                pfields,
-                index,
+        let mut within_variant =
+            |index, variant, ppv: &'c PreprocessedVariant| {
+                let fields = &ppv.fields;
+                let pmetas = &ppv.pmetas;
+                let pfields = &ppv.pfields;
+                let wv = WithinVariant {
+                    variant,
+                    fields,
+                    pmetas,
+                    pfields,
+                    index,
+                };
+                let wv = &wv;
+                let ctx = Context {
+                    variant: Some(wv),
+                    ..*ctx
+                };
+                call(&ctx, wv)
             };
-            let wv = &wv;
-            let ctx = Context {
-                variant: Some(wv),
-                ..*ctx
-            };
-            call(&ctx, wv)
-        };
         match &ctx.top.data {
             syn::Data::Enum(syn::DataEnum { variants, .. }) => {
-                for (index, (variant, pvariant)) in izip!(variants, ctx.pvariants).enumerate() {
+                for (index, (variant, pvariant)) in
+                    izip!(variants, ctx.pvariants).enumerate()
+                {
                     let index = index.try_into().expect(">=2^32 variants!");
                     within_variant(index, Some(variant), pvariant)?;
                 }
