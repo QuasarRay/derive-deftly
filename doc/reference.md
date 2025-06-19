@@ -18,6 +18,7 @@
       * [`$tgens`, `$tgnames`, `$twheres`, `$tdefgens` -- generics](#tgens-tgnames-twheres-tdefgens--generics)
       * [`${tmeta(...)}` `${vmeta(...)}` `${fmeta(...)}` -- `#[deftly]` attributes](#tmeta-vmeta-fmeta--deftly-attributes)
       * [`${fattrs ...}` `${vattrs ...}` `${tattrs ...}` -- other attributes](#fattrs--vattrs--tattrs---other-attributes)
+      * [`$findex` `$vindex` -- field/variant numerical index (**beta**)](#findex-vindex--fieldvariant-numerical-index-beta)
       * [`${paste ...}`, `$<...>` -- identifier pasting](#paste----identifier-pasting)
       * [`${CASE_CHANGE ...}` -- case changing](#case_change---case-changing)
       * [`${when CONDITION}` -- filtering out repetitions by a predicate](#when-condition--filtering-out-repetitions-by-a-predicate)
@@ -652,6 +653,26 @@ that come *after* the `#[derive(..., Deftly, ...)]`.
 ##### For `Enum`
 
  * `${vattrs deftly}` for `UnitVariant`: `#[deftly(value="enum_variant")]`
+
+<div id="x:findex">
+<div id="x:vindex">
+
+### `$findex` `$vindex` -- field/variant numerical index (**beta**)
+
+</div>
+</div>
+
+The numerical index of the field or variant, starting at 0.
+
+Can be used as a number, or a tuple field name.
+
+This feature is available only in [**beta**].
+
+#### Examples
+
+ * `$findex`: `0`, `1`, ..
+ * `$vindex` for `Enum`: `0`, `1`, ..
+ * `$vindex` for `Struct`: `0`
 
 <div id="x:paste">
 
