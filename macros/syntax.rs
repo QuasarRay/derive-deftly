@@ -108,6 +108,8 @@ pub enum SubstDetails<O: SubstParseContext> {
     fpatname(O::NotInBool),
     Vis(SubstVis, O::NotInPaste), // tvis, fvis
     tdefkwd(O::NotInBool),
+    vindex(O::NotInBool, beta::Enabled),
+    findex(O::NotInBool, beta::Enabled),
 
     // attributes
     Xmeta(meta::SubstMeta<O>),
@@ -818,6 +820,7 @@ impl<O: SubstParseContext> Parse for Subst<O> {
         let not_in_paste = || O::not_in_paste(&kw);
         let not_in_bool = || O::not_in_bool(&kw);
         let bool_only = || O::bool_only(&kw);
+        let beta = || beta::Enabled::new_for_syntax(kw.span());
 
         let parse_if = |input| SubstIf::parse(input, kw.span());
 
@@ -844,6 +847,8 @@ impl<O: SubstParseContext> Parse for Subst<O> {
         keyword! { fname(not_in_bool()?) }
         keyword! { ftype(not_in_bool()?) }
         keyword! { fpatname(not_in_bool()?) }
+        keyword! { vindex(not_in_bool()?, beta()?) }
+        keyword! { findex(not_in_bool()?, beta()?) }
         keyword! { tdefkwd(not_in_bool()?) }
 
         keyword! { "tvis": Vis(SubstVis::T, not_in_paste()?) }

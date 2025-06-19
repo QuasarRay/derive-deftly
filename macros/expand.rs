@@ -395,6 +395,14 @@ where
             })
         };
 
+        let do_index = |out: &mut O, index| {
+            let index = syn::Index {
+                index,
+                span: kw_span,
+            };
+            out.append_identfrag_toks(&TokenPastesAsIdent(index))
+        };
+
         match self {
             SD::tname(_) => out.append_identfrag_toks(&ctx.top.ident)?,
             SD::ttype(_) => do_ttype(out, Some(()), &do_tgnames),
@@ -420,6 +428,9 @@ where
                     Ident::new(&format!("f_{}", f.fname(kw_span)), kw_span);
                 out.append_identfrag_toks(&fpatname)?;
             }
+            SD::vindex(..) => do_index(out, ctx.variant(&kw_span)?.index)?,
+            SD::findex(..) => do_index(out, ctx.field(&kw_span)?.index)?,
+
             SD::Xmeta(sm) => do_meta(sm, out, sm.pmetas(ctx, kw_span)?)?,
             SD::error(e, _) => e.throw(ctx)?,
 

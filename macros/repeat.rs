@@ -146,6 +146,8 @@ impl<O: SubstParseContext> AnalyseRepeat for Subst<O> {
             SD::tdeftype(..) => None,
             SD::ftype(..) => Some(RO::Fields),
             SD::fpatname(_) => Some(RO::Fields),
+            SD::vindex(..) => Some(RO::Variants),
+            SD::findex(..) => Some(RO::Fields),
             SD::Vis(SubstVis::T, ..) => None,
             SD::Vis(SubstVis::F, ..) => Some(RO::Fields),
             SD::Vis(SubstVis::FD, ..) => Some(RO::Fields),
