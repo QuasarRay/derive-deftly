@@ -1600,14 +1600,14 @@ where T: 'l, T: TryInto<u8>
  * **$c…**: [`crate`](#x:crate)
  * **$d…**: [`dbg`](#x:dbg), [`dbg_all_keywords`](#x:dbg_all_keywords), [`defcond`](#x:defcond), [`define`](#x:define)
  * **$e…**: [`error`](#x:error)
- * **$f…**: [`fattrs`](#x:fattrs), [`fdefine`](#x:fdefine), [`fdefvis`](#x:fdefvis), [`fmeta`](#x:fmeta), [`fname`](#x:fname), [`for`](#x:for), [`fpatname`](#x:fpatname), [`ftype`](#x:ftype), [`fvis`](#x:fvis)
+ * **$f…**: [`fattrs`](#x:fattrs), [`fdefine`](#x:fdefine), [`fdefvis`](#x:fdefvis), [`findex`](#x:findex), [`fmeta`](#x:fmeta), [`fname`](#x:fname), [`for`](#x:for), [`fpatname`](#x:fpatname), [`ftype`](#x:ftype), [`fvis`](#x:fvis)
  * **$i…**: [`if`](#x:if), [`ignore`](#x:ignore)
  * **$l…**: [`lower_camel_case`](#x:lower_camel_case)
  * **$p…**: [`pascal_case`](#x:pascal_case), [`paste`](#x:paste)
  * **$s…**: [`select1`](#x:select1), [`shouty_snake_case`](#x:shouty_snake_case), [`snake_case`](#x:snake_case)
  * **$t…**: [`tattrs`](#x:tattrs), [`tdefgens`](#x:tdefgens), [`tdefkwd`](#x:tdefkwd), [`tdeftype`](#x:tdeftype), [`tdefvariants`](#x:tdefvariants), [`tgens`](#x:tgens), [`tgnames`](#x:tgnames), [`tmeta`](#x:tmeta), [`tname`](#x:tname), [`ttype`](#x:ttype), [`tvis`](#x:tvis), [`twheres`](#x:twheres)
  * **$u…**: [`upper_camel_case`](#x:upper_camel_case)
- * **$v…**: [`vattrs`](#x:vattrs), [`vdefbody`](#x:vdefbody), [`vmeta`](#x:vmeta), [`vname`](#x:vname), [`vpat`](#x:vpat), [`vtype`](#x:vtype)
+ * **$v…**: [`vattrs`](#x:vattrs), [`vdefbody`](#x:vdefbody), [`vindex`](#x:vindex), [`vmeta`](#x:vmeta), [`vname`](#x:vname), [`vpat`](#x:vpat), [`vtype`](#x:vtype)
  * **$w…**: [`when`](#x:when)
 
 ### Conditions index
