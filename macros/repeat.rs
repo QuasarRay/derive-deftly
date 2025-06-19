@@ -146,6 +146,8 @@ impl<O: SubstParseContext> AnalyseRepeat for Subst<O> {
             SD::tdeftype(..) => None,
             SD::ftype(..) => Some(RO::Fields),
             SD::fpatname(_) => Some(RO::Fields),
+            SD::vindex(..) => Some(RO::Variants),
+            SD::findex(..) => Some(RO::Fields),
             SD::Vis(SubstVis::T, ..) => None,
             SD::Vis(SubstVis::F, ..) => Some(RO::Fields),
             SD::Vis(SubstVis::FD, ..) => Some(RO::Fields),
@@ -243,31 +245,36 @@ impl<'w> WithinRepeatLevel<'w> for WithinVariant<'w> {
         'c: 'w,
         F: FnMut(&Context, &WithinVariant<'w>) -> Result<(), E>,
     {
-        let mut within_variant = |variant, ppv: &'c PreprocessedVariant| {
-            let fields = &ppv.fields;
-            let pmetas = &ppv.pmetas;
-            let pfields = &ppv.pfields;
-            let wv = WithinVariant {
-                variant,
-                fields,
-                pmetas,
-                pfields,
+        let mut within_variant =
+            |index, variant, ppv: &'c PreprocessedVariant| {
+                let fields = &ppv.fields;
+                let pmetas = &ppv.pmetas;
+                let pfields = &ppv.pfields;
+                let wv = WithinVariant {
+                    variant,
+                    fields,
+                    pmetas,
+                    pfields,
+                    index,
+                };
+                let wv = &wv;
+                let ctx = Context {
+                    variant: Some(wv),
+                    ..*ctx
+                };
+                call(&ctx, wv)
             };
-            let wv = &wv;
-            let ctx = Context {
-                variant: Some(wv),
-                ..*ctx
-            };
-            call(&ctx, wv)
-        };
         match &ctx.top.data {
             syn::Data::Enum(syn::DataEnum { variants, .. }) => {
-                for (variant, pvariant) in izip!(variants, ctx.pvariants) {
-                    within_variant(Some(variant), pvariant)?;
+                for (index, (variant, pvariant)) in
+                    izip!(variants, ctx.pvariants).enumerate()
+                {
+                    let index = index.try_into().expect(">=2^32 variants!");
+                    within_variant(index, Some(variant), pvariant)?;
                 }
             }
             syn::Data::Struct(_) | syn::Data::Union(_) => {
-                within_variant(None, &ctx.pvariants[0])?;
+                within_variant(0, None, &ctx.pvariants[0])?;
             }
         }
         Ok(())

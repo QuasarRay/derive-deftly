@@ -355,6 +355,9 @@ fn parse_bullet(
         poss(Err(msg.trim()))?;
     } else {
         let mut outputs = outputs;
+        if let Some(rhs) = outputs.strip_suffix(", ..") {
+            outputs = rhs.to_owned();
+        }
         while !outputs.is_empty() {
             let (p, rest) =
                 [

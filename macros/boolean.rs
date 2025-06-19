@@ -157,6 +157,8 @@ impl Subst<BooleanContext> {
             | SD::ftype(not_in_bool)
             | SD::vtype(_, _, not_in_bool)
             | SD::tdefkwd(not_in_bool)
+            | SD::vindex(not_in_bool, ..)
+            | SD::findex(not_in_bool, ..)
             | SD::tattrs(_, _, not_in_bool)
             | SD::vattrs(_, _, not_in_bool)
             | SD::fattrs(_, _, not_in_bool)

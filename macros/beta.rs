@@ -91,7 +91,7 @@ impl Enabled {
             TS::Set(ue) => ue.ok_or_else(|| {
                 span.error(
  "beta derive-deftly feature used, without `beta_deftly` template option"
-            )
+                )
             }),
         }
     }
