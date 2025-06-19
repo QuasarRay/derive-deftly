@@ -255,6 +255,7 @@ impl<'c> Context<'c> {
             fields: pvariants[0].fields,
             pmetas: &pvariants[0].pmetas,
             pfields: &pvariants[0].pfields,
+            index: 0,
         });
 
         let ctx = Context {

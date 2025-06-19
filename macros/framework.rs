@@ -52,6 +52,7 @@ pub struct WithinVariant<'c> {
     pub fields: &'c syn::Fields,
     pub pmetas: &'c meta::PreprocessedMetas,
     pub pfields: &'c [PreprocessedField],
+    pub index: u32,
 }
 
 #[derive(Debug, Clone)]
