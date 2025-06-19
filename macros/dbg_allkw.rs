@@ -182,6 +182,9 @@ fn dump_variant(mut w: &mut Out, ctx: &Context, wv: &WithinVariant) -> R {
 
     expand! { c, $vname }
     expand! { c, $vtype }
+    if false { // beta
+        expand! { c, $vindex }
+    }
     expand! { c, $vpat }
     expand! { c, ${vdefbody VNAME FIELDS..} }
 
@@ -212,6 +215,9 @@ fn dump_field(mut w: &mut Out, ctx: &Context, wf: Option<&WithinField>) -> R {
 
     expand! { c, $fname }
     expand! { c, $ftype }
+    if false { // beta
+        expand! { c, $findex }
+    }
     expand! { c, $fvis }
     expand! { c, $fdefvis }
     expand! { c, $fpatname }

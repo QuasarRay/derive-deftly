@@ -847,8 +847,8 @@ impl<O: SubstParseContext> Parse for Subst<O> {
         keyword! { fname(not_in_bool()?) }
         keyword! { ftype(not_in_bool()?) }
         keyword! { fpatname(not_in_bool()?) }
-        keyword! { vindex(not_in_bool()?, beta()?) }
-        keyword! { findex(not_in_bool()?, beta()?) }
+        keyword! { vindex(not_in_bool()?, beta()?) } // when non-beta,
+        keyword! { findex(not_in_bool()?, beta()?) } // edit dbg_allkw.rs
         keyword! { tdefkwd(not_in_bool()?) }
 
         keyword! { "tvis": Vis(SubstVis::T, not_in_paste()?) }
