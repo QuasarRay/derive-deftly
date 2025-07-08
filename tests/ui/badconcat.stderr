@@ -1,0 +1,29 @@
+error: not allowed in within ${concat ...}
+  --> ui/badconcat.rs:14:14
+   |
+14 |     ${concat forbidden}
+   |              ^^^^^^^^^
+
+error: not allowed in within ${concat ...}
+  --> ui/badconcat.rs:20:36
+   |
+20 |     ${concat ${tmeta(something) as token_stream}}
+   |                                    ^^^^^^^^^^^^
+
+error: not allowed in within ${concat ...}
+  --> ui/badconcat.rs:27:15
+   |
+27 |     ${concat $NOT_CONCAT}
+   |               ^^^^^^^^^^
+
+error: user-defined expansion is not concatenable because it isn't, itself, ${concat } or ${paste }
+  --> ui/badconcat.rs:26:25
+   |
+26 |     ${define NOT_CONCAT $tgens}
+   |                         ^
+
+error: not allowed in within ${paste ...} (or case_changing)
+  --> ui/badconcat.rs:33:15
+   |
+33 |     ${paste ${concat "ok_so_far"}}
+   |               ^^^^^^
