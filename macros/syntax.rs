@@ -333,32 +333,51 @@ impl Parse for Definition<DefinitionBody> {
         let body_span = input.span();
         let mut body: Argument<_> = input.parse()?;
 
+        /// Token to make sure we undo the pop in the match
+        struct PushedBack;
+
         // Is it precisely an invocation of ${paste } or $< > ?
         let body = match (|| {
-            if body.elements.len() != 1 {
-                return None;
-            }
             let Template { elements } = &mut body.0;
-            // This is tedious.  We really want to move match on a vec.
-            match elements.pop().expect("just checked length") {
-                TE::Subst(Subst {
-                    kw_span,
-                    sd: SD::paste(items, not_in_bool),
-                }) => Some(Argument(Template {
+            if elements.len() != 1 {
+                return Err(PushedBack);
+            }
+            let first = elements.pop().expect("just checked length");
+            let TE::Subst(Subst { kw_span, sd }) = first else {
+                elements.push(first);
+                return Err(PushedBack);
+            };
+
+            fn mk_special_body<IO: ExpansionOutput>(
+                kw_span: Span,
+                db_constructor: impl FnOnce(Argument<IO>) -> DefinitionBody,
+                new_sd: SubstDetails<IO>,
+            ) -> DefinitionBody {
+                db_constructor(Argument(Template {
                     elements: vec![TE::Subst(Subst {
                         kw_span,
-                        sd: SD::paste(items, not_in_bool),
+                        sd: new_sd,
                     })],
-                })),
-                other => {
-                    // Oops, put it back
-                    elements.push(other);
-                    None
-                }
+                }))
             }
+
+            let db = match sd {
+                SD::paste(items, not_in_bool) => mk_special_body(
+                    kw_span,
+                    DefinitionBody::Paste,
+                    SD::paste(items, not_in_bool),
+                ),
+                other => {
+                    let reconstruct = Subst { kw_span, sd: other };
+                    elements.push(TE::Subst(reconstruct));
+                    return Err(PushedBack);
+                }
+            };
+
+            Ok(db)
         })() {
-            Some(paste) => DefinitionBody::Paste(paste),
-            None => DefinitionBody::Normal(body),
+            Ok(special) => special,
+            Err(PushedBack) => DefinitionBody::Normal(body),
         };
 
         Ok(Definition {
