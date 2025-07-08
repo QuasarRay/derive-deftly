@@ -731,10 +731,12 @@ Only certain contents are allowed:
    nor compared for equality.
 
  * Expansions that expand to literal strings:
-   `${Xmeta as str}`.
+   `${Xmeta as str}`,
+   and the non-identifier case conversions: `${kebab_case ...}` etc.
 
 So, supported expansions are
 those allowed in [`${paste ...}`](#x:paste),
+all case conversions,
 and `${concat }` itself.
 
 (`${concat }` does the jobs of `std::concat!` and `std::stringify!`
@@ -1353,9 +1355,17 @@ the [`dbg` expansion option](#dbg--print-the-expansion-to-stderr-for-debugging).
 <div id="x:shouty_snake_case">
 <div id="x:snake_case">
 <div id="x:upper_camel_case">
+<div id="kebab_case">
+<div id="shouty_kebab_case">
+<div id="title_case">
+<div id="train_case">
 
 ## Case changing
 
+</div>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -1376,6 +1386,12 @@ The content must be valid within `${paste }`,
 and is treated the same way.
 `${CASE_CHANGE }` may appear within pasting and vice versa.
 
+`${kebab_case ..}`, `${shouty_kebab_case`},
+`${title_case }`, and `${train_case }`
+don't generate valid Rust identifiers and
+are only allowed within `${concat }`.
+(Therefore they are [**beta**] features.)
+
 This table shows the supported case styles.
 Note that changing the case can add and remove underscores.
 The precise details are as for [`heck`],
@@ -1389,6 +1405,10 @@ which is used to implement the actual case changing.
 | `snake_case`         |                                  | `SnakeCase`                       | `snake_case`          |
 | `shouty_snake_case`  |                                  | `ShoutySnakeCase`                 | `SHOUTY_SNAKE_CASE`   |
 | `lower_camel_case`   |                                  | `LowerCamelCase`                  | `lowerCamelCase`      |
+| `kebab_case`         |                                  | `KebabCase`                       | `kebab-case`          |
+| `shouty_kebab_case`  |                                  | `ShoutyKebabCase`                 | `shouty-kebab-case`   |
+| `title_case`         |                                  | `TitleCase`                       | `Title Case`          |
+| `train_case`         |                                  | `TrainCase`                       | `Train-Case`          |
 
 
 #### Examples
@@ -1398,6 +1418,13 @@ which is used to implement the actual case changing.
  * `${pascal_case x_ $fname _y}`: `XFieldBY`
  * `$<x_ ${lower_camel_case $fname} _y>`: `x_fieldB_y`
  * `${lower_camel_case $fname}` for tuple: error, ``constructed identifier "0" is invalid``
+
+#### XXXX Examples (forthcoming)
+
+ * `${concat ${kebab_case $fname}}`: `"field-b"`
+ * `${concat ${shouty_kebab_case $fname}}`: `"FIELD-B"`
+ * `${concat ${title_case $fname}}`: `"Field B"`
+ * `${concat ${train_case $fname}}`: `"Field-B"`
 
 ## Expansion options
 
