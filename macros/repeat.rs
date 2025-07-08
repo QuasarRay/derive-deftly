@@ -375,7 +375,10 @@ impl<'c> Context<'c> {
         self.within_level(why)
     }
     /// Obtains the current variant (or calls it an error)
-    pub fn variant(&self, why: &dyn Spanned) -> syn::Result<&WithinVariant<'_>> {
+    pub fn variant(
+        &self,
+        why: &dyn Spanned,
+    ) -> syn::Result<&WithinVariant<'_>> {
         self.within_level(why)
     }
     /// Obtains the current variant as a `syn::Variant`
