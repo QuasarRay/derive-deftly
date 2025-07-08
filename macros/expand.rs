@@ -168,7 +168,7 @@ impl SubstVPat {
             WithinField::for_each(ctx, |ctx, field| {
                 SD::fname::<TokenAccumulator>(())
                     .expand(ctx, &mut out, kw_span)?;
-                out.append_tokens(&((),), Token![:](kw_span))?;
+                out.append_tokens(&((), ()), Token![:](kw_span))?;
 
                 // Do the expansion with the paste machinery, since
                 // that has a ready-made notion of what fprefix= might
@@ -654,13 +654,23 @@ impl DefinitionName {
                 unpasteable
             })
         };
+        let not_in_concat = || {
+            O::not_in_concat(self).map_err(|mut unconcatable| {
+                unconcatable.combine(def.body_span.error(
+                    // XXXX Currently, the expansion can't be ${concat }
+                    // We must add the DefinitionBody::Concat variant
+"user-defined expansion is not concatenable because it isn't, itself, ${concat } or ${paste }"
+                ));
+                unconcatable
+            })
+        };
 
         match &def.body {
             DefinitionBody::Paste(content) => {
                 paste::expand(&ctx, def.body_span, content, out)?;
             }
             DefinitionBody::Normal(content) => {
-                let ok = (not_in_paste()?,);
+                let ok = (not_in_paste()?, not_in_concat()?);
                 out.append_tokens_with(&ok, |out| {
                     content.expand(&ctx, out);
                     Ok(())

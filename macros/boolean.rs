@@ -20,12 +20,16 @@ fn is_found(r: Result<(), Found>) -> bool {
 
 impl SubstParseContext for BooleanContext {
     type NotInPaste = ();
+    type NotInConcat = ();
     type NotInBool = Void;
     type BoolOnly = ();
     const IS_BOOL: bool = true;
     type DbgContent = Subst<BooleanContext>;
 
     fn not_in_paste(_: &impl Spanned) -> syn::Result<()> {
+        Ok(())
+    }
+    fn not_in_concat(_: &impl Spanned) -> syn::Result<()> {
         Ok(())
     }
     fn bool_only(_: &impl Spanned) -> syn::Result<()> {

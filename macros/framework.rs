@@ -126,6 +126,8 @@ pub enum SpecialInstructions {
 pub trait SubstParseContext: Sized {
     /// Uninhabited iff this lexical context is within `${paste }`
     type NotInPaste: Debug + Copy + Sized;
+    /// Uninhabited iff this lexical context is within `${concat }`
+    type NotInConcat: Debug + Copy + Sized;
     /// Uninhabited iff this lexical context is within a condition.
     type NotInBool: Debug + Copy + Sized;
     /// Uninhabited unless this lexical context is within a condition.
@@ -150,6 +152,7 @@ pub trait SubstParseContext: Sized {
     type DbgContent: Parse + Debug + AnalyseRepeat + meta::FindRecogMetas;
 
     fn not_in_paste(span: &impl Spanned) -> syn::Result<Self::NotInPaste>;
+    fn not_in_concat(span: &impl Spanned) -> syn::Result<Self::NotInConcat>;
     fn not_in_bool(span: &impl Spanned) -> syn::Result<Self::NotInBool>;
 
     fn bool_only(span: &impl Spanned) -> syn::Result<Self::BoolOnly> {
@@ -233,6 +236,7 @@ pub trait SubstParseContext: Sized {
 #[allow(type_alias_bounds)]
 pub type AllowTokens<O: SubstParseContext> = (
     <O as SubstParseContext>::NotInPaste,
+    <O as SubstParseContext>::NotInConcat,
 );
 
 /// Extensions/helpers for `SubstParseContext`
@@ -242,7 +246,7 @@ pub trait SubstParseContextExt: SubstParseContext {
 impl<O: SubstParseContext> SubstParseContextExt for O {
     fn allow_tokens(span: &impl Spanned) -> syn::Result<AllowTokens<Self>> {
         let span = span.span();
-        Ok((O::not_in_paste(&span)?,))
+        Ok((O::not_in_paste(&span)?, (O::not_in_concat(&span)?)))
     }
 }
 
@@ -521,9 +525,13 @@ impl TokenAccumulator {
 
 impl SubstParseContext for TokenAccumulator {
     type NotInPaste = ();
+    type NotInConcat = ();
     type NotInBool = ();
     type DbgContent = Template<Self>;
     fn not_in_paste(_: &impl Spanned) -> syn::Result<()> {
+        Ok(())
+    }
+    fn not_in_concat(_: &impl Spanned) -> syn::Result<()> {
         Ok(())
     }
     fn not_in_bool(_: &impl Spanned) -> syn::Result<()> {
@@ -592,7 +600,7 @@ impl ExpansionOutput for TokenAccumulator {
     }
     fn append_tokens_with(
         &mut self,
-        _not_in_paste: &((),),
+        (_not_in_paste, _not_in_concat): &((), ()),
         f: impl FnOnce(&mut TokenAccumulator) -> syn::Result<()>,
     ) -> syn::Result<()> {
         f(self)

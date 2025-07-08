@@ -22,6 +22,7 @@ pub(crate) mod framework;
 pub(crate) mod accum;
 pub(crate) mod approx_equal;
 pub(crate) mod boolean;
+pub(crate) mod concat;
 pub(crate) mod dbg_allkw;
 pub(crate) mod expand;
 pub(crate) mod meta;

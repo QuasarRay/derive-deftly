@@ -710,11 +710,15 @@ impl Items {
 
 impl SubstParseContext for Items {
     type NotInPaste = Void;
+    type NotInConcat = ();
     type NotInBool = ();
     type BoolOnly = Void;
     type DbgContent = Template<Self>;
 
     fn not_in_bool(_: &impl Spanned) -> syn::Result<()> {
+        Ok(())
+    }
+    fn not_in_concat(_: &impl Spanned) -> syn::Result<()> {
         Ok(())
     }
 
@@ -861,7 +865,7 @@ impl ExpansionOutput for Items {
     }
     fn append_tokens_with(
         &mut self,
-        (not_in_paste,): &(Void,),
+        (not_in_paste, _not_in_compat): &(Void, ()),
         _: impl FnOnce(&mut TokenAccumulator) -> syn::Result<()>,
     ) -> syn::Result<()> {
         void::unreachable(*not_in_paste)
