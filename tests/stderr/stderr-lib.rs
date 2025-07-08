@@ -11,6 +11,10 @@ mod badoptions;
 #[path = "../ui/dbgdump.rs"]
 mod dbgdump;
 
+#[cfg(feature = "enable-main")]
+#[path = "../ui/badconcat.rs"]
+mod badconcat;
+
 // Only compare the output using the recent versions, since the
 // minimal-versions produce different output
 // (mostly, different formatting for `$foo`, `$ foo`).

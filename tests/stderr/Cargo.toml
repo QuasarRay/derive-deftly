@@ -11,7 +11,7 @@ description="stderr testing crates - does not build"
 publish = false
 
 [dependencies]
-derive-deftly = { path = "../..", version = "*", features = ["full"] }
+derive-deftly = { path = "../..", version = "*", features = ["full",  "beta"] }
 
 [features]
 # The purpose of this crate is to fail the build, with error messages

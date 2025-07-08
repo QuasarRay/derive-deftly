@@ -33,4 +33,16 @@ derive_deftly_adhoc! {
     ${paste ${concat "ok_so_far"}}
 }
 
+derive_deftly_adhoc! {
+    DataType beta_deftly, dbg:
+
+    const _: &str = ${concat ${dbg { "successful string" }}};
+}
+
+derive_deftly_adhoc! {
+    DataType beta_deftly:
+
+    ${concat ${dbg { ${error "failure forced in dbg"} }}}
+}
+
 fn main() {}
