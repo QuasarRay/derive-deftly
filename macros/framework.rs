@@ -142,6 +142,9 @@ pub trait SubstParseContext: Sized {
     /// This has to be in this trait because
     /// `${dbg }` contains a `Template` but `dbg(...)` contains a `Subst`.
     ///
+    /// For all `ExpansionContext` impls, should be `Template<Self>`.
+    // We'd use an associated type default, but they're unstable.
+    ///
     /// We make bespoke output for each context; for boolean this is sui
     /// generis, and for expansions it's in [`ExpansionOutput::dbg_expand`].
     type DbgContent: Parse + Debug + AnalyseRepeat + meta::FindRecogMetas;
@@ -499,7 +502,7 @@ impl TokenAccumulator {
 impl SubstParseContext for TokenAccumulator {
     type NotInPaste = ();
     type NotInBool = ();
-    type DbgContent = Template<TokenAccumulator>;
+    type DbgContent = Template<Self>;
     fn not_in_paste(_: &impl Spanned) -> syn::Result<()> {
         Ok(())
     }
