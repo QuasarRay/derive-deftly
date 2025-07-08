@@ -163,6 +163,9 @@ pub trait SubstParseContext: Sized {
     fn meta_recog_usage() -> meta::Usage;
 
     /// For communicating through `parse_special`
+    ///
+    /// Used when parsing `${paste ..}` to handle
+    /// the special `>`-based end condition.
     type SpecialParseContext: Default;
 
     /// Handle any special syntax for a special kind of template context.
