@@ -861,7 +861,7 @@ impl ExpansionOutput for Items {
     }
     fn append_tokens_with(
         &mut self,
-        not_in_paste: &Void,
+        (not_in_paste,): &(Void,),
         _: impl FnOnce(&mut TokenAccumulator) -> syn::Result<()>,
     ) -> syn::Result<()> {
         void::unreachable(*not_in_paste)
@@ -948,10 +948,10 @@ impl Expand<Items> for TemplateElement<Items> {
             TE::LitStr(lit) => out.append_syn_litstr(&lit),
             TE::Subst(e) => e.expand(ctx, out)?,
             TE::Repeat(e) => e.expand(ctx, out),
-            TE::Literal(_, not_in_paste)
-            | TE::Punct(_, not_in_paste)
-            | TE::Group { not_in_paste, .. } => {
-                void::unreachable(*not_in_paste)
+            TE::Literal(_, allow_tokens)
+            | TE::Punct(_, allow_tokens)
+            | TE::Group { allow_tokens, .. } => {
+                void::unreachable(allow_tokens.0)
             }
         }
         Ok(())

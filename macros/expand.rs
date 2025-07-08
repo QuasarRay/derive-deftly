@@ -168,7 +168,7 @@ impl SubstVPat {
             WithinField::for_each(ctx, |ctx, field| {
                 SD::fname::<TokenAccumulator>(())
                     .expand(ctx, &mut out, kw_span)?;
-                out.append_tokens(&(), Token![:](kw_span))?;
+                out.append_tokens(&((),), Token![:](kw_span))?;
 
                 // Do the expansion with the paste machinery, since
                 // that has a ready-made notion of what fprefix= might
@@ -249,7 +249,7 @@ impl Expand<TokenAccumulator> for TemplateElement<TokenAccumulator> {
                 delim_span,
                 delimiter,
                 template,
-                not_in_paste: _,
+                allow_tokens: _,
             } => {
                 use proc_macro2::Group;
                 let mut content = TokenAccumulator::new();
@@ -434,8 +434,8 @@ where
             SD::Xmeta(sm) => do_meta(sm, out, sm.pmetas(ctx, kw_span)?)?,
             SD::error(e, _) => e.throw(ctx)?,
 
-            SD::Vis(vis, np) => {
-                out.append_tokens(np, vis.syn_vis(ctx, kw_span)?)?
+            SD::Vis(vis, at) => {
+                out.append_tokens(at, vis.syn_vis(ctx, kw_span)?)?
             }
             SD::tdefkwd(_) => {
                 fn w<O>(out: &mut O, t: impl ToTokens)
@@ -658,7 +658,7 @@ impl DefinitionName {
                         ));
                         unpasteable
                     })?;
-                out.append_tokens_with(&not_in_paste, |out| {
+                out.append_tokens_with(&(not_in_paste,), |out| {
                     content.expand(&ctx, out);
                     Ok(())
                 })?;

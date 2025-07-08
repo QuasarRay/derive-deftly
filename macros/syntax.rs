@@ -43,14 +43,15 @@ pub struct TemplateWithWhens<O: SubstParseContext> {
 pub enum TemplateElement<O: SubstParseContext> {
     Ident(Ident),
     LitStr(syn::LitStr),
-    Literal(syn::Lit, O::NotInPaste),
-    Punct(Punct, O::NotInPaste),
+    /// Not used for [`syn::Lit::Str`]
+    Literal(syn::Lit, AllowTokens<O>),
+    Punct(Punct, AllowTokens<O>),
     Group {
         /// Sadly Group's constructors let us only set *both* delimiters
         delim_span: Span,
         delimiter: Delimiter,
         template: Template<O>,
-        not_in_paste: O::NotInPaste,
+        allow_tokens: AllowTokens<O>,
     },
     /// Might contain `SD::when`
     Subst(Subst<O>),
@@ -106,32 +107,32 @@ pub enum SubstDetails<O: SubstParseContext> {
     fname(O::NotInBool),
     ftype(O::NotInBool),
     fpatname(O::NotInBool),
-    Vis(SubstVis, O::NotInPaste), // tvis, fvis
+    Vis(SubstVis, AllowTokens<O>), // tvis, fvis
     tdefkwd(O::NotInBool),
     vindex(O::NotInBool, beta::Enabled),
     findex(O::NotInBool, beta::Enabled),
 
     // attributes
     Xmeta(meta::SubstMeta<O>),
-    tattrs(RawAttr, O::NotInPaste, O::NotInBool),
-    vattrs(RawAttr, O::NotInPaste, O::NotInBool),
-    fattrs(RawAttr, O::NotInPaste, O::NotInBool),
+    tattrs(RawAttr, AllowTokens<O>, O::NotInBool),
+    vattrs(RawAttr, AllowTokens<O>, O::NotInBool),
+    fattrs(RawAttr, AllowTokens<O>, O::NotInBool),
 
     // generics
-    tgens(O::NotInPaste),
-    tdefgens(O::NotInPaste, O::NotInBool),
-    tgnames(O::NotInPaste, O::NotInBool),
-    twheres(O::NotInPaste, O::NotInBool),
+    tgens(AllowTokens<O>),
+    tdefgens(AllowTokens<O>, O::NotInBool),
+    tgnames(AllowTokens<O>, O::NotInBool),
+    twheres(AllowTokens<O>, O::NotInBool),
 
-    vpat(SubstVPat, O::NotInPaste, O::NotInBool),
-    vtype(SubstVType, O::NotInPaste, O::NotInBool),
+    vpat(SubstVPat, AllowTokens<O>, O::NotInBool),
+    vtype(SubstVType, AllowTokens<O>, O::NotInBool),
 
-    tdefvariants(Template<TokenAccumulator>, O::NotInPaste, O::NotInBool),
-    fdefine(Option<Argument>, O::NotInPaste, O::NotInBool),
+    tdefvariants(Template<TokenAccumulator>, AllowTokens<O>, O::NotInBool),
+    fdefine(Option<Argument>, AllowTokens<O>, O::NotInBool),
     vdefbody(
         Argument<O>,
         Template<TokenAccumulator>,
-        O::NotInPaste,
+        AllowTokens<O>,
         O::NotInBool,
     ),
 
@@ -171,7 +172,7 @@ pub enum SubstDetails<O: SubstParseContext> {
     dbg(DbgDumpRequest<O>),
     dbg_all_keywords(O::NotInBool),
 
-    Crate(O::NotInPaste, O::NotInBool),
+    Crate(AllowTokens<O>, O::NotInBool),
 }
 
 #[derive(Debug)]
@@ -509,7 +510,7 @@ pub fn deescape_orig_dollar(
 impl<O: SubstParseContext> Parse for TemplateElement<O> {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let input_span = input.span();
-        let not_in_paste = || O::not_in_paste(&input_span);
+        let allow_tokens = || O::allow_tokens(&input_span);
 
         let backtracked = input.fork();
 
@@ -520,7 +521,7 @@ impl<O: SubstParseContext> Parse for TemplateElement<O> {
                 let t_parser = |input: ParseStream| Template::parse(input);
                 let template = t_parser.parse2(group.stream())?;
                 TE::Group {
-                    not_in_paste: not_in_paste()?,
+                    allow_tokens: allow_tokens()?,
                     delim_span,
                     delimiter,
                     template,
@@ -529,7 +530,7 @@ impl<O: SubstParseContext> Parse for TemplateElement<O> {
             TT::Ident(tt) => TE::Ident(tt),
             tt @ TT::Literal(..) => match syn::parse2(tt.into())? {
                 syn::Lit::Str(s) => TE::LitStr(s),
-                other => TE::Literal(other, not_in_paste()?),
+                other => TE::Literal(other, allow_tokens()?),
             },
             TT::Punct(tok) if tok.as_char() == '#' => {
                 if let Ok(attr) = syn::Attribute::parse_inner(&backtracked) {
@@ -539,10 +540,10 @@ impl<O: SubstParseContext> Parse for TemplateElement<O> {
                         ));
                     }
                 }
-                TE::Punct(tok, not_in_paste()?)
+                TE::Punct(tok, allow_tokens()?)
             }
             TT::Punct(tok) if tok.as_char() != '$' => {
-                TE::Punct(tok, not_in_paste()?)
+                TE::Punct(tok, allow_tokens()?)
             }
             TT::Punct(_dollar) => {
                 let deescaped = deescape_orig_dollar(input)?;
@@ -563,7 +564,7 @@ impl<O: SubstParseContext> Parse for TemplateElement<O> {
                             }
                         },
                     }
-                    TE::Punct(dollar, not_in_paste()?)
+                    TE::Punct(dollar, allow_tokens()?)
                 } else if la.peek(token::Paren) {
                     RepeatedTemplate::parse_in_parens(input)?
                 } else {
@@ -817,7 +818,7 @@ impl<O: SubstParseContext> Parse for Subst<O> {
             keyword_general! { kw from_sd SD; $($args)* }
         } }
 
-        let not_in_paste = || O::not_in_paste(&kw);
+        let allow_tokens = || O::allow_tokens(&kw);
         let not_in_bool = || O::not_in_bool(&kw);
         let bool_only = || O::bool_only(&kw);
         let beta = || beta::Enabled::new_for_syntax(kw.span());
@@ -851,9 +852,9 @@ impl<O: SubstParseContext> Parse for Subst<O> {
         keyword! { findex(not_in_bool()?, beta()?) } // edit dbg_allkw.rs
         keyword! { tdefkwd(not_in_bool()?) }
 
-        keyword! { "tvis": Vis(SubstVis::T, not_in_paste()?) }
-        keyword! { "fvis": Vis(SubstVis::F, not_in_paste()?) }
-        keyword! { "fdefvis": Vis(SubstVis::FD, not_in_paste()?) }
+        keyword! { "tvis": Vis(SubstVis::T, allow_tokens()?) }
+        keyword! { "fvis": Vis(SubstVis::F, allow_tokens()?) }
+        keyword! { "fdefvis": Vis(SubstVis::FD, allow_tokens()?) }
 
         keyword! { is_struct(bool_only()?) }
         keyword! { is_enum(bool_only()?) }
@@ -862,27 +863,27 @@ impl<O: SubstParseContext> Parse for Subst<O> {
         keyword! { v_is_tuple(bool_only()?) }
         keyword! { v_is_named(bool_only()?) }
 
-        keyword! { tgens(not_in_paste()?) }
-        keyword! { tdefgens(not_in_paste()?, not_in_bool()?) }
-        keyword! { tgnames(not_in_paste()?, not_in_bool()?) }
-        keyword! { twheres(not_in_paste()?, not_in_bool()?) }
+        keyword! { tgens(allow_tokens()?) }
+        keyword! { tdefgens(allow_tokens()?, not_in_bool()?) }
+        keyword! { tgnames(allow_tokens()?, not_in_bool()?) }
+        keyword! { twheres(allow_tokens()?, not_in_bool()?) }
 
         use meta::Scope as MS;
         keyword! { "tmeta": Xmeta(parse_meta(input, MS::T)?) }
         keyword! { "vmeta": Xmeta(parse_meta(input, MS::V)?) }
         keyword! { "fmeta": Xmeta(parse_meta(input, MS::F)?) }
 
-        keyword! { tattrs(input.parse()?, not_in_paste()?, not_in_bool()?) }
-        keyword! { vattrs(input.parse()?, not_in_paste()?, not_in_bool()?) }
-        keyword! { fattrs(input.parse()?, not_in_paste()?, not_in_bool()?) }
+        keyword! { tattrs(input.parse()?, allow_tokens()?, not_in_bool()?) }
+        keyword! { vattrs(input.parse()?, allow_tokens()?, not_in_bool()?) }
+        keyword! { fattrs(input.parse()?, allow_tokens()?, not_in_bool()?) }
 
         keyword! { vtype(
             SubstVType::parse(input, kw.span())?,
-            not_in_paste()?, not_in_bool()?,
+            allow_tokens()?, not_in_bool()?,
         ) }
         keyword! { vpat(
             SubstVPat::parse(input, kw.span())?,
-            not_in_paste()?, not_in_bool()?,
+            allow_tokens()?, not_in_bool()?,
         ) }
 
         keyword! { tdefvariants(
@@ -890,11 +891,11 @@ impl<O: SubstParseContext> Parse for Subst<O> {
                 input,
                 "tdefvariants needs to contain the variant definitions",
             )?,
-            not_in_paste()?, not_in_bool()?,
+            allow_tokens()?, not_in_bool()?,
         ) }
         keyword! { fdefine(
             (!input.is_empty()).then(|| input.parse()).transpose()?,
-            not_in_paste()?, not_in_bool()?
+            allow_tokens()?, not_in_bool()?
         ) }
         keyword! { vdefbody(
             input.parse()?,
@@ -902,7 +903,7 @@ impl<O: SubstParseContext> Parse for Subst<O> {
                 input,
                 "vdefbody needs to contain the body definition",
             )?,
-            not_in_paste()?, not_in_bool()?,
+            allow_tokens()?, not_in_bool()?,
         ) }
         keyword! { is_empty(bool_only()?, {
             let content;
@@ -938,8 +939,8 @@ impl<O: SubstParseContext> Parse for Subst<O> {
         keyword! { error(input.parse()?, not_in_bool()?) }
         keyword! { dbg(input.parse()?) }
         keyword! { dbg_all_keywords(not_in_bool()?) }
-        keyword! { "crate": Crate(not_in_paste()?, not_in_bool()?) }
-        keyword! { "_dd_intern_crate": Crate(not_in_paste()?, not_in_bool()?) }
+        keyword! { "crate": Crate(allow_tokens()?, not_in_bool()?) }
+        keyword! { "_dd_intern_crate": Crate(allow_tokens()?, not_in_bool()?) }
 
         keyword! { "for": For(
             RepeatedTemplate::parse_for(input)?,

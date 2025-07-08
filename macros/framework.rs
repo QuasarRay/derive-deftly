@@ -227,6 +227,25 @@ pub trait SubstParseContext: Sized {
     }
 }
 
+/// Inhabited iff this lexical content may expand to arbitrary tokens
+///
+/// Calculated automatically
+#[allow(type_alias_bounds)]
+pub type AllowTokens<O: SubstParseContext> = (
+    <O as SubstParseContext>::NotInPaste,
+);
+
+/// Extensions/helpers for `SubstParseContext`
+pub trait SubstParseContextExt: SubstParseContext {
+    fn allow_tokens(span: &impl Spanned) -> syn::Result<AllowTokens<Self>>;
+}
+impl<O: SubstParseContext> SubstParseContextExt for O {
+    fn allow_tokens(span: &impl Spanned) -> syn::Result<AllowTokens<Self>> {
+        let span = span.span();
+        Ok((O::not_in_paste(&span)?,))
+    }
+}
+
 /// Expansion output accumulator, for a template lexical context
 ///
 /// Each template lexical context has a distinct type which
@@ -329,7 +348,7 @@ pub trait ExpansionOutput: SubstParseContext {
     /// during template parsing.
     fn append_tokens_with(
         &mut self,
-        np: &Self::NotInPaste,
+        allow_tokens: &AllowTokens<Self>,
         f: impl FnOnce(&mut TokenAccumulator) -> syn::Result<()>,
     ) -> syn::Result<()>;
 
@@ -368,10 +387,10 @@ pub trait ExpansionOutput: SubstParseContext {
     // rather badly and had other warts.
     fn append_tokens(
         &mut self,
-        np: &Self::NotInPaste,
+        allow_tokens: &AllowTokens<Self>,
         tokens: impl ToTokens,
     ) -> syn::Result<()> {
-        self.append_tokens_with(np, |out| {
+        self.append_tokens_with(allow_tokens, |out| {
             out.append(tokens);
             Ok(())
         })
@@ -573,7 +592,7 @@ impl ExpansionOutput for TokenAccumulator {
     }
     fn append_tokens_with(
         &mut self,
-        _not_in_paste: &(),
+        _not_in_paste: &((),),
         f: impl FnOnce(&mut TokenAccumulator) -> syn::Result<()>,
     ) -> syn::Result<()> {
         f(self)
