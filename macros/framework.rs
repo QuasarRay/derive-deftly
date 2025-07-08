@@ -400,14 +400,15 @@ pub trait ExpansionOutput: SubstParseContext {
     ///   * Without a trailing newline
     ///   * Subsume it into `self`
     ///
-    /// Failures are to be reported, and subsumed into `self`.
+    /// Expansion errors are to be reported, and subsumed into `self`.
+    /// Failures to write may be thrown.
     fn dbg_expand(
         &mut self,
         kw_span: Span,
         ctx: &Context,
         msg: &mut String,
         content: &Self::DbgContent,
-    );
+    ) -> fmt::Result;
 }
 
 /// Convenience trait providing `item.expand()`
@@ -604,18 +605,18 @@ impl ExpansionOutput for TokenAccumulator {
         ctx: &Context,
         msg: &mut String,
         content: &Template<TokenAccumulator>,
-    ) {
+    ) -> fmt::Result {
         let mut child = TokenAccumulator::new();
         content.expand(ctx, &mut child);
         let child = child.tokens();
         match &child {
-            Err(e) => write!(msg, "/* ERROR: {} */", e),
-            Ok(y) => write!(msg, "{}", y),
+            Err(e) => write!(msg, "/* ERROR: {} */", e)?,
+            Ok(y) => write!(msg, "{}", y)?,
         }
-        .expect("write! failed");
         match child {
             Ok(y) => self.append(y),
             Err(e) => self.record_error(e),
         }
+        Ok(())
     }
 }

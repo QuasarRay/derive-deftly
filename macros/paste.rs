@@ -903,7 +903,7 @@ impl ExpansionOutput for Items {
         ctx: &Context,
         msg: &mut String,
         content: &Template<Items>,
-    ) {
+    ) -> fmt::Result {
         let mut child = Items::new(kw_span);
         content.expand(ctx, &mut child);
         let Items {
@@ -913,7 +913,6 @@ impl ExpansionOutput for Items {
             atoms: _,
         } = child;
 
-        (|| {
             for e in &errors {
                 writeln!(msg, "ERROR: {}", e)?;
             }
@@ -935,12 +934,10 @@ impl ExpansionOutput for Items {
                     }
                 }
             }
-            Ok::<_, fmt::Error>(())
-        })()
-        .expect("write! failed");
 
         self.items.extend(items);
         self.errors.extend(errors);
+        Ok(())
     }
 }
 
