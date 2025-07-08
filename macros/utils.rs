@@ -319,6 +319,11 @@ impl ErrorAccumulator {
         self.defused = true;
         self.bad.take()
     }
+
+    /// If there were any errors, examine them (as a combined `syn::Error`)
+    pub fn examine(&self) -> Option<&syn::Error> {
+        self.bad.as_ref()
+    }
 }
 
 impl Drop for ErrorAccumulator {
