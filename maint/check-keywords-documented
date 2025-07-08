@@ -438,8 +438,5 @@ veEE	for
 v	userdefined
 
 # XXXX forthcoming
-veE	concat
-
-# XXXX forthcoming
 C	kebab_case shouty_kebab_case title_case train_case
 H	KebabCase ShoutyKebabCase TitleCase TrainCase
