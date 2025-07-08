@@ -495,10 +495,10 @@ impl SubstParseContext for TokenAccumulator {
     type NotInPaste = ();
     type NotInBool = ();
     type DbgContent = Template<TokenAccumulator>;
-    fn not_in_bool(_: &impl Spanned) -> syn::Result<()> {
+    fn not_in_paste(_: &impl Spanned) -> syn::Result<()> {
         Ok(())
     }
-    fn not_in_paste(_: &impl Spanned) -> syn::Result<()> {
+    fn not_in_bool(_: &impl Spanned) -> syn::Result<()> {
         Ok(())
     }
     fn meta_recog_usage() -> meta::Usage {
