@@ -648,7 +648,7 @@ impl Items {
             })?
             .map(|(pos, _)| pos);
 
-        fn plain_strs(items: &[Item]) -> impl Iterator<Item = Piece> + Clone {
+        fn plain_strs(items: &[Item]) -> impl Iterator<Item = Piece<'_>> + Clone {
             items.iter().map(|item| match item {
                 Item::Plain { text, span } => (text.as_str(), *span),
                 _ => panic!("non plain item"),

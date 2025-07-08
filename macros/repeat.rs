@@ -371,11 +371,11 @@ impl<'c> Context<'c> {
     }
 
     /// Obtains the current field (or calls it an error)
-    pub fn field(&self, why: &dyn Spanned) -> syn::Result<&WithinField> {
+    pub fn field(&self, why: &dyn Spanned) -> syn::Result<&WithinField<'_>> {
         self.within_level(why)
     }
     /// Obtains the current variant (or calls it an error)
-    pub fn variant(&self, why: &dyn Spanned) -> syn::Result<&WithinVariant> {
+    pub fn variant(&self, why: &dyn Spanned) -> syn::Result<&WithinVariant<'_>> {
         self.within_level(why)
     }
     /// Obtains the current variant as a `syn::Variant`
@@ -422,7 +422,7 @@ impl<'c> Context<'c> {
 
 impl<'w> WithinField<'w> {
     /// What would `${fname}` expand to?
-    pub fn fname(&self, tspan: Span) -> Fname {
+    pub fn fname(&self, tspan: Span) -> Fname<'_> {
         if let Some(fname) = &self.field.ident {
             // todo is this the right span to emit?
             Fname::Name(fname)
