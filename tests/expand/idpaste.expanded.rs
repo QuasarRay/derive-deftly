@@ -45,6 +45,8 @@ struct PreExpandNamePost {
 }
 struct WomExpandNameBat;
 struct ViaDefineTFrag;
+const HUMAN_STR: &str = "$ttype = ExpandName.";
+const COMPUTER_STR: &str = "TFrag";
 #[derive_deftly_adhoc]
 enum EdgeCases {
     Tuple(u32),
