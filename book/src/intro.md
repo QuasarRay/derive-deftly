@@ -25,7 +25,7 @@ to help you get a feel for the system.
 There is also comprehensive and rigorous reference material:
 
 * **[Template language reference manual][Reference]**
-   (terse, but complete).
+  (terse, but complete).
 
 * **[rustdoc top-level][rustdoc]**:
   Documents macros exposed by the `derive-deftly` crate.

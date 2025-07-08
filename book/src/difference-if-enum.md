@@ -16,14 +16,14 @@ Here are the new conditions we'll need:
   * [`is_enum`][c:is_enum] - True if the top-level type is an enum.
   * [`is_struct`][c:is_struct] - True if the top-level type is a struct.
   * [`v_is_unit`][c:v_is_unit] - True if the current variant
-     (or the top-level type, in the case of a struct)
-     is a unit struct/variant.
+    (or the top-level type, in the case of a struct)
+    is a unit struct/variant.
   * [`v_is_tuple`][c:v_is_tuple] - True if the current variant
-     (or the top-level type, in the case of a struct)
-     is a tuple struct/variant.
+    (or the top-level type, in the case of a struct)
+    is a tuple struct/variant.
   * [`v_is_named`][c:v_is_named] - True if the current variant
-     (or the top-level type, in the case of a struct)
-     is a struct/variant with named fields.
+    (or the top-level type, in the case of a struct)
+    is a struct/variant with named fields.
 
 With these conditions, we can write our template,
 albeit with quite a lot of redundancy.
