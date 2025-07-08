@@ -646,19 +646,22 @@ impl DefinitionName {
         let (def, ctx) = ctx.find_definition(self)?.ok_or_else(|| {
             self.error(format!("user-defined expansion `{}` not found", self))
         })?;
+        let not_in_paste = || {
+            O::not_in_paste(self).map_err(|mut unpasteable| {
+                unpasteable.combine(def.body_span.error(
+ "user-defined expansion is not pasteable because it isn't, itself, ${paste }"
+                ));
+                unpasteable
+            })
+        };
+
         match &def.body {
             DefinitionBody::Paste(content) => {
                 paste::expand(&ctx, def.body_span, content, out)?;
             }
             DefinitionBody::Normal(content) => {
-                let not_in_paste =
-                    O::not_in_paste(self).map_err(|mut unpasteable| {
-                        unpasteable.combine(def.body_span.error(
- "user-defined expansion is not pasteable because it isn't, itself, ${paste }"
-                        ));
-                        unpasteable
-                    })?;
-                out.append_tokens_with(&(not_in_paste,), |out| {
+                let ok = (not_in_paste()?,);
+                out.append_tokens_with(&ok, |out| {
                     content.expand(&ctx, out);
                     Ok(())
                 })?;
