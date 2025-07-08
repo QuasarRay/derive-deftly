@@ -9,6 +9,8 @@
 
 // This is a superset of macros/build.rs, in a more sophisticated style.
 
+#![allow(clippy::uninlined_format_args)] // Not in MSRV 1.56
+
 use std::fmt::Write as _;
 
 #[allow(clippy::format_collect)]
