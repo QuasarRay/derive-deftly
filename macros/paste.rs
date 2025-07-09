@@ -713,6 +713,7 @@ impl SubstParseContext for Items {
     type NotInConcat = ();
     type NotInBool = ();
     type BoolOnly = Void;
+    type ConcatOnly = Void;
     type DbgContent = Template<Self>;
 
     fn not_in_bool(_: &impl Spanned) -> syn::Result<()> {

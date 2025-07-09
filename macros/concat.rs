@@ -171,6 +171,7 @@ impl SubstParseContext for Accumulator {
     type NotInConcat = Void;
     type NotInBool = ();
     type BoolOnly = Void;
+    type ConcatOnly = ();
     type DbgContent = Template<Self>;
     type SpecialParseContext = ();
 
@@ -181,6 +182,9 @@ impl SubstParseContext for Accumulator {
         Err(span.error("not allowed in within ${concat ...}"))
     }
     fn not_in_bool(_: &impl Spanned) -> syn::Result<()> {
+        Ok(())
+    }
+    fn concat_only(_: &impl Spanned) -> syn::Result<()> {
         Ok(())
     }
     fn meta_recog_usage() -> meta::Usage {

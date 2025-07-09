@@ -130,6 +130,8 @@ pub trait SubstParseContext: Sized {
     type NotInConcat: Debug + Copy + Sized;
     /// Uninhabited iff this lexical context is within a condition.
     type NotInBool: Debug + Copy + Sized;
+    /// Uninhabited unless this lexical context is within `${concat }`
+    type ConcatOnly: Debug + Copy + Sized;
     /// Uninhabited unless this lexical context is within a condition.
     type BoolOnly: Debug + Copy + Sized;
 
@@ -158,6 +160,12 @@ pub trait SubstParseContext: Sized {
     fn bool_only(span: &impl Spanned) -> syn::Result<Self::BoolOnly> {
         Err(span.error(
             "derive-deftly keyword is a condition - not valid as an expansion",
+        ))
+    }
+    #[allow(dead_code)] // XXXX
+    fn concat_only(span: &impl Spanned) -> syn::Result<Self::ConcatOnly> {
+        Err(span.error(
+            "derive-deftly keyword is only allowed within ${concat }",
         ))
     }
 
@@ -542,6 +550,7 @@ impl SubstParseContext for TokenAccumulator {
     }
 
     type BoolOnly = Void;
+    type ConcatOnly = Void;
 
     type SpecialParseContext = ();
 }
