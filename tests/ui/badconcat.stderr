@@ -50,3 +50,9 @@ error: failure forced in dbg (template)
    |
 45 |     ${concat ${dbg { ${error "failure forced in dbg"} }}}
    |                              ^^^^^^^^^^^^^^^^^^^^^^^
+
+error: derive-deftly keyword is only allowed within ${concat }
+  --> ui/badconcat.rs:60:29
+   |
+60 |     ${define BARE_KEBAB { ${kebab_case $tname} }}
+   |                             ^^^^^^^^^^

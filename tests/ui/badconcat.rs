@@ -45,4 +45,19 @@ derive_deftly_adhoc! {
     ${concat ${dbg { ${error "failure forced in dbg"} }}}
 }
 
+derive_deftly_adhoc! {
+    DataType beta_deftly:
+
+    // You can't ${define } something containing concat-only expansions
+    // without putting the ${concat } in the ${define }.
+    //
+    // And you can't ${concat } a ${define } unless that ${define }
+    // is precisely the ${concat }.
+    //
+    // In principle we could have ${defconcat } but that would be more
+    // confusing, I think.  We have ${defcond } because conditions
+    // are a separate namespace.
+    ${define BARE_KEBAB { ${kebab_case $tname} }}
+}
+
 fn main() {}

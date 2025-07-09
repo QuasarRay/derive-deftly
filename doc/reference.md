@@ -20,7 +20,7 @@
       * [`${fattrs ...}` `${vattrs ...}` `${tattrs ...}` -- other attributes](#fattrs--vattrs--tattrs---other-attributes)
       * [`$findex` `$vindex` -- field/variant numerical index (**beta**)](#findex-vindex--fieldvariant-numerical-index-beta)
       * [`${paste ...}`, `$<...>` -- identifier pasting](#paste----identifier-pasting)
-      * [`${concat ...}` - literal concatenation (**beta**)](#concat----literal-concatenation-beta)
+      * [`${concat ...}` - string literal concatenation (**beta**)](#concat----string-literal-concatenation-beta)
       * [`${CASE_CHANGE ...}` -- case changing](#case_change---case-changing)
       * [`${when CONDITION}` -- filtering out repetitions by a predicate](#when-condition--filtering-out-repetitions-by-a-predicate)
       * [`${if COND1 { ... } else if COND2 { ... } else { ... }}` -- conditional](#if-cond1----else-if-cond2----else-----conditional)
@@ -710,7 +710,7 @@ Iff necessary, the result will be a raw identifier.
 
 <div id="x:concat">
 
-### `${concat ...}` - literal concatenation (**beta**)
+### `${concat ...}` - string literal concatenation (**beta**)
 
 </div>
 
@@ -726,9 +726,10 @@ Only certain contents are allowed:
 
  * Expansions that expand to types:
    the type's source code text is used (as if with `stringify!`).
-   The precise representation is neither defined nor stable!
+
+   **The precise representation is neither defined nor stable!**
    Whitespace, `::` and even `« »` may be added or removed!
-   The expansion can be used in documentation or messages
+   The result can be used in documentation or messages
    but should not reinterpreted as Rust code,
    nor compared for equality.
 
@@ -741,7 +742,7 @@ those allowed in [`${paste ...}`](#x:paste),
 all case conversions,
 and `${concat }` itself.
 
-(`${concat }` does the jobs of `std::concat!` and `std::stringify!`
+`${concat }` does the jobs of `std::concat!` and `std::stringify!`
 but can be used in more places and is more convenient.
 
 This feature is available only in [**beta**].
@@ -1399,7 +1400,7 @@ and is treated the same way.
 `${kebab_case ..}`, `${shouty_kebab_case`},
 `${title_case }`, and `${train_case }`
 don't generate valid Rust identifiers and
-are only allowed within `${concat }`.
+are only allowed within [`${concat }`](#x:concat).
 (Therefore they are [**beta**] features.)
 
 This table shows the supported case styles.
@@ -1409,16 +1410,16 @@ which is used to implement the actual case changing.
 
 <!-- ## maint/check-keywords-documented cases ## -->
 
-| `CASE_CHANGE`        | `CASE_CHANGE` aliases            | Name in [`heck`]  | Example of results    |
-|----------------------|----------------------------------|-----------------------------------|-----------------------|
-| `pascal_case`        | `upper_camel_case`               | `UpperCamelCase`                  | `PascalCase`          |
-| `snake_case`         |                                  | `SnakeCase`                       | `snake_case`          |
-| `shouty_snake_case`  |                                  | `ShoutySnakeCase`                 | `SHOUTY_SNAKE_CASE`   |
-| `lower_camel_case`   |                                  | `LowerCamelCase`                  | `lowerCamelCase`      |
-| `kebab_case`         |                                  | `KebabCase`                       | `kebab-case`          |
-| `shouty_kebab_case`  |                                  | `ShoutyKebabCase`                 | `shouty-kebab-case`   |
-| `title_case`         |                                  | `TitleCase`                       | `Title Case`          |
-| `train_case`         |                                  | `TrainCase`                       | `Train-Case`          |
+| `CASE_CHANGE`        | `CASE_CHANGE` aliases            | Name in [`heck`]  | Example of results    | Allowed in  |
+|----------------------|----------------------------------|-----------------------------------|-----------------------|---------------|
+| `pascal_case`        | `upper_camel_case`               | `UpperCamelCase`                  | `PascalCase`          | anywhere      |
+| `snake_case`         |                                  | `SnakeCase`                       | `snake_case`          | anywhere      |
+| `shouty_snake_case`  |                                  | `ShoutySnakeCase`                 | `SHOUTY_SNAKE_CASE`   | anywhere      |
+| `lower_camel_case`   |                                  | `LowerCamelCase`                  | `lowerCamelCase`      | anywhere      |
+| `kebab_case`         |                                  | `KebabCase`                       | `kebab-case`          | `${concat }`  |
+| `shouty_kebab_case`  |                                  | `ShoutyKebabCase`                 | `shouty-kebab-case`   | `${concat }`  |
+| `title_case`         |                                  | `TitleCase`                       | `Title Case`          | `${concat }`  |
+| `train_case`         |                                  | `TrainCase`                       | `Train-Case`          | `${concat }`  |
 
 
 #### Examples
