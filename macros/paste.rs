@@ -139,6 +139,42 @@ impl<T: ToTokens + quote::IdentFragment + Display> IdentFrag for T {
     }
 }
 
+//---------- restricted case conversions ----------
+
+/// Token that an associated `ChangeCase` has been checked for legal context
+///
+/// Really this ought to be a field in each variant of `ChangeCase<O>`
+/// but that would make lots of pointless generics.
+///
+/// The keyword-specific part of the check is just
+/// an avoidance of user error, anyway.
+#[derive(Debug)]
+pub struct ChangeCaseOkIn<O: SubstParseContext> {
+    pub not_in_bool: O::NotInBool,
+    #[allow(dead_code)]
+    paste_context_checked: (),
+}
+
+impl<O: SubstParseContext> ChangeCaseOkIn<O> {
+    pub fn new_checked(case: ChangeCase, span: Span) -> syn::Result<Self> {
+        let not_in_bool = O::not_in_bool(&span)?;
+
+        let paste_context_checked = case
+            .ok_in_paste()
+            // Otherwise, it's a ${concat }-only case change keyword (& beta)
+            .or_else(|()| {
+                let _: O::ConcatOnly = O::concat_only(&span)?;
+                let _: beta::Enabled = beta::Enabled::new_for_syntax(span)?;
+                Ok::<_, syn::Error>(())
+            })?;
+
+        Ok(ChangeCaseOkIn {
+            not_in_bool,
+            paste_context_checked,
+        })
+    }
+}
+
 //---------- case conversion ----------
 
 /// Define cases using heck
@@ -157,7 +193,7 @@ impl<T: ToTokens + quote::IdentFragment + Display> IdentFrag for T {
 #[cfg(feature = "case")]
 macro_rules! define_cases { {
     $(
-        $heck:ident $( $keyword:literal )*,
+        $heck:ident $( $keyword:literal )* $in_paste:ident,
     )*
 } => {
     #[derive(Debug, Clone, Copy)]
@@ -185,13 +221,21 @@ macro_rules! define_cases { {
               )*
             }
         }
+
+        fn ok_in_paste(self) -> Result<(), ()> {
+            match self {
+              $(
+                ChangeCase::$heck =>  $in_paste(()),
+              )*
+            }
+        }
     }
 } }
 
 #[cfg(not(feature = "case"))]
 macro_rules! define_cases { {
     $(
-        $heck:ident $( $keyword:literal )*,
+        $heck:ident $( $keyword:literal )* $in_paste:ident,
     )*
 } => {
     #[derive(Debug, Clone, Copy)]
@@ -217,15 +261,19 @@ macro_rules! define_cases { {
         fn apply(self, _input: &str) -> String {
             match self {}
         }
+
+        fn ok_in_paste(self) -> Result<(), ()> {
+            match self {}
+        }
     }
 } }
 
 define_cases! {
     // heck API       our keyword (and aliases)  our example(s)
-    AsUpperCamelCase    "pascal_case"         "upper_camel_case"   ,
-    AsLowerCamelCase    "lower_camel_case"                         ,
-    AsSnakeCase         "snake_case"                               ,
-    AsShoutySnakeCase   "shouty_snake_case"                        ,
+    AsUpperCamelCase    "pascal_case"         "upper_camel_case"   Ok,
+    AsLowerCamelCase    "lower_camel_case"                         Ok,
+    AsSnakeCase         "snake_case"                               Ok,
+    AsShoutySnakeCase   "shouty_snake_case"                        Ok,
 }
 
 //---------- TokenPastesAsIdent ----------

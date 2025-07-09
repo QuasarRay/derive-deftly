@@ -176,7 +176,7 @@ impl Subst<BooleanContext> {
             | SD::fdefine(_, _, not_in_bool)
             | SD::vdefbody(_, _, _, not_in_bool)
             | SD::paste(_, not_in_bool)
-            | SD::ChangeCase(_, _, not_in_bool)
+            | SD::ChangeCase(.., paste::ChangeCaseOkIn { not_in_bool, .. })
             | SD::concat(_, not_in_bool, ..)
             | SD::when(_, not_in_bool)
             | SD::define(_, not_in_bool)

@@ -138,7 +138,11 @@ pub enum SubstDetails<O: SubstParseContext> {
 
     // expansion manipulation
     paste(Template<paste::Items>, O::NotInBool),
-    ChangeCase(Template<paste::Items>, paste::ChangeCase, O::NotInBool),
+    ChangeCase(
+        Template<paste::Items>,
+        paste::ChangeCase,
+        paste::ChangeCaseOkIn<O>,
+    ),
     concat(
         Template<concat::Accumulator>,
         O::NotInBool,
@@ -998,11 +1002,9 @@ impl<O: SubstParseContext> Parse for Subst<O> {
         keyword! { not(in_parens(input)?.parse()?, bool_only()?) }
 
         if let Ok(case) = kw.to_string().parse() {
-            return from_sd(SD::ChangeCase(
-                Template::parse(input)?,
-                case,
-                not_in_bool()?,
-            ));
+            let ok = paste::ChangeCaseOkIn::new_checked(case, kw.span())?;
+
+            return from_sd(SD::ChangeCase(Template::parse(input)?, case, ok));
         }
 
         if let Ok(user_defined) = kw.clone().try_into() {
