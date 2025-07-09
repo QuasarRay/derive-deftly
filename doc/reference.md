@@ -20,6 +20,7 @@
       * [`${fattrs ...}` `${vattrs ...}` `${tattrs ...}` -- other attributes](#fattrs--vattrs--tattrs---other-attributes)
       * [`$findex` `$vindex` -- field/variant numerical index (**beta**)](#findex-vindex--fieldvariant-numerical-index-beta)
       * [`${paste ...}`, `$<...>` -- identifier pasting](#paste----identifier-pasting)
+      * [`${concat ...}` - literal concatenation (**beta**)](#concat----literal-concatenation-beta)
       * [`${CASE_CHANGE ...}` -- case changing](#case_change---case-changing)
       * [`${when CONDITION}` -- filtering out repetitions by a predicate](#when-condition--filtering-out-repetitions-by-a-predicate)
       * [`${if COND1 { ... } else if COND2 { ... } else { ... }}` -- conditional](#if-cond1----else-if-cond2----else-----conditional)
@@ -1351,10 +1352,14 @@ the [`${dbg ..}` expansion](#dbg--dbg_all_keywords--debugging-output)
 and
 the [`dbg` expansion option](#dbg--print-the-expansion-to-stderr-for-debugging).
 
+<div id="x:kebab_case">
 <div id="x:lower_camel_case">
 <div id="x:pascal_case">
+<div id="x:shouty_kebab_case">
 <div id="x:shouty_snake_case">
 <div id="x:snake_case">
+<div id="x:title_case">
+<div id="x:train_case">
 <div id="x:upper_camel_case">
 <div id="kebab_case">
 <div id="shouty_kebab_case">
@@ -1363,6 +1368,10 @@ the [`dbg` expansion option](#dbg--print-the-expansion-to-stderr-for-debugging).
 
 ## Case changing
 
+</div>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -1672,15 +1681,16 @@ where T: 'l, T: TryInto<u8>
 
 <!--## index x ##-->
 
- * **$c…**: [`crate`](#x:crate)
+ * **$c…**: [`concat`](#x:concat), [`crate`](#x:crate)
  * **$d…**: [`dbg`](#x:dbg), [`dbg_all_keywords`](#x:dbg_all_keywords), [`defcond`](#x:defcond), [`define`](#x:define)
  * **$e…**: [`error`](#x:error)
  * **$f…**: [`fattrs`](#x:fattrs), [`fdefine`](#x:fdefine), [`fdefvis`](#x:fdefvis), [`findex`](#x:findex), [`fmeta`](#x:fmeta), [`fname`](#x:fname), [`for`](#x:for), [`fpatname`](#x:fpatname), [`ftype`](#x:ftype), [`fvis`](#x:fvis)
  * **$i…**: [`if`](#x:if), [`ignore`](#x:ignore)
+ * **$k…**: [`kebab_case`](#x:kebab_case)
  * **$l…**: [`lower_camel_case`](#x:lower_camel_case)
  * **$p…**: [`pascal_case`](#x:pascal_case), [`paste`](#x:paste)
- * **$s…**: [`select1`](#x:select1), [`shouty_snake_case`](#x:shouty_snake_case), [`snake_case`](#x:snake_case)
- * **$t…**: [`tattrs`](#x:tattrs), [`tdefgens`](#x:tdefgens), [`tdefkwd`](#x:tdefkwd), [`tdeftype`](#x:tdeftype), [`tdefvariants`](#x:tdefvariants), [`tgens`](#x:tgens), [`tgnames`](#x:tgnames), [`tmeta`](#x:tmeta), [`tname`](#x:tname), [`ttype`](#x:ttype), [`tvis`](#x:tvis), [`twheres`](#x:twheres)
+ * **$s…**: [`select1`](#x:select1), [`shouty_kebab_case`](#x:shouty_kebab_case), [`shouty_snake_case`](#x:shouty_snake_case), [`snake_case`](#x:snake_case)
+ * **$t…**: [`tattrs`](#x:tattrs), [`tdefgens`](#x:tdefgens), [`tdefkwd`](#x:tdefkwd), [`tdeftype`](#x:tdeftype), [`tdefvariants`](#x:tdefvariants), [`tgens`](#x:tgens), [`tgnames`](#x:tgnames), [`title_case`](#x:title_case), [`tmeta`](#x:tmeta), [`tname`](#x:tname), [`train_case`](#x:train_case), [`ttype`](#x:ttype), [`tvis`](#x:tvis), [`twheres`](#x:twheres)
  * **$u…**: [`upper_camel_case`](#x:upper_camel_case)
  * **$v…**: [`vattrs`](#x:vattrs), [`vdefbody`](#x:vdefbody), [`vindex`](#x:vindex), [`vmeta`](#x:vmeta), [`vname`](#x:vname), [`vpat`](#x:vpat), [`vtype`](#x:vtype)
  * **$w…**: [`when`](#x:when)
