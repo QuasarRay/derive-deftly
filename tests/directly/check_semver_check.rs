@@ -46,6 +46,12 @@ impl ToTokens for TrackedVersion {
     }
 }
 
+fn read_some_cargo_toml(filename: &str) -> toml::value::Table {
+    // The FromStr impl for Table (and the alias toml::Table) aren't in 0.5.0;
+    // toml 0.6.0 needs Rust 1.60, ahead of our MSRV 1.56.
+    toml::de::from_str(&fs::read_to_string(filename).unwrap()).unwrap()
+}
+
 fn read_tested_back_compat() -> TrackedVersion {
     // We test (only) old-b here: that's the test case that tests
     // a template user using older d-d
@@ -53,13 +59,8 @@ fn read_tested_back_compat() -> TrackedVersion {
     // which is what the semver check (called in the exporter)
     // is guaranteeing will work.
     const PKG: &str = "tests/compat/old-b";
-    let cargo = fs::read_to_string(format!("../{PKG}/Cargo.toml"))
-        .unwrap()
-        .parse::<toml::Value>()
-        .unwrap();
-    let dep = &cargo //
-        .as_table()
-        .unwrap()["dependencies"]
+    let cargo = read_some_cargo_toml(&format!("../{PKG}/Cargo.toml"));
+    let dep = &cargo["dependencies"] //
         .as_table()
         .unwrap()["derive-deftly"];
     let version = if let Some(t) = dep.as_table() {
@@ -72,13 +73,8 @@ fn read_tested_back_compat() -> TrackedVersion {
 }
 
 fn read_current() -> TrackedVersion {
-    let cargo = fs::read_to_string("../Cargo.toml")
-        .unwrap()
-        .parse::<toml::Value>()
-        .unwrap();
-    let version = cargo //
-        .as_table()
-        .unwrap()["package"]
+    let cargo = read_some_cargo_toml("../Cargo.toml");
+    let version = cargo["package"] //
         .as_table()
         .unwrap()["version"]
         .as_str()
