@@ -252,6 +252,10 @@ define_cases! {
     AsLowerCamelCase    "lower_camel_case"                         Ok,
     AsSnakeCase         "snake_case"                               Ok,
     AsShoutySnakeCase   "shouty_snake_case"                        Ok,
+    AsKebabCase         "kebab_case"                               Err,
+    AsShoutyKebabCase   "shouty_kebab_case"                        Err,
+    AsTitleCase         "title_case"                               Err,
+    AsTrainCase         "train_case"                               Err,
 }
 
 //---------- TokenPastesAsIdent ----------

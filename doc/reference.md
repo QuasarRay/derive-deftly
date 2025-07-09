@@ -1419,9 +1419,6 @@ which is used to implement the actual case changing.
  * `${pascal_case x_ $fname _y}`: `XFieldBY`
  * `$<x_ ${lower_camel_case $fname} _y>`: `x_fieldB_y`
  * `${lower_camel_case $fname}` for tuple: error, ``constructed identifier "0" is invalid``
-
-#### XXXX Examples (forthcoming)
-
  * `${concat ${kebab_case $fname}}`: `"field-b"`
  * `${concat ${shouty_kebab_case $fname}}`: `"FIELD-B"`
  * `${concat ${title_case $fname}}`: `"Field B"`

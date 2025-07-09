@@ -436,7 +436,3 @@ veEE	for
 
 # User-defined keywords
 v	userdefined
-
-# XXXX forthcoming
-C	kebab_case shouty_kebab_case title_case train_case
-H	KebabCase ShoutyKebabCase TitleCase TrainCase
