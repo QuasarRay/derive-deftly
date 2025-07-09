@@ -913,27 +913,27 @@ impl ExpansionOutput for Items {
             atoms: _,
         } = child;
 
-            for e in &errors {
-                writeln!(msg, "ERROR: {}", e)?;
-            }
-            for (sep, i) in izip!(
-                chain!([""], iter::repeat(" ")), //
-                &items,
-            ) {
-                write!(msg, "{}", sep)?;
-                match i {
-                    Item::Plain { text, .. } => write!(msg, "{:?}", text)?,
-                    Item::Complex { surround, text, .. } => {
-                        write!(
-                            msg,
-                            "{:?}+{:?}+{:?}",
-                            surround.pre.to_string(),
-                            text,
-                            surround.post.to_string(),
-                        )?;
-                    }
+        for e in &errors {
+            writeln!(msg, "ERROR: {}", e)?;
+        }
+        for (sep, i) in izip!(
+            chain!([""], iter::repeat(" ")), //
+            &items,
+        ) {
+            write!(msg, "{}", sep)?;
+            match i {
+                Item::Plain { text, .. } => write!(msg, "{:?}", text)?,
+                Item::Complex { surround, text, .. } => {
+                    write!(
+                        msg,
+                        "{:?}+{:?}+{:?}",
+                        surround.pre.to_string(),
+                        text,
+                        surround.post.to_string(),
+                    )?;
                 }
             }
+        }
 
         self.items.extend(items);
         self.errors.extend(errors);
