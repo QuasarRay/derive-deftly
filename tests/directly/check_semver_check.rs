@@ -46,6 +46,16 @@ impl ToTokens for TrackedVersion {
     }
 }
 
+fn read_some_cargo_toml(filename: &str) -> toml::value::Table {
+    fs::read_to_string(filename)
+        .unwrap()
+        .parse::<toml::Value>()
+        .unwrap()
+        .as_table()
+        .unwrap()
+        .clone()
+}
+
 fn read_tested_back_compat() -> TrackedVersion {
     // We test (only) old-b here: that's the test case that tests
     // a template user using older d-d
@@ -53,13 +63,9 @@ fn read_tested_back_compat() -> TrackedVersion {
     // which is what the semver check (called in the exporter)
     // is guaranteeing will work.
     const PKG: &str = "tests/compat/old-b";
-    let cargo = fs::read_to_string(format!("../{PKG}/Cargo.toml"))
-        .unwrap()
-        .parse::<toml::Value>()
-        .unwrap();
+    let cargo = read_some_cargo_toml(&format!("../{PKG}/Cargo.toml"));
     let dep = &cargo //
-        .as_table()
-        .unwrap()["dependencies"]
+        ["dependencies"]
         .as_table()
         .unwrap()["derive-deftly"];
     let version = if let Some(t) = dep.as_table() {
@@ -72,13 +78,9 @@ fn read_tested_back_compat() -> TrackedVersion {
 }
 
 fn read_current() -> TrackedVersion {
-    let cargo = fs::read_to_string("../Cargo.toml")
-        .unwrap()
-        .parse::<toml::Value>()
-        .unwrap();
+    let cargo = read_some_cargo_toml("../Cargo.toml");
     let version = cargo //
-        .as_table()
-        .unwrap()["package"]
+        ["package"]
         .as_table()
         .unwrap()["version"]
         .as_str()
