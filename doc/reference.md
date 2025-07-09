@@ -1410,16 +1410,16 @@ which is used to implement the actual case changing.
 
 <!-- ## maint/check-keywords-documented cases ## -->
 
-| `CASE_CHANGE`        | `CASE_CHANGE` aliases            | Name in [`heck`]  | Example of results    |
-|----------------------|----------------------------------|-----------------------------------|-----------------------|
-| `pascal_case`        | `upper_camel_case`               | `UpperCamelCase`                  | `PascalCase`          |
-| `snake_case`         |                                  | `SnakeCase`                       | `snake_case`          |
-| `shouty_snake_case`  |                                  | `ShoutySnakeCase`                 | `SHOUTY_SNAKE_CASE`   |
-| `lower_camel_case`   |                                  | `LowerCamelCase`                  | `lowerCamelCase`      |
-| `kebab_case`         |                                  | `KebabCase`                       | `kebab-case`          |
-| `shouty_kebab_case`  |                                  | `ShoutyKebabCase`                 | `shouty-kebab-case`   |
-| `title_case`         |                                  | `TitleCase`                       | `Title Case`          |
-| `train_case`         |                                  | `TrainCase`                       | `Train-Case`          |
+| `CASE_CHANGE`        | `CASE_CHANGE` aliases            | Name in [`heck`]  | Example of results    | Allowed in  |
+|----------------------|----------------------------------|-----------------------------------|-----------------------|---------------|
+| `pascal_case`        | `upper_camel_case`               | `UpperCamelCase`                  | `PascalCase`          | anywhere      |
+| `snake_case`         |                                  | `SnakeCase`                       | `snake_case`          | anywhere      |
+| `shouty_snake_case`  |                                  | `ShoutySnakeCase`                 | `SHOUTY_SNAKE_CASE`   | anywhere      |
+| `lower_camel_case`   |                                  | `LowerCamelCase`                  | `lowerCamelCase`      | anywhere      |
+| `kebab_case`         |                                  | `KebabCase`                       | `kebab-case`          | `${concat }`  |
+| `shouty_kebab_case`  |                                  | `ShoutyKebabCase`                 | `shouty-kebab-case`   | `${concat }`  |
+| `title_case`         |                                  | `TitleCase`                       | `Title Case`          | `${concat }`  |
+| `train_case`         |                                  | `TrainCase`                       | `Train-Case`          | `${concat }`  |
 
 
 #### Examples
