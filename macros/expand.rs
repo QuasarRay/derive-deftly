@@ -241,7 +241,7 @@ impl Expand<TokenAccumulator> for TemplateElement<TokenAccumulator> {
         out: &mut TokenAccumulator,
     ) -> syn::Result<()> {
         match self {
-            TE::Ident(tt) => out.append(tt.clone()),
+            TE::Ident(tt, ..) => out.append(tt.clone()),
             TE::Literal(tt, ..) => out.append(tt.clone()),
             TE::LitStr(tt) => out.append(tt.clone()),
             TE::Punct(tt, _) => out.append(tt.clone()),

@@ -41,7 +41,7 @@ pub struct TemplateWithWhens<O: SubstParseContext> {
 
 #[derive(Debug)]
 pub enum TemplateElement<O: SubstParseContext> {
-    Ident(Ident),
+    Ident(Ident, O::NotInConcat),
     LitStr(syn::LitStr),
     /// Not used for [`syn::Lit::Str`]
     Literal(syn::Lit, AllowTokens<O>),
@@ -511,6 +511,7 @@ impl<O: SubstParseContext> Parse for TemplateElement<O> {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let input_span = input.span();
         let allow_tokens = || O::allow_tokens(&input_span);
+        let not_in_concat = || O::not_in_concat(&input_span);
 
         let backtracked = input.fork();
 
@@ -527,7 +528,7 @@ impl<O: SubstParseContext> Parse for TemplateElement<O> {
                     template,
                 }
             }
-            TT::Ident(tt) => TE::Ident(tt),
+            TT::Ident(tt) => TE::Ident(tt, not_in_concat()?),
             tt @ TT::Literal(..) => match syn::parse2(tt.into())? {
                 syn::Lit::Str(s) => TE::LitStr(s),
                 other => TE::Literal(other, allow_tokens()?),

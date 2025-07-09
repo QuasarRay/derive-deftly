@@ -140,7 +140,11 @@ impl ExpansionOutput for Accumulator {
 impl Expand<Accumulator> for TemplateElement<Accumulator> {
     fn expand(&self, ctx: &Context, out: &mut Accumulator) -> syn::Result<()> {
         match self {
-            TE::Ident(ident) => out.append_identfrag_toks(&ident)?,
+            TE::Ident(_ident, not_in_concat) => {
+                // We *would* support ${concat ident}
+                // but it would be confusing.
+                void::unreachable(*not_in_concat);
+            }
             TE::LitStr(lit) => out.append_syn_litstr(&lit),
             TE::Subst(e) => e.expand(ctx, out)?,
             TE::Repeat(e) => e.expand(ctx, out),

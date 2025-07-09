@@ -1599,7 +1599,7 @@ impl<O: SubstParseContext> FindRecogMetas for Template<O> {
 impl<O: SubstParseContext> FindRecogMetas for TemplateElement<O> {
     fn find_recog_metas(&self, acc: &mut Recognised) {
         match self {
-            TE::Ident(_)
+            TE::Ident(..)
             | TE::LitStr(_)
             | TE::Literal(..)
             | TE::Punct(..) => {}
