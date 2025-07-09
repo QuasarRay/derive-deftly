@@ -64,8 +64,7 @@ fn read_tested_back_compat() -> TrackedVersion {
     // is guaranteeing will work.
     const PKG: &str = "tests/compat/old-b";
     let cargo = read_some_cargo_toml(&format!("../{PKG}/Cargo.toml"));
-    let dep = &cargo //
-        ["dependencies"]
+    let dep = &cargo["dependencies"] //
         .as_table()
         .unwrap()["derive-deftly"];
     let version = if let Some(t) = dep.as_table() {
@@ -79,8 +78,7 @@ fn read_tested_back_compat() -> TrackedVersion {
 
 fn read_current() -> TrackedVersion {
     let cargo = read_some_cargo_toml("../Cargo.toml");
-    let version = cargo //
-        ["package"]
+    let version = cargo["package"] //
         .as_table()
         .unwrap()["version"]
         .as_str()
