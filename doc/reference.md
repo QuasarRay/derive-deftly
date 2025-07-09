@@ -20,7 +20,7 @@
       * [`${fattrs ...}` `${vattrs ...}` `${tattrs ...}` -- other attributes](#fattrs--vattrs--tattrs---other-attributes)
       * [`$findex` `$vindex` -- field/variant numerical index (**beta**)](#findex-vindex--fieldvariant-numerical-index-beta)
       * [`${paste ...}`, `$<...>` -- identifier pasting](#paste----identifier-pasting)
-      * [`${concat ...}` - literal concatenation (**beta**)](#concat----literal-concatenation-beta)
+      * [`${concat ...}` - string literal concatenation (**beta**)](#concat----string-literal-concatenation-beta)
       * [`${CASE_CHANGE ...}` -- case changing](#case_change---case-changing)
       * [`${when CONDITION}` -- filtering out repetitions by a predicate](#when-condition--filtering-out-repetitions-by-a-predicate)
       * [`${if COND1 { ... } else if COND2 { ... } else { ... }}` -- conditional](#if-cond1----else-if-cond2----else-----conditional)
@@ -710,7 +710,7 @@ Iff necessary, the result will be a raw identifier.
 
 <div id="x:concat">
 
-### `${concat ...}` - literal concatenation (**beta**)
+### `${concat ...}` - string literal concatenation (**beta**)
 
 </div>
 
