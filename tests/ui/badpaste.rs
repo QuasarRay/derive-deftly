@@ -45,4 +45,13 @@ derive_deftly_adhoc! {
     struct $<ViaDefine $VIA_DEFINE>;
 }
 
+derive_deftly_adhoc! {
+    DataType beta_deftly:
+    ${kebab_case $tname}
+}
+derive_deftly_adhoc! {
+    DataType beta_deftly:
+    $<${kebab_case $tname}>
+}
+
 fn main() {}
