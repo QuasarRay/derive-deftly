@@ -162,7 +162,6 @@ pub trait SubstParseContext: Sized {
             "derive-deftly keyword is a condition - not valid as an expansion",
         ))
     }
-    #[allow(dead_code)] // XXXX
     fn concat_only(span: &impl Spanned) -> syn::Result<Self::ConcatOnly> {
         Err(span
             .error("derive-deftly keyword is only allowed within ${concat }"))
