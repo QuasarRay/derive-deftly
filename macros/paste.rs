@@ -190,7 +190,6 @@ impl<O: SubstParseContext> ChangeCaseOkIn<O> {
 /// API.  It will become the variant name in `ChangeCase`.
 ///
 /// `$keyword` are the keywords we recognise for this case conversion.
-#[cfg(feature = "case")]
 macro_rules! define_cases { {
     $(
         $heck:ident $( $keyword:literal )* $in_paste:ident,
@@ -198,15 +197,28 @@ macro_rules! define_cases { {
 } => {
     #[derive(Debug, Clone, Copy)]
     pub enum ChangeCase {
-        $( $heck, )*
+      $(
+        #[cfg(feature = "case")]
+        $heck,
+      )*
     }
 
     impl FromStr for ChangeCase {
         type Err = ();
+        #[allow(unreachable_code)]
         fn from_str(s: &str) -> Result<Self, ()> {
             Ok(match s {
               $(
-                $( $keyword )|* => ChangeCase::$heck,
+                $( $keyword )|* => {
+                    // Minimal build, so no need to bother with a proper error.
+                    #[cfg(not(feature = "case"))]
+                    panic!(
+ "case changing not supported, enable `case` feature of `derive-deftly`"
+                    );
+
+                    #[cfg(feature = "case")]
+                    ChangeCase::$heck
+                },
               )*
                 _ => return Err(()),
             })
@@ -214,9 +226,10 @@ macro_rules! define_cases { {
     }
 
     impl ChangeCase {
-        fn apply(self, input: &str) -> String {
+        fn apply(self, #[allow(unused)] input: &str) -> String {
             match self {
               $(
+                #[cfg(feature = "case")]
                 ChangeCase::$heck => heck::$heck(input).to_string(),
               )*
             }
@@ -225,45 +238,10 @@ macro_rules! define_cases { {
         fn ok_in_paste(self) -> Result<(), ()> {
             match self {
               $(
-                ChangeCase::$heck =>  $in_paste(()),
+                #[cfg(feature = "case")]
+                ChangeCase::$heck => $in_paste(()),
               )*
             }
-        }
-    }
-} }
-
-#[cfg(not(feature = "case"))]
-macro_rules! define_cases { {
-    $(
-        $heck:ident $( $keyword:literal )* $in_paste:ident,
-    )*
-} => {
-    #[derive(Debug, Clone, Copy)]
-    pub enum ChangeCase {}
-
-    impl FromStr for ChangeCase {
-        type Err = ();
-        fn from_str(s: &str) -> Result<Self, ()> {
-            match s {
-              $(
-                $( $keyword )|* => {}
-              )*
-                _ => return Err(()),
-            }
-            // Minimal build, so no need to bother with a proper error.
-            panic!(
- "case changing not supported, enable `case` feature of `derive-deftly`"
-            );
-        }
-    }
-
-    impl ChangeCase {
-        fn apply(self, _input: &str) -> String {
-            match self {}
-        }
-
-        fn ok_in_paste(self) -> Result<(), ()> {
-            match self {}
         }
     }
 } }
