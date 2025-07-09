@@ -37,7 +37,7 @@ beta = ["derive-deftly-macros/beta"]
 
 [dependencies]
 derive-deftly-macros = { package = "bizarre-derive-deftly-macros", path = "../bizarre-macros", version = "0.0.666" }
-heck = { version = ">=0.4, <0.6", optional = true }
+heck = { version = ">=0.4.1, <0.6", optional = true }
 
 [lib]
 path = "../../../src/lib.rs"
