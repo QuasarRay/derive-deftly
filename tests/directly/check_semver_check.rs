@@ -47,13 +47,9 @@ impl ToTokens for TrackedVersion {
 }
 
 fn read_some_cargo_toml(filename: &str) -> toml::value::Table {
-    fs::read_to_string(filename)
-        .unwrap()
-        .parse::<toml::Value>()
-        .unwrap()
-        .as_table()
-        .unwrap()
-        .clone()
+    // The FromStr impl for Table (and the alias toml::Table) aren't in 0.5.0;
+    // toml 0.6.0 needs Rust 1.60, ahead of our MSRV 1.56.
+    toml::de::from_str(&fs::read_to_string(filename).unwrap()).unwrap()
 }
 
 fn read_tested_back_compat() -> TrackedVersion {
