@@ -612,7 +612,9 @@ impl<O: ExpansionOutput> DbgDumpRequest<O> {
         )
         .expect("write to String failed");
 
-        out.dbg_expand(kw_span, ctx, &mut msg, &self.content_parsed);
+        out.dbg_expand(kw_span, ctx, &mut msg, &self.content_parsed)
+            .expect("write dbg expansion info failed");
+
         writeln!(
             msg,
             r#"

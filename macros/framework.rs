@@ -142,6 +142,9 @@ pub trait SubstParseContext: Sized {
     /// This has to be in this trait because
     /// `${dbg }` contains a `Template` but `dbg(...)` contains a `Subst`.
     ///
+    /// For all `ExpansionContext` impls, should be `Template<Self>`.
+    // We'd use an associated type default, but they're unstable.
+    ///
     /// We make bespoke output for each context; for boolean this is sui
     /// generis, and for expansions it's in [`ExpansionOutput::dbg_expand`].
     type DbgContent: Parse + Debug + AnalyseRepeat + meta::FindRecogMetas;
@@ -163,6 +166,9 @@ pub trait SubstParseContext: Sized {
     fn meta_recog_usage() -> meta::Usage;
 
     /// For communicating through `parse_special`
+    ///
+    /// Used when parsing `${paste ..}` to handle
+    /// the special `>`-based end condition.
     type SpecialParseContext: Default;
 
     /// Handle any special syntax for a special kind of template context.
@@ -377,7 +383,9 @@ pub trait ExpansionOutput: SubstParseContext {
     /// This one is used for special cases, eg `${ignore ...}`
     fn new_with_span(kw_span: Span) -> Self;
 
-    fn default_subst_meta_as(kw: Span) -> syn::Result<meta::SubstAs<Self>>;
+    fn default_subst_meta_as(kw: Span) -> syn::Result<meta::SubstAs<Self>> {
+        Err(kw.error("missing `as ...` in meta expansion"))
+    }
 
     /// Implement the core of the `ignore` keyword
     ///
@@ -392,14 +400,15 @@ pub trait ExpansionOutput: SubstParseContext {
     ///   * Without a trailing newline
     ///   * Subsume it into `self`
     ///
-    /// Failures are to be reported, and subsumed into `self`.
+    /// Expansion errors are to be reported, and subsumed into `self`.
+    /// Failures to write may be thrown.
     fn dbg_expand(
         &mut self,
         kw_span: Span,
         ctx: &Context,
         msg: &mut String,
         content: &Self::DbgContent,
-    );
+    ) -> fmt::Result;
 }
 
 /// Convenience trait providing `item.expand()`
@@ -494,11 +503,11 @@ impl TokenAccumulator {
 impl SubstParseContext for TokenAccumulator {
     type NotInPaste = ();
     type NotInBool = ();
-    type DbgContent = Template<TokenAccumulator>;
-    fn not_in_bool(_: &impl Spanned) -> syn::Result<()> {
+    type DbgContent = Template<Self>;
+    fn not_in_paste(_: &impl Spanned) -> syn::Result<()> {
         Ok(())
     }
-    fn not_in_paste(_: &impl Spanned) -> syn::Result<()> {
+    fn not_in_bool(_: &impl Spanned) -> syn::Result<()> {
         Ok(())
     }
     fn meta_recog_usage() -> meta::Usage {
@@ -586,10 +595,6 @@ impl ExpansionOutput for TokenAccumulator {
         Self::new()
     }
 
-    fn default_subst_meta_as(kw: Span) -> syn::Result<meta::SubstAs<Self>> {
-        Err(kw.error("missing `as ...` in meta expansion"))
-    }
-
     fn ignore_impl(self) -> syn::Result<()> {
         self.0.map(|_: TokenStream| ())
     }
@@ -600,18 +605,18 @@ impl ExpansionOutput for TokenAccumulator {
         ctx: &Context,
         msg: &mut String,
         content: &Template<TokenAccumulator>,
-    ) {
+    ) -> fmt::Result {
         let mut child = TokenAccumulator::new();
         content.expand(ctx, &mut child);
         let child = child.tokens();
         match &child {
-            Err(e) => write!(msg, "/* ERROR: {} */", e),
-            Ok(y) => write!(msg, "{}", y),
+            Err(e) => write!(msg, "/* ERROR: {} */", e)?,
+            Ok(y) => write!(msg, "{}", y)?,
         }
-        .expect("write! failed");
         match child {
             Ok(y) => self.append(y),
             Err(e) => self.record_error(e),
         }
+        Ok(())
     }
 }

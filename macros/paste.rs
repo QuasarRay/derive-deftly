@@ -712,7 +712,7 @@ impl SubstParseContext for Items {
     type NotInPaste = Void;
     type NotInBool = ();
     type BoolOnly = Void;
-    type DbgContent = Template<Items>;
+    type DbgContent = Template<Self>;
 
     fn not_in_bool(_: &impl Spanned) -> syn::Result<()> {
         Ok(())
@@ -903,7 +903,7 @@ impl ExpansionOutput for Items {
         ctx: &Context,
         msg: &mut String,
         content: &Template<Items>,
-    ) {
+    ) -> fmt::Result {
         let mut child = Items::new(kw_span);
         content.expand(ctx, &mut child);
         let Items {
@@ -913,34 +913,31 @@ impl ExpansionOutput for Items {
             atoms: _,
         } = child;
 
-        (|| {
-            for e in &errors {
-                writeln!(msg, "ERROR: {}", e)?;
-            }
-            for (sep, i) in izip!(
-                chain!([""], iter::repeat(" ")), //
-                &items,
-            ) {
-                write!(msg, "{}", sep)?;
-                match i {
-                    Item::Plain { text, .. } => write!(msg, "{:?}", text)?,
-                    Item::Complex { surround, text, .. } => {
-                        write!(
-                            msg,
-                            "{:?}+{:?}+{:?}",
-                            surround.pre.to_string(),
-                            text,
-                            surround.post.to_string(),
-                        )?;
-                    }
+        for e in &errors {
+            writeln!(msg, "ERROR: {}", e)?;
+        }
+        for (sep, i) in izip!(
+            chain!([""], iter::repeat(" ")), //
+            &items,
+        ) {
+            write!(msg, "{}", sep)?;
+            match i {
+                Item::Plain { text, .. } => write!(msg, "{:?}", text)?,
+                Item::Complex { surround, text, .. } => {
+                    write!(
+                        msg,
+                        "{:?}+{:?}+{:?}",
+                        surround.pre.to_string(),
+                        text,
+                        surround.post.to_string(),
+                    )?;
                 }
             }
-            Ok::<_, fmt::Error>(())
-        })()
-        .expect("write! failed");
+        }
 
         self.items.extend(items);
         self.errors.extend(errors);
+        Ok(())
     }
 }
 
