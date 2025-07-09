@@ -726,6 +726,7 @@ Only certain contents are allowed:
  * Expansions that expand to types:
    the type's source code text is used (as if with `stringify!`).
    The precise representation is neither defined nor stable!
+   Whitespace, `::` and even `« »` may be added or removed!
    The expansion can be used in documentation or messages
    but should not reinterpreted as Rust code,
    nor compared for equality.
@@ -744,14 +745,14 @@ but can be used in more places and is more convenient.
 
 This feature is available only in [**beta**].
 
-#### XXXX Examples (forthcoming)
+#### Examples
 
  * `${concat "first" "second"}`: `"firstsecond"`
  * `${concat $tname "Suffix"}`: `"TupleSuffix"`
  * `${concat $ttype "Suffix"}`: `"Tuple::<'a, 'l, T, C>Suffix"`
  * `${concat $<$ttype Suffix>}`: `"TupleSuffix::<'a, 'l, T, C>"`
  * `${concat "Prefix" $ftype}`: `"Prefix<T as TryInto<u8>>::Error"`
- * `${concat $<Prefix $ftype>}`: `"<T as TryInto<u8>>::PrefixError"`
+ * `${concat $<Prefix $ftype>}`: `"<T as TryInto::<u8>>::PrefixError"`
  * `${concat ${snake_case $vname}}`: `"named_variant"`
  * `${concat $<r#raw_ident>}`: `"raw_ident"`
 

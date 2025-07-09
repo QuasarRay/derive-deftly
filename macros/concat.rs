@@ -34,6 +34,136 @@ impl Accumulator {
     fn append_display(&mut self, plain: impl Display) {
         write!(&mut self.text, "{}", plain).expect("Display onto String")
     }
+
+    /// Convert a type to a "nice" string
+    ///
+    /// `syn::Type as ToTokens` produces a lot of `Spacing::Alone`
+    /// which results in a lot of excessive whitespace.
+    ///
+    /// We use an algorithm which prints something reasonably pretty
+    /// which we also think is probably parseable
+    /// unless there `None`-delimited groups (which we make visible).
+    ///
+    /// Note that our documentation doesn't promise parseability,
+    /// just readability.
+    ///
+    /// This algorithm *does* obviously produce parseable output
+    /// if the input is just a single identifier token.
+    ///
+    /// ### Rules
+    ///
+    ///  * We never put spaces next to any of `<>:`
+    ///  * We don't put a space after `&` or `'`
+    ///  * We don't put a space before `,`
+    ///  * We put spaces just inside `{ }` iff nonempty
+    ///  * We don't put spaces just inside `( )` or `[ ]` (or `« »`)
+    ///  * Otherwise, we put a space between each pair of TTs
+    fn append_type_like(&mut self, tokens: TokenStream) {
+        recurse_display_type_like(
+            &mut self.text,
+            &mut Prev::NeverSpace,
+            tokens,
+        )
+        .expect("formatting type-like tokens into String failed");
+    }
+}
+
+/// State (previous token) for `recurse_display_type_like`
+enum Prev {
+    /// Previous token wants to suppress any following space
+    NeverSpace,
+    /// We're at the start of a `{ }` group
+    OpenBrace,
+    /// Insert a space unless the *next* token wants to suppress it.
+    Other,
+}
+
+/// Implementation of `append_type_like`
+fn recurse_display_type_like(
+    out: &mut String,
+    prev: &mut Prev,
+    tokens: TokenStream,
+) -> fmt::Result {
+    for tt in tokens {
+        let def_spc = match &prev {
+            Prev::NeverSpace => "",
+            _other => " ",
+        };
+
+        let wr; // forces every arm to write something
+        let cat; // next value of prev, forces every arm to set it
+        match tt {
+            TT::Punct(p) => {
+                let p = p.as_char();
+                match p {
+                    '<' | '>' | ':' => {
+                        wr = write!(out, "{}", p);
+                        cat = Prev::NeverSpace;
+                    }
+                    '&' | '\'' => {
+                        wr = write!(out, "{}{}", def_spc, p);
+                        cat = Prev::NeverSpace;
+                    }
+                    ',' => {
+                        wr = write!(out, "{}", p);
+                        cat = Prev::Other;
+                    }
+                    other => {
+                        wr = write!(out, "{}{}", def_spc, other);
+                        cat = Prev::Other;
+                    }
+                }
+            }
+            TT::Group(g) => {
+                let delim = g.delimiter();
+                let mut normal = |open, close| {
+                    write!(out, "{}{}", def_spc, open)?;
+                    recurse_display_type_like(
+                        out,
+                        &mut Prev::NeverSpace,
+                        g.stream(),
+                    )?;
+                    write!(out, "{}", close)
+                };
+                match delim {
+                    Delimiter::Brace => {
+                        write!(out, "{}{{", def_spc)?;
+                        let mut inner_prev = Prev::OpenBrace;
+                        recurse_display_type_like(
+                            out,
+                            &mut inner_prev,
+                            g.stream(),
+                        )?;
+                        wr = match inner_prev {
+                            Prev::OpenBrace => write!(out, "}}"),
+                            _other => write!(out, " }}"),
+                        };
+                        cat = Prev::Other;
+                    }
+                    Delimiter::Parenthesis => {
+                        wr = normal('(', ')');
+                        cat = Prev::Other;
+                    }
+                    Delimiter::Bracket => {
+                        wr = normal('[', ']');
+                        cat = Prev::Other;
+                    }
+                    Delimiter::None => {
+                        wr = normal('«', '»');
+                        cat = Prev::Other;
+                    }
+                }
+            }
+            other => {
+                wr = write!(out, "{}{}", def_spc, other);
+                cat = Prev::Other;
+            }
+        }
+
+        let () = wr?;
+        *prev = cat;
+    }
+    Ok(())
 }
 
 impl SubstParseContext for Accumulator {
@@ -79,21 +209,28 @@ impl ExpansionOutput for Accumulator {
         B: FnOnce(&mut TokenAccumulator),
         I: IdentFrag,
     {
-        self.errors.handle_in(|| {
-            write!(
-                self.text,
-                "{}{}{}",
-                TokenAccumulator::with_ephemeral_in(pre)?,
-                ident.fragment(),
-                TokenAccumulator::with_ephemeral_in(post)?,
-            )
-            .expect("write type-like tokens to String failed");
-            Ok(())
-        });
+        match (|| {
+            let mut ta = TokenAccumulator::new();
+            pre(&mut ta);
+            ta.with_tokens(|ts| ident.frag_to_tokens(ts));
+            post(&mut ta);
+            ta.tokens()
+        })() {
+            Ok(y) => self.append_type_like(y),
+            Err(e) => self.errors.push(e),
+        }
         Ok(())
     }
     fn append_syn_litstr(&mut self, lit: &syn::LitStr) {
         self.append_display(lit.value());
+    }
+    fn append_syn_type(
+        &mut self,
+        te_span: Span,
+        v: syn::Type,
+        grouping: Grouping,
+    ) {
+        self.append_syn_type_inner(te_span, v, grouping);
     }
     fn append_syn_type_inner(
         &mut self,
@@ -101,8 +238,7 @@ impl ExpansionOutput for Accumulator {
         ty: syn::Type,
         _grouping: Grouping,
     ) {
-        write!(self.text, "{}", ty.to_token_stream())
-            .expect("write type to String failed");
+        self.append_type_like(ty.to_token_stream());
     }
     fn dbg_expand(
         &mut self,

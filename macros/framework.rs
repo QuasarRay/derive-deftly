@@ -521,14 +521,6 @@ impl TokenAccumulator {
             }
         });
     }
-    pub fn with_ephemeral_in<F>(f: F) -> syn::Result<TokenStream>
-    where
-        F: FnOnce(&mut TokenAccumulator),
-    {
-        let mut ta = TokenAccumulator::new();
-        f(&mut ta);
-        ta.tokens()
-    }
 }
 
 impl SubstParseContext for TokenAccumulator {
