@@ -549,6 +549,11 @@ where
                 content.expand(ctx, &mut items);
                 items.assemble(out, Some(*case))?;
             }
+            SD::concat(content, _not_in_bool, not_in_paste, _) => {
+                let mut accum = concat::Accumulator::new_with_span(kw_span);
+                content.expand(ctx, &mut accum);
+                accum.finish_onto(not_in_paste, out);
+            }
 
             SD::define(..) | SD::defcond(..) => out.write_error(
                 &kw_span,

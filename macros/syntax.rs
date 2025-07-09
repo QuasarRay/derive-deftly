@@ -139,6 +139,12 @@ pub enum SubstDetails<O: SubstParseContext> {
     // expansion manipulation
     paste(Template<paste::Items>, O::NotInBool),
     ChangeCase(Template<paste::Items>, paste::ChangeCase, O::NotInBool),
+    concat(
+        Template<concat::Accumulator>,
+        O::NotInBool,
+        O::NotInPaste,
+        beta::Enabled,
+    ),
 
     // special
     when(Box<Condition>, O::NotInBool),
@@ -820,6 +826,7 @@ impl<O: SubstParseContext> Parse for Subst<O> {
         } }
 
         let allow_tokens = || O::allow_tokens(&kw);
+        let not_in_paste = || O::not_in_paste(&kw);
         let not_in_bool = || O::not_in_bool(&kw);
         let bool_only = || O::bool_only(&kw);
         let beta = || beta::Enabled::new_for_syntax(kw.span());
@@ -928,6 +935,14 @@ impl<O: SubstParseContext> Parse for Subst<O> {
         }) }
 
         keyword! { paste(Template::parse(input)?, not_in_bool()?) }
+
+        keyword! { concat(
+            Template::parse(input)?,
+            not_in_bool()?,
+            not_in_paste()?,
+            beta()?,
+        ) }
+
         keyword! { when(input.parse()?, not_in_bool()?) }
         keyword! { define(input.parse()?, not_in_bool()?) }
         keyword! { defcond(input.parse()?, not_in_bool()?) }

@@ -69,17 +69,28 @@ impl ExpansionOutput for Accumulator {
     fn append_idpath<A, B, I>(
         &mut self,
         _te_span: Span,
-        _pre: A,
-        _ident: &I,
-        _post: B,
-        grouping: Grouping,
+        pre: A,
+        ident: &I,
+        post: B,
+        _grouping: Grouping,
     ) -> Result<(), I::BadIdent>
     where
         A: FnOnce(&mut TokenAccumulator),
         B: FnOnce(&mut TokenAccumulator),
         I: IdentFrag,
     {
-        todo!() // XXXX
+        self.errors.handle_in(|| {
+            write!(
+                self.text,
+                "{}{}{}",
+                TokenAccumulator::with_ephemeral_in(pre)?,
+                ident.fragment(),
+                TokenAccumulator::with_ephemeral_in(post)?,
+            )
+            .expect("write type-like tokens to String failed");
+            Ok(())
+        });
+        Ok(())
     }
     fn append_syn_litstr(&mut self, lit: &syn::LitStr) {
         self.append_display(lit.value());
@@ -88,9 +99,10 @@ impl ExpansionOutput for Accumulator {
         &mut self,
         _te_span: Span,
         ty: syn::Type,
-        grouping: Grouping,
+        _grouping: Grouping,
     ) {
-        todo!() // XXXX
+        write!(self.text, "{}", ty.to_token_stream())
+            .expect("write type to String failed");
     }
     fn dbg_expand(
         &mut self,

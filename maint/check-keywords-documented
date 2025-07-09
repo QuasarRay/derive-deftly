@@ -438,7 +438,7 @@ veEE	for
 v	userdefined
 
 # XXXX forthcoming
-E	concat
+veE	concat
 
 # XXXX forthcoming
 C	kebab_case shouty_kebab_case title_case train_case

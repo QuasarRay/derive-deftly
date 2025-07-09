@@ -173,6 +173,7 @@ impl<O: SubstParseContext> AnalyseRepeat for Subst<O> {
             SD::vdefbody(..) => Some(RO::Variants),
             SD::paste(body, ..) => recurse!(body),
             SD::ChangeCase(body, ..) => recurse!(body),
+            SD::concat(body, ..) => recurse!(body),
             SD::when(..) => None, // out-of-place when, ignore it
             SD::define(..) => None,
             SD::defcond(..) => None,
