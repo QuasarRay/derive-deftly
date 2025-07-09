@@ -164,9 +164,8 @@ pub trait SubstParseContext: Sized {
     }
     #[allow(dead_code)] // XXXX
     fn concat_only(span: &impl Spanned) -> syn::Result<Self::ConcatOnly> {
-        Err(span.error(
-            "derive-deftly keyword is only allowed within ${concat }",
-        ))
+        Err(span
+            .error("derive-deftly keyword is only allowed within ${concat }"))
     }
 
     /// When we find a `fmeta` etc. in this context, does it allow a value?
