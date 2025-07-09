@@ -726,9 +726,10 @@ Only certain contents are allowed:
 
  * Expansions that expand to types:
    the type's source code text is used (as if with `stringify!`).
-   The precise representation is neither defined nor stable!
+
+   **The precise representation is neither defined nor stable!**
    Whitespace, `::` and even `« »` may be added or removed!
-   The expansion can be used in documentation or messages
+   The result can be used in documentation or messages
    but should not reinterpreted as Rust code,
    nor compared for equality.
 
@@ -741,7 +742,7 @@ those allowed in [`${paste ...}`](#x:paste),
 all case conversions,
 and `${concat }` itself.
 
-(`${concat }` does the jobs of `std::concat!` and `std::stringify!`
+`${concat }` does the jobs of `std::concat!` and `std::stringify!`
 but can be used in more places and is more convenient.
 
 This feature is available only in [**beta**].
