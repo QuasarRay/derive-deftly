@@ -348,9 +348,13 @@ impl Parse for Definition<DefinitionBody> {
                 return Err(PushedBack);
             }
             let first = elements.pop().expect("just checked length");
-            let TE::Subst(Subst { kw_span, sd }) = first else {
-                elements.push(first);
-                return Err(PushedBack);
+            // let ... else would be nice, but not available at MSRV 1.56
+            let (kw_span, sd) = match first {
+                TE::Subst(Subst { kw_span, sd }) => (kw_span, sd),
+                _ => {
+                    elements.push(first);
+                    return Err(PushedBack);
+                }
             };
 
             fn mk_special_body<IO: ExpansionOutput>(
