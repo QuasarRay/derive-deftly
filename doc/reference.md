@@ -1400,7 +1400,7 @@ and is treated the same way.
 `${kebab_case ..}`, `${shouty_kebab_case`},
 `${title_case }`, and `${train_case }`
 don't generate valid Rust identifiers and
-are only allowed within `${concat }`.
+are only allowed within [`${concat }`](#x:concat).
 (Therefore they are [**beta**] features.)
 
 This table shows the supported case styles.
