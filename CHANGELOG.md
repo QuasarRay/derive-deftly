@@ -57,6 +57,21 @@ or via the [account request form].
 
 ## Changelog
 
+### 1.2.0
+
+#### Added
+
+ * BETA: `${concat }`
+ * BETA: `$kebab_case` `$shouty_kebab_case` `$title_case` `$train_case`
+
+#### Improved
+
+ * Relaxed upper dependency bounds for `toml`.
+
+#### Changed
+
+ * Tightened lower dependency bound for `heck` from `0.4` to `0.4.1`.
+
 ### 1.1.0
 
 #### Added
