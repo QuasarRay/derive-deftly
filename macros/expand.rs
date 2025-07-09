@@ -662,8 +662,6 @@ impl DefinitionName {
         let not_in_concat = || {
             O::not_in_concat(self).map_err(|mut unconcatable| {
                 unconcatable.combine(def.body_span.error(
-                    // XXXX Currently, the expansion can't be ${concat }
-                    // We must add the DefinitionBody::Concat variant
 "user-defined expansion is not concatenable because it isn't, itself, ${concat } or ${paste }"
                 ));
                 unconcatable
@@ -673,6 +671,12 @@ impl DefinitionName {
         match &def.body {
             DefinitionBody::Paste(content) => {
                 paste::expand(&ctx, def.body_span, content, out)?;
+            }
+            DefinitionBody::Concat(content) => {
+                let mut inner =
+                    concat::Accumulator::new_with_span(def.body_span);
+                content.expand(&ctx, &mut inner);
+                inner.finish_onto(&not_in_paste()?, out);
             }
             DefinitionBody::Normal(content) => {
                 let ok = (not_in_paste()?, not_in_concat()?);

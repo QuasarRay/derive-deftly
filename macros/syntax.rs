@@ -195,6 +195,7 @@ pub struct DefinitionName(syn::Ident);
 pub enum DefinitionBody {
     Normal(Argument),
     Paste(Argument<paste::Items>),
+    Concat(Argument<concat::Accumulator>),
 }
 
 pub type DefCondBody = Box<Condition>;
@@ -367,6 +368,13 @@ impl Parse for Definition<DefinitionBody> {
                     DefinitionBody::Paste,
                     SD::paste(items, not_in_bool),
                 ),
+                SD::concat(items, not_in_bool, not_in_paste, beta) => {
+                    mk_special_body(
+                        kw_span,
+                        DefinitionBody::Concat,
+                        SD::concat(items, not_in_bool, not_in_paste, beta),
+                    )
+                }
                 other => {
                     let reconstruct = Subst { kw_span, sd: other };
                     elements.push(TE::Subst(reconstruct));
