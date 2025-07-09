@@ -76,7 +76,7 @@ strum = { version = ">=0.24, <0.28", features = ["derive"] }
 syn = { version = "2.0.53", features = ["extra-traits", "full"] }
 void = "1"
 
-heck = ">=0.4, <0.6"
+heck = ">=0.4.1, <0.6"
 
 macrotest = { version = "1.0.10", optional = true }
 trybuild = "1.0.46"

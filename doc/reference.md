@@ -20,6 +20,7 @@
       * [`${fattrs ...}` `${vattrs ...}` `${tattrs ...}` -- other attributes](#fattrs--vattrs--tattrs---other-attributes)
       * [`$findex` `$vindex` -- field/variant numerical index (**beta**)](#findex-vindex--fieldvariant-numerical-index-beta)
       * [`${paste ...}`, `$<...>` -- identifier pasting](#paste----identifier-pasting)
+      * [`${concat ...}` - literal concatenation (**beta**)](#concat----literal-concatenation-beta)
       * [`${CASE_CHANGE ...}` -- case changing](#case_change---case-changing)
       * [`${when CONDITION}` -- filtering out repetitions by a predicate](#when-condition--filtering-out-repetitions-by-a-predicate)
       * [`${if COND1 { ... } else if COND2 { ... } else { ... }}` -- conditional](#if-cond1----else-if-cond2----else-----conditional)
@@ -707,6 +708,55 @@ Iff necessary, the result will be a raw identifier.
  * `${paste x_ $fname}` for tuple: `x_0`
  * `${paste $fname _x}` for tuple: error, ``constructed identifier "0_x" is invalid``
 
+<div id="x:concat">
+
+### `${concat ...}` - literal concatenation (**beta**)
+
+</div>
+
+Concatenates the content and expands to a string literal.
+Only certain contents are allowed:
+
+ * Strings literals (`"..."`):
+   the contents of the string is used.
+
+ * Expansions that expand to identifiers:
+   the text of the identifier is used.
+   For raw identifiers, only the identifier name is used.
+
+ * Expansions that expand to types:
+   the type's source code text is used (as if with `stringify!`).
+   The precise representation is neither defined nor stable!
+   Whitespace, `::` and even `« »` may be added or removed!
+   The expansion can be used in documentation or messages
+   but should not reinterpreted as Rust code,
+   nor compared for equality.
+
+ * Expansions that expand to literal strings:
+   `${Xmeta as str}`,
+   and the non-identifier case conversions: `${kebab_case ...}` etc.
+
+So, supported expansions are
+those allowed in [`${paste ...}`](#x:paste),
+all case conversions,
+and `${concat }` itself.
+
+(`${concat }` does the jobs of `std::concat!` and `std::stringify!`
+but can be used in more places and is more convenient.
+
+This feature is available only in [**beta**].
+
+#### Examples
+
+ * `${concat "first" "second"}`: `"firstsecond"`
+ * `${concat $tname "Suffix"}`: `"TupleSuffix"`
+ * `${concat $ttype "Suffix"}`: `"Tuple::<'a, 'l, T, C>Suffix"`
+ * `${concat $<$ttype Suffix>}`: `"TupleSuffix::<'a, 'l, T, C>"`
+ * `${concat "Prefix" $ftype}`: `"Prefix<T as TryInto<u8>>::Error"`
+ * `${concat $<Prefix $ftype>}`: `"<T as TryInto::<u8>>::PrefixError"`
+ * `${concat ${snake_case $vname}}`: `"named_variant"`
+ * `${concat $<r#raw_ident>}`: `"raw_ident"`
+
 ### `${CASE_CHANGE ...}` -- case changing
 
 Expands the content, and changes its case
@@ -1001,6 +1051,10 @@ and expand it later when they are.)
 `${NAME}` may only be used
 inside pasting and case changing
 if `BODY` was precisely an invocation of `${paste }` or `$<...>`.
+
+`${NAME}` may only be used
+inside `${concat ...}`
+if `BODY` was precisely an invocation of `${concat }`, `${paste }` or `$<...>`.
 
 You can define an expansion and a condition with the same name;
 they won't interfere.
@@ -1298,14 +1352,30 @@ the [`${dbg ..}` expansion](#dbg--dbg_all_keywords--debugging-output)
 and
 the [`dbg` expansion option](#dbg--print-the-expansion-to-stderr-for-debugging).
 
+<div id="x:kebab_case">
 <div id="x:lower_camel_case">
 <div id="x:pascal_case">
+<div id="x:shouty_kebab_case">
 <div id="x:shouty_snake_case">
 <div id="x:snake_case">
+<div id="x:title_case">
+<div id="x:train_case">
 <div id="x:upper_camel_case">
+<div id="kebab_case">
+<div id="shouty_kebab_case">
+<div id="title_case">
+<div id="train_case">
 
 ## Case changing
 
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -1326,6 +1396,12 @@ The content must be valid within `${paste }`,
 and is treated the same way.
 `${CASE_CHANGE }` may appear within pasting and vice versa.
 
+`${kebab_case ..}`, `${shouty_kebab_case`},
+`${title_case }`, and `${train_case }`
+don't generate valid Rust identifiers and
+are only allowed within `${concat }`.
+(Therefore they are [**beta**] features.)
+
 This table shows the supported case styles.
 Note that changing the case can add and remove underscores.
 The precise details are as for [`heck`],
@@ -1339,6 +1415,10 @@ which is used to implement the actual case changing.
 | `snake_case`         |                                  | `SnakeCase`                       | `snake_case`          |
 | `shouty_snake_case`  |                                  | `ShoutySnakeCase`                 | `SHOUTY_SNAKE_CASE`   |
 | `lower_camel_case`   |                                  | `LowerCamelCase`                  | `lowerCamelCase`      |
+| `kebab_case`         |                                  | `KebabCase`                       | `kebab-case`          |
+| `shouty_kebab_case`  |                                  | `ShoutyKebabCase`                 | `shouty-kebab-case`   |
+| `title_case`         |                                  | `TitleCase`                       | `Title Case`          |
+| `train_case`         |                                  | `TrainCase`                       | `Train-Case`          |
 
 
 #### Examples
@@ -1348,6 +1428,10 @@ which is used to implement the actual case changing.
  * `${pascal_case x_ $fname _y}`: `XFieldBY`
  * `$<x_ ${lower_camel_case $fname} _y>`: `x_fieldB_y`
  * `${lower_camel_case $fname}` for tuple: error, ``constructed identifier "0" is invalid``
+ * `${concat ${kebab_case $fname}}`: `"field-b"`
+ * `${concat ${shouty_kebab_case $fname}}`: `"FIELD-B"`
+ * `${concat ${title_case $fname}}`: `"Field B"`
+ * `${concat ${train_case $fname}}`: `"Field-B"`
 
 ## Expansion options
 
@@ -1597,15 +1681,16 @@ where T: 'l, T: TryInto<u8>
 
 <!--## index x ##-->
 
- * **$c…**: [`crate`](#x:crate)
+ * **$c…**: [`concat`](#x:concat), [`crate`](#x:crate)
  * **$d…**: [`dbg`](#x:dbg), [`dbg_all_keywords`](#x:dbg_all_keywords), [`defcond`](#x:defcond), [`define`](#x:define)
  * **$e…**: [`error`](#x:error)
  * **$f…**: [`fattrs`](#x:fattrs), [`fdefine`](#x:fdefine), [`fdefvis`](#x:fdefvis), [`findex`](#x:findex), [`fmeta`](#x:fmeta), [`fname`](#x:fname), [`for`](#x:for), [`fpatname`](#x:fpatname), [`ftype`](#x:ftype), [`fvis`](#x:fvis)
  * **$i…**: [`if`](#x:if), [`ignore`](#x:ignore)
+ * **$k…**: [`kebab_case`](#x:kebab_case)
  * **$l…**: [`lower_camel_case`](#x:lower_camel_case)
  * **$p…**: [`pascal_case`](#x:pascal_case), [`paste`](#x:paste)
- * **$s…**: [`select1`](#x:select1), [`shouty_snake_case`](#x:shouty_snake_case), [`snake_case`](#x:snake_case)
- * **$t…**: [`tattrs`](#x:tattrs), [`tdefgens`](#x:tdefgens), [`tdefkwd`](#x:tdefkwd), [`tdeftype`](#x:tdeftype), [`tdefvariants`](#x:tdefvariants), [`tgens`](#x:tgens), [`tgnames`](#x:tgnames), [`tmeta`](#x:tmeta), [`tname`](#x:tname), [`ttype`](#x:ttype), [`tvis`](#x:tvis), [`twheres`](#x:twheres)
+ * **$s…**: [`select1`](#x:select1), [`shouty_kebab_case`](#x:shouty_kebab_case), [`shouty_snake_case`](#x:shouty_snake_case), [`snake_case`](#x:snake_case)
+ * **$t…**: [`tattrs`](#x:tattrs), [`tdefgens`](#x:tdefgens), [`tdefkwd`](#x:tdefkwd), [`tdeftype`](#x:tdeftype), [`tdefvariants`](#x:tdefvariants), [`tgens`](#x:tgens), [`tgnames`](#x:tgnames), [`title_case`](#x:title_case), [`tmeta`](#x:tmeta), [`tname`](#x:tname), [`train_case`](#x:train_case), [`ttype`](#x:ttype), [`tvis`](#x:tvis), [`twheres`](#x:twheres)
  * **$u…**: [`upper_camel_case`](#x:upper_camel_case)
  * **$v…**: [`vattrs`](#x:vattrs), [`vdefbody`](#x:vdefbody), [`vindex`](#x:vindex), [`vmeta`](#x:vmeta), [`vname`](#x:vname), [`vpat`](#x:vpat), [`vtype`](#x:vtype)
  * **$w…**: [`when`](#x:when)

@@ -110,12 +110,12 @@ pub struct SubstMeta<O: SubstParseContext> {
 #[derive(Debug, Clone, AsRefStr, Display)]
 #[allow(non_camel_case_types)] // clearer to use the exact ident
 pub enum SubstAs<O: SubstParseContext> {
-    expr(O::NotInBool, O::NotInPaste, SubstAsSupported<ValueExpr>),
+    expr(O::NotInBool, AllowTokens<O>, SubstAsSupported<ValueExpr>),
     ident(O::NotInBool),
-    items(O::NotInBool, O::NotInPaste, SubstAsSupported<ValueItems>),
+    items(O::NotInBool, AllowTokens<O>, SubstAsSupported<ValueItems>),
     path(O::NotInBool),
     str(O::NotInBool),
-    token_stream(O::NotInBool, O::NotInPaste),
+    token_stream(O::NotInBool, AllowTokens<O>),
     ty(O::NotInBool),
 }
 
@@ -275,7 +275,7 @@ impl<O: SubstParseContext> SubstAs<O> {
             keyword_general! { kw from_sma SubstAs; $($args)* }
         } }
 
-        let not_in_paste = || O::not_in_paste(&kw);
+        let allow_tokens = || O::allow_tokens(&kw);
         fn supported<P>(kw: &IdentAny) -> syn::Result<SubstAsSupported<P>>
         where
             P: SubstAsSupportStatus,
@@ -283,12 +283,12 @@ impl<O: SubstParseContext> SubstAs<O> {
             SubstAsSupportStatus::new(&kw)
         }
 
-        keyword! { expr(nb, not_in_paste()?, supported(&kw)?) }
+        keyword! { expr(nb, allow_tokens()?, supported(&kw)?) }
         keyword! { ident(nb) }
-        keyword! { items(nb, not_in_paste()?, supported(&kw)?) }
+        keyword! { items(nb, allow_tokens()?, supported(&kw)?) }
         keyword! { path(nb) }
         keyword! { str(nb) }
-        keyword! { token_stream(nb, not_in_paste()?) }
+        keyword! { token_stream(nb, allow_tokens()?) }
         keyword! { ty(nb) }
 
         Err(kw.error("unknown derive-deftly 'as' syntax type keyword"))
@@ -959,10 +959,10 @@ impl<'l> FoundNode<'l> {
         };
 
         match as_ {
-            as_ @ SA::expr(.., np, supported) => {
+            as_ @ SA::expr(.., at, supported) => {
                 let expr = metavalue_lit_as(lit, tspan, as_)?;
                 supported.infer_type(&expr);
-                out.append_tokens(np, Grouping::Parens.surround(expr))?;
+                out.append_tokens(at, Grouping::Parens.surround(expr))?;
             }
             as_ @ SA::ident(..) => {
                 let ident: IdentAny = metavalue_lit_as(lit, tspan, as_)?;
@@ -1599,8 +1599,10 @@ impl<O: SubstParseContext> FindRecogMetas for Template<O> {
 impl<O: SubstParseContext> FindRecogMetas for TemplateElement<O> {
     fn find_recog_metas(&self, acc: &mut Recognised) {
         match self {
-            TE::Ident(_) | TE::LitStr(_) | TE::Literal(..) | TE::Punct(..) => {
-            }
+            TE::Ident(..)
+            | TE::LitStr(_)
+            | TE::Literal(..)
+            | TE::Punct(..) => {}
             TE::Group { template, .. } => template.find_recog_metas(acc),
             TE::Subst(n) => n.find_recog_metas(acc),
             TE::Repeat(n) => n.find_recog_metas(acc),
@@ -1665,6 +1667,7 @@ impl<O: SubstParseContext> FindRecogMetas for SubstDetails<O> {
             }
             paste(v, _) => v.find_recog_metas(acc),
             ChangeCase(v, _, _) => v.find_recog_metas(acc),
+            concat(v, ..) => v.find_recog_metas(acc),
 
             when(v, _) => v.find_recog_metas(acc),
             define(v, _) => v.find_recog_metas(acc),
@@ -1753,6 +1756,7 @@ impl FindRecogMetas for DefinitionBody {
         match self {
             DefinitionBody::Normal(v) => v.find_recog_metas(acc),
             DefinitionBody::Paste(v) => v.find_recog_metas(acc),
+            DefinitionBody::Concat(v) => v.find_recog_metas(acc),
         }
     }
 }

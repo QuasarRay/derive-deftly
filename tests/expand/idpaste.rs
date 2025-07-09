@@ -65,9 +65,10 @@ struct ExpandName {
 }
 
 derive_deftly_adhoc! {
-    ExpandName:
+    ExpandName beta_deftly:
 
     ${define VIA_DEFINE ${paste ${tmeta(t_frag) as ident}}}
+    ${define CONCAT_DEFINE ${concat "$ttype = " $ttype "."}}
 
     struct ${paste "Pre" $tdeftype "Post"} {
         $(
@@ -84,6 +85,9 @@ derive_deftly_adhoc! {
                            ${if true { _bat } else { _noise }}}};
 
     struct $<ViaDefine $VIA_DEFINE>;
+
+    const HUMAN_STR: &str = ${concat $CONCAT_DEFINE};
+    const COMPUTER_STR: &str = ${concat $VIA_DEFINE};
 }
 
 #[derive(Deftly)]

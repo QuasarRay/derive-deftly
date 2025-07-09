@@ -58,4 +58,4 @@ beta = ["derive-deftly-macros/beta"]
 [dependencies]
 derive-deftly-macros = { path = "macros", version = "=1.1.0", default-features = false }
 # This dependency is *here* only for the link to `heck` in the docs.
-heck = { version = ">=0.4, <0.6", optional = true }
+heck = { version = ">=0.4.1, <0.6", optional = true }

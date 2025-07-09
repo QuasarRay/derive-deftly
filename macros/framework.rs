@@ -126,8 +126,12 @@ pub enum SpecialInstructions {
 pub trait SubstParseContext: Sized {
     /// Uninhabited iff this lexical context is within `${paste }`
     type NotInPaste: Debug + Copy + Sized;
+    /// Uninhabited iff this lexical context is within `${concat }`
+    type NotInConcat: Debug + Copy + Sized;
     /// Uninhabited iff this lexical context is within a condition.
     type NotInBool: Debug + Copy + Sized;
+    /// Uninhabited unless this lexical context is within `${concat }`
+    type ConcatOnly: Debug + Copy + Sized;
     /// Uninhabited unless this lexical context is within a condition.
     type BoolOnly: Debug + Copy + Sized;
 
@@ -150,12 +154,17 @@ pub trait SubstParseContext: Sized {
     type DbgContent: Parse + Debug + AnalyseRepeat + meta::FindRecogMetas;
 
     fn not_in_paste(span: &impl Spanned) -> syn::Result<Self::NotInPaste>;
+    fn not_in_concat(span: &impl Spanned) -> syn::Result<Self::NotInConcat>;
     fn not_in_bool(span: &impl Spanned) -> syn::Result<Self::NotInBool>;
 
     fn bool_only(span: &impl Spanned) -> syn::Result<Self::BoolOnly> {
         Err(span.error(
             "derive-deftly keyword is a condition - not valid as an expansion",
         ))
+    }
+    fn concat_only(span: &impl Spanned) -> syn::Result<Self::ConcatOnly> {
+        Err(span
+            .error("derive-deftly keyword is only allowed within ${concat }"))
     }
 
     /// When we find a `fmeta` etc. in this context, does it allow a value?
@@ -224,6 +233,26 @@ pub trait SubstParseContext: Sized {
         Err(kw_span.error(format_args!(
  "missing parameters to expansion keyword (NB: argument must be within {{ }})",
         )))
+    }
+}
+
+/// Inhabited iff this lexical content may expand to arbitrary tokens
+///
+/// Calculated automatically
+#[allow(type_alias_bounds)]
+pub type AllowTokens<O: SubstParseContext> = (
+    <O as SubstParseContext>::NotInPaste,
+    <O as SubstParseContext>::NotInConcat,
+);
+
+/// Extensions/helpers for `SubstParseContext`
+pub trait SubstParseContextExt: SubstParseContext {
+    fn allow_tokens(span: &impl Spanned) -> syn::Result<AllowTokens<Self>>;
+}
+impl<O: SubstParseContext> SubstParseContextExt for O {
+    fn allow_tokens(span: &impl Spanned) -> syn::Result<AllowTokens<Self>> {
+        let span = span.span();
+        Ok((O::not_in_paste(&span)?, (O::not_in_concat(&span)?)))
     }
 }
 
@@ -329,7 +358,7 @@ pub trait ExpansionOutput: SubstParseContext {
     /// during template parsing.
     fn append_tokens_with(
         &mut self,
-        np: &Self::NotInPaste,
+        allow_tokens: &AllowTokens<Self>,
         f: impl FnOnce(&mut TokenAccumulator) -> syn::Result<()>,
     ) -> syn::Result<()>;
 
@@ -368,10 +397,10 @@ pub trait ExpansionOutput: SubstParseContext {
     // rather badly and had other warts.
     fn append_tokens(
         &mut self,
-        np: &Self::NotInPaste,
+        allow_tokens: &AllowTokens<Self>,
         tokens: impl ToTokens,
     ) -> syn::Result<()> {
-        self.append_tokens_with(np, |out| {
+        self.append_tokens_with(allow_tokens, |out| {
             out.append(tokens);
             Ok(())
         })
@@ -502,9 +531,13 @@ impl TokenAccumulator {
 
 impl SubstParseContext for TokenAccumulator {
     type NotInPaste = ();
+    type NotInConcat = ();
     type NotInBool = ();
     type DbgContent = Template<Self>;
     fn not_in_paste(_: &impl Spanned) -> syn::Result<()> {
+        Ok(())
+    }
+    fn not_in_concat(_: &impl Spanned) -> syn::Result<()> {
         Ok(())
     }
     fn not_in_bool(_: &impl Spanned) -> syn::Result<()> {
@@ -515,6 +548,7 @@ impl SubstParseContext for TokenAccumulator {
     }
 
     type BoolOnly = Void;
+    type ConcatOnly = Void;
 
     type SpecialParseContext = ();
 }
@@ -573,7 +607,7 @@ impl ExpansionOutput for TokenAccumulator {
     }
     fn append_tokens_with(
         &mut self,
-        _not_in_paste: &(),
+        (_not_in_paste, _not_in_concat): &((), ()),
         f: impl FnOnce(&mut TokenAccumulator) -> syn::Result<()>,
     ) -> syn::Result<()> {
         f(self)

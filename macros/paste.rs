@@ -139,6 +139,42 @@ impl<T: ToTokens + quote::IdentFragment + Display> IdentFrag for T {
     }
 }
 
+//---------- restricted case conversions ----------
+
+/// Token that an associated `ChangeCase` has been checked for legal context
+///
+/// Really this ought to be a field in each variant of `ChangeCase<O>`
+/// but that would make lots of pointless generics.
+///
+/// The keyword-specific part of the check is just
+/// an avoidance of user error, anyway.
+#[derive(Debug)]
+pub struct ChangeCaseOkIn<O: SubstParseContext> {
+    pub not_in_bool: O::NotInBool,
+    #[allow(dead_code)]
+    paste_context_checked: (),
+}
+
+impl<O: SubstParseContext> ChangeCaseOkIn<O> {
+    pub fn new_checked(case: ChangeCase, span: Span) -> syn::Result<Self> {
+        let not_in_bool = O::not_in_bool(&span)?;
+
+        let paste_context_checked = case
+            .ok_in_paste()
+            // Otherwise, it's a ${concat }-only case change keyword (& beta)
+            .or_else(|()| {
+                let _: O::ConcatOnly = O::concat_only(&span)?;
+                let _: beta::Enabled = beta::Enabled::new_for_syntax(span)?;
+                Ok::<_, syn::Error>(())
+            })?;
+
+        Ok(ChangeCaseOkIn {
+            not_in_bool,
+            paste_context_checked,
+        })
+    }
+}
+
 //---------- case conversion ----------
 
 /// Define cases using heck
@@ -154,23 +190,35 @@ impl<T: ToTokens + quote::IdentFragment + Display> IdentFrag for T {
 /// API.  It will become the variant name in `ChangeCase`.
 ///
 /// `$keyword` are the keywords we recognise for this case conversion.
-#[cfg(feature = "case")]
 macro_rules! define_cases { {
     $(
-        $heck:ident $( $keyword:literal )*,
+        $heck:ident $( $keyword:literal )* $in_paste:ident,
     )*
 } => {
     #[derive(Debug, Clone, Copy)]
     pub enum ChangeCase {
-        $( $heck, )*
+      $(
+        #[cfg(feature = "case")]
+        $heck,
+      )*
     }
 
     impl FromStr for ChangeCase {
         type Err = ();
+        #[allow(unreachable_code)]
         fn from_str(s: &str) -> Result<Self, ()> {
             Ok(match s {
               $(
-                $( $keyword )|* => ChangeCase::$heck,
+                $( $keyword )|* => {
+                    // Minimal build, so no need to bother with a proper error.
+                    #[cfg(not(feature = "case"))]
+                    panic!(
+ "case changing not supported, enable `case` feature of `derive-deftly`"
+                    );
+
+                    #[cfg(feature = "case")]
+                    ChangeCase::$heck
+                },
               )*
                 _ => return Err(()),
             })
@@ -178,54 +226,36 @@ macro_rules! define_cases { {
     }
 
     impl ChangeCase {
-        fn apply(self, input: &str) -> String {
+        fn apply(self, #[allow(unused)] input: &str) -> String {
             match self {
               $(
+                #[cfg(feature = "case")]
                 ChangeCase::$heck => heck::$heck(input).to_string(),
               )*
             }
         }
-    }
-} }
 
-#[cfg(not(feature = "case"))]
-macro_rules! define_cases { {
-    $(
-        $heck:ident $( $keyword:literal )*,
-    )*
-} => {
-    #[derive(Debug, Clone, Copy)]
-    pub enum ChangeCase {}
-
-    impl FromStr for ChangeCase {
-        type Err = ();
-        fn from_str(s: &str) -> Result<Self, ()> {
-            match s {
+        fn ok_in_paste(self) -> Result<(), ()> {
+            match self {
               $(
-                $( $keyword )|* => {}
+                #[cfg(feature = "case")]
+                ChangeCase::$heck => $in_paste(()),
               )*
-                _ => return Err(()),
             }
-            // Minimal build, so no need to bother with a proper error.
-            panic!(
- "case changing not supported, enable `case` feature of `derive-deftly`"
-            );
-        }
-    }
-
-    impl ChangeCase {
-        fn apply(self, _input: &str) -> String {
-            match self {}
         }
     }
 } }
 
 define_cases! {
     // heck API       our keyword (and aliases)  our example(s)
-    AsUpperCamelCase    "pascal_case"         "upper_camel_case"   ,
-    AsLowerCamelCase    "lower_camel_case"                         ,
-    AsSnakeCase         "snake_case"                               ,
-    AsShoutySnakeCase   "shouty_snake_case"                        ,
+    AsUpperCamelCase    "pascal_case"         "upper_camel_case"   Ok,
+    AsLowerCamelCase    "lower_camel_case"                         Ok,
+    AsSnakeCase         "snake_case"                               Ok,
+    AsShoutySnakeCase   "shouty_snake_case"                        Ok,
+    AsKebabCase         "kebab_case"                               Err,
+    AsShoutyKebabCase   "shouty_kebab_case"                        Err,
+    AsTitleCase         "title_case"                               Err,
+    AsTrainCase         "train_case"                               Err,
 }
 
 //---------- TokenPastesAsIdent ----------
@@ -710,11 +740,16 @@ impl Items {
 
 impl SubstParseContext for Items {
     type NotInPaste = Void;
+    type NotInConcat = ();
     type NotInBool = ();
     type BoolOnly = Void;
+    type ConcatOnly = Void;
     type DbgContent = Template<Self>;
 
     fn not_in_bool(_: &impl Spanned) -> syn::Result<()> {
+        Ok(())
+    }
+    fn not_in_concat(_: &impl Spanned) -> syn::Result<()> {
         Ok(())
     }
 
@@ -861,7 +896,7 @@ impl ExpansionOutput for Items {
     }
     fn append_tokens_with(
         &mut self,
-        not_in_paste: &Void,
+        (not_in_paste, _not_in_compat): &(Void, ()),
         _: impl FnOnce(&mut TokenAccumulator) -> syn::Result<()>,
     ) -> syn::Result<()> {
         void::unreachable(*not_in_paste)
@@ -944,14 +979,14 @@ impl ExpansionOutput for Items {
 impl Expand<Items> for TemplateElement<Items> {
     fn expand(&self, ctx: &Context, out: &mut Items) -> syn::Result<()> {
         match self {
-            TE::Ident(ident) => out.append_identfrag_toks(&ident)?,
+            TE::Ident(ident, ..) => out.append_identfrag_toks(&ident)?,
             TE::LitStr(lit) => out.append_syn_litstr(&lit),
             TE::Subst(e) => e.expand(ctx, out)?,
             TE::Repeat(e) => e.expand(ctx, out),
-            TE::Literal(_, not_in_paste)
-            | TE::Punct(_, not_in_paste)
-            | TE::Group { not_in_paste, .. } => {
-                void::unreachable(*not_in_paste)
+            TE::Literal(_, allow_tokens)
+            | TE::Punct(_, allow_tokens)
+            | TE::Group { allow_tokens, .. } => {
+                void::unreachable(allow_tokens.0)
             }
         }
         Ok(())

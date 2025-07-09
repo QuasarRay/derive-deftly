@@ -168,7 +168,7 @@ impl SubstVPat {
             WithinField::for_each(ctx, |ctx, field| {
                 SD::fname::<TokenAccumulator>(())
                     .expand(ctx, &mut out, kw_span)?;
-                out.append_tokens(&(), Token![:](kw_span))?;
+                out.append_tokens(&((), ()), Token![:](kw_span))?;
 
                 // Do the expansion with the paste machinery, since
                 // that has a ready-made notion of what fprefix= might
@@ -241,7 +241,7 @@ impl Expand<TokenAccumulator> for TemplateElement<TokenAccumulator> {
         out: &mut TokenAccumulator,
     ) -> syn::Result<()> {
         match self {
-            TE::Ident(tt) => out.append(tt.clone()),
+            TE::Ident(tt, ..) => out.append(tt.clone()),
             TE::Literal(tt, ..) => out.append(tt.clone()),
             TE::LitStr(tt) => out.append(tt.clone()),
             TE::Punct(tt, _) => out.append(tt.clone()),
@@ -249,7 +249,7 @@ impl Expand<TokenAccumulator> for TemplateElement<TokenAccumulator> {
                 delim_span,
                 delimiter,
                 template,
-                not_in_paste: _,
+                allow_tokens: _,
             } => {
                 use proc_macro2::Group;
                 let mut content = TokenAccumulator::new();
@@ -434,8 +434,8 @@ where
             SD::Xmeta(sm) => do_meta(sm, out, sm.pmetas(ctx, kw_span)?)?,
             SD::error(e, _) => e.throw(ctx)?,
 
-            SD::Vis(vis, np) => {
-                out.append_tokens(np, vis.syn_vis(ctx, kw_span)?)?
+            SD::Vis(vis, at) => {
+                out.append_tokens(at, vis.syn_vis(ctx, kw_span)?)?
             }
             SD::tdefkwd(_) => {
                 fn w<O>(out: &mut O, t: impl ToTokens)
@@ -549,6 +549,11 @@ where
                 content.expand(ctx, &mut items);
                 items.assemble(out, Some(*case))?;
             }
+            SD::concat(content, _not_in_bool, not_in_paste, _) => {
+                let mut accum = concat::Accumulator::new_with_span(kw_span);
+                content.expand(ctx, &mut accum);
+                accum.finish_onto(not_in_paste, out);
+            }
 
             SD::define(..) | SD::defcond(..) => out.write_error(
                 &kw_span,
@@ -646,19 +651,36 @@ impl DefinitionName {
         let (def, ctx) = ctx.find_definition(self)?.ok_or_else(|| {
             self.error(format!("user-defined expansion `{}` not found", self))
         })?;
+        let not_in_paste = || {
+            O::not_in_paste(self).map_err(|mut unpasteable| {
+                unpasteable.combine(def.body_span.error(
+ "user-defined expansion is not pasteable because it isn't, itself, ${paste }"
+                ));
+                unpasteable
+            })
+        };
+        let not_in_concat = || {
+            O::not_in_concat(self).map_err(|mut unconcatable| {
+                unconcatable.combine(def.body_span.error(
+"user-defined expansion is not concatenable because it isn't, itself, ${concat } or ${paste }"
+                ));
+                unconcatable
+            })
+        };
+
         match &def.body {
             DefinitionBody::Paste(content) => {
                 paste::expand(&ctx, def.body_span, content, out)?;
             }
+            DefinitionBody::Concat(content) => {
+                let mut inner =
+                    concat::Accumulator::new_with_span(def.body_span);
+                content.expand(&ctx, &mut inner);
+                inner.finish_onto(&not_in_paste()?, out);
+            }
             DefinitionBody::Normal(content) => {
-                let not_in_paste =
-                    O::not_in_paste(self).map_err(|mut unpasteable| {
-                        unpasteable.combine(def.body_span.error(
- "user-defined expansion is not pasteable because it isn't, itself, ${paste }"
-                        ));
-                        unpasteable
-                    })?;
-                out.append_tokens_with(&not_in_paste, |out| {
+                let ok = (not_in_paste()?, not_in_concat()?);
+                out.append_tokens_with(&ok, |out| {
                     content.expand(&ctx, out);
                     Ok(())
                 })?;

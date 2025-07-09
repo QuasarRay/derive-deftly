@@ -45,3 +45,15 @@ error: user-defined expansion is not pasteable because it isn't, itself, ${paste
    |
 43 |     ${define VIA_DEFINE ${tmeta(t_frag) as ident}}
    |                         ^
+
+error: derive-deftly keyword is only allowed within ${concat }
+  --> ui/badpaste.rs:50:7
+   |
+50 |     ${kebab_case $tname}
+   |       ^^^^^^^^^^
+
+error: derive-deftly keyword is only allowed within ${concat }
+  --> ui/badpaste.rs:54:9
+   |
+54 |     $<${kebab_case $tname}>
+   |         ^^^^^^^^^^

@@ -46,7 +46,7 @@ pub use super::utils::{
     ToTokensPunctComposable, TokenOutputTrimmer,
 };
 
-pub(super) use super::{accum, adviseable, beta, check};
+pub(super) use super::{accum, adviseable, beta, check, concat};
 pub(super) use super::{dbg_allkw, engine, framework, meta};
 
 #[allow(unused_imports)] // used in tests

@@ -1,0 +1,52 @@
+error: not allowed in within ${concat ...}
+  --> ui/badconcat.rs:14:14
+   |
+14 |     ${concat forbidden}
+   |              ^^^^^^^^^
+
+error: not allowed in within ${concat ...}
+  --> ui/badconcat.rs:20:36
+   |
+20 |     ${concat ${tmeta(something) as token_stream}}
+   |                                    ^^^^^^^^^^^^
+
+error: not allowed in within ${concat ...}
+  --> ui/badconcat.rs:27:15
+   |
+27 |     ${concat $NOT_CONCAT}
+   |               ^^^^^^^^^^
+
+error: user-defined expansion is not concatenable because it isn't, itself, ${concat } or ${paste }
+  --> ui/badconcat.rs:26:25
+   |
+26 |     ${define NOT_CONCAT $tgens}
+   |                         ^
+
+error: not allowed in within ${paste ...} (or case_changing)
+  --> ui/badconcat.rs:33:15
+   |
+33 |     ${paste ${concat "ok_so_far"}}
+   |               ^^^^^^
+
+error: failure forced in dbg (in this data structure)
+  --> ui/badconcat.rs:4:1
+   |
+4  | / #[derive_deftly_adhoc]
+5  | | #[deftly(something = "Box<char>")]
+6  | | struct DataType {
+   | |_________________^
+...
+42 | / derive_deftly_adhoc! {
+43 | |     DataType beta_deftly:
+44 | |
+45 | |     ${concat ${dbg { ${error "failure forced in dbg"} }}}
+46 | | }
+   | |_- in this macro invocation
+   |
+   = note: this error originates in the macro `derive_deftly_driver_DataType` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: failure forced in dbg (template)
+  --> ui/badconcat.rs:45:30
+   |
+45 |     ${concat ${dbg { ${error "failure forced in dbg"} }}}
+   |                              ^^^^^^^^^^^^^^^^^^^^^^^
