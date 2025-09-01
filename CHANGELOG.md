@@ -57,6 +57,16 @@ or via the [account request form].
 
 ## Changelog
 
+### 1.3.0
+
+#### Added
+
+ * BETA: `${paste_spanned }`
+
+#### Improved
+
+ * Minor docs fixes.
+
 ### 1.2.0
 
 #### Added
