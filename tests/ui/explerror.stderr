@@ -2,7 +2,7 @@ error: basic (in this field)
   --> ui/explerror.rs:6:5
    |
 6  |       field: usize,
-   |       ^^^^^^^^^^^^
+   |       ^^^^^
 ...
 9  | / derive_deftly_adhoc! {
 10 | |     Struct:
