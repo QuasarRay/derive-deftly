@@ -212,7 +212,7 @@ sub grok_document () {
 	    # remove inner { }, repeatedly
 	    while (s{ ( \{ [^{}]* ) \{ [^{}]* \} ( .* \} ) }{$1 $2}x) { }
 	    $found->('x', $lno, m{\`\$(\w+)\`}g);
-	    $found->('x', $lno, m{\`\$\{(\w+)[^\}]+\}\`}g);
+	    $found->('x', $lno, m{\`\$\{(\w+)[^\}]*\}\`}g);
 	} else {
 	    die "bad maint/check-keywords-documented $in !";
 	}
