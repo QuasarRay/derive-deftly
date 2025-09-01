@@ -19,7 +19,7 @@
       * [`${tmeta(...)}` `${vmeta(...)}` `${fmeta(...)}` -- `#[deftly]` attributes](#tmeta-vmeta-fmeta--deftly-attributes)
       * [`${fattrs ...}` `${vattrs ...}` `${tattrs ...}` -- other attributes](#fattrs--vattrs--tattrs---other-attributes)
       * [`$findex` `$vindex` -- field/variant numerical index (**beta**)](#findex-vindex--fieldvariant-numerical-index-beta)
-      * [`${paste ...}`, `$<...>` -- identifier pasting](#paste----identifier-pasting)
+      * [`${paste ...}`, `$<...>`, `${paste_spanned}` -- identifier pasting](#paste---paste_spanned--identifier-pasting)
       * [`${concat ...}` - string literal concatenation (**beta**)](#concat----string-literal-concatenation-beta)
       * [`${CASE_CHANGE ...}` -- case changing](#case_change---case-changing)
       * [`${when CONDITION}` -- filtering out repetitions by a predicate](#when-condition--filtering-out-repetitions-by-a-predicate)
@@ -676,9 +676,11 @@ This feature is available only in [**beta**].
  * `$vindex` for `Struct`: `0`
 
 <div id="x:paste">
+<div id="x:paste_spanned">
 
-### `${paste ...}`, `$<...>` -- identifier pasting
+### `${paste ...}`, `$<...>`, `${paste_spanned}` -- identifier pasting
 
+</div>
 </div>
 
 Expands the contents and pastes it together into a single identifier.
@@ -704,11 +706,26 @@ Iff necessary, the result will be a raw identifier.
 The span (for hygiene and error reporting) is that of the `${paste }`
 invocation in the template.
 
+`${paste_spanned SPAN CONTENT}`
+allows control of the identifier "span",
+which is used by Rust to control hygiene and error reporting.
+`CONTENT` is pasted together, and then the span from `SPAN` is applied.
+Both are positional arguments.
+`$fname`, `$ftype` and `$vname` are good options for `SPAN`.
+Explicitly setting the span can have surprising results;
+some testing (even, experimentation) may be needed.
+Meta attributes used in `SPAN` do not count as having been used,
+for the purposes of unused attribute checking;
+if necessary, use `${ignore }`.
+Available only in [**beta**].
+
 #### Examples
 
  * `$<Zingy $ftype Builder>` for `TupleVariant`:
     `« std::iter::ZingyOnceBuilder::<T> »`
  * `${paste x_ $fname}` for tuple: `x_0`
+ * `${paste_spanned $vname { x_ $fname }}` for tuple: `x_0`,
+    (with the span of `$vname`)
  * `${paste $fname _x}` for tuple: error, ``constructed identifier "0_x" is invalid``
 
 <div id="x:concat">
@@ -1692,7 +1709,7 @@ where T: 'l, T: TryInto<u8>
  * **$i…**: [`if`](#x:if), [`ignore`](#x:ignore)
  * **$k…**: [`kebab_case`](#x:kebab_case)
  * **$l…**: [`lower_camel_case`](#x:lower_camel_case)
- * **$p…**: [`pascal_case`](#x:pascal_case), [`paste`](#x:paste)
+ * **$p…**: [`pascal_case`](#x:pascal_case), [`paste`](#x:paste), [`paste_spanned`](#x:paste_spanned)
  * **$s…**: [`select1`](#x:select1), [`shouty_kebab_case`](#x:shouty_kebab_case), [`shouty_snake_case`](#x:shouty_snake_case), [`snake_case`](#x:snake_case)
  * **$t…**: [`tattrs`](#x:tattrs), [`tdefgens`](#x:tdefgens), [`tdefkwd`](#x:tdefkwd), [`tdeftype`](#x:tdeftype), [`tdefvariants`](#x:tdefvariants), [`tgens`](#x:tgens), [`tgnames`](#x:tgnames), [`title_case`](#x:title_case), [`tmeta`](#x:tmeta), [`tname`](#x:tname), [`train_case`](#x:train_case), [`ttype`](#x:ttype), [`tvis`](#x:tvis), [`twheres`](#x:twheres)
  * **$u…**: [`upper_camel_case`](#x:upper_camel_case)

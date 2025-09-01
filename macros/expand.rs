@@ -544,6 +544,19 @@ where
             SD::paste(content, ..) => {
                 paste::expand(ctx, kw_span, content, out)?;
             }
+            SD::paste_spanned(span, content, ..) => {
+                let set_span = (|| {
+                    let mut span_tokens = TokenAccumulator::new();
+                    span.expand(ctx, &mut span_tokens);
+                    let span = span_tokens.tokens()?.span();
+                    Ok(span)
+                })()
+                .unwrap_or_else(|e| {
+                    out.record_error(e);
+                    kw_span
+                });
+                paste::expand(ctx, set_span, content, out)?;
+            }
             SD::ChangeCase(content, case, ..) => {
                 let mut items = paste::Items::new(kw_span);
                 content.expand(ctx, &mut items);
