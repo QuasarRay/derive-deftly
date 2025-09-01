@@ -371,11 +371,7 @@ fn mk_ident<'i>(
     } else {
         whole
     };
-    Pasted {
-        span,
-        whole,
-        atoms,
-    }
+    Pasted { span, whole, atoms }
 }
 
 /// Error that stands in for the `syn::Error` from an invalid identifier
