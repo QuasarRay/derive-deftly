@@ -1,10 +1,8 @@
 error: multiple conditions matched (in this field)
   --> ui/badselect1.rs:19:5
    |
-19 | /     #[deftly(right)]
-20 | |     #[deftly(left)]
-21 | |     c: usize,
-   | |____________^
+19 |       #[deftly(right)]
+   |       ^
 ...
 24 | / derive_deftly_adhoc! {
 25 | |     Both:
@@ -31,9 +29,8 @@ error: multiple conditions matched (true condition)
 error: no conditions matched, and no else clause (in this field)
   --> ui/badselect1.rs:15:5
    |
-15 | /     #[deftly(left)]
-16 | |     a: usize,
-   | |____________^
+15 |       #[deftly(left)]
+   |       ^
 ...
 24 | / derive_deftly_adhoc! {
 25 | |     Both:
