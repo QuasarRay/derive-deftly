@@ -699,6 +699,9 @@ which must refer to a path (perhaps with generics, and/or surrounding `( )`).
 Then the pasting will be applied to the final path element identifier,
 and the surroundings reproduced unaltered.
 
+The span (for hygiene and error reporting) is that of the `${paste }`
+invocation in the template.
+
 Iff necessary, the result will be a raw identifier.
 
 #### Examples
