@@ -9,7 +9,8 @@ use super::framework::*;
 /// and collects the identifier fragments being pasted.
 #[derive(Debug)]
 pub struct Items {
-    tspan: Span,
+    /// Error reporting for bad identifiers, and also the output span
+    span: Span,
     items: Vec<Item>,
     errors: Vec<syn::Error>,
     atoms: Vec<AtomForReport>,
@@ -291,9 +292,9 @@ impl<T: ToTokens> IdentFrag for TokenPastesAsIdent<T> {
 //---------- implementation ----------
 
 impl Items {
-    pub fn new(tspan: Span) -> Self {
+    pub fn new(span: Span) -> Self {
         Items {
-            tspan,
+            span,
             items: vec![],
             errors: vec![],
             atoms: vec![],
@@ -359,7 +360,7 @@ use AssemblyInstruction as AI;
 /// Any surrounding path elements, generics, etc., of a nontrivial
 /// expansion, are handled by `assemble`, not here.
 fn mk_ident<'i>(
-    out_span: Span,
+    span: Span,
     change_case: Option<ChangeCase>,
     pieces: impl Iterator<Item = Piece<'i>> + Clone,
     atoms: Vec<AtomForReport>,
@@ -370,11 +371,7 @@ fn mk_ident<'i>(
     } else {
         whole
     };
-    Pasted {
-        span: out_span,
-        whole,
-        atoms,
-    }
+    Pasted { span, whole, atoms }
 }
 
 /// Error that stands in for the `syn::Error` from an invalid identifier
@@ -532,11 +529,11 @@ fn ident_from_str() {
 
 pub fn expand(
     ctx: &Context<'_>,
-    kw_span: Span,
+    tspan: Span,
     content: &Template<paste::Items>,
     out: &mut impl ExpansionOutput,
 ) -> syn::Result<()> {
-    let mut items = paste::Items::new(kw_span);
+    let mut items = paste::Items::new(tspan);
     content.expand(ctx, &mut items);
     items.assemble(out, None)
 }
@@ -603,7 +600,7 @@ impl Items {
         }
 
         match Self::assemble_inner(
-            self.tspan,
+            self.span,
             self.items,
             change_case,
             self.atoms,
@@ -920,7 +917,7 @@ impl ExpansionOutput for Items {
 
     fn ignore_impl(self) -> syn::Result<()> {
         let Items {
-            tspan: _,
+            span: _,
             items: _,
             atoms: _,
             errors,
@@ -942,7 +939,7 @@ impl ExpansionOutput for Items {
         let mut child = Items::new(kw_span);
         content.expand(ctx, &mut child);
         let Items {
-            tspan: _,
+            span: _,
             items,
             errors,
             atoms: _,

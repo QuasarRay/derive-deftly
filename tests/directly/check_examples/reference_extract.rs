@@ -359,6 +359,9 @@ fn parse_bullet(
             outputs = rhs.to_owned();
         }
         while !outputs.is_empty() {
+            if m!(outputs, r#"^\([^()]+\)$"#) {
+                break;
+            }
             let (p, rest) =
                 [
                     "(?m)^`([^`]+)`(?:, (.*)|)$",

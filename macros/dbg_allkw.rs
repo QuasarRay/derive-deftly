@@ -131,6 +131,7 @@ fn dump_whole(mut w: &mut Out, ctx: &Context) -> R {
         bool! { c, fmeta }
         // Too complex to demonstrate
         expand! { c, $paste }
+        expand! { c, $paste_spanned }
         expand! { c, $concat }
         // Too subtle to demonstrate
         expand! { c, $crate }
