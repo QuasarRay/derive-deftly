@@ -1171,7 +1171,7 @@ True iff there was such an attribute.
 
 The condition is true if there is at least one matching entry,
 and (unlike `${Xmeta}`)
-the corresponding driver attribute does not need to be a `=LIT`.
+the corresponding driver attribute does not need to be a `LIT`.
 
 So `Xmeta(SUB(NAME))` is true if the driver has
 `#[deftly(SUB(NAME(INNER=...)))]` or `#[deftly(SUB(NAME))]` or
