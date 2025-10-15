@@ -217,6 +217,7 @@ pub fn derive_deftly_adhoc(
 /// for the captured template macro `derive_deftly_template_MyMacro`.
 /// derive-deftly will then also append a note about
 /// how to invoke the template.
+/// (The `#[doc]` attribute syntax can also be used here.)
 ///
 /// ## Template definition macro `derive_deftly_template_MyMacro`
 ///
