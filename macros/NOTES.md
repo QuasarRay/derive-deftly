@@ -238,6 +238,133 @@ Syntax and semantics TBD.  Some notes:
    commas in enum { ..., ..., }, and so on.
 ```
 
+# Sharing template code between multiple derives
+
+### Impetus and xrefs
+
+ * [\#39](https://gitlab.torproject.org/Diziet/rust-derive-deftly/-/issues/39)
+   Way to define multiple templates sharing `${define ..}` and `${defcond }`
+ * [\#35](https://gitlab.torproject.org/Diziet/rust-derive-deftly/-/issues/35)
+   Can derive_deftly macros be modular?
+ * [\#69](https://gitlab.torproject.org/Diziet/rust-derive-deftly/-/issues/69)
+   proposed syntax change to make #39 easier: braces around top-level of definition.
+
+### Proposed approach
+
+```rust,ignore
+define_derive_deftly_module! {
+    ///DOCS
+    [export] ModuleName:
+
+    use SubModule;
+    ${define ...}
+    ${defcnd ...}
+}
+```
+
+Generates `macro_rules! derive_deftly_module_module_name`
+which captures just those definitions.
+
+```rust,ignore
+define_derive_deftly! {
+    use [crate::]ModuleName;
+
+    ///DOCS
+    Template:
+}
+```
+
+This meets all (or almost all) of the use cases, I think.
+
+### Questions
+
+ * Is "module" the right name?  I have chosen "module" rather than
+   `mod` because these things are rather unlike normal Rust modules.
+   ("defines" or "definitions" would be hopelessly confusing.)
+
+ * `define_derive_deftly! { mod ...` would be a possible module
+   definition syntax but it seems more magical than having a totally
+   different top-level definition macro.  (And using `mod` this way
+   makes the syntax overlap more between different uses.)
+
+ * Casing of the module name.  I have chosen `ModuleName` mostly to
+   avoid clashing with future d-d keywords (eg here we have `export`).
+   We would forbid module names starting with lowercase.
+
+### Fine points
+
+ * The module can only contain `${define}`, `${defcond}` and `use`.
+   So it cannot define derives as-such, but it could contain
+   the whole *body* of a derive as a `${define}`.
+
+ * Definitions from modules can be shadowed by definitions in
+   subsequently-included modules, or in the main template.
+
+ * There is no namespacing, and scope is (still) dynamic, not lexical.
+   This plus shadowing means that a module's "internal" defines might
+   be redefined by the module's user.  So definitions in modules
+   should have a namespace component within their name - including
+   internal definitions.
+
+ * `use` statements in `define_derive_deftly!` appear before the
+   name of the template being defined.  In `define_derive_deftly_module!`
+   they appare after the module name.  This is partly related to docs
+   processing, see below.  It also makes it clear that `use`
+   in a module makes the definitions available to the caller.
+
+ * Module references in `use` statements are resolved and their contents
+   syntax-checked at the point where the `use` is encountered.
+   (So `define_derive_deftly_module` is a proc macro.)
+
+ * There is no way to specify per-dd-module template options.
+   (Doing that would involve expanding different parts of a single
+   template with  different options in force.)
+
+ * Corrolary: there is no way to control beta features.
+   Beta features are always enabled in the module-definition-time
+   syntax check.  If a module uses beta features then every derive
+   that uses that module must enable beta features.  But:
+
+ * The whole feature (both `define_derive_deftly_module!` and `use`)
+   is beta, so only available if the `beta` cargo feature is enabled,
+   and the `beta_deftly` template feature is on each template with
+   a `use`.
+
+### Documentation sharing
+
+We want a way to share documentation text between different derives.
+
+Right now nothing outside the template expansion is `$-expaneded`,
+so `///DOCS` in `define_derive_deftly!` can only be literal.
+Extend that as follows:
+
+Allow `///DOCS` *in derives* to also contain `${DOC_REFERENCE}` or
+`$DOC_REFERENCE` where that's a definition from a module whose body
+is precisely zero or more `#[doc = "..."]` (without any nested
+expansions or anything).
+
+So this will allow a limited form of documentation-sharing,
+that's about as powerful as `#![doc=include_str!(" ... ")]`,
+and can be extended later if we want.
+
+(Implicitly this is a new expansion mechanism, which does not
+involve a driver struct.)
+
+Documentation for a derive-deftly *module* can't use this feature.
+
+### Semver implications of `export`:
+
+Normally, template code present in different crates can be processed
+by different, perhaps semver-incompatible, versions of derive-deftly.
+
+But, a whole derive must be processed by *one* version of
+derive-deftly.  Ie, when you `use` a module from another crate, that
+other crate's module's template text gets processed with *your*
+version of derive-deftly.
+
+So `export`` means you're on your own: considerations are similar to
+(but less radical than) those for exporting a driver.
+
 # Future plans wrt macro namespace questions
 
 ## Deriving from things other than data structures
