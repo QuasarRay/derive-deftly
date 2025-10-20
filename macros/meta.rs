@@ -743,6 +743,7 @@ pub type ValueItems = MetaUnsupported;
 
 /// newtype to avoid coherence - it doesn't impl `Parse + ToTokens`
 #[derive(Debug, Copy, Clone)]
+#[allow(dead_code)] // rust-lang/rust/issues/145936
 pub struct MetaUnsupported(Void);
 
 #[derive(Debug, Copy, Clone)]
