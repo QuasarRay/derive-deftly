@@ -57,7 +57,7 @@ This does mean that specifying a completely unknown template
 will prevent error reports from subsequent templates,
 which is a shame.
 
-### Overall input syntax for `derive_deftly_engine!` and templates
+### Overall input syntax for templates and `derive_deftly_engine!`
 
 Because of expansion chaining, calls to the engine,
 and to templates, overlap.
@@ -71,8 +71,9 @@ and to templates, overlap.
         ( .... )
     // these parts passed to d_d_engine only, and not in last call:
         { TEMPLATE.. }
-        ( CRATE; [TOPTIONS..] 
+        ( CRATE; [TOPTIONS..]
           TEMPLATE_NAME /* omitted if not available */;
+          { IMPORTED_DEFINITIONS.. } // from a module (may be omitted)
           .... )
     // always present:
         // after here is simply passed through by templates:
@@ -89,6 +90,9 @@ and to templates, overlap.
 (We use the notation `....` for room we are leaving
 for future expansion;
 these are currently empty.)
+
+The engine also accepts a nonoverlapping syntax for handling
+template definitions which use modules - see below.
 
 ### 1. `define_derive_deftly!` macro for defining a reuseable template
 
@@ -114,7 +118,9 @@ Expands to
             [ $(aoptions)* ]
             ( )
             { TEMPLATE.. }
-            ( $crate; [TOPTIONS..] Template; )
+            ( $crate; [TOPTIONS..] Template;
+              { IMPORTED_DEFINITIONS.. } // only if via modules (see below)
+              )
             $($tpassthrough)*
         }
     } }
@@ -279,7 +285,7 @@ we return directly to the engine:
         .
         ( )
         [] // end of the chain
-        [_name Template _meta_used [..] _meta_recog [..] _name Template2 ..] 
+        [_name Template _meta_used [..] _meta_recog [..] _name Template2 ..]
     }
 ```
 
@@ -310,7 +316,7 @@ generates this
     macro_rules! derive_deftly_driver_StructName { {
         { $($template:tt)* }
         { ($orig_dollar:tt) $(future:tt)* }
-        $($dpassthrough:tt)* 
+        $($dpassthrough:tt)*
      } => {
         derive_deftly_engine!{
             { pub struct StructName { /* original struct definition */ } }
@@ -377,3 +383,212 @@ whose template syntax resembles the expansion syntax from `macro_rules`.
 
 `crate` is just used as the expansion for `${crate}`.
 (For an ad-hoc template, the local crate is correct.)
+
+## Implementation approach - deftly definition modules
+
+### Overall input syntax for modules and `derive_deftly_engine!`
+
+```rust,ignore
+    macro! {
+	    via_modules [
+            {....} // used by `macro`
+		    NEXT_MACRO {....} // used by `NEXT_MACRO`
+	        ..
+			define_derive_deftly {....} DEFWHAT ....
+	    ]
+        { EARLIER_PREFIX.. }
+        { MAIN_PASSTHROUGH.. }
+        ( $ EXTRA_PASSTHROUGH.... )
+        ....
+    }
+```
+
+Loosely, the semantics of `derive_deftly_module_MODULE` are:
+define a thing, which depends on MODULE's definitions.
+
+Each `derive_deftly_module_MODULE` macro
+prepends its own definitions to EARLIER\_PREFIX,
+leaving MAIN\_PASSTHROUGH unchanged,
+and then calls the next macro in turn.
+
+Eventually `derive_deftly_engine` is reached, with NEXT\_MACROS empty,
+and looks at `[ DEFWHAT .... ]` to know what to do.
+
+When a template uses multiple modules,
+the module macros are listed in `[ ]` in reverse order,
+because the last macro in the list runs last, prepending,
+so that its definitions end up first in the output.
+Engine comes last because it runs on the "outside",
+after all the prepending is done.
+The reverse ordering is not strictly necessary -
+we could define the macros to *append* and list in forwards order;
+it's done this way for future compatibility
+with possible other uses of the module system.
+
+EARLIER\_PREFIX has already been dollar-escaped, using `$ orig_dollar`.
+MAIN\_PASSTHROUGH has not.
+
+### Module macro
+
+```rust,ignore
+    define_derive_deftly_module! {
+        DOCS
+        [export] MODULE:
+
+        M_DEFINES
+    }
+```
+
+Expands to:
+
+```rust,ignore
+    DOCS
+    #[macro_export]
+    macro_rules! derive_deftly_module_MODULE { {
+        via_modules [
+            { $($our_opts:tt)* }
+		    $next_macro:path
+	        { $($next_opts:tt)* }
+			$(rest:tt)*
+		]
+        { $($predefs:tt)* }
+        { $($main:tt)* }
+        ( $($extra:tt)* )
+        $($ignored:tt)*
+    } => {
+      $next_macro! {
+        via_modules [ { $($next_opts)* } $($rest)* ]
+        { M_DEFINES $($predefs)* }
+        { $($main)* }
+        ( $($extra)* )
+      }
+    } }
+```
+
+In M_DEFINES, dollars have to be turned into `$orig_dollar`.
+
+### Definition of a module-using template
+
+```rust,ignore
+    define_derive_deftly! {
+        use M1;
+        use M2;
+        DOCS MyMacro TOPTIONS..: TEMPLATE..
+    }
+```
+
+Expands to:
+
+```rust,ignore
+    derive_deftly_module_M2! {
+        via_modules [
+		    {}
+			derive_deftly_module_M1 {}
+			derive_deftly_engine {} define
+        ]
+        { }
+        { DOCS MyMacro TOPTIONS..: TEMPLATE.. }
+        ( )
+    }
+```
+
+Hence:
+
+```rust,ignore
+    derive_deftly_module_M1! {
+        via_modules [
+		    {}
+			derive_deftly_engine {} define
+        ]
+        { M2_DEFINES }
+        { DOCS MyMacro TOPTIONS..: TEMPLATE.. }
+        ( )
+    }
+```
+
+Hence:
+
+```rust,ignore
+    derive_deftly_engine! {
+        via_modules [
+		    {} define
+	    ]
+        { M1_DEFINES M2_DEFINES }
+        { DOCS MyMacro TOPTIONS..: TEMPLATE.. }
+        ( )
+    }
+```
+
+Which is then handled as if it were an invocation of `define_derive_deftly!`
+without any `use` statements.
+
+The resulting template macro will additionally embody
+`{ M1_DEFINES M2_DEFINES }` as `{ IMPORTED_DEFINITIONS.. }`.
+
+### Definition of a module-using module
+
+These are resolved early, so that they are syntax-checked
+(and the names of the imported modules resolved) at the definition site:
+
+```rust,ignore
+    define_derive_deftly_module! {
+        MODULE_DOCS
+        [export] MODULE:
+
+        use P1;
+        use P2;
+
+        M_DEFINES
+    }
+```
+
+Expands to:
+
+```rust,ignore
+    derive_deftly_module_P2! {
+        via_modules [
+		    {}
+			derive_deftly_module_P1 {}
+			derive_deftly_engine {} defmod
+		]
+        { M_DEFINES }
+        { MODULE_DOCS [export] MODULE: }
+        ( )
+    }
+```
+
+Hence:
+
+```rust,ignore
+    derive_deftly_module_P1! {
+        via_modules [
+		    {}
+			derive_deftly_engine {} defmod
+		]
+        { P2_DEFINES M_DEFINES }
+        { MODULE_DOCS [export] MODULE: }
+        ( )
+    }
+```
+
+Hence:
+
+```rust,ignore
+    derive_deftly_engine {
+        via_modules [
+		    {} defmod
+        ]
+        { P1_DEFINES P2_DEFINES M_DEFINES }
+        { MODULE_DOCS [export] MODULE: }
+        ( )
+    }
+```
+
+Which is treated as:
+
+```rust,ignore
+    define_derive_deftly_module! {
+        MODULE_DOCS [export] MODULE:
+        P1_DEFINES P2_DEFINES M_DEFINES
+    }
+```
