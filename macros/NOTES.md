@@ -308,7 +308,7 @@ This meets all (or almost all) of the use cases, I think.
 
  * `use` statements in `define_derive_deftly!` appear before the
    name of the template being defined.  In `define_derive_deftly_module!`
-   they appare after the module name.  This is partly related to docs
+   they appear after the module name.  This is partly related to docs
    processing, see below.  It also makes it clear that `use`
    in a module makes the definitions available to the caller.
 
