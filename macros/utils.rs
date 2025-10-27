@@ -454,9 +454,21 @@ impl Deref for DocAttributes {
         &self.0
     }
 }
-impl ToTokens for DocAttributes {
-    fn to_tokens(&self, out: &mut TokenStream) {
-        self.0.to_tokens(out)
+impl DocAttributes {
+    pub fn to_tokens_with_addendum(
+        self,
+        addendum_text: fmt::Arguments<'_>,
+    ) -> TokenStream {
+        let addendum = if self.0.is_empty() {
+            None
+        } else {
+            Some(addendum_text.to_string())
+        };
+        let mut out = self.0.to_token_stream();
+        if let Some(addendum) = addendum {
+            out.extend(quote!( #[doc = #addendum] ))
+        }
+        out
     }
 }
 
