@@ -44,6 +44,7 @@ pub use super::utils::{
     spans_join, typepath_add_missing_argument_colons, ErrorAccumulator,
     ErrorLoc, Grouping, IdentAny, MacroExport, MakeError, TemplateName,
     ToTokensPunctComposable, TokenOutputTrimmer,
+    DocAttributes,
 };
 
 pub(super) use super::{accum, adviseable, beta, check, concat};

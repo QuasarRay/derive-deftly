@@ -4,7 +4,7 @@ use super::framework::*;
 
 #[derive(Debug, Clone)]
 struct TemplateDefinition {
-    doc_attrs: Vec<syn::Attribute>,
+    doc_attrs: DocAttributes,
     export: Option<MacroExport>,
     templ_name: TemplateName,
     options: UnprocessedOptions,
@@ -16,14 +16,7 @@ impl Parse for TemplateDefinition {
         // This rejects Rust keywords, which is good because
         // for example `#[derive_deftly(pub)]` ought not to mean to apply
         // a template called `pub`.  See ticket #1.
-        let doc_attrs = input.call(syn::Attribute::parse_outer)?;
-        for attr in &doc_attrs {
-            if !attr.path().is_ident("doc") {
-                return Err(attr
-                    .path()
-                    .error("only doc attributes are supported"));
-            }
-        }
+        let doc_attrs = input.parse()?;
         let export = MacroExport::parse_option(input)?;
         let templ_name = input.parse()?;
         let options =
@@ -226,7 +219,7 @@ To use it, write: `#[derive(Deftly)] #[derive_deftly({})]`."#,
     // the macro must recent a dollar as its first argument because
     // it is hard to find a dollar otherwise!
     output.extend(quote! {
-        #( #doc_attrs )*
+        #doc_attrs
         #doc_addendum
         #export_attr
         macro_rules! #templ_mac_name {
