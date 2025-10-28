@@ -563,12 +563,28 @@ impl<'t, 'o> TokenOutputTrimmer<'t, 'o> {
 
 //---------- TemplateName ----------
 
-#[derive(Debug, Clone)]
-pub struct TemplateName(syn::Ident);
-impl_to_tokens!(TemplateName, 0);
-impl_display!(TemplateName, 0);
+pub type TemplateName = SyntheticMacroName<SyntheticMacroTemplate>;
 
-const WHAT: &str = "template";
+// Generic arrangements
+
+/// Name of a thing of kind `Kind`
+#[derive(Debug, Clone)]
+pub struct SyntheticMacroName<Kind>(syn::Ident, Kind);
+
+/// Kind marker types
+pub trait SyntheticMacroKind: Default + Copy + Debug {
+    const WHAT: &'static str;
+}
+
+// Kinds
+
+#[derive(Debug, Clone, Copy, Default)]
+pub struct SyntheticMacroTemplate;
+impl SyntheticMacroKind for SyntheticMacroTemplate {
+    const WHAT: &'static str = "template";
+}
+
+// Non-generic functions, with substantive code
 
 fn synthetic_macro_name_check(
     ident: &syn::Ident,
@@ -599,26 +615,32 @@ fn synthetic_macro_name_macro_name(
     format_ident!("derive_deftly_{what}_{}", ident)
 }
 
-impl TemplateName {
+// Impls, generic
+
+impl_to_tokens!(SyntheticMacroName[K], 0);
+impl_display!(SyntheticMacroName[K], 0);
+
+impl<K: SyntheticMacroKind> SyntheticMacroName<K> {
     pub fn macro_name(&self) -> syn::Ident {
-        synthetic_macro_name_macro_name(&self.0, WHAT)
+        synthetic_macro_name_macro_name(&self.0, K::WHAT)
     }
 }
 
-impl Parse for TemplateName {
+impl<K: SyntheticMacroKind> Parse for SyntheticMacroName<K> {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let ident: syn::Ident = input.parse()?;
         ident.try_into()
     }
 }
-impl TryFrom<syn::Ident> for TemplateName {
+
+impl<K: SyntheticMacroKind> TryFrom<syn::Ident> for SyntheticMacroName<K> {
     type Error = syn::Error;
-    fn try_from(ident: syn::Ident) -> syn::Result<TemplateName> {
-        synthetic_macro_name_check(&ident, WHAT)?;
-        Ok(TemplateName(ident))
+    fn try_from(ident: syn::Ident) -> syn::Result<SyntheticMacroName<K>> {
+        synthetic_macro_name_check(&ident, K::WHAT)?;
+        Ok(SyntheticMacroName(ident, K::default()))
     }
 }
-impl quote::IdentFragment for TemplateName {
+impl<K> quote::IdentFragment for SyntheticMacroName<K> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         quote::IdentFragment::fmt(&self.0, f)
     }
