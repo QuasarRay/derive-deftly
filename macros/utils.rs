@@ -649,6 +649,54 @@ impl<K> quote::IdentFragment for SyntheticMacroName<K> {
     }
 }
 
+//---------- TemplatePath ----------
+
+pub type TemplatePath = SyntheticMacroPath<SyntheticMacroTemplate>;
+
+// Invariant: is valid (so, last segment is a valid TemplateName)
+#[derive(Debug, Clone)]
+pub struct SyntheticMacroPath<Kind>(syn::Path, Kind);
+
+impl_to_tokens!(SyntheticMacroPath[K], 0);
+
+fn synthetic_macro_path_parse(
+    input: ParseStream,
+    what: &str,
+) -> syn::Result<syn::Path> {
+    let path = syn::Path::parse_mod_style(input)?;
+
+    let last = path.segments.last().ok_or_else(|| {
+        path.leading_colon
+            .as_ref()
+            .expect("path with no tokens!")
+            .error("empty path not allowed here")
+    })?;
+
+    synthetic_macro_name_check(&last.ident, what)?;
+
+    Ok(path)
+}
+
+fn synthetic_macro_path_macro_path(path: &syn::Path, what: &str) -> syn::Path {
+    let mut out = path.clone();
+    let last = &mut out.segments.last_mut().expect("became empty!").ident;
+    *last = synthetic_macro_name_macro_name(last, what);
+    out
+}
+
+impl<K: SyntheticMacroKind> Parse for SyntheticMacroPath<K> {
+    fn parse(input: ParseStream) -> syn::Result<Self> {
+        let path = synthetic_macro_path_parse(input, K::WHAT)?;
+        Ok(SyntheticMacroPath(path, K::default()))
+    }
+}
+
+impl<K: SyntheticMacroKind> SyntheticMacroPath<K> {
+    pub fn macro_path(&self) -> syn::Path {
+        synthetic_macro_path_macro_path(&self.0, K::WHAT)
+    }
+}
+
 //---------- engine_macro_name ----------
 
 /// Return a full path to the location of `derive_deftly_engine`.
