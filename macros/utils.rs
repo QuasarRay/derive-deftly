@@ -13,15 +13,21 @@ macro_rules! impl_deref { { $ttype:ty, $fname:tt, $ftype:ty } => {
         }
     }
 } }
-macro_rules! impl_to_tokens { { $ttype:ty, $fname:tt } => {
-    impl ToTokens for $ttype {
+macro_rules! impl_to_tokens { {
+    $ttype:ident $( [ $($tgen:tt)* ] )?,
+    $fname:tt
+} => {
+    impl $( < $($tgen)* > )? ToTokens for $ttype $( < $($tgen)* > )? {
         fn to_tokens(&self, out: &mut TokenStream) {
             self.$fname.to_tokens(out)
         }
     }
 } }
-macro_rules! impl_display { { $ttype:ty, $fname:tt } => {
-    impl Display for $ttype {
+macro_rules! impl_display { {
+    $ttype:ident $( [ $($tgen:tt)* ] )?,
+    $fname:tt
+} => {
+    impl $( < $($tgen)* > )? Display for $ttype $( < $($tgen)* > )? {
         fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
             Display::fmt(&self.$fname, f)
         }
