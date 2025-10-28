@@ -13,6 +13,14 @@ macro_rules! impl_deref { { $ttype:ty, $fname:tt, $ftype:ty } => {
         }
     }
 } }
+macro_rules! impl_to_tokens { { $ttype:ty, $fname:tt } => {
+    impl ToTokens for $ttype {
+        fn to_tokens(&self, out: &mut TokenStream) {
+            self.$fname.to_tokens(out)
+        }
+    }
+} }
+
 //---------- dbg dumps of macro inputs/outputs ----------
 
 /// Calls eprintln! but only if enabled
@@ -418,14 +426,11 @@ impl Grouping {
 /// in which case it's not really an *identifier*.
 pub struct IdentAny(pub syn::Ident);
 impl_deref!(IdentAny, 0, syn::Ident);
+impl_to_tokens!(IdentAny, 0);
+
 impl Parse for IdentAny {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         Ok(IdentAny(Ident::parse_any(input)?))
-    }
-}
-impl ToTokens for IdentAny {
-    fn to_tokens(&self, out: &mut TokenStream) {
-        self.0.to_tokens(out)
     }
 }
 impl<T: AsRef<str> + ?Sized> PartialEq<T> for IdentAny {
@@ -497,6 +502,7 @@ impl<'t, 'o> TokenOutputTrimmer<'t, 'o> {
 
 #[derive(Debug, Clone)]
 pub struct TemplateName(syn::Ident);
+impl_to_tokens!(TemplateName, 0);
 
 impl TemplateName {
     pub fn macro_name(&self) -> syn::Ident {
@@ -531,11 +537,6 @@ impl TryFrom<syn::Ident> for TemplateName {
         .map_err(|emsg| ident.error(emsg))?;
 
         Ok(TemplateName(ident))
-    }
-}
-impl ToTokens for TemplateName {
-    fn to_tokens(&self, out: &mut TokenStream) {
-        self.0.to_tokens(out)
     }
 }
 impl Display for TemplateName {

@@ -43,6 +43,7 @@ pub struct UnprocessedOptions {
     ts: TokenStream,
     pub beta_enabled: Option<beta::Enabled>,
 }
+impl_to_tokens!(UnprocessedOptions, ts);
 
 /// Template options, semantically resolved
 #[derive(Default, Debug, Clone)]
@@ -321,12 +322,6 @@ impl<V: FromStr + DdOptValDescribable> Parse for DdOptVal<V> {
 }
 
 //---------- processing ----------
-
-impl ToTokens for UnprocessedOptions {
-    fn to_tokens(&self, out: &mut TokenStream) {
-        out.extend(self.ts.clone());
-    }
-}
 
 impl UnprocessedOptions {
     #[allow(dead_code)] // Currently unused, retain it in case we need it
