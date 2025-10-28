@@ -568,9 +568,40 @@ pub struct TemplateName(syn::Ident);
 impl_to_tokens!(TemplateName, 0);
 impl_display!(TemplateName, 0);
 
+const WHAT: &str = "template";
+
+fn synthetic_macro_name_check(
+    ident: &syn::Ident,
+    what: &str,
+) -> syn::Result<()> {
+    let s = ident.to_string();
+    match s.chars().find(|&c| c != '_') {
+        None => Err(format!(
+            "{what} name cannot consist entirely of underscores"
+        )),
+        Some(c) => {
+            if c.is_lowercase() {
+                Err(format!(
+ "{what} name may not start with a lowercase letter (after any underscores)"
+                ))
+            } else {
+                Ok(())
+            }
+        }
+    }
+    .map_err(|emsg| ident.error(emsg))
+}
+
+fn synthetic_macro_name_macro_name(
+    ident: &syn::Ident,
+    what: &str,
+) -> syn::Ident {
+    format_ident!("derive_deftly_{what}_{}", ident)
+}
+
 impl TemplateName {
     pub fn macro_name(&self) -> syn::Ident {
-        format_ident!("derive_deftly_template_{}", &self.0)
+        synthetic_macro_name_macro_name(&self.0, WHAT)
     }
 }
 
@@ -583,23 +614,7 @@ impl Parse for TemplateName {
 impl TryFrom<syn::Ident> for TemplateName {
     type Error = syn::Error;
     fn try_from(ident: syn::Ident) -> syn::Result<TemplateName> {
-        let s = ident.to_string();
-        match s.chars().find(|&c| c != '_') {
-            None => {
-                Err("template name cannot consist entirely of underscores")
-            }
-            Some(c) => {
-                if c.is_lowercase() {
-                    Err(
- "template name may not start with a lowercase letter (after any underscores)"
-                )
-                } else {
-                    Ok(())
-                }
-            }
-        }
-        .map_err(|emsg| ident.error(emsg))?;
-
+        synthetic_macro_name_check(&ident, WHAT)?;
         Ok(TemplateName(ident))
     }
 }
