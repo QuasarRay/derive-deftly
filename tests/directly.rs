@@ -18,6 +18,7 @@ use syn::parse_quote;
 
 #[allow(dead_code)]
 #[path = "../macros/macros.rs"]
+#[macro_use]
 pub(super) mod macros;
 
 mod tscompare;

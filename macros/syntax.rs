@@ -202,6 +202,7 @@ pub struct Definition<B> {
 #[derive(Debug, Eq, PartialEq, Ord, PartialOrd)]
 pub struct DefinitionName(syn::Ident);
 impl_to_tokens!(DefinitionName, 0);
+impl_display!(DefinitionName, 0);
 
 #[derive(Debug)]
 pub enum DefinitionBody {
@@ -314,12 +315,6 @@ impl TryFrom<syn::Ident> for DefinitionName {
         } else {
             Ok(DefinitionName(ident))
         }
-    }
-}
-
-impl Display for DefinitionName {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        Display::fmt(&self.0, f)
     }
 }
 

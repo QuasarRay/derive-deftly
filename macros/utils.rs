@@ -20,6 +20,13 @@ macro_rules! impl_to_tokens { { $ttype:ty, $fname:tt } => {
         }
     }
 } }
+macro_rules! impl_display { { $ttype:ty, $fname:tt } => {
+    impl Display for $ttype {
+        fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+            Display::fmt(&self.$fname, f)
+        }
+    }
+} }
 
 //---------- dbg dumps of macro inputs/outputs ----------
 
@@ -503,6 +510,7 @@ impl<'t, 'o> TokenOutputTrimmer<'t, 'o> {
 #[derive(Debug, Clone)]
 pub struct TemplateName(syn::Ident);
 impl_to_tokens!(TemplateName, 0);
+impl_display!(TemplateName, 0);
 
 impl TemplateName {
     pub fn macro_name(&self) -> syn::Ident {
@@ -537,11 +545,6 @@ impl TryFrom<syn::Ident> for TemplateName {
         .map_err(|emsg| ident.error(emsg))?;
 
         Ok(TemplateName(ident))
-    }
-}
-impl Display for TemplateName {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        Display::fmt(&self.0, f)
     }
 }
 impl quote::IdentFragment for TemplateName {
