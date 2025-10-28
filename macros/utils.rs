@@ -3,6 +3,16 @@
 use super::prelude::*;
 use proc_macro_crate::{crate_name, FoundCrate};
 
+//---------- macros for defining impls ----------
+
+macro_rules! impl_deref { { $ttype:ty, $fname:tt, $ftype:ty } => {
+    impl Deref for $ttype {
+        type Target = $ftype;
+        fn deref(&self) -> &$ftype {
+            &self.$fname
+        }
+    }
+} }
 //---------- dbg dumps of macro inputs/outputs ----------
 
 /// Calls eprintln! but only if enabled
@@ -407,15 +417,10 @@ impl Grouping {
 /// Needs care when used with user data, since it might be a keyword,
 /// in which case it's not really an *identifier*.
 pub struct IdentAny(pub syn::Ident);
+impl_deref!(IdentAny, 0, syn::Ident);
 impl Parse for IdentAny {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         Ok(IdentAny(Ident::parse_any(input)?))
-    }
-}
-impl Deref for IdentAny {
-    type Target = syn::Ident;
-    fn deref(&self) -> &syn::Ident {
-        &self.0
     }
 }
 impl ToTokens for IdentAny {

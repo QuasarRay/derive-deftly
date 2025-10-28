@@ -20,6 +20,7 @@ pub struct Template<O: SubstParseContext> {
 pub struct TopTemplate {
     pub content: Template<TokenAccumulator>,
 }
+impl_deref!(TopTemplate, content, Template<TokenAccumulator>);
 
 /// `ARG` as per
 /// "Named and positional template arguments"
@@ -439,13 +440,6 @@ impl TopTemplate {
             || input.parse(),
         )?;
         Ok(TopTemplate { content })
-    }
-}
-
-impl Deref for TopTemplate {
-    type Target = Template<TokenAccumulator>;
-    fn deref(&self) -> &Template<TokenAccumulator> {
-        &self.content
     }
 }
 
