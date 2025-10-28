@@ -564,6 +564,7 @@ impl<'t, 'o> TokenOutputTrimmer<'t, 'o> {
 //---------- TemplateName ----------
 
 pub type TemplateName = SyntheticMacroName<SyntheticMacroTemplate>;
+pub type ModuleName = SyntheticMacroName<SyntheticMacroModule>;
 
 // Generic arrangements
 
@@ -582,6 +583,12 @@ pub trait SyntheticMacroKind: Default + Copy + Debug {
 pub struct SyntheticMacroTemplate;
 impl SyntheticMacroKind for SyntheticMacroTemplate {
     const WHAT: &'static str = "template";
+}
+
+#[derive(Debug, Clone, Copy, Default)]
+pub struct SyntheticMacroModule;
+impl SyntheticMacroKind for SyntheticMacroModule {
+    const WHAT: &'static str = "module";
 }
 
 // Non-generic functions, with substantive code
@@ -652,6 +659,7 @@ impl<K> quote::IdentFragment for SyntheticMacroName<K> {
 //---------- TemplatePath ----------
 
 pub type TemplatePath = SyntheticMacroPath<SyntheticMacroTemplate>;
+pub type ModulePath = SyntheticMacroPath<SyntheticMacroModule>;
 
 // Invariant: is valid (so, last segment is a valid TemplateName)
 #[derive(Debug, Clone)]
