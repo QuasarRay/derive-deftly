@@ -3,6 +3,31 @@
 use super::prelude::*;
 use proc_macro_crate::{crate_name, FoundCrate};
 
+//---------- macros for defining impls ----------
+
+macro_rules! impl_deref { { $ttype:ty, $fname:tt, $ftype:ty } => {
+    impl Deref for $ttype {
+        type Target = $ftype;
+        fn deref(&self) -> &$ftype {
+            &self.$fname
+        }
+    }
+} }
+macro_rules! impl_to_tokens { { $ttype:ty, $fname:tt } => {
+    impl ToTokens for $ttype {
+        fn to_tokens(&self, out: &mut TokenStream) {
+            self.$fname.to_tokens(out)
+        }
+    }
+} }
+macro_rules! impl_display { { $ttype:ty, $fname:tt } => {
+    impl Display for $ttype {
+        fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+            Display::fmt(&self.$fname, f)
+        }
+    }
+} }
+
 //---------- dbg dumps of macro inputs/outputs ----------
 
 /// Calls eprintln! but only if enabled
@@ -407,20 +432,12 @@ impl Grouping {
 /// Needs care when used with user data, since it might be a keyword,
 /// in which case it's not really an *identifier*.
 pub struct IdentAny(pub syn::Ident);
+impl_deref!(IdentAny, 0, syn::Ident);
+impl_to_tokens!(IdentAny, 0);
+
 impl Parse for IdentAny {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         Ok(IdentAny(Ident::parse_any(input)?))
-    }
-}
-impl Deref for IdentAny {
-    type Target = syn::Ident;
-    fn deref(&self) -> &syn::Ident {
-        &self.0
-    }
-}
-impl ToTokens for IdentAny {
-    fn to_tokens(&self, out: &mut TokenStream) {
-        self.0.to_tokens(out)
     }
 }
 impl<T: AsRef<str> + ?Sized> PartialEq<T> for IdentAny {
@@ -492,6 +509,8 @@ impl<'t, 'o> TokenOutputTrimmer<'t, 'o> {
 
 #[derive(Debug, Clone)]
 pub struct TemplateName(syn::Ident);
+impl_to_tokens!(TemplateName, 0);
+impl_display!(TemplateName, 0);
 
 impl TemplateName {
     pub fn macro_name(&self) -> syn::Ident {
@@ -526,16 +545,6 @@ impl TryFrom<syn::Ident> for TemplateName {
         .map_err(|emsg| ident.error(emsg))?;
 
         Ok(TemplateName(ident))
-    }
-}
-impl ToTokens for TemplateName {
-    fn to_tokens(&self, out: &mut TokenStream) {
-        self.0.to_tokens(out)
-    }
-}
-impl Display for TemplateName {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        Display::fmt(&self.0, f)
     }
 }
 impl quote::IdentFragment for TemplateName {

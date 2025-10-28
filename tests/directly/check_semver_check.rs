@@ -18,12 +18,7 @@ use super::*;
 
 #[derive(Clone, Eq, PartialEq)]
 struct Version(String);
-
-impl Display for Version {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        Display::fmt(&self.0, f)
-    }
-}
+impl_display!(Version, 0);
 
 struct TrackedVersion {
     v: Version,

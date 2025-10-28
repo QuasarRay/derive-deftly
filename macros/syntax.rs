@@ -20,6 +20,7 @@ pub struct Template<O: SubstParseContext> {
 pub struct TopTemplate {
     pub content: Template<TokenAccumulator>,
 }
+impl_deref!(TopTemplate, content, Template<TokenAccumulator>);
 
 /// `ARG` as per
 /// "Named and positional template arguments"
@@ -200,6 +201,8 @@ pub struct Definition<B> {
 
 #[derive(Debug, Eq, PartialEq, Ord, PartialOrd)]
 pub struct DefinitionName(syn::Ident);
+impl_to_tokens!(DefinitionName, 0);
+impl_display!(DefinitionName, 0);
 
 #[derive(Debug)]
 pub enum DefinitionBody {
@@ -294,12 +297,6 @@ pub struct DbgDumpRequest<O: SubstParseContext> {
 /// Error returned by `DefinitionName::try_from(syn::Ident)`
 pub struct InvalidDefinitionName;
 
-impl ToTokens for DefinitionName {
-    fn to_tokens(&self, out: &mut TokenStream) {
-        self.0.to_tokens(out)
-    }
-}
-
 impl TryFrom<syn::Ident> for DefinitionName {
     type Error = InvalidDefinitionName;
     fn try_from(ident: syn::Ident) -> Result<Self, InvalidDefinitionName> {
@@ -318,12 +315,6 @@ impl TryFrom<syn::Ident> for DefinitionName {
         } else {
             Ok(DefinitionName(ident))
         }
-    }
-}
-
-impl Display for DefinitionName {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        Display::fmt(&self.0, f)
     }
 }
 
@@ -439,13 +430,6 @@ impl TopTemplate {
             || input.parse(),
         )?;
         Ok(TopTemplate { content })
-    }
-}
-
-impl Deref for TopTemplate {
-    type Target = Template<TokenAccumulator>;
-    fn deref(&self) -> &Template<TokenAccumulator> {
-        &self.content
     }
 }
 
