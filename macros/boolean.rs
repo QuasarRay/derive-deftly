@@ -61,9 +61,9 @@ impl Subst<BooleanContext> {
         // eprintln!("@@@@@@@@@@@@@@@@@@@@ EVAL {:?}", self);
         let kw_span = self.kw_span;
 
-        let ctx = gctx.full_ctx_xxxx();
+        let ctx = gctx.full_ctx(kw_span);
 
-        let v_fields = || ctx.variant(&kw_span).map(|v| &v.fields);
+        let v_fields = || ctx?.variant(&kw_span).map(|v| &v.fields);
         use syn::Fields as SF;
 
         let expand = |x: &Template<_>| {
@@ -74,13 +74,13 @@ impl Subst<BooleanContext> {
         };
 
         let r = match &self.sd {
-            SD::is_enum(..) => ctx.is_enum(),
-            SD::is_struct(..) => matches!(ctx.top.data, syn::Data::Struct(_)),
-            SD::is_union(..) => matches!(ctx.top.data, syn::Data::Union(_)),
+            SD::is_enum(..) => ctx?.is_enum(),
+            SD::is_struct(..) => matches!(ctx?.top.data, syn::Data::Struct(_)),
+            SD::is_union(..) => matches!(ctx?.top.data, syn::Data::Union(_)),
             SD::v_is_unit(..) => matches!(v_fields()?, SF::Unit),
             SD::v_is_tuple(..) => matches!(v_fields()?, SF::Unnamed(..)),
             SD::v_is_named(..) => matches!(v_fields()?, SF::Named(..)),
-            SD::tgens(_) => !ctx.top.generics.params.is_empty(),
+            SD::tgens(_) => !ctx?.top.generics.params.is_empty(),
 
             SD::Xmeta(sm) => {
                 let meta::SubstMeta {
@@ -104,7 +104,7 @@ impl Subst<BooleanContext> {
                         | mSA::ty(nb) => void::unreachable(*nb),
                     }
                 };
-                is_found(label.search_eval_bool(sm.pmetas(ctx, kw_span)?))
+                is_found(label.search_eval_bool(sm.pmetas(ctx?, kw_span)?))
             }
 
             SD::is_empty(_, content) => expand(content)?.is_empty(),
@@ -136,7 +136,7 @@ impl Subst<BooleanContext> {
                 })
                 .unwrap_or(Ok(true))?,
 
-            SD::Vis(vis, _) => match vis.syn_vis(ctx, kw_span)? {
+            SD::Vis(vis, _) => match vis.syn_vis(ctx?, kw_span)? {
                 syn::Visibility::Public(_) => true,
                 _ => false,
             },
