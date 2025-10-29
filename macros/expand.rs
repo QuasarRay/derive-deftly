@@ -51,11 +51,10 @@ where
             match &mut found {
                 Ok(None) => found = Ok(Some((cspan, consequence))),
                 Ok(Some((span1, _))) => {
-                    found = Err(vec![
-                        ctx.error_loc(),
+                    found = Err(ctx.prepend_error_loc(&[
                         error_loc(*span1),
                         error_loc(cspan),
-                    ])
+                    ]))
                 }
                 Err(several) => several.push(error_loc(cspan)),
             }
@@ -65,8 +64,10 @@ where
             .map(|(_cspan, consequence)| consequence)
             .or(self.otherwise.as_deref())
             .ok_or_else(|| {
-                [ctx.error_loc(), (self.kw_span, "select1 expansion")]
-                    .error("no conditions matched, and no else clause")
+                ctx.prepend_error_loc(
+                    &[(self.kw_span, "select1 expansion")], //
+                )
+                .error("no conditions matched, and no else clause")
             })?;
         found.expand(ctx, out);
         Ok(())
@@ -661,11 +662,11 @@ impl<O: ExpansionOutput> DbgDumpRequest<O> {
 
 impl ExplicitError {
     pub fn throw<T>(&self, ctx: &Context<'_>) -> Result<T, syn::Error> {
-        Err([
-            ctx.error_loc(), //
-            (self.message.span(), "template"),
-        ]
-        .error(self.message.value()))
+        Err(ctx
+            .prepend_error_loc(&[
+                (self.message.span(), "template"), //
+            ])
+            .error(self.message.value()))
     }
 }
 
