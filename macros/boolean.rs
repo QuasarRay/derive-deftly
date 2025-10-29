@@ -216,6 +216,6 @@ impl DefinitionName {
                 error
             })?;
 
-        def.body.eval_bool(&ctx)
+        def.body.eval_bool(ctx.full_ctx_xxxx())
     }
 }
