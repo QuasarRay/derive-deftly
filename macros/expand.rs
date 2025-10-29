@@ -203,12 +203,10 @@ where
     O: ExpansionOutput,
 {
     fn expand<'c>(&self, ctx_in: &impl GeneralContext<'c>, out: &mut O) {
-        let ctx_in = ctx_in.full_ctx_xxxx();
-
         let mut ctx_buf;
         let mut definitions_here = vec![];
         let mut defconds_here = vec![];
-        let mut ctx = ctx_in;
+        let mut ctx = ctx_in.reduce_lifetime();
 
         for element in &self.elements {
             macro_rules! handle_definition { {
@@ -222,7 +220,7 @@ where
                     // Doing this with a macro makes it nice and obvious
                     // to the borrow checker.
                     $store.push(def);
-                    ctx_buf = ctx_in.clone();
+                    ctx_buf = ctx_in.reduce_lifetime().clone();
                     ctx_buf.as_mut().defs = Definitions {
                         earlier: Some(&ctx_in.defs().defs),
                         here: &definitions_here,
