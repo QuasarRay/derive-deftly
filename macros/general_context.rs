@@ -40,6 +40,8 @@ pub trait GeneralContext<'c>:
     ///
     fn error_loc_general(&self) -> Option<ErrorLoc<'c>>;
 
+    fn display_for_dbg(&self) -> impl Display + '_;
+
     // ----- Provided -----
 
     /// Obtain a full `Context`, in situations where a driver is needed
@@ -147,6 +149,34 @@ impl<'c> GeneralContext<'c> for Context<'c> {
 
     fn error_loc_general(&self) -> Option<ErrorLoc<'c>> {
         Some(self.error_loc())
+    }
+
+    fn display_for_dbg(&self) -> impl Display + '_ {
+        struct Adapter<'a>(&'a Context<'a>);
+
+        impl Display for Adapter<'_> {
+            fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+                let ctx = self.0;
+                write!(f, "for {}", &ctx.top.ident)?;
+                if let Some(wv) = &ctx.variant {
+                    if let Some(v) = &wv.variant {
+                        write!(f, "::{}", &v.ident)?;
+                    }
+                }
+                if let Some(wf) = &ctx.field {
+                    // we're just using the Display impl, any span will do
+                    let span = Span::call_site();
+                    write!(f, ".{}", &wf.fname(span))?;
+                }
+                if let Some(templ) = &ctx.template_name {
+                    let templ = templ.to_token_stream().to_string();
+                    write!(f, " from {}", templ)?;
+                }
+                Ok::<_, fmt::Error>(())
+            }
+        }
+
+        Adapter(self)
     }
 }
 
