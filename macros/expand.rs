@@ -322,6 +322,7 @@ where
         // user can append things to, but ideally *not* for expansions like
         // $ttype that the user can't.
         let do_tgnames = |out: &mut TokenAccumulator,
+                          ctx: &Context,
                           composable| {
             for pair in ctx.top.generics.params.pairs() {
                 use syn::GenericParam as GP;
@@ -361,7 +362,7 @@ where
             }
         };
         let do_tgens =
-            |out: &mut TokenAccumulator, composable: bool| {
+            |out: &mut TokenAccumulator, ctx: &Context, composable: bool| {
                 out.append_maybe_punct_composable(
                     &ctx.top.generics.params,
                     composable,
@@ -375,7 +376,7 @@ where
         //   defining a new type      $tdeftype  Type<G: bounds>
         // Handles $ttype and $tdeftype, and, indirectly, $vtype
         let do_ttype = |out: &mut O, colons: Option<()>, do_some_gens| {
-            let _: &dyn Fn(&mut _, bool) = do_some_gens; // specify type
+            let _: &dyn Fn(&mut _, _, bool) = do_some_gens; // specify type
             let gens = &ctx.top.generics;
             let colons = gens
                 .lt_token
@@ -387,7 +388,7 @@ where
                 |out| {
                     out.append(colons);
                     out.append(gens.lt_token);
-                    do_some_gens(out, false);
+                    do_some_gens(out, ctx, false);
                     out.append(gens.gt_token);
                 },
                 Grouping::Ungrouped,
@@ -489,11 +490,11 @@ where
                 Ok(())
             })?,
             SD::tdefgens(np, ..) => out.append_tokens_with(np, |out| {
-                do_tgens(out, true);
+                do_tgens(out, ctx, true);
                 Ok(())
             })?,
             SD::tgnames(np, ..) => out.append_tokens_with(np, |out| {
-                do_tgnames(out, true);
+                do_tgnames(out, ctx, true);
                 Ok(())
             })?,
             SD::twheres(np, ..) => out.append_tokens_with(np, |out| {
