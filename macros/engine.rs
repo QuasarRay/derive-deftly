@@ -266,9 +266,11 @@ impl<'c> Context<'c> {
             field: None,
             variant: variant.as_ref(),
             pvariants: &pvariants,
-            definitions: Default::default(),
-            nesting_depth: 0,
-            nesting_parent: None,
+            defs: DefinitionsContext {
+                defs: Default::default(),
+                nesting_depth: 0,
+                nesting_parent: None,
+            },
             within_loop: WithinLoop::None,
         };
 

@@ -215,9 +215,11 @@ where
                     // to the borrow checker.
                     $store.push(def);
                     ctx_buf = ctx_in.clone();
-                    ctx_buf.definitions.earlier = Some(&ctx_in.definitions);
-                    ctx_buf.definitions.here = &definitions_here;
-                    ctx_buf.definitions.conds = &defconds_here;
+                    ctx_buf.as_mut().defs = Definitions {
+                        earlier: Some(&ctx_in.defs().defs),
+                        here: &definitions_here,
+                        conds: &defconds_here,
+                    };
                     ctx = &ctx_buf;
                     continue;
                 }

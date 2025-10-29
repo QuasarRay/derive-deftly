@@ -202,7 +202,7 @@ impl DefinitionName {
                     "user-defined condition `{}` not found",
                     self,
                 ));
-                if let Some(def) = ctx.definitions
+                if let Some(def) = ctx.defs().defs
                     .find_raw::<DefinitionBody>(self)
                 {
                     // Condition syntax looks like fine tokens,

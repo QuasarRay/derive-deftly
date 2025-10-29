@@ -244,7 +244,7 @@ fn dump_user_defined(mut w: &mut Out, ctx: &Context) -> R {
         $heading:expr, $B:ty, $body:stmt
     } => { {
         let mut set = BTreeSet::new();
-        for def in ctx.definitions.iter::<$B>().flatten() {
+        for def in ctx.defs().defs.iter::<$B>().flatten() {
             set.insert(&def.name);
         }
         if !set.is_empty() {
