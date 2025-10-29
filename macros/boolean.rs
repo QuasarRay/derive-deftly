@@ -113,7 +113,7 @@ impl Subst<BooleanContext> {
                     == Equality::Equal
             }
 
-            SD::UserDefined(name) => name.lookup_eval_bool(ctx)?,
+            SD::UserDefined(name) => name.lookup_eval_bool(gctx)?,
 
             SD::False(..) => false,
             SD::True(..) => true,
@@ -202,8 +202,10 @@ impl Subst<BooleanContext> {
 impl DefinitionName {
     fn lookup_eval_bool<'c>(
         &self,
-        ctx: &Context<'c>,
+        ctx: &impl GeneralContext<'c>,
     ) -> syn::Result<bool> {
+        let ctx = ctx.reduce_lifetime();
+
         let (def, ctx) = ctx.find_definition::<DefCondBody>(self)?
             .ok_or_else(|| {
                 let mut error = self.error(format!(
@@ -224,6 +226,6 @@ impl DefinitionName {
                 error
             })?;
 
-        def.body.eval_bool(ctx.full_ctx_xxxx())
+        def.body.eval_bool(&ctx)
     }
 }
