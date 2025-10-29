@@ -527,8 +527,8 @@ fn ident_from_str() {
     chk_err("0");
 }
 
-pub fn expand(
-    ctx: &Context<'_>,
+pub fn expand<'c>(
+    ctx: &impl GeneralContext<'c>,
     tspan: Span,
     content: &Template<paste::Items>,
     out: &mut impl ExpansionOutput,
