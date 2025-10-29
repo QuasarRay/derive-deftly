@@ -54,7 +54,10 @@ impl SubstParseContext for BooleanContext {
 }
 
 impl Subst<BooleanContext> {
-    pub fn eval_bool(&self, ctx: &Context) -> syn::Result<bool> {
+    pub fn eval_bool<'c>(
+        &self,
+        ctx: &Context<'c>,
+    ) -> syn::Result<bool> {
         // eprintln!("@@@@@@@@@@@@@@@@@@@@ EVAL {:?}", self);
         let kw_span = self.kw_span;
 
