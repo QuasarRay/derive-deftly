@@ -61,6 +61,8 @@ pub enum TemplateElement<O: SubstParseContext> {
 
 #[derive(Debug)]
 pub struct RepeatedTemplate<O: SubstParseContext> {
+    #[allow(unused)] // XXXX
+    pub span: Span,
     pub template: Template<O>,
     #[allow(clippy::vec_box)]
     pub whens: Vec<Box<Subst<BooleanContext>>>,
@@ -1288,6 +1290,7 @@ impl<O: SubstParseContext> RepeatedTemplate<O> {
 
         match over {
             Ok(over) => Ok(RepeatedTemplate {
+                span: span.open(),
                 over,
                 template,
                 whens,
