@@ -247,7 +247,7 @@ impl ExpansionOutput for Accumulator {
     fn dbg_expand<'c>(
         &mut self,
         kw_span: Span,
-        ctx: &Context<'c>,
+        ctx: &impl GeneralContext<'c>,
         msg: &mut String,
         content: &Template<Accumulator>,
     ) -> fmt::Result {

@@ -611,7 +611,7 @@ where
             SD::select1(conds, ..) => conds.expand_select1(gctx, out)?,
             SD::For(repeat, _) => repeat.expand(ctx, out),
 
-            SD::dbg(ddr) => ddr.expand(ctx, out, kw_span),
+            SD::dbg(ddr) => ddr.expand(gctx, out, kw_span),
             SD::dbg_all_keywords(_) => dbg_allkw::dump(ctx),
 
             // ## maint/check-keywords-documented BoolOnly ##
@@ -636,7 +636,7 @@ where
 impl<O: ExpansionOutput> DbgDumpRequest<O> {
     fn expand<'c>(
         &self,
-        ctx: &Context<'c>,
+        ctx: &impl GeneralContext<'c>,
         out: &mut O,
         kw_span: Span,
     ) {

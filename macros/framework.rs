@@ -448,7 +448,7 @@ pub trait ExpansionOutput: SubstParseContext {
     fn dbg_expand<'c>(
         &mut self,
         kw_span: Span,
-        ctx: &Context<'c>,
+        ctx: &impl GeneralContext<'c>,
         msg: &mut String,
         content: &Self::DbgContent,
     ) -> fmt::Result;
@@ -654,7 +654,7 @@ impl ExpansionOutput for TokenAccumulator {
     fn dbg_expand<'c>(
         &mut self,
         _kw_span: Span,
-        ctx: &Context<'c>,
+        ctx: &impl GeneralContext<'c>,
         msg: &mut String,
         content: &Template<TokenAccumulator>,
     ) -> fmt::Result {
