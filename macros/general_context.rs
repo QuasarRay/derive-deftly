@@ -1,9 +1,86 @@
 #![allow(unused)] // XXXX
+//! Contexts that might not include a driver
 
 use super::framework::*;
 
-impl<'c> Context<'c> {
-    pub fn defs(&self) -> &DefinitionsContext<'c> {
+pub type ErrorHandler<'c> = &'c dyn Fn(Span) -> syn::Error;
+
+/// Probably a `Context`, but might not be - there might be no driver
+///
+/// Definitely contains a `DefinitionsContext`.
+pub trait GeneralContext<'c>:
+    Clone + AsRef<DefinitionsContext<'c>> + AsMut<DefinitionsContext<'c>>
+{
+    /// This very type, but with a different lifetime
+    ///
+    /// A couple of places want to make a version of the context but
+    /// with a shorter lifetime - but they only have the impl trait,
+    /// not a concrete type.
+    ///
+    /// There isn't a way to declare in the trait definition that the
+    /// type is covariant in its lifetime.  (It's hard even to *talk*
+    /// about the implementing Context type's own lifetime.)
+    ///
+    /// Instead, we provide this type: it implements the same trait,
+    /// but maybe with a shorter lifetime.  `reduce_lifetime` returns it.
+    ///
+    /// Implementations on `T<'a>` should make this be `T<'l>`.
+    type Self_<'l>: GeneralContext<'l> + Copy
+    where
+        'c: 'l;
+
+    fn reduce_lifetime<'s, 'r>(&'s self) -> &'s Self::Self_<'r>
+    where
+        'c: 'r;
+
+    fn full_ctx_raw(&self) -> Result<&Context<'c>, ErrorHandler<'c>>;
+
+    // ----- Provided -----
+
+    /// Obtain a full `Context`, in situations where a driver is needed
+    fn full_ctx(&self, span: Span) -> FullContextResult<'_, 'c> {
+        self.full_ctx_raw()
+            .map_err(move |error_handler| MissingContextError {
+                span,
+                error_handler,
+            })
+    }
+
+    /// XXXX placeholder while we deploy `GeneralContext` everywhere
+    fn full_ctx_xxxx(&self) -> &Context<'c> {
+        self.full_ctx(Span::call_site())
+            .unwrap_or_else(|_| panic!()) //XXXX
+    }
+
+    /// Convenience method.
+    ///
+    /// We could use `.as_ref()` but that is less clear (and risks
+    /// future inference failures).
+    ///
+    /// We don't bother with `defs_mut`.
+    fn defs(&self) -> &DefinitionsContext<'c> {
+        self.as_ref()
+    }
+}
+
+pub type FullContextResult<'s, 'c> = Result<
+    &'s Context<'c>, //
+    MissingContextError<'c>,
+>;
+
+/// Cheap type that embodies a failed requirement for a driver
+///
+/// This can be pre-obtained and bound to a local `ctx`, and then
+/// converted conveniently to `syn::Error` with `ctx?` when actually
+/// needed.
+#[derive(Clone, Copy)]
+pub struct MissingContextError<'c> {
+    span: Span,
+    error_handler: ErrorHandler<'c>,
+}
+
+impl<'c> AsRef<DefinitionsContext<'c>> for Context<'c> {
+    fn as_ref(&self) -> &DefinitionsContext<'c> {
         &self.defs
     }
 }
@@ -11,5 +88,29 @@ impl<'c> Context<'c> {
 impl<'c> AsMut<DefinitionsContext<'c>> for Context<'c> {
     fn as_mut(&mut self) -> &mut DefinitionsContext<'c> {
         &mut self.defs
+    }
+}
+
+impl<'c> GeneralContext<'c> for Context<'c> {
+    type Self_<'l>
+        = Context<'l>
+    where
+        'c: 'l;
+
+    fn reduce_lifetime<'s, 'r>(&'s self) -> &'s Self::Self_<'r>
+    where
+        'c: 'r,
+    {
+        self
+    }
+
+    fn full_ctx_raw(&self) -> Result<&Context<'c>, ErrorHandler<'c>> {
+        Ok(self)
+    }
+}
+
+impl<'c> From<MissingContextError<'c>> for syn::Error {
+    fn from(e: MissingContextError<'c>) -> syn::Error {
+        (e.error_handler)(e.span)
     }
 }

@@ -14,6 +14,8 @@ pub use super::syntax::*;
 pub(super) use super::paste;
 pub(super) use super::paste::{IdentFrag, IdentFragInfallible};
 
+pub(super) use general_context::GeneralContext;
+
 /// Context during expansion
 ///
 /// References the driver, and digested information about it.
