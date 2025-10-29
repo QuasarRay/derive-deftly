@@ -118,10 +118,10 @@ impl Subst<BooleanContext> {
             SD::False(..) => false,
             SD::True(..) => true,
 
-            SD::not(v, _) => !v.eval_bool(ctx)?,
+            SD::not(v, _) => !v.eval_bool(gctx)?,
             SD::any(vs, _) => vs
                 .iter()
-                .find_map(|v| match v.eval_bool(ctx) {
+                .find_map(|v| match v.eval_bool(gctx) {
                     Ok(true) => Some(Ok(true)),
                     Err(e) => Some(Err(e)),
                     Ok(false) => None,
@@ -129,7 +129,7 @@ impl Subst<BooleanContext> {
                 .unwrap_or(Ok(false))?,
             SD::all(vs, _) => vs
                 .iter()
-                .find_map(|v| match v.eval_bool(ctx) {
+                .find_map(|v| match v.eval_bool(gctx) {
                     Ok(true) => None,
                     Err(e) => Some(Err(e)),
                     Ok(false) => Some(Ok(false)),
@@ -142,12 +142,12 @@ impl Subst<BooleanContext> {
             },
 
             SD::dbg(ddr) => {
-                let r = ddr.content_parsed.eval_bool(ctx);
+                let r = ddr.content_parsed.eval_bool(gctx);
                 let () = &ddr.content_string;
                 let w = |s: fmt::Arguments| {
                     eprintln!(
                         "derive-deftly dbg condition {} evaluated to {}",
-                        ddr.display_heading(ctx),
+                        ddr.display_heading(gctx),
                         s,
                     )
                 };
