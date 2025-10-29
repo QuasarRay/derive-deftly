@@ -929,10 +929,10 @@ impl ExpansionOutput for Items {
         accum.finish()
     }
 
-    fn dbg_expand(
+    fn dbg_expand<'c>(
         &mut self,
         kw_span: Span,
-        ctx: &Context,
+        ctx: &Context<'c>,
         msg: &mut String,
         content: &Template<Items>,
     ) -> fmt::Result {

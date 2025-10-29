@@ -445,10 +445,10 @@ pub trait ExpansionOutput: SubstParseContext {
     ///
     /// Expansion errors are to be reported, and subsumed into `self`.
     /// Failures to write may be thrown.
-    fn dbg_expand(
+    fn dbg_expand<'c>(
         &mut self,
         kw_span: Span,
-        ctx: &Context,
+        ctx: &Context<'c>,
         msg: &mut String,
         content: &Self::DbgContent,
     ) -> fmt::Result;
@@ -651,10 +651,10 @@ impl ExpansionOutput for TokenAccumulator {
         self.0.map(|_: TokenStream| ())
     }
 
-    fn dbg_expand(
+    fn dbg_expand<'c>(
         &mut self,
         _kw_span: Span,
-        ctx: &Context,
+        ctx: &Context<'c>,
         msg: &mut String,
         content: &Template<TokenAccumulator>,
     ) -> fmt::Result {
