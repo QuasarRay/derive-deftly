@@ -436,23 +436,23 @@ impl TopTemplate {
 
 impl<O: SubstParseContext> Parse for Template<O> {
     fn parse(input: ParseStream) -> syn::Result<Self> {
-        Template::parse_special(input, &mut Default::default())
+        Template::parse_special(input, &mut O::SpecialParseContext::default())
     }
 }
 
 impl<O: SubstParseContext> Template<O> {
-    fn parse_special(
+    fn parse_special<S: SpecialParseContext>(
         input: ParseStream,
-        special: &mut O::SpecialParseContext,
+        special: &mut S,
     ) -> syn::Result<Self> {
         TemplateWithWhens::parse_special(input, special)?.try_into()
     }
 }
 
 impl<O: SubstParseContext> TemplateWithWhens<O> {
-    fn parse_special(
+    fn parse_special<S: SpecialParseContext>(
         input: ParseStream,
-        mut special: &mut O::SpecialParseContext,
+        mut special: &mut S,
     ) -> syn::Result<Self> {
         // eprintln!("@@@@@@@@@@ PARSE {}", &input);
         let mut good = vec![];
@@ -460,7 +460,7 @@ impl<O: SubstParseContext> TemplateWithWhens<O> {
         while !input.is_empty() {
             let special = &mut special;
             match errors.handle_in(|| {
-                O::special_before_element_hook(special, input)
+                special.before_element_hook(input)
             }) {
                 Some(None) => {},
                 None | // error! quit parsing
@@ -1256,8 +1256,10 @@ impl<O: SubstParseContext> RepeatedTemplate<O> {
     ) -> Result<RepeatedTemplate<O>, syn::Error> {
         use TemplateWithWhens as TWW;
 
-        let TWW { elements } =
-            TWW::parse_special(input, &mut Default::default())?;
+        let TWW { elements } = TWW::parse_special::<O::SpecialParseContext>(
+            input,
+            &mut Default::default(),
+        )?;
 
         // split `when` off
         let mut elements = VecDeque::from(elements);
