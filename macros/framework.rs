@@ -32,9 +32,18 @@ pub struct Context<'c> {
     pub field: Option<&'c WithinField<'c>>,
     pub within_loop: WithinLoop,
     pub pvariants: &'c [PreprocessedVariant<'c>],
-    pub definitions: Definitions<'c>,
+    pub defs: DefinitionsContext<'c>,
+}
+
+/// Part of the context relating to user-defined expansions and conditions
+#[derive(Debug, Clone, Copy)]
+pub struct DefinitionsContext<'c> {
+    pub defs: Definitions<'c>,
     pub nesting_depth: u16,
-    pub nesting_parent: Option<(&'c Context<'c>, &'c DefinitionName)>,
+    pub nesting_parent: Option<(
+        &'c DefinitionsContext<'c>, //
+        &'c DefinitionName,
+    )>,
 }
 
 #[derive(Debug)]

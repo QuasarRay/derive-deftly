@@ -492,20 +492,22 @@ impl<'c> Context<'c> {
         Definitions<'c>: AsRef<[&'c Definition<B>]>,
         B: 'static,
     {
-        let def = match self.definitions.find_raw(call) {
+        let def = match self.defs().defs.find_raw(call) {
             Some(y) => y,
             None => return Ok(None),
         };
 
-        let ctx = self.deeper(&def.name, call)?;
-        Ok(Some((def, ctx)))
+        let defs = self.defs().deeper(&def.name, call)?;
+        Ok(Some((def, Context { defs, ..*self })))
     }
+}
 
+impl<'c> DefinitionsContext<'c> {
     fn deeper(
         &'c self,
         def: &'c DefinitionName,
         call: &'c DefinitionName,
-    ) -> syn::Result<Context<'c>> {
+    ) -> syn::Result<DefinitionsContext<'c>> {
         let nesting_depth = self.nesting_depth + 1;
         let stack_entry = (self, call);
         if nesting_depth > NESTING_LIMIT {
@@ -551,7 +553,7 @@ impl<'c> Context<'c> {
             }
             return Err(errs);
         }
-        Ok(Context {
+        Ok(DefinitionsContext {
             nesting_depth,
             nesting_parent: Some(stack_entry),
             ..*self
