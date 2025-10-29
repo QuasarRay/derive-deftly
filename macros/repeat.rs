@@ -329,7 +329,7 @@ impl<'w> WithinRepeatLevel<'w> for WithinField<'w> {
 
 impl<'c> Context<'c> {
     /// Returns an [`ErrorLoc`] for the current part of the driver
-    pub fn error_loc(&self) -> (Span, &'static str) {
+    pub fn error_loc(&self) -> ErrorLoc<'static> {
         if let Some(field) = &self.field {
             (field.field.span(), "in this field")
         } else if let Some(variant) =
