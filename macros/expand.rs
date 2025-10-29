@@ -38,7 +38,11 @@ where
     Template<O>: ExpandInfallible<O>,
     O: ExpansionOutput,
 {
-    fn expand_select1(&self, ctx: &Context, out: &mut O) -> syn::Result<()> {
+    fn expand_select1(
+        &self,
+        ctx: &Context,
+        out: &mut O,
+    ) -> syn::Result<()> {
         let mut found: Result<Option<(Span, &Template<O>)>, Vec<ErrorLoc>> =
             Ok(None);
 
