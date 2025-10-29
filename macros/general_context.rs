@@ -63,6 +63,27 @@ pub trait GeneralContext<'c>:
     }
 }
 
+impl<'c> Context<'c> {
+    // This is here so that it can be a trait method on GeneralContext.
+    // Otherwise it would have to be a free function or in an extension trait.
+    pub fn find_definition<B>(
+        &'c self,
+        call: &'c DefinitionName,
+    ) -> syn::Result<Option<(&'c Definition<B>, Context<'c>)>>
+    where
+        Definitions<'c>: AsRef<[&'c Definition<B>]>,
+        B: 'static,
+    {
+        let def = match self.defs().defs.find_raw(call) {
+            Some(y) => y,
+            None => return Ok(None),
+        };
+
+        let defs = self.defs().find_definition_deeper(&def.name, call)?;
+        Ok(Some((def, Context { defs, ..*self })))
+    }
+}
+
 pub type FullContextResult<'s, 'c> = Result<
     &'s Context<'c>, //
     MissingContextError<'c>,
