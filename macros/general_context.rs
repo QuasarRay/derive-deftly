@@ -61,15 +61,13 @@ pub trait GeneralContext<'c>:
     fn defs(&self) -> &DefinitionsContext<'c> {
         self.as_ref()
     }
-}
 
-impl<'c> Context<'c> {
     // This is here so that it can be a trait method on GeneralContext.
     // Otherwise it would have to be a free function or in an extension trait.
-    pub fn find_definition<B>(
+    fn find_definition<B>(
         &'c self,
         call: &'c DefinitionName,
-    ) -> syn::Result<Option<(&'c Definition<B>, Context<'c>)>>
+    ) -> syn::Result<Option<(&'c Definition<B>, impl GeneralContext<'c>)>>
     where
         Definitions<'c>: AsRef<[&'c Definition<B>]>,
         B: 'static,
@@ -80,7 +78,9 @@ impl<'c> Context<'c> {
         };
 
         let defs = self.defs().find_definition_deeper(&def.name, call)?;
-        Ok(Some((def, Context { defs, ..*self })))
+        let mut self_ = self.clone();
+        *self_.as_mut() = defs;
+        Ok(Some((def, self_)))
     }
 }
 

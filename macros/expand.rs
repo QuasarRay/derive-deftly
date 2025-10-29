@@ -683,6 +683,8 @@ impl DefinitionName {
             })
         };
 
+        let ctx = ctx.full_ctx_xxxx();
+
         match &def.body {
             DefinitionBody::Paste(content) => {
                 paste::expand(&ctx, def.body_span, content, out)?;
