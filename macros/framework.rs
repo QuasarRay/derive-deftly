@@ -14,7 +14,7 @@ pub use super::syntax::*;
 pub(super) use super::paste;
 pub(super) use super::paste::{IdentFrag, IdentFragInfallible};
 
-pub(super) use general_context::GeneralContext;
+pub(super) use general_context::{GeneralContext, MissingContextError};
 
 /// Context during expansion
 ///

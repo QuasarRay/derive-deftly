@@ -360,6 +360,7 @@ where
                     pair.punct().to_tokens_punct_composable(out);
                 });
             }
+            Ok::<_, MissingContextError>(())
         };
         let do_tgens =
             |out: &mut TokenAccumulator, ctx: &Context, composable: bool| {
@@ -393,7 +394,8 @@ where
                 },
                 Grouping::Ungrouped,
             )
-            .unwrap_or_else(|e| e.unreachable())
+            .unwrap_or_else(|e| e.unreachable());
+            Ok::<_, MissingContextError>(())
         };
 
         let do_maybe_delimited_group = |out, np, delim, content| {
@@ -425,8 +427,8 @@ where
 
         match self {
             SD::tname(_) => out.append_identfrag_toks(&ctx.top.ident)?,
-            SD::ttype(_) => do_ttype(out, Some(()), &do_tgnames),
-            SD::tdeftype(_) => do_ttype(out, None, &do_tgens),
+            SD::ttype(_) => do_ttype(out, Some(()), &do_tgnames)?,
+            SD::tdeftype(_) => do_ttype(out, None, &do_tgens)?,
             SD::vname(_) => {
                 out.append_identfrag_toks(&ctx.syn_variant(&kw_span)?.ident)?
             }
@@ -486,7 +488,7 @@ where
             })?,
 
             SD::tgens(np, ..) => out.append_tokens_with(np, |out| {
-                do_tgens_nodefs(out);
+                do_tgens_nodefs(out)?;
                 Ok(())
             })?,
             SD::tdefgens(np, ..) => out.append_tokens_with(np, |out| {
