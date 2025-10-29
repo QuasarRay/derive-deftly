@@ -661,7 +661,10 @@ impl<O: ExpansionOutput> DbgDumpRequest<O> {
 }
 
 impl ExplicitError {
-    pub fn throw<T>(&self, ctx: &Context<'_>) -> Result<T, syn::Error> {
+    pub fn throw<T>(
+        &self,
+        ctx: &Context<'_>,
+    ) -> Result<T, syn::Error> {
         Err(gctx
             .prepend_error_loc(&[
                 (self.message.span(), "template"), //
