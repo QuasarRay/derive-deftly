@@ -557,12 +557,12 @@ where
             SD::Crate(np, ..) => out.append_tokens(np, &ctx.template_crate)?,
 
             SD::paste(content, ..) => {
-                paste::expand(ctx, kw_span, content, out)?;
+                paste::expand(gctx, kw_span, content, out)?;
             }
             SD::paste_spanned(span, content, ..) => {
                 let set_span = (|| {
                     let mut span_tokens = TokenAccumulator::new();
-                    span.expand(ctx, &mut span_tokens);
+                    span.expand(gctx, &mut span_tokens);
                     let span = span_tokens.tokens()?.span();
                     Ok(span)
                 })()
@@ -570,11 +570,11 @@ where
                     out.record_error(e);
                     kw_span
                 });
-                paste::expand(ctx, set_span, content, out)?;
+                paste::expand(gctx, set_span, content, out)?;
             }
             SD::ChangeCase(content, case, ..) => {
                 let mut items = paste::Items::new(kw_span);
-                content.expand(ctx, &mut items);
+                content.expand(gctx, &mut items);
                 items.assemble(out, Some(*case))?;
             }
             SD::concat(content, _not_in_bool, not_in_paste, _) => {
@@ -703,7 +703,7 @@ impl DefinitionName {
 
         match &def.body {
             DefinitionBody::Paste(content) => {
-                paste::expand(&ctx, def.body_span, content, out)?;
+                paste::expand(ctx, def.body_span, content, out)?;
             }
             DefinitionBody::Concat(content) => {
                 let mut inner =
