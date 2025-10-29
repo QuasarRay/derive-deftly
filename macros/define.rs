@@ -4,7 +4,7 @@ use super::framework::*;
 
 #[derive(Debug, Clone)]
 struct TemplateDefinition {
-    doc_attrs: Vec<syn::Attribute>,
+    doc_attrs: DocAttributes,
     export: Option<MacroExport>,
     templ_name: TemplateName,
     options: UnprocessedOptions,
@@ -16,14 +16,7 @@ impl Parse for TemplateDefinition {
         // This rejects Rust keywords, which is good because
         // for example `#[derive_deftly(pub)]` ought not to mean to apply
         // a template called `pub`.  See ticket #1.
-        let doc_attrs = input.call(syn::Attribute::parse_outer)?;
-        for attr in &doc_attrs {
-            if !attr.path().is_ident("doc") {
-                return Err(attr
-                    .path()
-                    .error("only doc attributes are supported"));
-            }
-        }
+        let doc_attrs = input.parse()?;
         let export = MacroExport::parse_option(input)?;
         let templ_name = input.parse()?;
         let options =
@@ -198,16 +191,13 @@ pub fn define_derive_deftly_func_macro(
 
     let templ_mac_name = templ_name.macro_name();
 
-    let doc_addendum = (!doc_attrs.is_empty()).then(|| {
-        let addendum = format!(
-            r#"
+    let doc_attrs = doc_attrs.to_tokens_with_addendum(format_args!(
+        r#"
 
 This is a `derive_deftly` template.  Do not invoke it directly.
 To use it, write: `#[derive(Deftly)] #[derive_deftly({})]`."#,
-            templ_name
-        );
-        quote!( #[doc = #addendum] )
-    });
+        templ_name,
+    ));
 
     let engine_macro;
     let export_attr;
@@ -226,8 +216,7 @@ To use it, write: `#[derive(Deftly)] #[derive_deftly({})]`."#,
     // the macro must recent a dollar as its first argument because
     // it is hard to find a dollar otherwise!
     output.extend(quote! {
-        #( #doc_attrs )*
-        #doc_addendum
+        #doc_attrs
         #export_attr
         macro_rules! #templ_mac_name {
             {

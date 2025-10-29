@@ -149,6 +149,12 @@ impl<T: Parse> Parse for Concatenated<T> {
     }
 }
 
+impl<T: ToTokens> Concatenated<T> {
+    pub fn is_empty(&self) -> bool {
+        self.0.is_empty()
+    }
+}
+
 impl<T: ToTokens> ToTokens for Concatenated<T> {
     fn to_tokens(&self, out: &mut TokenStream) {
         for item in &self.0 {
@@ -419,6 +425,50 @@ impl Grouping {
                     .to_token_stream()
             }
         }
+    }
+}
+
+//---------- DocAttribute ----------
+
+/// `syn::Attribute`(s) (zero or more) that are known to be a `#[doc ]`.
+#[derive(Debug, Clone)]
+pub struct DocAttributes(Concatenated<syn::Attribute>);
+
+impl Parse for DocAttributes {
+    fn parse(input: ParseStream) -> syn::Result<Self> {
+        let attrs = input.call(syn::Attribute::parse_outer)?;
+        for attr in &attrs {
+            if !attr.path().is_ident("doc") {
+                return Err(attr
+                    .path()
+                    .error("only doc attributes are supported"));
+            }
+        }
+        Ok(DocAttributes(Concatenated(attrs)))
+    }
+}
+
+impl Deref for DocAttributes {
+    type Target = Concatenated<syn::Attribute>;
+    fn deref(&self) -> &Concatenated<syn::Attribute> {
+        &self.0
+    }
+}
+impl DocAttributes {
+    pub fn to_tokens_with_addendum(
+        self,
+        addendum_text: fmt::Arguments<'_>,
+    ) -> TokenStream {
+        let addendum = if self.0.is_empty() {
+            None
+        } else {
+            Some(addendum_text.to_string())
+        };
+        let mut out = self.0.to_token_stream();
+        if let Some(addendum) = addendum {
+            out.extend(quote!( #[doc = #addendum] ))
+        }
+        out
     }
 }
 
