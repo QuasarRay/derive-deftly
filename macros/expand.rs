@@ -596,7 +596,7 @@ where
                 // (There are some parallels between this and `${when }`)
                 "${define } and ${defcond } only allowed in a full template",
             ),
-            SD::UserDefined(name) => name.lookup_expand(ctx, out)?,
+            SD::UserDefined(name) => name.lookup_expand(gctx, out)?,
 
             SD::ignore(content, _) => {
                 let mut ignore = O::new_with_span(kw_span);
@@ -681,14 +681,17 @@ impl ExplicitError {
 }
 
 impl DefinitionName {
-    fn lookup_expand<O: ExpansionOutput>(
+    fn lookup_expand<'c, O: ExpansionOutput>(
         &self,
-        ctx: &Context<'_>,
+        ctx: &impl GeneralContext<'c>,
         out: &mut O,
     ) -> syn::Result<()> {
+        let ctx = ctx.reduce_lifetime();
+
         let (def, ctx) = ctx.find_definition(self)?.ok_or_else(|| {
             self.error(format!("user-defined expansion `{}` not found", self))
         })?;
+
         let not_in_paste = || {
             O::not_in_paste(self).map_err(|mut unpasteable| {
                 unpasteable.combine(def.body_span.error(
@@ -706,22 +709,20 @@ impl DefinitionName {
             })
         };
 
-        let ctx = ctx.full_ctx_xxxx();
-
         match &def.body {
             DefinitionBody::Paste(content) => {
-                paste::expand(ctx, def.body_span, content, out)?;
+                paste::expand(&ctx, def.body_span, content, out)?;
             }
             DefinitionBody::Concat(content) => {
                 let mut inner =
                     concat::Accumulator::new_with_span(def.body_span);
-                content.expand(ctx, &mut inner);
+                content.expand(&ctx, &mut inner);
                 inner.finish_onto(&not_in_paste()?, out);
             }
             DefinitionBody::Normal(content) => {
                 let ok = (not_in_paste()?, not_in_concat()?);
                 out.append_tokens_with(&ok, |out| {
-                    content.expand(ctx, out);
+                    content.expand(&ctx, out);
                     Ok(())
                 })?;
             }
