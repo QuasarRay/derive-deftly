@@ -19,7 +19,10 @@ pub(super) use super::paste::{IdentFrag, IdentFragInfallible};
 /// References the driver, and digested information about it.
 /// Also represents where in the driver we are,
 /// including repetition context.
-#[derive(Debug, Clone)]
+//
+// Has to be Copy because otherwise the borrow checker doesn't understand
+// what's going on with ctx_buf in Template::expand.
+#[derive(Debug, Clone, Copy)]
 pub struct Context<'c> {
     pub top: &'c syn::DeriveInput,
     pub template_crate: &'c syn::Path,
