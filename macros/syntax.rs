@@ -1057,7 +1057,8 @@ impl<O: SubstParseContext> DbgDumpRequest<O> {
         );
 
         impl<O> Display for Adapter<'_, O>
-        where O: SubstParseContext,
+        where
+            O: SubstParseContext,
         {
             fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
                 let Adapter(ddr, ctx) = self;
