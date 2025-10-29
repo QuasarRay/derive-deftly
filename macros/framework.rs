@@ -467,7 +467,7 @@ pub trait ExpansionOutput: SubstParseContext {
 pub trait Expand<O> {
     fn expand<'c>(
         &self,
-        ctx: &Context<'c>,
+        ctx: &impl GeneralContext<'c>,
         out: &mut O,
     ) -> syn::Result<()>;
 }
@@ -477,7 +477,7 @@ pub trait Expand<O> {
 /// within the output accumulator
 /// and therefore do not need to return them.
 pub trait ExpandInfallible<O> {
-    fn expand(&self, ctx: &Context, out: &mut O);
+    fn expand<'c>(&self, ctx: &impl GeneralContext<'c>, out: &mut O);
 }
 
 /// Accumulates tokens, or errors

@@ -292,7 +292,7 @@ impl ExpansionOutput for Accumulator {
 impl Expand<Accumulator> for TemplateElement<Accumulator> {
     fn expand<'c>(
         &self,
-        ctx: &Context<'c>,
+        ctx: &impl GeneralContext<'c>,
         out: &mut Accumulator,
     ) -> syn::Result<()> {
         match self {

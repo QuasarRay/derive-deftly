@@ -12,9 +12,11 @@ where
 {
     fn expand<'c>(
         &self,
-        ctx: &Context<'c>,
+        ctx: &impl GeneralContext<'c>,
         out: &mut O,
     ) -> syn::Result<()> {
+        let ctx = ctx.full_ctx_xxxx();
+
         for (condition, consequence) in &self.tests {
             //dbg!(&condition);
             if condition.eval_bool(ctx)? {
@@ -200,7 +202,9 @@ where
     TemplateElement<O>: Expand<O>,
     O: ExpansionOutput,
 {
-    fn expand(&self, ctx_in: &Context, out: &mut O) {
+    fn expand<'c>(&self, ctx_in: &impl GeneralContext<'c>, out: &mut O) {
+        let ctx_in = ctx_in.full_ctx_xxxx();
+
         let mut ctx_buf;
         let mut definitions_here = vec![];
         let mut defconds_here = vec![];
@@ -243,7 +247,7 @@ where
 impl Expand<TokenAccumulator> for TemplateElement<TokenAccumulator> {
     fn expand<'c>(
         &self,
-        ctx: &Context<'c>,
+        ctx: &impl GeneralContext<'c>,
         out: &mut TokenAccumulator,
     ) -> syn::Result<()> {
         match self {
@@ -282,7 +286,7 @@ where
 {
     fn expand<'c>(
         &self,
-        ctx: &Context<'c>,
+        ctx: &impl GeneralContext<'c>,
         out: &mut O,
     ) -> syn::Result<()> {
         self.sd.expand(ctx, out, self.kw_span)
@@ -772,7 +776,15 @@ where
     Template<O>: ExpandInfallible<O>,
     O: ExpansionOutput,
 {
-    fn expand<'c>(&self, ctx: &Context<'c>, out: &mut O) {
+    fn expand<'c>(&self, ctx: &impl GeneralContext<'c>, out: &mut O) {
+        let ctx = match ctx.full_ctx(self.span) {
+            Ok(y) => y,
+            Err(e) => {
+                out.record_error(e.into());
+                return;
+            }
+        };
+
         // for_with_within expects a fallible closure, but we want to do
         // infallible work in our infallible context, so we use `Void`
         // as the error type and wrap each call in `Ok`.

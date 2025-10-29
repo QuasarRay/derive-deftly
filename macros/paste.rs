@@ -976,7 +976,7 @@ impl ExpansionOutput for Items {
 impl Expand<Items> for TemplateElement<Items> {
     fn expand<'c>(
         &self,
-        ctx: &Context<'c>,
+        ctx: &impl GeneralContext<'c>,
         out: &mut Items,
     ) -> syn::Result<()> {
         match self {
