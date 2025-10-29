@@ -581,7 +581,7 @@ where
             }
             SD::concat(content, _not_in_bool, not_in_paste, _) => {
                 let mut accum = concat::Accumulator::new_with_span(kw_span);
-                content.expand(ctx, &mut accum);
+                content.expand(gctx, &mut accum);
                 accum.finish_onto(not_in_paste, out);
             }
 
@@ -600,7 +600,7 @@ where
 
             SD::ignore(content, _) => {
                 let mut ignore = O::new_with_span(kw_span);
-                content.expand(ctx, &mut ignore);
+                content.expand(gctx, &mut ignore);
                 let () = ignore.ignore_impl()?;
             }
             SD::when(..) => out.write_error(
