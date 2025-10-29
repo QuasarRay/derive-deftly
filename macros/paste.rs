@@ -974,7 +974,11 @@ impl ExpansionOutput for Items {
 }
 
 impl Expand<Items> for TemplateElement<Items> {
-    fn expand(&self, ctx: &Context, out: &mut Items) -> syn::Result<()> {
+    fn expand<'c>(
+        &self,
+        ctx: &Context<'c>,
+        out: &mut Items,
+    ) -> syn::Result<()> {
         match self {
             TE::Ident(ident, ..) => out.append_identfrag_toks(&ident)?,
             TE::LitStr(lit) => out.append_syn_litstr(&lit),

@@ -465,7 +465,11 @@ pub trait ExpansionOutput: SubstParseContext {
 /// It also avoids having to make all of these expansion methods
 /// members of the `ExpansionOutput` trait.
 pub trait Expand<O> {
-    fn expand(&self, ctx: &Context, out: &mut O) -> syn::Result<()>;
+    fn expand<'c>(
+        &self,
+        ctx: &Context<'c>,
+        out: &mut O,
+    ) -> syn::Result<()>;
 }
 /// Convenience trait providing `fn expand(self)`, infallible version
 ///

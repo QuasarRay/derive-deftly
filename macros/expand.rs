@@ -10,7 +10,11 @@ where
     Template<O>: ExpandInfallible<O>,
     O: ExpansionOutput,
 {
-    fn expand(&self, ctx: &Context, out: &mut O) -> syn::Result<()> {
+    fn expand<'c>(
+        &self,
+        ctx: &Context<'c>,
+        out: &mut O,
+    ) -> syn::Result<()> {
         for (condition, consequence) in &self.tests {
             //dbg!(&condition);
             if condition.eval_bool(ctx)? {
@@ -237,9 +241,9 @@ where
 }
 
 impl Expand<TokenAccumulator> for TemplateElement<TokenAccumulator> {
-    fn expand(
+    fn expand<'c>(
         &self,
-        ctx: &Context,
+        ctx: &Context<'c>,
         out: &mut TokenAccumulator,
     ) -> syn::Result<()> {
         match self {
@@ -276,7 +280,11 @@ where
     O: ExpansionOutput,
     TemplateElement<O>: Expand<O>,
 {
-    fn expand(&self, ctx: &Context, out: &mut O) -> syn::Result<()> {
+    fn expand<'c>(
+        &self,
+        ctx: &Context<'c>,
+        out: &mut O,
+    ) -> syn::Result<()> {
         self.sd.expand(ctx, out, self.kw_span)
     }
 }
@@ -764,7 +772,7 @@ where
     Template<O>: ExpandInfallible<O>,
     O: ExpansionOutput,
 {
-    fn expand(&self, ctx: &Context, out: &mut O) {
+    fn expand<'c>(&self, ctx: &Context<'c>, out: &mut O) {
         // for_with_within expects a fallible closure, but we want to do
         // infallible work in our infallible context, so we use `Void`
         // as the error type and wrap each call in `Ok`.
