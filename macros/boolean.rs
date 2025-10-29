@@ -68,7 +68,7 @@ impl Subst<BooleanContext> {
 
         let expand = |x: &Template<_>| {
             let mut out = TokenAccumulator::new();
-            x.expand(ctx, &mut out);
+            x.expand(gctx, &mut out);
             let out = out.tokens()?;
             Ok::<TokenStream, syn::Error>(out)
         };
