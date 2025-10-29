@@ -289,13 +289,15 @@ where
     /// Expand this template element, by adding it to `O`
     ///
     /// This is done using `O`'s [`ExpansionOutput`] methods.
-    fn expand(
+    fn expand<'c>(
         &self,
-        ctx: &Context,
+        gctx: &impl GeneralContext<'c>,
         out: &mut O,
         kw_span: Span,
     ) -> syn::Result<()> {
         // eprintln!("@@@@@@@@@@@@@@@@@@@@ EXPAND {:?}", self);
+
+        let ctx = gctx.full_ctx_xxxx();
 
         let do_meta = |sm: &meta::SubstMeta<_>, out, meta| {
             sm.expand(ctx, kw_span, out, meta)
