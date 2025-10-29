@@ -310,10 +310,10 @@ where
     ) -> syn::Result<()> {
         // eprintln!("@@@@@@@@@@@@@@@@@@@@ EXPAND {:?}", self);
 
-        let ctx = gctx.full_ctx_xxxx();
+        let ctx = gctx.full_ctx(kw_span);
 
         let do_meta = |sm: &meta::SubstMeta<_>, out, meta| {
-            sm.expand(ctx, kw_span, out, meta)
+            sm.expand(ctx?, kw_span, out, meta)
         };
 
         // Methods for handling generics.  Most take `composable: bool`,
@@ -335,7 +335,7 @@ where
             }
         };
         let do_tgens_nodefs = |out: &mut TokenAccumulator| {
-            for pair in ctx.top.generics.params.pairs() {
+            for pair in ctx?.top.generics.params.pairs() {
                 use syn::GenericParam as GP;
                 let out_attrs = |out: &mut TokenAccumulator, attrs: &[_]| {
                     attrs.iter().for_each(|attr| out.append(attr));
@@ -378,6 +378,7 @@ where
         // Handles $ttype and $tdeftype, and, indirectly, $vtype
         let do_ttype = |out: &mut O, colons: Option<()>, do_some_gens| {
             let _: &dyn Fn(&mut _, _, bool) = do_some_gens; // specify type
+            let ctx = ctx?;
             let gens = &ctx.top.generics;
             let colons = gens
                 .lt_token
@@ -407,11 +408,11 @@ where
                         delim,
                         kw_span,
                         |inside: &mut TokenAccumulator| {
-                            Ok(content.expand(ctx, inside))
+                            Ok(content.expand(ctx?, inside))
                         },
                     )?);
                 } else {
-                    content.expand(ctx, out);
+                    content.expand(ctx?, out);
                 }
                 Ok(())
             })
@@ -426,18 +427,18 @@ where
         };
 
         match self {
-            SD::tname(_) => out.append_identfrag_toks(&ctx.top.ident)?,
+            SD::tname(_) => out.append_identfrag_toks(&ctx?.top.ident)?,
             SD::ttype(_) => do_ttype(out, Some(()), &do_tgnames)?,
             SD::tdeftype(_) => do_ttype(out, None, &do_tgens)?,
             SD::vname(_) => {
-                out.append_identfrag_toks(&ctx.syn_variant(&kw_span)?.ident)?
+                out.append_identfrag_toks(&ctx?.syn_variant(&kw_span)?.ident)?
             }
             SD::fname(_) => {
-                let fname = ctx.field(&kw_span)?.fname(kw_span);
+                let fname = ctx?.field(&kw_span)?.fname(kw_span);
                 out.append_identfrag_toks(&fname)?;
             }
             SD::ftype(_) => {
-                let f = ctx.field(&kw_span)?;
+                let f = ctx?.field(&kw_span)?;
                 out.append_syn_type(
                     kw_span,
                     f.field.ty.clone(),
@@ -445,19 +446,19 @@ where
                 );
             }
             SD::fpatname(_) => {
-                let f = ctx.field(&kw_span)?;
+                let f = ctx?.field(&kw_span)?;
                 let fpatname =
                     Ident::new(&format!("f_{}", f.fname(kw_span)), kw_span);
                 out.append_identfrag_toks(&fpatname)?;
             }
-            SD::vindex(..) => do_index(out, ctx.variant(&kw_span)?.index)?,
-            SD::findex(..) => do_index(out, ctx.field(&kw_span)?.index)?,
+            SD::vindex(..) => do_index(out, ctx?.variant(&kw_span)?.index)?,
+            SD::findex(..) => do_index(out, ctx?.field(&kw_span)?.index)?,
 
-            SD::Xmeta(sm) => do_meta(sm, out, sm.pmetas(ctx, kw_span)?)?,
+            SD::Xmeta(sm) => do_meta(sm, out, sm.pmetas(ctx?, kw_span)?)?,
             SD::error(e, _) => e.throw(gctx)?,
 
             SD::Vis(vis, at) => {
-                out.append_tokens(at, vis.syn_vis(ctx, kw_span)?)?
+                out.append_tokens(at, vis.syn_vis(ctx?, kw_span)?)?
             }
             SD::tdefkwd(_) => {
                 fn w<O>(out: &mut O, t: impl ToTokens)
@@ -468,7 +469,7 @@ where
                         .unwrap_or_else(|e| e.unreachable());
                 }
                 use syn::Data::*;
-                match &ctx.top.data {
+                match &ctx?.top.data {
                     Struct(d) => w(out, &d.struct_token),
                     Enum(d) => w(out, &d.enum_token),
                     Union(d) => w(out, &d.union_token),
@@ -476,15 +477,15 @@ where
             }
 
             SD::tattrs(ra, np, ..) => out.append_tokens_with(np, |out| {
-                ra.expand(ctx, out, &ctx.top.attrs)
+                ra.expand(ctx?, out, &ctx?.top.attrs)
             })?,
             SD::vattrs(ra, np, ..) => out.append_tokens_with(np, |out| {
-                let variant = ctx.variant(&kw_span)?.variant;
+                let variant = ctx?.variant(&kw_span)?.variant;
                 let attrs = variant.as_ref().map(|v| &*v.attrs);
-                ra.expand(ctx, out, attrs.unwrap_or_default())
+                ra.expand(ctx?, out, attrs.unwrap_or_default())
             })?,
             SD::fattrs(ra, np, ..) => out.append_tokens_with(np, |out| {
-                ra.expand(ctx, out, &ctx.field(&kw_span)?.field.attrs)
+                ra.expand(ctx?, out, &ctx?.field(&kw_span)?.field.attrs)
             })?,
 
             SD::tgens(np, ..) => out.append_tokens_with(np, |out| {
@@ -492,15 +493,15 @@ where
                 Ok(())
             })?,
             SD::tdefgens(np, ..) => out.append_tokens_with(np, |out| {
-                do_tgens(out, ctx, true);
+                do_tgens(out, ctx?, true);
                 Ok(())
             })?,
             SD::tgnames(np, ..) => out.append_tokens_with(np, |out| {
-                do_tgnames(out, ctx, true);
+                do_tgnames(out, ctx?, true);
                 Ok(())
             })?,
             SD::twheres(np, ..) => out.append_tokens_with(np, |out| {
-                if let Some(clause) = &ctx.top.generics.where_clause {
+                if let Some(clause) = &ctx?.top.generics.where_clause {
                     out.with_tokens(|out| {
                         clause.predicates.to_tokens_punct_composable(out);
                     });
@@ -510,14 +511,14 @@ where
 
             SD::vpat(v, np, ..) => out.append_tokens_with(np, |out| {
                 // This comment prevents rustfmt making this unlike the others
-                v.expand(ctx, out, kw_span)
+                v.expand(ctx?, out, kw_span)
             })?,
             SD::vtype(v, np, ..) => out.append_tokens_with(np, |out| {
-                v.expand(ctx, out, kw_span, SD::ttype(Default::default()))
+                v.expand(ctx?, out, kw_span, SD::ttype(Default::default()))
             })?,
 
             SD::tdefvariants(content, np, ..) => {
-                let delim = if ctx.is_enum() {
+                let delim = if ctx?.is_enum() {
                     Some(Delimiter::Brace)
                 } else {
                     None
@@ -526,10 +527,10 @@ where
             }
             SD::fdefine(spec_f, np, ..) => {
                 out.append_tokens_with(np, |out| {
-                    let field = ctx.field(&kw_span)?.field;
+                    let field = ctx?.field(&kw_span)?.field;
                     if let Some(driver_f) = &field.ident {
                         if let Some(spec_f) = spec_f {
-                            spec_f.expand(ctx, out);
+                            spec_f.expand(ctx?, out);
                         } else {
                             out.append(driver_f);
                         }
@@ -540,10 +541,10 @@ where
             }
             SD::vdefbody(vname, content, np, ..) => {
                 use syn::Fields as SF;
-                let variant = ctx.variant(&kw_span)?;
+                let variant = ctx?.variant(&kw_span)?;
                 let struct_variant = variant.is_struct_toplevel_as_variant();
                 if !struct_variant {
-                    vname.expand(ctx, out);
+                    vname.expand(ctx?, out);
                 }
                 let delim = match variant.fields {
                     SF::Unit => None,
@@ -561,7 +562,7 @@ where
                     out.append_tokens(np, Token![;](kw_span))?;
                 }
             }
-            SD::Crate(np, ..) => out.append_tokens(np, &ctx.template_crate)?,
+            SD::Crate(np, ..) => out.append_tokens(np, &ctx?.template_crate)?,
 
             SD::paste(content, ..) => {
                 paste::expand(gctx, kw_span, content, out)?;
@@ -614,10 +615,10 @@ where
             ),
             SD::If(conds, ..) => conds.expand(gctx, out)?,
             SD::select1(conds, ..) => conds.expand_select1(gctx, out)?,
-            SD::For(repeat, _) => repeat.expand(ctx, out),
+            SD::For(repeat, _) => repeat.expand(ctx?, out),
 
             SD::dbg(ddr) => ddr.expand(gctx, out, kw_span),
-            SD::dbg_all_keywords(_) => dbg_allkw::dump(ctx),
+            SD::dbg_all_keywords(_) => dbg_allkw::dump(ctx?),
 
             // ## maint/check-keywords-documented BoolOnly ##
             SD::is_struct(bo)
