@@ -1,4 +1,3 @@
-#![allow(unused)] // XXXX
 //! Contexts that might not include a driver
 
 use super::framework::*;
