@@ -34,6 +34,12 @@ pub trait GeneralContext<'c>:
 
     fn full_ctx_raw(&self) -> Result<&Context<'c>, ErrorHandler<'c>>;
 
+    /// Driver `ErrorLoc` - if there is a driver
+    ///
+    /// Like `Context::error_loc` but can return `None`.
+    ///
+    fn error_loc_general(&self) -> Option<ErrorLoc<'c>>;
+
     // ----- Provided -----
 
     /// Obtain a full `Context`, in situations where a driver is needed
@@ -59,6 +65,17 @@ pub trait GeneralContext<'c>:
     /// We don't bother with `defs_mut`.
     fn defs(&self) -> &DefinitionsContext<'c> {
         self.as_ref()
+    }
+
+    fn prepend_error_loc(
+        &self,
+        rest: &'_ [ErrorLoc<'c>],
+    ) -> Vec<ErrorLoc<'c>> {
+        chain!(
+            self.error_loc_general(), //
+            rest.iter().copied(),
+        )
+        .collect_vec()
     }
 
     // This is here so that it can be a trait method on GeneralContext.
@@ -126,6 +143,10 @@ impl<'c> GeneralContext<'c> for Context<'c> {
 
     fn full_ctx_raw(&self) -> Result<&Context<'c>, ErrorHandler<'c>> {
         Ok(self)
+    }
+
+    fn error_loc_general(&self) -> Option<ErrorLoc<'c>> {
+        Some(self.error_loc())
     }
 }
 
