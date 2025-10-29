@@ -53,12 +53,6 @@ pub trait GeneralContext<'c>:
             })
     }
 
-    /// XXXX placeholder while we deploy `GeneralContext` everywhere
-    fn full_ctx_xxxx(&self) -> &Context<'c> {
-        self.full_ctx(Span::call_site())
-            .unwrap_or_else(|_| panic!()) //XXXX
-    }
-
     /// Convenience method.
     ///
     /// We could use `.as_ref()` but that is less clear (and risks
