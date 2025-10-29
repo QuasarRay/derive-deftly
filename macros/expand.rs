@@ -321,7 +321,8 @@ where
         // because we should include it for expansions like $tgens that the
         // user can append things to, but ideally *not* for expansions like
         // $ttype that the user can't.
-        let do_tgnames = |out: &mut TokenAccumulator, composable| {
+        let do_tgnames = |out: &mut TokenAccumulator,
+                          composable| {
             for pair in ctx.top.generics.params.pairs() {
                 use syn::GenericParam as GP;
                 match pair.value() {
@@ -359,12 +360,13 @@ where
                 });
             }
         };
-        let do_tgens = |out: &mut TokenAccumulator, composable: bool| {
-            out.append_maybe_punct_composable(
-                &ctx.top.generics.params,
-                composable,
-            );
-        };
+        let do_tgens =
+            |out: &mut TokenAccumulator, composable: bool| {
+                out.append_maybe_punct_composable(
+                    &ctx.top.generics.params,
+                    composable,
+                );
+            };
 
         // There are three contexts where the top-level type
         // name might occur with generics, and two syntaxes:
