@@ -61,7 +61,6 @@ pub enum TemplateElement<O: SubstParseContext> {
 
 #[derive(Debug)]
 pub struct RepeatedTemplate<O: SubstParseContext> {
-    #[allow(unused)] // XXXX
     pub span: Span,
     pub template: Template<O>,
     #[allow(clippy::vec_box)]
