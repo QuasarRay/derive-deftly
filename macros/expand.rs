@@ -15,8 +15,6 @@ where
         ctx: &impl GeneralContext<'c>,
         out: &mut O,
     ) -> syn::Result<()> {
-        let ctx = ctx.full_ctx_xxxx();
-
         for (condition, consequence) in &self.tests {
             //dbg!(&condition);
             if condition.eval_bool(ctx)? {
@@ -38,9 +36,9 @@ where
     Template<O>: ExpandInfallible<O>,
     O: ExpansionOutput,
 {
-    fn expand_select1(
+    fn expand_select1<'c>(
         &self,
-        ctx: &Context,
+        ctx: &impl GeneralContext<'c>,
         out: &mut O,
     ) -> syn::Result<()> {
         let mut found: Result<Option<(Span, &Template<O>)>, Vec<ErrorLoc>> =
@@ -609,8 +607,8 @@ where
                 &kw_span,
                 "internal error - misplaced ${when } detected too late!",
             ),
-            SD::If(conds, ..) => conds.expand(ctx, out)?,
-            SD::select1(conds, ..) => conds.expand_select1(ctx, out)?,
+            SD::If(conds, ..) => conds.expand(gctx, out)?,
+            SD::select1(conds, ..) => conds.expand_select1(gctx, out)?,
             SD::For(repeat, _) => repeat.expand(ctx, out),
 
             SD::dbg(ddr) => ddr.expand(ctx, out, kw_span),

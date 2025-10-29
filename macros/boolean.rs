@@ -56,10 +56,12 @@ impl SubstParseContext for BooleanContext {
 impl Subst<BooleanContext> {
     pub fn eval_bool<'c>(
         &self,
-        ctx: &Context<'c>,
+        gctx: &impl GeneralContext<'c>,
     ) -> syn::Result<bool> {
         // eprintln!("@@@@@@@@@@@@@@@@@@@@ EVAL {:?}", self);
         let kw_span = self.kw_span;
+
+        let ctx = gctx.full_ctx_xxxx();
 
         let v_fields = || ctx.variant(&kw_span).map(|v| &v.fields);
         use syn::Fields as SF;
