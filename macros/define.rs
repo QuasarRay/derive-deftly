@@ -3,7 +3,7 @@
 use super::framework::*;
 
 #[derive(Debug, Clone)]
-struct TemplateDefinition {
+pub struct TemplateDefinition {
     doc_attrs: DocAttributes,
     export: Option<MacroExport>,
     templ_name: TemplateName,
@@ -156,13 +156,24 @@ pub fn define_derive_deftly_func_macro(
 ) -> Result<TokenStream, syn::Error> {
     dprint_block!(&input, "define_derive_deftly! input");
 
+    let definition = syn::parse2(input)?;
+    define_template(
+        definition,
+        "define_derive_deftly! output"
+    )
+}
+
+pub fn define_template(
+    definition: TemplateDefinition,
+    #[allow(unused)] dprint_prefix: &str,
+) -> syn::Result<TokenStream> {
     let TemplateDefinition {
         doc_attrs,
         export,
         templ_name,
         options,
         template,
-    } = syn::parse2(input)?;
+    } = definition;
 
     let mut output = TokenStream::new();
 
@@ -244,7 +255,6 @@ To use it, write: `#[derive(Deftly)] #[derive_deftly({})]`."#,
         }
     });
 
-    dprint_block!(&output, "define_derive_deftly! output {}", templ_mac_name);
-
+    dprint_block!(&output, "{} {}", dprint_prefix, templ_mac_name);
     Ok(output)
 }
