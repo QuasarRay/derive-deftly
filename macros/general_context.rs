@@ -4,7 +4,7 @@ use super::framework::*;
 
 //==================== types ====================
 
-pub type ErrorHandler<'c> = &'c dyn Fn(Span) -> syn::Error;
+pub type ErrorHandler<'c> = &'c (dyn Fn(Span) -> syn::Error + 'c);
 
 pub type FullContextResult<'s, 'c> = Result<
     &'s Context<'c>, //
