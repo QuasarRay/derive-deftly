@@ -18,7 +18,7 @@ pub struct Template<O: SubstParseContext> {
 
 #[derive(Debug)]
 pub struct TopTemplate {
-    pub content: Template<TokenAccumulator>,
+    content: Template<TokenAccumulator>,
 }
 impl_deref!(TopTemplate, content, Template<TokenAccumulator>);
 
