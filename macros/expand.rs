@@ -719,21 +719,22 @@ impl DefinitionName {
                 unconcatable
             })
         };
+	let ctx = &ctx;
 
         match &def.body {
             DefinitionBody::Paste(content) => {
-                paste::expand(&ctx, def.body_span, content, out)?;
+                paste::expand(ctx, def.body_span, content, out)?;
             }
             DefinitionBody::Concat(content) => {
                 let mut inner =
                     concat::Accumulator::new_with_span(def.body_span);
-                content.expand(&ctx, &mut inner);
+                content.expand(ctx, &mut inner);
                 inner.finish_onto(&not_in_paste()?, out);
             }
             DefinitionBody::Normal(content) => {
                 let ok = (not_in_paste()?, not_in_concat()?);
                 out.append_tokens_with(&ok, |out| {
-                    content.expand(&ctx, out);
+                    content.expand(ctx, out);
                     Ok(())
                 })?;
             }
