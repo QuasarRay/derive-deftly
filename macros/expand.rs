@@ -408,11 +408,11 @@ where
                         delim,
                         kw_span,
                         |inside: &mut TokenAccumulator| {
-                            Ok(content.expand(ctx?, inside))
+                            Ok(content.expand(gctx, inside))
                         },
                     )?);
                 } else {
-                    content.expand(ctx?, out);
+                    content.expand(gctx, out);
                 }
                 Ok(())
             })
@@ -530,7 +530,7 @@ where
                     let field = ctx?.field(&kw_span)?.field;
                     if let Some(driver_f) = &field.ident {
                         if let Some(spec_f) = spec_f {
-                            spec_f.expand(ctx?, out);
+                            spec_f.expand(gctx, out);
                         } else {
                             out.append(driver_f);
                         }
@@ -544,7 +544,7 @@ where
                 let variant = ctx?.variant(&kw_span)?;
                 let struct_variant = variant.is_struct_toplevel_as_variant();
                 if !struct_variant {
-                    vname.expand(ctx?, out);
+                    vname.expand(gctx, out);
                 }
                 let delim = match variant.fields {
                     SF::Unit => None,
@@ -617,7 +617,7 @@ where
             ),
             SD::If(conds, ..) => conds.expand(gctx, out)?,
             SD::select1(conds, ..) => conds.expand_select1(gctx, out)?,
-            SD::For(repeat, _) => repeat.expand(ctx?, out),
+            SD::For(repeat, _) => repeat.expand(gctx, out),
 
             SD::dbg(ddr) => ddr.expand(gctx, out, kw_span),
             SD::dbg_all_keywords(_) => dbg_allkw::dump(ctx?),
