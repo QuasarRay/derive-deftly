@@ -1047,19 +1047,18 @@ impl<O: SubstParseContext> Parse for DbgDumpRequest<O> {
 }
 
 impl<O: SubstParseContext> DbgDumpRequest<O> {
-    pub fn display_heading<'s, 'c>(
+    pub fn display_heading<'s>(
         &'s self,
-        ctx: &'s impl GeneralContext<'c>,
+        ctx: GeneralContext<'s>,
     ) -> impl Display + 's {
-        struct Adapter<'a, O: SubstParseContext, C>(
+        struct Adapter<'a, 'c, O: SubstParseContext>(
             &'a DbgDumpRequest<O>,
-            &'a C,
+            GeneralContext<'c>,
         );
 
-        impl<'c, O, C> Display for Adapter<'_, O, C>
+        impl<O> Display for Adapter<'_, '_, O>
         where
             O: SubstParseContext,
-            C: GeneralContext<'c>,
         {
             fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
                 let Adapter(ddr, ctx) = self;

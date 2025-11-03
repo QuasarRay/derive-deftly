@@ -321,7 +321,7 @@ impl EngineExpandInput {
             self.template_name.as_ref(),
             |ctx| {
                 let mut output = TokenAccumulator::new();
-                self.template.expand(&ctx, &mut output);
+                self.template.expand(ctx.as_general(), &mut output);
                 let output = output.tokens()?;
 
                 //    dbg!(&&output);

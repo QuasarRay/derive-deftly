@@ -2,9 +2,13 @@
 
 use super::framework::*;
 
+use GeneralContext as GC;
+use GeneralContextBuf as GCB;
+
 macro_rules! GeneralContext { { $($life:tt)* } => {
-    &impl GeneralContext<$($life)*>
+    GeneralContext<$($life)*>
 } }
+
 
 //==================== types ====================
 
@@ -29,45 +33,39 @@ pub struct MissingContextError<'c> {
 /// Probably a `Context`, but might not be - there might be no driver
 ///
 /// Definitely contains a `DefinitionsContext`.
-pub trait GeneralContext<'c>:
-    Clone + AsRef<DefinitionsContext<'c>> + AsMut<DefinitionsContext<'c>>
-{
-    /// This very type, but with a different lifetime
-    ///
-    /// A couple of places want to make a version of the context but
-    /// with a shorter lifetime - but they only have the impl trait,
-    /// not a concrete type.
-    ///
-    /// There isn't a way to declare in the trait definition that the
-    /// type is covariant in its lifetime.  (It's hard even to *talk*
-    /// about the implementing Context type's own lifetime.)
-    ///
-    /// Instead, we provide this type: it implements the same trait,
-    /// but maybe with a shorter lifetime.  `reduce_lifetime` returns it.
-    ///
-    /// Implementations on `T<'a>` should make this be `T<'l>`.
-    type Self_<'l>: GeneralContext<'l> + Copy
-    where
-        'c: 'l;
+#[derive(Clone, Copy)]
+pub enum GeneralContext<'c> {
+    Full(&'c Context<'c>),
+    NoDriver(&'c DriverlessContext<'c>),
+}
 
-    fn reduce_lifetime<'s, 'r>(&'s self) -> &'s Self::Self_<'r>
-    where
-        'c: 'r;
+/// Probably a `Context`, but might not be - there might be no driver
+///
+/// Definitely contains a `DefinitionsContext`.
+#[derive(Clone, Copy)]
+pub enum GeneralContextBuf<'c> {
+    Full(Context<'c>),
+    NoDriver(DriverlessContext<'c>),
+}
 
-    fn full_ctx_raw(&self) -> Result<&Context<'c>, ErrorHandler<'c>>;
+#[derive(Clone, Copy)]
+pub struct DriverlessContext<'c> {
+    defs: DefinitionsContext<'c>,
+    driver_needed: ErrorHandler<'c>,
+}
+ 
+//==================== methods on GeneralContext ====================
 
-    /// Driver `ErrorLoc` - if there is a driver
-    ///
-    /// Like `Context::error_loc` but can return `None`.
-    ///
-    fn error_loc_general(&self) -> Option<ErrorLoc<'c>>;
-
-    fn display_for_dbg(&self) -> impl Display + '_;
-
-    // ----- Provided -----
+impl<'c> GeneralContext<'c> {
+    pub fn full_ctx_raw(&self) -> Result<&Context<'c>, ErrorHandler<'c>> {
+        match self {
+            GC::Full(ctx) => Ok(ctx),
+            GC::NoDriver(dc) => Err(dc.driver_needed),
+        }
+    }
 
     /// Obtain a full `Context`, in situations where a driver is needed
-    fn full_ctx(&self, span: Span) -> FullContextResult<'_, 'c> {
+    pub fn full_ctx(&self, span: Span) -> FullContextResult<'_, 'c> {
         self.full_ctx_raw()
             .map_err(move |error_handler| MissingContextError {
                 span,
@@ -81,11 +79,19 @@ pub trait GeneralContext<'c>:
     /// future inference failures).
     ///
     /// We don't bother with `defs_mut`.
-    fn defs(&self) -> &DefinitionsContext<'c> {
+    pub fn defs(&self) -> &DefinitionsContext<'c> {
         self.as_ref()
     }
 
-    fn prepend_error_loc(
+    // XXXX rename to error_loc, now it's not coexisting with an inherent
+    pub fn error_loc_general(&self) -> Option<ErrorLoc<'c>> {
+        match self {
+            GC::Full(ctx) => Some(ctx.error_loc()),
+            GC::NoDriver { .. } => None,
+        }
+    }
+
+    pub fn prepend_error_loc(
         &self,
         rest: &'_ [ErrorLoc<'c>],
     ) -> Vec<ErrorLoc<'c>> {
@@ -96,12 +102,22 @@ pub trait GeneralContext<'c>:
         .collect_vec()
     }
 
+    pub fn clone_buf(&self) -> GeneralContextBuf<'c> {
+        match self {
+            GC::Full(ctx) => GCB::Full((*ctx).clone()),
+            GC::NoDriver(dc) => GCB::NoDriver((*dc).clone()),
+        }
+    }
+}
+
+impl<'c> GeneralContext<'c> {
     // This is here so that it can be a trait method on GeneralContext.
     // Otherwise it would have to be a free function or in an extension trait.
-    fn find_definition<B>(
+    // XXXX ^ no longer true, put it back
+    pub fn find_definition<B>(
         &'c self,
         call: &'c DefinitionName,
-    ) -> syn::Result<Option<(&'c Definition<B>, impl GeneralContext<'c>)>>
+    ) -> syn::Result<Option<(&'c Definition<B>, GeneralContextBuf<'c>)>>
     where
         Definitions<'c>: AsRef<[&'c Definition<B>]>,
         B: 'static,
@@ -112,21 +128,27 @@ pub trait GeneralContext<'c>:
         };
 
         let defs = self.defs().find_definition_deeper(&def.name, call)?;
-        let mut self_ = self.clone();
+        let mut self_ = self.clone_buf();
         *self_.as_mut() = defs;
         Ok(Some((def, self_)))
     }
 }
 
-impl<'c> AsRef<DefinitionsContext<'c>> for Context<'c> {
+impl<'c> AsRef<DefinitionsContext<'c>> for GeneralContext<'c> {
     fn as_ref(&self) -> &DefinitionsContext<'c> {
-        &self.defs
+        match self {
+            GC::Full(ctx) => &ctx.defs,
+            GC::NoDriver(dc) => &dc.defs,
+        }
     }
 }
 
-impl<'c> AsMut<DefinitionsContext<'c>> for Context<'c> {
+impl<'c> AsMut<DefinitionsContext<'c>> for GeneralContextBuf<'c> {
     fn as_mut(&mut self) -> &mut DefinitionsContext<'c> {
-        &mut self.defs
+        match self {
+            GCB::Full(ctx) => &mut ctx.defs,
+            GCB::NoDriver(dc) => &mut  dc.defs,
+        }
     }
 }
 
@@ -159,37 +181,39 @@ impl Display for ContextDbgDisplayAdapter<'_> {
     }
 }
 
-impl<'c> GeneralContext<'c> for Context<'c> {
-    type Self_<'l>
-        = Context<'l>
-    where
-        'c: 'l;
-
-    fn reduce_lifetime<'s, 'r>(&'s self) -> &'s Self::Self_<'r>
-    where
-        'c: 'r,
-    {
-        self
-    }
-
-    fn full_ctx_raw(&self) -> Result<&Context<'c>, ErrorHandler<'c>> {
-        Ok(self)
-    }
-
-    fn error_loc_general(&self) -> Option<ErrorLoc<'c>> {
-        Some(self.error_loc())
-    }
-
-    fn display_for_dbg(&self) -> impl Display + '_ {
+impl<'c> Context<'c> {
+    pub fn display_for_dbg(&self) -> impl Display + '_ {
         ContextDbgDisplayAdapter(Some(self))
     }
 }
 
-impl<'c> Context<'c> {
-    pub fn as_general(&'c self) -> &'c Context<'c> {
-        self
+impl<'c> GeneralContext<'c> {
+    pub fn display_for_dbg(&self) -> impl Display + '_ {
+        ContextDbgDisplayAdapter(match &self {
+            GC::Full(ctx) => Some(ctx),
+            GC::NoDriver { .. } => None,
+        })
     }
 }
+
+//==================== conversions to/from Context ====================
+
+impl<'c> Context<'c> {
+    pub fn as_general(&'c self) -> GeneralContext<'c> {
+        GC::Full(self)
+    }
+}
+
+impl<'c> GeneralContextBuf<'c> {
+    pub fn as_ref(&'c self) -> GeneralContext<'c> {
+        match self {
+            GCB::Full(ctx) => GC::Full(ctx),
+            GCB::NoDriver(dc) => GC::NoDriver(dc),
+        }
+    }
+}
+
+//==================== remaining impl(s) ====================
 
 impl<'c> From<MissingContextError<'c>> for syn::Error {
     fn from(e: MissingContextError<'c>) -> syn::Error {
