@@ -78,8 +78,7 @@ impl<'c> GeneralContext<'c> {
         self.as_ref()
     }
 
-    // XXXX rename to error_loc, now it's not coexisting with an inherent
-    pub fn error_loc_general(&self) -> Option<ErrorLoc<'c>> {
+    pub fn error_loc(&self) -> Option<ErrorLoc<'c>> {
         match self {
             GC::Full(ctx) => Some(ctx.error_loc()),
             GC::NoDriver { .. } => None,
@@ -91,7 +90,7 @@ impl<'c> GeneralContext<'c> {
         rest: &'_ [ErrorLoc<'c>],
     ) -> Vec<ErrorLoc<'c>> {
         chain!(
-            self.error_loc_general(), //
+            self.error_loc(), //
             rest.iter().copied(),
         )
         .collect_vec()
