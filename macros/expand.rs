@@ -175,8 +175,11 @@ impl SubstVPat {
 
         let in_braces = braced_group(kw_span, |mut out| {
             WithinField::for_each(ctx, |ctx, field| {
-                SD::fname::<TokenAccumulator>(())
-                    .expand(ctx.as_general(), &mut out, kw_span)?;
+                SD::fname::<TokenAccumulator>(()).expand(
+                    ctx.as_general(),
+                    &mut out,
+                    kw_span,
+                )?;
                 out.append_tokens(&((), ()), Token![:](kw_span))?;
 
                 // Do the expansion with the paste machinery, since
