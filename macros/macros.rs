@@ -1,3 +1,4 @@
+#![allow(unused)] /* XXXX */
 #![allow(clippy::style, clippy::complexity)]
 #![doc=include_str!("README.md")]
 //

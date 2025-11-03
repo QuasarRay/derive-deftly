@@ -513,12 +513,14 @@ impl<O: SubstParseContext> Deref for Argument<O> {
 ///
 /// Do not construct this yourself.
 /// Only `deescape_orig_dollar` is allowed to do that.
+#[derive(Debug, strum::EnumDiscriminants)]
+// XXXX rename Handled
 pub enum OrigDollarDeescaped {
     /// We didn't find any `orig_dollar`
     NotFound,
     /// We *did* find `orig_dollar`; if we now see *another* `$`
     /// things get even stranger.
-    Found,
+    Found(Span),
 }
 
 /// Skip over any `orig_dollar`
@@ -533,7 +535,7 @@ pub fn deescape_orig_dollar(
         let (found, rest) = (|| {
             let (ident, rest) = cursor.ident()?;
             (ident == "orig_dollar").then(|| ())?;
-            Some((OrigDollarDeescaped::Found, rest))
+            Some((OrigDollarDeescaped::Found(ident.span()), rest))
         })()
         .unwrap_or((OrigDollarDeescaped::NotFound, *cursor));
         Ok((found, rest))
@@ -587,9 +589,9 @@ impl<O: SubstParseContext> Parse for TemplateElement<O> {
                     let dollar: Punct = input.parse()?;
                     match deescaped {
                         OrigDollarDeescaped::NotFound => {},
-                        OrigDollarDeescaped::Found => {
+                        OrigDollarDeescaped::Found(_) => {
                             match deescape_orig_dollar(input)? {
-                                OrigDollarDeescaped::Found => {},
+                                OrigDollarDeescaped::Found(_) => {},
                                 OrigDollarDeescaped::NotFound => {
                                     return Err(dollar.error(
  "found `$orig_dollar $` not followed by another orig_dollar!"
