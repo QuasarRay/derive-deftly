@@ -12,7 +12,7 @@ where
 {
     fn expand<'c>(
         &self,
-        ctx: GeneralContext!('c),
+        ctx: GeneralContext<'c>,
         out: &mut O,
     ) -> syn::Result<()> {
         for (condition, consequence) in &self.tests {
@@ -38,7 +38,7 @@ where
 {
     fn expand_select1<'c>(
         &self,
-        ctx: GeneralContext!('c),
+        ctx: GeneralContext<'c>,
         out: &mut O,
     ) -> syn::Result<()> {
         let mut found: Result<Option<(Span, &Template<O>)>, Vec<ErrorLoc>> =
@@ -208,7 +208,7 @@ where
     TemplateElement<O>: Expand<O>,
     O: ExpansionOutput,
 {
-    fn expand<'c>(&self, ctx_in: GeneralContext!('c), out: &mut O) {
+    fn expand<'c>(&self, ctx_in: GeneralContext<'c>, out: &mut O) {
         let mut ctx_buf;
         let mut definitions_here = vec![];
         let mut defconds_here = vec![];
@@ -251,7 +251,7 @@ where
 impl Expand<TokenAccumulator> for TemplateElement<TokenAccumulator> {
     fn expand<'c>(
         &self,
-        ctx: GeneralContext!('c),
+        ctx: GeneralContext<'c>,
         out: &mut TokenAccumulator,
     ) -> syn::Result<()> {
         match self {
@@ -290,7 +290,7 @@ where
 {
     fn expand<'c>(
         &self,
-        ctx: GeneralContext!('c),
+        ctx: GeneralContext<'c>,
         out: &mut O,
     ) -> syn::Result<()> {
         self.sd.expand(ctx, out, self.kw_span)
@@ -307,7 +307,7 @@ where
     /// This is done using `O`'s [`ExpansionOutput`] methods.
     fn expand<'c>(
         &self,
-        gctx: GeneralContext!('c),
+        gctx: GeneralContext<'c>,
         out: &mut O,
         kw_span: Span,
     ) -> syn::Result<()> {
@@ -647,7 +647,7 @@ where
 impl<O: ExpansionOutput> DbgDumpRequest<O> {
     fn expand<'c>(
         &self,
-        ctx: GeneralContext!('c),
+        ctx: GeneralContext<'c>,
         out: &mut O,
         kw_span: Span,
     ) {
@@ -681,7 +681,7 @@ impl<O: ExpansionOutput> DbgDumpRequest<O> {
 impl ExplicitError {
     pub fn throw<'c, T>(
         &self,
-        gctx: GeneralContext!('c),
+        gctx: GeneralContext<'c>,
     ) -> Result<T, syn::Error> {
         Err(gctx
             .prepend_error_loc(&[
@@ -694,7 +694,7 @@ impl ExplicitError {
 impl DefinitionName {
     fn lookup_expand<'c, O: ExpansionOutput>(
         &self,
-        ctx: GeneralContext!('c),
+        ctx: GeneralContext<'c>,
         out: &mut O,
     ) -> syn::Result<()> {
         let (def, ctx) = ctx.find_definition(self)?.ok_or_else(|| {
@@ -796,7 +796,7 @@ where
     Template<O>: ExpandInfallible<O>,
     O: ExpansionOutput,
 {
-    fn expand<'c>(&self, ctx: GeneralContext!('c), out: &mut O) {
+    fn expand<'c>(&self, ctx: GeneralContext<'c>, out: &mut O) {
         let ctx = match ctx.full_ctx(self.span) {
             Ok(y) => y,
             Err(e) => {

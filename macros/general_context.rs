@@ -5,11 +5,6 @@ use super::framework::*;
 use GeneralContext as GC;
 use GeneralContextBuf as GCB;
 
-macro_rules! GeneralContext { { $($life:tt)* } => {
-    GeneralContext<$($life)*>
-} }
-
-
 //==================== types ====================
 
 pub type ErrorHandler<'c> = &'c (dyn Fn(Span) -> syn::Error + 'c);
