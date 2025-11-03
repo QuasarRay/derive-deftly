@@ -293,12 +293,12 @@ impl EngineExpandInput {
 
         if let Some(exp) = driver_kind {
             macro_rules! got_kind { { $($kind:ident)* } => {
-            match &self.driver.data {
-                $(
-                    syn::Data::$kind(..) => ExpectedDriverKind::$kind,
-                )*
-            }
-        } }
+                match &self.driver.data {
+                    $(
+                        syn::Data::$kind(..) => ExpectedDriverKind::$kind,
+                    )*
+                }
+            } }
 
             let got_kind = got_kind!(Struct Enum Union);
             if got_kind != exp.value {

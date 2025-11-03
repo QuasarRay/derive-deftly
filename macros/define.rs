@@ -57,7 +57,7 @@ impl Parse for TemplateDefinition {
 ///
 /// See `doc/implementation.md` for why this is needed.
 ///
-/// This has the weird result that there's a sometimes
+/// This has the weird result that there's sometimes
 /// (namely, when using an adhoc, rather than precanned template)
 /// an undocumented `orig_dollar` expansion keyword,
 /// with strange behaviour.

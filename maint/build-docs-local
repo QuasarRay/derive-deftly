@@ -143,7 +143,7 @@ def build_rustdocs(cli_rustdoc_arg: List[str]) -> None:
     shfrag = '''
         : ${CARGO:=cargo}
         set -x
-        $CARGO $NAILINGCARGO_CARGO_OPTIONS doc "$@"
+        $CARGO $NAILINGCARGO_TOOLCHAIN $NAILINGCARGO_CARGO_OPTIONS doc "$@"
 '''
     cmd = ['sh','-ec', shfrag, 'x'] + rustdoc_opts + cli_rustdoc_arg
     for p in rustdoc_packages:
