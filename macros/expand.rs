@@ -89,10 +89,10 @@ impl SubstVType {
              spec: &Option<Argument<TokenAccumulator>>,
              sd: SubstDetails<TokenAccumulator>| {
                 if let Some(spec) = spec {
-                    spec.expand(ctx, out);
+                    spec.expand(ctx.as_general(), out);
                     Ok(())
                 } else {
-                    sd.expand(ctx, out, kw_span)
+                    sd.expand(ctx.as_general(), out, kw_span)
                 }
             };
 
@@ -176,7 +176,7 @@ impl SubstVPat {
         let in_braces = braced_group(kw_span, |mut out| {
             WithinField::for_each(ctx, |ctx, field| {
                 SD::fname::<TokenAccumulator>(())
-                    .expand(ctx, &mut out, kw_span)?;
+                    .expand(ctx.as_general(), &mut out, kw_span)?;
                 out.append_tokens(&((), ()), Token![:](kw_span))?;
 
                 // Do the expansion with the paste machinery, since
@@ -184,7 +184,7 @@ impl SubstVPat {
                 // allow, and how to use it.
                 let mut paste = paste::Items::new(kw_span);
                 if let Some(fprefix) = &self.fprefix {
-                    fprefix.expand(ctx, &mut paste);
+                    fprefix.expand(ctx.as_general(), &mut paste);
                 } else {
                     paste.append_fixed_string("f_");
                 }
@@ -830,7 +830,7 @@ impl<O: ExpansionOutput> RepeatedTemplate<O> {
         ctx.within_loop = WithinLoop::When;
 
         for when in &self.whens {
-            match when.eval_bool(&ctx) {
+            match when.eval_bool(ctx.as_general()) {
                 Ok(true) => continue,
                 Ok(false) => return,
                 Err(e) => {
@@ -841,6 +841,6 @@ impl<O: ExpansionOutput> RepeatedTemplate<O> {
         }
 
         ctx.within_loop = WithinLoop::Body;
-        self.template.expand(&ctx, out)
+        self.template.expand(ctx.as_general(), out)
     }
 }

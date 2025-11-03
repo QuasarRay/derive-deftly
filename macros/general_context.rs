@@ -174,6 +174,12 @@ impl<'c> GeneralContext<'c> for Context<'c> {
     }
 }
 
+impl<'c> Context<'c> {
+    pub fn as_general(&'c self) -> &'c Context<'c> {
+        self
+    }
+}
+
 impl<'c> From<MissingContextError<'c>> for syn::Error {
     fn from(e: MissingContextError<'c>) -> syn::Error {
         (e.error_handler)(e.span)

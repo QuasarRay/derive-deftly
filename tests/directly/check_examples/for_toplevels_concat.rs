@@ -35,7 +35,7 @@ impl Example for ForToplevelsConcatExample {
                     got.extend(
                         Context::call(driver, crate_, None, |ctx| {
                             let mut out = TokenAccumulator::new();
-                            template.expand(&ctx, &mut out);
+                            template.expand(ctx.as_general(), &mut out);
                             out.tokens()
                         })
                         .map_err(|e| format!("expansion failed: {}", e))?,
