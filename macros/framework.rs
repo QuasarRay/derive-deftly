@@ -40,7 +40,7 @@ pub struct Context<'c> {
 }
 
 /// Part of the context relating to user-defined expansions and conditions
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, Default)]
 pub struct DefinitionsContext<'c> {
     pub defs: Definitions<'c>,
     pub nesting_depth: u16,

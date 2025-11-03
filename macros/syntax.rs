@@ -10,7 +10,8 @@ use super::framework::*;
 pub use SubstDetails as SD;
 pub use TemplateElement as TE;
 
-#[derive(Debug)]
+#[derive(Debug, Default)]
+// We deliberately don't make this Clone, to avoid cloning whole parse trees.
 pub struct Template<O: SubstParseContext> {
     /// `TD::Subst` is known not to contain `SD::when`
     pub elements: Vec<TemplateElement<O>>,
