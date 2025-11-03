@@ -2,11 +2,29 @@
 
 use super::framework::*;
 
-pub type ErrorHandler<'c> = &'c dyn Fn(Span) -> syn::Error;
-
 macro_rules! GeneralContext { { $($life:tt)* } => {
     &impl GeneralContext<$($life)*>
 } }
+
+//==================== types ====================
+
+pub type ErrorHandler<'c> = &'c dyn Fn(Span) -> syn::Error;
+
+pub type FullContextResult<'s, 'c> = Result<
+    &'s Context<'c>, //
+    MissingContextError<'c>,
+>;
+
+/// Cheap type that embodies a failed requirement for a driver
+///
+/// This can be pre-obtained and bound to a local `ctx`, and then
+/// converted conveniently to `syn::Error` with `ctx?` when actually
+/// needed.
+#[derive(Clone, Copy)]
+pub struct MissingContextError<'c> {
+    span: Span,
+    error_handler: ErrorHandler<'c>,
+}
 
 /// Probably a `Context`, but might not be - there might be no driver
 ///
@@ -98,22 +116,6 @@ pub trait GeneralContext<'c>:
         *self_.as_mut() = defs;
         Ok(Some((def, self_)))
     }
-}
-
-pub type FullContextResult<'s, 'c> = Result<
-    &'s Context<'c>, //
-    MissingContextError<'c>,
->;
-
-/// Cheap type that embodies a failed requirement for a driver
-///
-/// This can be pre-obtained and bound to a local `ctx`, and then
-/// converted conveniently to `syn::Error` with `ctx?` when actually
-/// needed.
-#[derive(Clone, Copy)]
-pub struct MissingContextError<'c> {
-    span: Span,
-    error_handler: ErrorHandler<'c>,
 }
 
 impl<'c> AsRef<DefinitionsContext<'c>> for Context<'c> {
