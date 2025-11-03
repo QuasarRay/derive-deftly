@@ -56,7 +56,7 @@ impl SubstParseContext for BooleanContext {
 impl Subst<BooleanContext> {
     pub fn eval_bool<'c>(
         &self,
-        gctx: &impl GeneralContext<'c>,
+        gctx: GeneralContext!('c),
     ) -> syn::Result<bool> {
         // eprintln!("@@@@@@@@@@@@@@@@@@@@ EVAL {:?}", self);
         let kw_span = self.kw_span;
@@ -202,7 +202,7 @@ impl Subst<BooleanContext> {
 impl DefinitionName {
     fn lookup_eval_bool<'c>(
         &self,
-        ctx: &impl GeneralContext<'c>,
+        ctx: GeneralContext!('c),
     ) -> syn::Result<bool> {
         let ctx = ctx.reduce_lifetime();
 

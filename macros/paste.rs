@@ -528,7 +528,7 @@ fn ident_from_str() {
 }
 
 pub fn expand<'c>(
-    ctx: &impl GeneralContext<'c>,
+    ctx: GeneralContext!('c),
     tspan: Span,
     content: &Template<paste::Items>,
     out: &mut impl ExpansionOutput,
@@ -932,7 +932,7 @@ impl ExpansionOutput for Items {
     fn dbg_expand<'c>(
         &mut self,
         kw_span: Span,
-        ctx: &impl GeneralContext<'c>,
+        ctx: GeneralContext!('c),
         msg: &mut String,
         content: &Template<Items>,
     ) -> fmt::Result {
@@ -976,7 +976,7 @@ impl ExpansionOutput for Items {
 impl Expand<Items> for TemplateElement<Items> {
     fn expand<'c>(
         &self,
-        ctx: &impl GeneralContext<'c>,
+        ctx: GeneralContext!('c),
         out: &mut Items,
     ) -> syn::Result<()> {
         match self {

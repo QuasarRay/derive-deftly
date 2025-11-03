@@ -2,6 +2,10 @@
 
 use super::framework::*;
 
+macro_rules! GeneralContext { { $($life:tt)* } => {
+    &impl GeneralContext<$($life)*>
+} }
+
 //==================== types ====================
 
 pub type ErrorHandler<'c> = &'c (dyn Fn(Span) -> syn::Error + 'c);
