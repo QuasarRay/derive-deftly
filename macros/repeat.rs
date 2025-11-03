@@ -455,6 +455,27 @@ impl<'w> WithinVariant<'w> {
 
 //---------- definitions (user-defined keywords) ----------
 
+impl<'c> GeneralContext<'c> {
+    pub fn find_definition<B>(
+        &'c self,
+        call: &'c DefinitionName,
+    ) -> syn::Result<Option<(&'c Definition<B>, GeneralContextBuf<'c>)>>
+    where
+        Definitions<'c>: AsRef<[&'c Definition<B>]>,
+        B: 'static,
+    {
+        let def = match self.defs().defs.find_raw(call) {
+            Some(y) => y,
+            None => return Ok(None),
+        };
+
+        let defs = self.defs().find_definition_deeper(&def.name, call)?;
+        let mut self_ = self.clone_buf();
+        *self_.as_mut() = defs;
+        Ok(Some((def, self_)))
+    }
+}
+
 impl<'c> DefinitionsContext<'c> {
     /// Internal function for use by `find_definition`
     pub fn find_definition_deeper(

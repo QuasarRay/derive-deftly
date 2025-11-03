@@ -105,30 +105,6 @@ impl<'c> GeneralContext<'c> {
     }
 }
 
-impl<'c> GeneralContext<'c> {
-    // This is here so that it can be a trait method on GeneralContext.
-    // Otherwise it would have to be a free function or in an extension trait.
-    // XXXX ^ no longer true, put it back
-    pub fn find_definition<B>(
-        &'c self,
-        call: &'c DefinitionName,
-    ) -> syn::Result<Option<(&'c Definition<B>, GeneralContextBuf<'c>)>>
-    where
-        Definitions<'c>: AsRef<[&'c Definition<B>]>,
-        B: 'static,
-    {
-        let def = match self.defs().defs.find_raw(call) {
-            Some(y) => y,
-            None => return Ok(None),
-        };
-
-        let defs = self.defs().find_definition_deeper(&def.name, call)?;
-        let mut self_ = self.clone_buf();
-        *self_.as_mut() = defs;
-        Ok(Some((def, self_)))
-    }
-}
-
 impl<'c> AsRef<DefinitionsContext<'c>> for GeneralContext<'c> {
     fn as_ref(&self) -> &DefinitionsContext<'c> {
         match self {
