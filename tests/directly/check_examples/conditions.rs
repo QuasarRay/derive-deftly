@@ -121,7 +121,7 @@ impl ConditionExample {
         ctx: &Context<'_>,
     ) {
         let context_desc = ctx.desc_for_tests();
-        let got = cond.eval_bool(ctx);
+        let got = cond.eval_bool(ctx.as_general());
 
         let limvals = self
             .true_contexts

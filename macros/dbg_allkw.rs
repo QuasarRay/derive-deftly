@@ -46,7 +46,7 @@ fn template_result(ctx: &Context, templ: TokenStream) -> String {
         parser.parse2(templ).expect("failed to parse own template");
     let result = (|| {
         let mut output = TokenAccumulator::new();
-        templ.expand(ctx, &mut output);
+        templ.expand(ctx.as_general(), &mut output);
         output.tokens()
     })();
     match result {
