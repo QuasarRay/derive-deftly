@@ -4,6 +4,10 @@ use super::framework::*;
 
 pub type ErrorHandler<'c> = &'c dyn Fn(Span) -> syn::Error;
 
+macro_rules! GeneralContext { { $($life:tt)* } => {
+    &impl GeneralContext<$($life)*>
+} }
+
 /// Probably a `Context`, but might not be - there might be no driver
 ///
 /// Definitely contains a `DefinitionsContext`.

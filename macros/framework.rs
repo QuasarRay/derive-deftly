@@ -448,7 +448,7 @@ pub trait ExpansionOutput: SubstParseContext {
     fn dbg_expand<'c>(
         &mut self,
         kw_span: Span,
-        ctx: &impl GeneralContext<'c>,
+        ctx: GeneralContext!('c),
         msg: &mut String,
         content: &Self::DbgContent,
     ) -> fmt::Result;
@@ -467,7 +467,7 @@ pub trait ExpansionOutput: SubstParseContext {
 pub trait Expand<O> {
     fn expand<'c>(
         &self,
-        ctx: &impl GeneralContext<'c>,
+        ctx: GeneralContext!('c),
         out: &mut O,
     ) -> syn::Result<()>;
 }
@@ -477,7 +477,7 @@ pub trait Expand<O> {
 /// within the output accumulator
 /// and therefore do not need to return them.
 pub trait ExpandInfallible<O> {
-    fn expand<'c>(&self, ctx: &impl GeneralContext<'c>, out: &mut O);
+    fn expand<'c>(&self, ctx: GeneralContext!('c), out: &mut O);
 }
 
 /// Accumulates tokens, or errors
@@ -654,7 +654,7 @@ impl ExpansionOutput for TokenAccumulator {
     fn dbg_expand<'c>(
         &mut self,
         _kw_span: Span,
-        ctx: &impl GeneralContext<'c>,
+        ctx: GeneralContext!('c),
         msg: &mut String,
         content: &Template<TokenAccumulator>,
     ) -> fmt::Result {
