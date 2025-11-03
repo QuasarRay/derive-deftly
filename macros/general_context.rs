@@ -48,7 +48,7 @@ pub struct DriverlessContext<'c> {
     defs: DefinitionsContext<'c>,
     driver_needed: ErrorHandler<'c>,
 }
- 
+
 //==================== methods on GeneralContext ====================
 
 impl<'c> GeneralContext<'c> {
@@ -117,7 +117,7 @@ impl<'c> AsMut<DefinitionsContext<'c>> for GeneralContextBuf<'c> {
     fn as_mut(&mut self) -> &mut DefinitionsContext<'c> {
         match self {
             GCB::Full(ctx) => &mut ctx.defs,
-            GCB::NoDriver(dc) => &mut  dc.defs,
+            GCB::NoDriver(dc) => &mut dc.defs,
         }
     }
 }
