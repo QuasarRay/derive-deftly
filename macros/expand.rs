@@ -562,7 +562,9 @@ where
                     out.append_tokens(np, Token![;](kw_span))?;
                 }
             }
-            SD::Crate(np, ..) => out.append_tokens(np, &ctx?.template_crate)?,
+            SD::Crate(np, ..) => {
+                out.append_tokens(np, &ctx?.template_crate)?
+            }
 
             SD::paste(content, ..) => {
                 paste::expand(gctx, kw_span, content, out)?;
