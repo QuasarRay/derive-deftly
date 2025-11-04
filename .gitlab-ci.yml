@@ -24,6 +24,15 @@ image: "rust:bookworm"
   # See "Using the proper Nightly Rust" in tests/tests.rs
   image: rustlang/rust@sha256:b3ddf3e263f50345cd3693a93f59f0ba2cc5575a430553b71db48487a5f541dc
   # ^ this is from tags.2025-02-10T14:08+00:00.gz (see HACKING.md)
+  extends: .cargo
+  cache:
+    key: rust-nightly
+
+.cargo-minimal:
+  extends: .cargo
+  image: "rust:1.56.0"
+  cache:
+    key: rust-minimal
 
 # Running tests without --workspace is useful because that way cargo
 # won't add features to our dependencies that we didn't actually enable
@@ -233,26 +242,28 @@ check-doc-links:
 # We don't enable any of the optional fatures in derive-deftly-tests.
 minimal-versions:
   stage: comprehensive
-  image: "rust:1.56.0"
+  extends: .cargo-minimal
   script:
     - mv Cargo.lock.minimal Cargo.lock
     - maint/cargo-test-locked +1.56.0 --workspace --no-default-features --features=derive-deftly-tests/full
 
 minimal-versions-minfeatures:
   stage: comprehensive
-  image: "rust:1.56.0"
+  extends: .cargo-minimal
   script:
     - mv Cargo.lock.minimal Cargo.lock
     - maint/cargo-test-locked +1.56.0 -p derive-deftly-tests --no-default-features
 
 feature-matrix:
   stage: comprehensive
+  extends: .cargo
   script:
     - apt-get update && apt-get install -y python3-toml
     - maint/feature-matrix-test
 
 cargo-test-dprint:
   stage: comprehensive
+  extends: .cargo
   script:
     - RUSTFLAGS="--cfg derive_deftly_dprint" DERIVE_DEFTLY_DPRINT=1 maint/cargo-test-locked --workspace --all-features -- run_pass_expand 3>&2 2>&1 1>&3 3>&- | tee dprint-output
     - grep -m1 'define_derive_deftly! input start' dprint-output
