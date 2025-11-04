@@ -11,6 +11,17 @@ pub struct TemplateDefinition {
     template: TokenStream,
 }
 
+#[derive(Debug, Clone)]
+enum DefineMacroInput {
+    Immediate(TemplateDefinition),
+}
+
+impl Parse for DefineMacroInput {
+    fn parse(input: ParseStream) -> syn::Result<Self> {
+        input.parse().map(DefineMacroInput::Immediate)
+    }
+}
+
 impl Parse for TemplateDefinition {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         // This rejects Rust keywords, which is good because
@@ -156,11 +167,13 @@ pub fn define_derive_deftly_func_macro(
 ) -> Result<TokenStream, syn::Error> {
     dprint_block!(&input, "define_derive_deftly! input");
 
-    let definition = syn::parse2(input)?;
-    define_template(
-        definition,
-        "define_derive_deftly! output"
-    )
+    let input = syn::parse2(input)?;
+
+    match input {
+        DefineMacroInput::Immediate(definition) => {
+            define_template(definition, "define_derive_deftly! output")
+        }
+    }
 }
 
 pub fn define_template(
