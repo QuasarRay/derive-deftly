@@ -215,26 +215,33 @@ cargo-doc-all:
     - jq --raw-output '. | select(.message.level) | .message.rendered' <rustdoc.json |tee rustdoc.errors
     - test ! -s rustdoc.errors
 
+.build-docs-local:
+  script:
+    - ./maint/via-cargo-install-in-ci mdbook
+    - apt-get update
+    - apt-get -y install python3 python3-toml
+
 # Check that our (locally-massaged) don't have broken links.
 # This also detects links brokne between rustdoc (on docs.rs)
 # and the guide (on pages.tpo).
 build-docs-local:
   stage: comprehensive
+  extends: .build-docs-local
   script:
-    - ./maint/via-cargo-install-in-ci mdbook
-    - apt-get update
-    - apt-get -y install python3 python3-toml
     - maint/build-docs-local --dev --no-linkcheck
+  cache:
+    when: 'always'
+    paths:
+      - cache/*
 
 # Check that our (locally-massaged) docs don't have broken links.
 # This also detects links brokne between rustdoc (on docs.rs)
 # and the guide (on pages.tpo).
 check-doc-links:
   stage: comprehensive
+  extends: .build-docs-local
   script:
-    - ./maint/via-cargo-install-in-ci mdbook
-    - apt-get update
-    - apt-get -y install python3 python3-toml linklint
+    - apt-get -y linklint
     - maint/build-docs-local
     - maint/build-docs-local --dev
 
