@@ -645,12 +645,7 @@ where
 }
 
 impl<O: ExpansionOutput> DbgDumpRequest<O> {
-    fn expand<'c>(
-        &self,
-        ctx: GeneralContext<'c>,
-        out: &mut O,
-        kw_span: Span,
-    ) {
+    fn expand<'c>(&self, ctx: GeneralContext<'c>, out: &mut O, kw_span: Span) {
         let desc =
             format!("derive-deftly dbg dump {}", self.display_heading(ctx),);
 
