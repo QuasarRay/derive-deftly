@@ -204,8 +204,6 @@ impl DefinitionName {
         &self,
         ctx: GeneralContext!('c),
     ) -> syn::Result<bool> {
-        let ctx = ctx.reduce_lifetime();
-
         let (def, ctx) = ctx.find_definition::<DefCondBody>(self)?
             .ok_or_else(|| {
                 let mut error = self.error(format!(
@@ -226,6 +224,6 @@ impl DefinitionName {
                 error
             })?;
 
-        def.body.eval_bool(&ctx)
+        def.body.eval_bool(ctx.as_ref())
     }
 }

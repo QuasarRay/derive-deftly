@@ -212,7 +212,7 @@ where
         let mut ctx_buf;
         let mut definitions_here = vec![];
         let mut defconds_here = vec![];
-        let mut ctx = ctx_in.reduce_lifetime();
+        let mut ctx = ctx_in;
 
         for element in &self.elements {
             macro_rules! handle_definition { {
@@ -226,13 +226,13 @@ where
                     // Doing this with a macro makes it nice and obvious
                     // to the borrow checker.
                     $store.push(def);
-                    ctx_buf = ctx_in.reduce_lifetime().clone();
+                    ctx_buf = ctx_in.clone_buf();
                     ctx_buf.as_mut().defs = Definitions {
                         earlier: Some(&ctx_in.defs().defs),
                         here: &definitions_here,
                         conds: &defconds_here,
                     };
-                    ctx = &ctx_buf;
+                    ctx = ctx_buf.as_ref();
                     continue;
                 }
 
@@ -697,8 +697,6 @@ impl DefinitionName {
         ctx: GeneralContext!('c),
         out: &mut O,
     ) -> syn::Result<()> {
-        let ctx = ctx.reduce_lifetime();
-
         let (def, ctx) = ctx.find_definition(self)?.ok_or_else(|| {
             self.error(format!("user-defined expansion `{}` not found", self))
         })?;
@@ -719,7 +717,7 @@ impl DefinitionName {
                 unconcatable
             })
         };
-        let ctx = &ctx;
+        let ctx = ctx.as_ref();
 
         match &def.body {
             DefinitionBody::Paste(content) => {
