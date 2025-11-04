@@ -226,6 +226,8 @@ cargo-doc-all:
 # and the guide (on pages.tpo).
 build-docs-local:
   stage: comprehensive
+  extends:
+    - .cache-cargo-install
   script:
     - *build-docs-prep-script
     - maint/build-docs-local --dev --no-linkcheck
@@ -235,6 +237,8 @@ build-docs-local:
 # and the guide (on pages.tpo).
 check-doc-links:
   stage: comprehensive
+  extends:
+    - .cache-cargo-install
   script:
     - *build-docs-prep-script
     - apt-get -y install linklint
@@ -276,6 +280,8 @@ pages:
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
   stage: deploy-book
+  extends:
+    - .cache-cargo-install
   script:
     - ./maint/via-cargo-install-in-ci mdbook
     - ./maint/build-mdbook
