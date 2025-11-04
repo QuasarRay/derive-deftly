@@ -128,11 +128,14 @@ impl<'c> AsMut<DefinitionsContext<'c>> for Context<'c> {
 
 //==================== display_for_dbg ====================
 
-struct ContextDbgDisplayAdapter<'a>(&'a Context<'a>);
+struct ContextDbgDisplayAdapter<'a>(Option<&'a Context<'a>>);
 
 impl Display for ContextDbgDisplayAdapter<'_> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let ctx = &self.0;
+        let Some(ctx) = self.0 else {
+            return write!(f, "[no driver]");
+        };
+
         write!(f, "for {}", &ctx.top.ident)?;
         if let Some(wv) = &ctx.variant {
             if let Some(v) = &wv.variant {
@@ -174,7 +177,7 @@ impl<'c> GeneralContext<'c> for Context<'c> {
     }
 
     fn display_for_dbg(&self) -> impl Display + '_ {
-        ContextDbgDisplayAdapter(self)
+        ContextDbgDisplayAdapter(Some(self))
     }
 }
 
