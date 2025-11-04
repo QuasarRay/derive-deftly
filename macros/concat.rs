@@ -247,7 +247,7 @@ impl ExpansionOutput for Accumulator {
     fn dbg_expand<'c>(
         &mut self,
         kw_span: Span,
-        ctx: GeneralContext!('c),
+        ctx: GeneralContext<'c>,
         msg: &mut String,
         content: &Template<Accumulator>,
     ) -> fmt::Result {
@@ -292,7 +292,7 @@ impl ExpansionOutput for Accumulator {
 impl Expand<Accumulator> for TemplateElement<Accumulator> {
     fn expand<'c>(
         &self,
-        ctx: GeneralContext!('c),
+        ctx: GeneralContext<'c>,
         out: &mut Accumulator,
     ) -> syn::Result<()> {
         match self {
