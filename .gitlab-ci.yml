@@ -16,8 +16,21 @@ image: "rust:bookworm"
 
 .rust-msrv:
   image: "rust:1.56.0"
+  cache:
+    key: rust-minimal
+    when: 'always'
+    paths:
+      # We cache the $CARGO_HOME only for our MSRV, 1.56.0.  For modern
+      # Rust, downloading the crate files from crates.io is *much* faster
+      # getting them from the gitlab CI cache.  WTF.
+      - .cargo-home
+      # The 1.56 compiler is also considerably slower.
+      - target
 .rust-msrv-prep-script: &rust-msrv-prep-script
     - mv Cargo.lock.minimal Cargo.lock
+    # Use a CARGO_HOME here, where we can cache it.
+    - export CARGO_HOME="$PWD/.cargo-home"
+    - export PATH="$CARGO_HOME/bin:$PATH"
 
 # Running tests without --workspace is useful because that way cargo
 # won't add features to our dependencies that we didn't actually enable
