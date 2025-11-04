@@ -152,7 +152,7 @@ impl<'c> GeneralContext<'c> for Context<'c> {
 
         impl Display for Adapter<'_> {
             fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-                let ctx = self.0;
+                let ctx = &self.0;
                 write!(f, "for {}", &ctx.top.ident)?;
                 if let Some(wv) = &ctx.variant {
                     if let Some(v) = &wv.variant {
