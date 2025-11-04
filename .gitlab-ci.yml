@@ -37,6 +37,14 @@ image: "rust:bookworm"
   image: rustlang/rust@sha256:b3ddf3e263f50345cd3693a93f59f0ba2cc5575a430553b71db48487a5f541dc
   # ^ this is from tags.2025-02-10T14:08+00:00.gz (see HACKING.md)
 
+.cache-cargo-install:
+  # Note!  `.extends` doesn't merge the `paths` in `cache`, so
+  # a job that wanted to cache various different things couldn't just use this.
+  cache:
+    when: 'always'
+    paths:
+      - cache/*
+
 # Running tests without --workspace is useful because that way cargo
 # won't add features to our dependencies that we didn't actually enable
 # *in the derive-deftly or derive-deftly-macros crates*.
@@ -118,13 +126,10 @@ cargo-test:
   stage: test
   extends:
     - .rust-nightly
+    - .cache-cargo-install
   script:
     - ./maint/via-cargo-install-in-ci cargo-expand --version=1.0.100 --features=prettyplease
     - maint/cargo-test-locked --workspace --all-features -- --skip directly::check_examples
-  cache:
-    when: 'always'
-    paths:
-      - cache/*
 
 # Warning only, since this approach may be fragile and also the 
 # testing machinery (particularly the thing that parses reference.md
@@ -146,15 +151,12 @@ every-commit:
   stage: comprehensive
   extends:
     - .rust-nightly
+    - .cache-cargo-install
   script:
     - apt-get -y update
     - apt-get -y install libtoml-perl git
     - ./maint/via-cargo-install-in-ci cargo-expand --version=1.0.67 --features=prettyplease
     - maint/for-every-commit maint/cargo-test-locked --workspace --all-features -- --skip directly::check_examples
-  cache:
-    when: 'always'
-    paths:
-      - cache/*
 
 python3-mypy:
   stage: test
