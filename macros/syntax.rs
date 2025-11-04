@@ -443,7 +443,7 @@ impl<O: SubstParseContext> Parse for Template<O> {
 }
 
 impl<O: SubstParseContext> Template<O> {
-    fn parse_special<S: SpecialParseContext>(
+    pub fn parse_special<S: SpecialParseContext>(
         input: ParseStream,
         special: &mut S,
     ) -> syn::Result<Self> {
@@ -759,8 +759,7 @@ impl ParseUsingSubkeywords for SubstVPat {
 
 impl<O: SubstParseContext> Subst<O> {
     /// Parses everything including a `$` (which we insist on)
-    #[allow(dead_code)] // This was once used for ${paste }
-    fn parse_entire(input: ParseStream) -> syn::Result<Self> {
+    pub fn parse_entire(input: ParseStream) -> syn::Result<Self> {
         let _dollar: Token![$] = input.parse()?;
         let deescaped = deescape_orig_dollar(input)?;
         let la = input.lookahead1();

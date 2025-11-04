@@ -218,7 +218,7 @@ where
     TemplateElement<O>: Expand<O>,
     O: ExpansionOutput + 's,
 {
-    fn expand_iter<'c>(
+    pub fn expand_iter<'c>(
         elements: impl IntoIterator<Item = &'s TemplateElement<O>>,
         ctx_in: GeneralContext<'c>,
         out: &mut O,
