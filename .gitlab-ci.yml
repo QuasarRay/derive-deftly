@@ -14,10 +14,17 @@ default:
 
 image: "rust:bookworm"
 
+.cargo:
+  cache:
+    paths:
+      - target
+      - /usr/local/cargo
+
 # Running tests without --workspace is useful because that way cargo
 # won't add features to our dependencies that we didn't actually enable
 # *in the derive-deftly or derive-deftly-macros crates*.
 cargo-check-deps:
+  extends: .cargo
   stage: test
   script:
     - cargo check --locked --all-features
