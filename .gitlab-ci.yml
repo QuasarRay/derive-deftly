@@ -30,16 +30,19 @@ cargo-check-deps:
     - cargo check --locked --all-features
 
 cargo-check:
+  extends: .cargo
   stage: test
   script:
     - cargo check --locked --workspace --all-features
 
 cargo-check-minfeatures:
+  extends: .cargo
   stage: test
   script:
     - cargo check --locked --no-default-features --features=minimal-1
 
 cargo-fmt:
+  extends: .cargo
   stage: test
   script:
     - rustup component add rustfmt
@@ -68,6 +71,9 @@ maint-check-todos:
     - maint/check-blocking-todos
 
 cargo-clippy:
+  extends: .cargo
+  cache:
+    key: 
   stage: test
   image: "rust:1.84.0"
   script:
