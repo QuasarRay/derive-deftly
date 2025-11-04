@@ -7,7 +7,8 @@ stages:
 default:
   before_script:
     # Print version info for debugging
-    - export CARGO_HOME=$PWD/.cargo-home
+    - export CARGO_HOME="$PWD/.cargo-home"
+    - export PATH="$CARGO_HOME/bin:$PATH"
     - rustc --version ||true
     - cargo --version ||true
     # See tests/stderr.rs
