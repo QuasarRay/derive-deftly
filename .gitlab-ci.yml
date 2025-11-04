@@ -7,6 +7,7 @@ stages:
 default:
   before_script:
     # Print version info for debugging
+    - export CARGO_HOME=$PWD/.cargo-home
     - rustc --version ||true
     - cargo --version ||true
     # See tests/stderr.rs
@@ -18,7 +19,7 @@ image: "rust:bookworm"
   cache:
     paths:
       - target
-      - /usr/local/cargo
+      - .cargo-home
 
 .cargo-nightly:
   # See "Using the proper Nightly Rust" in tests/tests.rs
