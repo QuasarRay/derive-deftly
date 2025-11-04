@@ -14,6 +14,37 @@ default:
 
 image: "rust:bookworm"
 
+.rust-msrv:
+  image: "rust:1.56.0"
+  cache:
+    key: rust-minimal
+    when: 'always'
+    paths:
+      # We cache the $CARGO_HOME only for our MSRV, 1.56.0.  For modern
+      # Rust, downloading the crate files from crates.io is *much* faster
+      # getting them from the gitlab CI cache.  WTF.
+      - .cargo-home
+      # The 1.56 compiler is also considerably slower.
+      - target
+.rust-msrv-prep-script: &rust-msrv-prep-script
+    - mv Cargo.lock.minimal Cargo.lock
+    # Use a CARGO_HOME here, where we can cache it.
+    - export CARGO_HOME="$PWD/.cargo-home"
+    - export PATH="$CARGO_HOME/bin:$PATH"
+
+.rust-nightly:
+  # See "Using the proper Nightly Rust" in tests/tests.rs
+  image: rustlang/rust@sha256:b3ddf3e263f50345cd3693a93f59f0ba2cc5575a430553b71db48487a5f541dc
+  # ^ this is from tags.2025-02-10T14:08+00:00.gz (see HACKING.md)
+
+.cache-cargo-install:
+  # Note!  `.extends` doesn't merge the `paths` in `cache`, so
+  # a job that wanted to cache various different things couldn't just use this.
+  cache:
+    when: 'always'
+    paths:
+      - cache/*
+
 # Running tests without --workspace is useful because that way cargo
 # won't add features to our dependencies that we didn't actually enable
 # *in the derive-deftly or derive-deftly-macros crates*.
@@ -93,23 +124,20 @@ check-keywords-documented:
 #   https://github.com/dtolnay/cargo-expand/issues/179
 cargo-test:
   stage: test
-  # See "Using the proper Nightly Rust" in tests/tests.rs
-  image: rustlang/rust@sha256:b3ddf3e263f50345cd3693a93f59f0ba2cc5575a430553b71db48487a5f541dc
-  # ^ this is from tags.2025-02-10T14:08+00:00.gz (see HACKING.md)
+  extends:
+    - .rust-nightly
+    - .cache-cargo-install
   script:
     - ./maint/via-cargo-install-in-ci cargo-expand --version=1.0.100 --features=prettyplease
     - maint/cargo-test-locked --workspace --all-features -- --skip directly::check_examples
-  cache:
-    when: 'always'
-    paths:
-      - cache/*
 
 # Warning only, since this approach may be fragile and also the 
 # testing machinery (particularly the thing that parses reference.md
 # is rather baroque and ad-hco).
 test-doc-examples:
   stage: comprehensive
-  image: rustlang/rust@sha256:b3ddf3e263f50345cd3693a93f59f0ba2cc5575a430553b71db48487a5f541dc
+  extends:
+    - .rust-nightly
   allow_failure: true
   script:
     - maint/cargo-test-locked -p derive-deftly-tests --all-features -- --nocapture directly::check_examples
@@ -121,16 +149,14 @@ test-doc-examples:
 # the only commit in an MR will still work.
 every-commit:
   stage: comprehensive
-  image: rustlang/rust@sha256:b3ddf3e263f50345cd3693a93f59f0ba2cc5575a430553b71db48487a5f541dc
+  extends:
+    - .rust-nightly
+    - .cache-cargo-install
   script:
     - apt-get -y update
     - apt-get -y install libtoml-perl git
     - ./maint/via-cargo-install-in-ci cargo-expand --version=1.0.67 --features=prettyplease
     - maint/for-every-commit maint/cargo-test-locked --workspace --all-features -- --skip directly::check_examples
-  cache:
-    when: 'always'
-    paths:
-      - cache/*
 
 python3-mypy:
   stage: test
@@ -142,7 +168,8 @@ python3-mypy:
 
 cargo-test-minfeatures:
   stage: comprehensive
-  image: rustlang/rust@sha256:b3ddf3e263f50345cd3693a93f59f0ba2cc5575a430553b71db48487a5f541dc
+  extends:
+    - .rust-nightly
   script:
     - maint/cargo-test-locked  -p derive-deftly-tests --no-default-features --features=derive-deftly-tests/recent,derive-deftly-tests/ui -- --skip directly::check_examples
 
@@ -189,15 +216,20 @@ cargo-doc-all:
     - jq --raw-output '. | select(.message.level) | .message.rendered' <rustdoc.json |tee rustdoc.errors
     - test ! -s rustdoc.errors
 
+.build-docs-prep-script: &build-docs-prep-script
+    - ./maint/via-cargo-install-in-ci mdbook
+    - apt-get update
+    - apt-get -y install python3 python3-toml
+
 # Check that our (locally-massaged) don't have broken links.
 # This also detects links brokne between rustdoc (on docs.rs)
 # and the guide (on pages.tpo).
 build-docs-local:
   stage: comprehensive
+  extends:
+    - .cache-cargo-install
   script:
-    - ./maint/via-cargo-install-in-ci mdbook
-    - apt-get update
-    - apt-get -y install python3 python3-toml
+    - *build-docs-prep-script
     - maint/build-docs-local --dev --no-linkcheck
 
 # Check that our (locally-massaged) docs don't have broken links.
@@ -205,10 +237,11 @@ build-docs-local:
 # and the guide (on pages.tpo).
 check-doc-links:
   stage: comprehensive
+  extends:
+    - .cache-cargo-install
   script:
-    - ./maint/via-cargo-install-in-ci mdbook
-    - apt-get update
-    - apt-get -y install python3 python3-toml linklint
+    - *build-docs-prep-script
+    - apt-get -y install linklint
     - maint/build-docs-local
     - maint/build-docs-local --dev
 
@@ -217,16 +250,18 @@ check-doc-links:
 # We don't enable any of the optional fatures in derive-deftly-tests.
 minimal-versions:
   stage: comprehensive
-  image: "rust:1.56.0"
+  extends:
+    - .rust-msrv
   script:
-    - mv Cargo.lock.minimal Cargo.lock
+    - *rust-msrv-prep-script
     - maint/cargo-test-locked +1.56.0 --workspace --no-default-features --features=derive-deftly-tests/full
 
 minimal-versions-minfeatures:
   stage: comprehensive
-  image: "rust:1.56.0"
+  extends:
+    - .rust-msrv
   script:
-    - mv Cargo.lock.minimal Cargo.lock
+    - *rust-msrv-prep-script
     - maint/cargo-test-locked +1.56.0 -p derive-deftly-tests --no-default-features
 
 feature-matrix:
@@ -245,6 +280,8 @@ pages:
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
   stage: deploy-book
+  extends:
+    - .cache-cargo-install
   script:
     - ./maint/via-cargo-install-in-ci mdbook
     - ./maint/build-mdbook
