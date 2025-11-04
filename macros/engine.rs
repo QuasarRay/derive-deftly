@@ -266,9 +266,11 @@ impl<'c> Context<'c> {
             field: None,
             variant: variant.as_ref(),
             pvariants: &pvariants,
-            definitions: Default::default(),
-            nesting_depth: 0,
-            nesting_parent: None,
+            defs: DefinitionsContext {
+                defs: Default::default(),
+                nesting_depth: 0,
+                nesting_parent: None,
+            },
             within_loop: WithinLoop::None,
         };
 
@@ -319,7 +321,7 @@ impl EngineExpandInput {
             self.template_name.as_ref(),
             |ctx| {
                 let mut output = TokenAccumulator::new();
-                self.template.expand(&ctx, &mut output);
+                self.template.expand(ctx.as_general(), &mut output);
                 let output = output.tokens()?;
 
                 //    dbg!(&&output);

@@ -397,34 +397,6 @@ impl<'c> Context<'c> {
         })?;
         Ok(r)
     }
-
-    pub fn display_for_dbg(&self) -> impl Display + '_ {
-        struct Adapter<'a>(&'a Context<'a>);
-
-        impl Display for Adapter<'_> {
-            fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-                let ctx = self.0;
-                write!(f, "for {}", &ctx.top.ident)?;
-                if let Some(wv) = &ctx.variant {
-                    if let Some(v) = &wv.variant {
-                        write!(f, "::{}", &v.ident)?;
-                    }
-                }
-                if let Some(wf) = &ctx.field {
-                    // we're just using the Display impl, any span will do
-                    let span = Span::call_site();
-                    write!(f, ".{}", &wf.fname(span))?;
-                }
-                if let Some(templ) = &ctx.template_name {
-                    let templ = templ.to_token_stream().to_string();
-                    write!(f, " from {}", templ)?;
-                }
-                Ok::<_, fmt::Error>(())
-            }
-        }
-
-        Adapter(self)
-    }
 }
 
 //---------- Fname ----------
@@ -483,29 +455,34 @@ impl<'w> WithinVariant<'w> {
 
 //---------- definitions (user-defined keywords) ----------
 
-impl<'c> Context<'c> {
+impl<'c> GeneralContext<'c> {
     pub fn find_definition<B>(
         &'c self,
         call: &'c DefinitionName,
-    ) -> syn::Result<Option<(&'c Definition<B>, Context<'c>)>>
+    ) -> syn::Result<Option<(&'c Definition<B>, GeneralContextBuf<'c>)>>
     where
         Definitions<'c>: AsRef<[&'c Definition<B>]>,
         B: 'static,
     {
-        let def = match self.definitions.find_raw(call) {
+        let def = match self.defs().defs.find_raw(call) {
             Some(y) => y,
             None => return Ok(None),
         };
 
-        let ctx = self.deeper(&def.name, call)?;
-        Ok(Some((def, ctx)))
+        let defs = self.defs().find_definition_deeper(&def.name, call)?;
+        let mut self_ = self.clone_buf();
+        *self_.as_mut() = defs;
+        Ok(Some((def, self_)))
     }
+}
 
-    fn deeper(
+impl<'c> DefinitionsContext<'c> {
+    /// Internal function for use by `find_definition`
+    pub fn find_definition_deeper(
         &'c self,
         def: &'c DefinitionName,
         call: &'c DefinitionName,
-    ) -> syn::Result<Context<'c>> {
+    ) -> syn::Result<DefinitionsContext<'c>> {
         let nesting_depth = self.nesting_depth + 1;
         let stack_entry = (self, call);
         if nesting_depth > NESTING_LIMIT {
@@ -551,7 +528,7 @@ impl<'c> Context<'c> {
             }
             return Err(errs);
         }
-        Ok(Context {
+        Ok(DefinitionsContext {
             nesting_depth,
             nesting_parent: Some(stack_entry),
             ..*self

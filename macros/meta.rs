@@ -832,7 +832,7 @@ where
         )?;
 
         if let (None, Some((def, ..))) = (&found, default) {
-            return Ok(def.expand(ctx, out));
+            return Ok(def.expand(ctx.as_general(), out));
         }
 
         let found = found.ok_or_else(|| {

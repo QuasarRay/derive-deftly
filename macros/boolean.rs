@@ -54,28 +54,33 @@ impl SubstParseContext for BooleanContext {
 }
 
 impl Subst<BooleanContext> {
-    pub fn eval_bool(&self, ctx: &Context) -> syn::Result<bool> {
+    pub fn eval_bool<'c>(
+        &self,
+        gctx: GeneralContext<'c>,
+    ) -> syn::Result<bool> {
         // eprintln!("@@@@@@@@@@@@@@@@@@@@ EVAL {:?}", self);
         let kw_span = self.kw_span;
 
-        let v_fields = || ctx.variant(&kw_span).map(|v| &v.fields);
+        let ctx = gctx.full_ctx(kw_span);
+
+        let v_fields = || ctx?.variant(&kw_span).map(|v| &v.fields);
         use syn::Fields as SF;
 
         let expand = |x: &Template<_>| {
             let mut out = TokenAccumulator::new();
-            x.expand(ctx, &mut out);
+            x.expand(gctx, &mut out);
             let out = out.tokens()?;
             Ok::<TokenStream, syn::Error>(out)
         };
 
         let r = match &self.sd {
-            SD::is_enum(..) => ctx.is_enum(),
-            SD::is_struct(..) => matches!(ctx.top.data, syn::Data::Struct(_)),
-            SD::is_union(..) => matches!(ctx.top.data, syn::Data::Union(_)),
+            SD::is_enum(..) => ctx?.is_enum(),
+            SD::is_struct(..) => matches!(ctx?.top.data, syn::Data::Struct(_)),
+            SD::is_union(..) => matches!(ctx?.top.data, syn::Data::Union(_)),
             SD::v_is_unit(..) => matches!(v_fields()?, SF::Unit),
             SD::v_is_tuple(..) => matches!(v_fields()?, SF::Unnamed(..)),
             SD::v_is_named(..) => matches!(v_fields()?, SF::Named(..)),
-            SD::tgens(_) => !ctx.top.generics.params.is_empty(),
+            SD::tgens(_) => !ctx?.top.generics.params.is_empty(),
 
             SD::Xmeta(sm) => {
                 let meta::SubstMeta {
@@ -99,7 +104,7 @@ impl Subst<BooleanContext> {
                         | mSA::ty(nb) => void::unreachable(*nb),
                     }
                 };
-                is_found(label.search_eval_bool(sm.pmetas(ctx, kw_span)?))
+                is_found(label.search_eval_bool(sm.pmetas(ctx?, kw_span)?))
             }
 
             SD::is_empty(_, content) => expand(content)?.is_empty(),
@@ -108,15 +113,15 @@ impl Subst<BooleanContext> {
                     == Equality::Equal
             }
 
-            SD::UserDefined(name) => name.lookup_eval_bool(ctx)?,
+            SD::UserDefined(name) => name.lookup_eval_bool(gctx)?,
 
             SD::False(..) => false,
             SD::True(..) => true,
 
-            SD::not(v, _) => !v.eval_bool(ctx)?,
+            SD::not(v, _) => !v.eval_bool(gctx)?,
             SD::any(vs, _) => vs
                 .iter()
-                .find_map(|v| match v.eval_bool(ctx) {
+                .find_map(|v| match v.eval_bool(gctx) {
                     Ok(true) => Some(Ok(true)),
                     Err(e) => Some(Err(e)),
                     Ok(false) => None,
@@ -124,25 +129,25 @@ impl Subst<BooleanContext> {
                 .unwrap_or(Ok(false))?,
             SD::all(vs, _) => vs
                 .iter()
-                .find_map(|v| match v.eval_bool(ctx) {
+                .find_map(|v| match v.eval_bool(gctx) {
                     Ok(true) => None,
                     Err(e) => Some(Err(e)),
                     Ok(false) => Some(Ok(false)),
                 })
                 .unwrap_or(Ok(true))?,
 
-            SD::Vis(vis, _) => match vis.syn_vis(ctx, kw_span)? {
+            SD::Vis(vis, _) => match vis.syn_vis(ctx?, kw_span)? {
                 syn::Visibility::Public(_) => true,
                 _ => false,
             },
 
             SD::dbg(ddr) => {
-                let r = ddr.content_parsed.eval_bool(ctx);
+                let r = ddr.content_parsed.eval_bool(gctx);
                 let () = &ddr.content_string;
                 let w = |s: fmt::Arguments| {
                     eprintln!(
                         "derive-deftly dbg condition {} evaluated to {}",
-                        ddr.display_heading(ctx),
+                        ddr.display_heading(gctx),
                         s,
                     )
                 };
@@ -195,14 +200,17 @@ impl Subst<BooleanContext> {
 }
 
 impl DefinitionName {
-    fn lookup_eval_bool(&self, ctx: &Context<'_>) -> syn::Result<bool> {
+    fn lookup_eval_bool<'c>(
+        &self,
+        ctx: GeneralContext<'c>,
+    ) -> syn::Result<bool> {
         let (def, ctx) = ctx.find_definition::<DefCondBody>(self)?
             .ok_or_else(|| {
                 let mut error = self.error(format!(
                     "user-defined condition `{}` not found",
                     self,
                 ));
-                if let Some(def) = ctx.definitions
+                if let Some(def) = ctx.defs().defs
                     .find_raw::<DefinitionBody>(self)
                 {
                     // Condition syntax looks like fine tokens,
@@ -216,6 +224,6 @@ impl DefinitionName {
                 error
             })?;
 
-        def.body.eval_bool(&ctx)
+        def.body.eval_bool(ctx.as_ref())
     }
 }

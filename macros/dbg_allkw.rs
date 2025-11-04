@@ -46,7 +46,7 @@ fn template_result(ctx: &Context, templ: TokenStream) -> String {
         parser.parse2(templ).expect("failed to parse own template");
     let result = (|| {
         let mut output = TokenAccumulator::new();
-        templ.expand(ctx, &mut output);
+        templ.expand(ctx.as_general(), &mut output);
         output.tokens()
     })();
     match result {
@@ -244,7 +244,7 @@ fn dump_user_defined(mut w: &mut Out, ctx: &Context) -> R {
         $heading:expr, $B:ty, $body:stmt
     } => { {
         let mut set = BTreeSet::new();
-        for def in ctx.definitions.iter::<$B>().flatten() {
+        for def in ctx.defs.defs.iter::<$B>().flatten() {
             set.insert(&def.name);
         }
         if !set.is_empty() {

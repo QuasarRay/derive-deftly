@@ -527,8 +527,8 @@ fn ident_from_str() {
     chk_err("0");
 }
 
-pub fn expand(
-    ctx: &Context<'_>,
+pub fn expand<'c>(
+    ctx: GeneralContext<'c>,
     tspan: Span,
     content: &Template<paste::Items>,
     out: &mut impl ExpansionOutput,
@@ -929,10 +929,10 @@ impl ExpansionOutput for Items {
         accum.finish()
     }
 
-    fn dbg_expand(
+    fn dbg_expand<'c>(
         &mut self,
         kw_span: Span,
-        ctx: &Context,
+        ctx: GeneralContext<'c>,
         msg: &mut String,
         content: &Template<Items>,
     ) -> fmt::Result {
@@ -974,7 +974,11 @@ impl ExpansionOutput for Items {
 }
 
 impl Expand<Items> for TemplateElement<Items> {
-    fn expand(&self, ctx: &Context, out: &mut Items) -> syn::Result<()> {
+    fn expand<'c>(
+        &self,
+        ctx: GeneralContext<'c>,
+        out: &mut Items,
+    ) -> syn::Result<()> {
         match self {
             TE::Ident(ident, ..) => out.append_identfrag_toks(&ident)?,
             TE::LitStr(lit) => out.append_syn_litstr(&lit),

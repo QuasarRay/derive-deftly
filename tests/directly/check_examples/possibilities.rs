@@ -158,7 +158,7 @@ impl PossibilitiesExample {
             let template: Template<TokenAccumulator> =
                 syn::parse2(input.clone())?;
 
-            template.expand(ctx, &mut out);
+            template.expand(ctx.as_general(), &mut out);
             let got = out.tokens()?;
 
             Ok(got)

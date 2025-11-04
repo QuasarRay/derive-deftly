@@ -14,6 +14,10 @@ pub use super::syntax::*;
 pub(super) use super::paste;
 pub(super) use super::paste::{IdentFrag, IdentFragInfallible};
 
+pub(super) use general_context::{
+    GeneralContext, GeneralContextBuf, MissingContextError,
+};
+
 /// Context during expansion
 ///
 /// References the driver, and digested information about it.
@@ -32,9 +36,18 @@ pub struct Context<'c> {
     pub field: Option<&'c WithinField<'c>>,
     pub within_loop: WithinLoop,
     pub pvariants: &'c [PreprocessedVariant<'c>],
-    pub definitions: Definitions<'c>,
+    pub defs: DefinitionsContext<'c>,
+}
+
+/// Part of the context relating to user-defined expansions and conditions
+#[derive(Debug, Clone, Copy)]
+pub struct DefinitionsContext<'c> {
+    pub defs: Definitions<'c>,
     pub nesting_depth: u16,
-    pub nesting_parent: Option<(&'c Context<'c>, &'c DefinitionName)>,
+    pub nesting_parent: Option<(
+        &'c DefinitionsContext<'c>, //
+        &'c DefinitionName,
+    )>,
 }
 
 #[derive(Debug)]
@@ -434,10 +447,10 @@ pub trait ExpansionOutput: SubstParseContext {
     ///
     /// Expansion errors are to be reported, and subsumed into `self`.
     /// Failures to write may be thrown.
-    fn dbg_expand(
+    fn dbg_expand<'c>(
         &mut self,
         kw_span: Span,
-        ctx: &Context,
+        ctx: GeneralContext<'c>,
         msg: &mut String,
         content: &Self::DbgContent,
     ) -> fmt::Result;
@@ -454,7 +467,11 @@ pub trait ExpansionOutput: SubstParseContext {
 /// It also avoids having to make all of these expansion methods
 /// members of the `ExpansionOutput` trait.
 pub trait Expand<O> {
-    fn expand(&self, ctx: &Context, out: &mut O) -> syn::Result<()>;
+    fn expand<'c>(
+        &self,
+        ctx: GeneralContext<'c>,
+        out: &mut O,
+    ) -> syn::Result<()>;
 }
 /// Convenience trait providing `fn expand(self)`, infallible version
 ///
@@ -462,7 +479,7 @@ pub trait Expand<O> {
 /// within the output accumulator
 /// and therefore do not need to return them.
 pub trait ExpandInfallible<O> {
-    fn expand(&self, ctx: &Context, out: &mut O);
+    fn expand<'c>(&self, ctx: GeneralContext<'c>, out: &mut O);
 }
 
 /// Accumulates tokens, or errors
@@ -636,10 +653,10 @@ impl ExpansionOutput for TokenAccumulator {
         self.0.map(|_: TokenStream| ())
     }
 
-    fn dbg_expand(
+    fn dbg_expand<'c>(
         &mut self,
         _kw_span: Span,
-        ctx: &Context,
+        ctx: GeneralContext<'c>,
         msg: &mut String,
         content: &Template<TokenAccumulator>,
     ) -> fmt::Result {

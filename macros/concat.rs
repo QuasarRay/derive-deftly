@@ -244,10 +244,10 @@ impl ExpansionOutput for Accumulator {
     ) {
         self.append_type_like(ty.to_token_stream());
     }
-    fn dbg_expand(
+    fn dbg_expand<'c>(
         &mut self,
         kw_span: Span,
-        ctx: &Context,
+        ctx: GeneralContext<'c>,
         msg: &mut String,
         content: &Template<Accumulator>,
     ) -> fmt::Result {
@@ -290,7 +290,11 @@ impl ExpansionOutput for Accumulator {
 }
 
 impl Expand<Accumulator> for TemplateElement<Accumulator> {
-    fn expand(&self, ctx: &Context, out: &mut Accumulator) -> syn::Result<()> {
+    fn expand<'c>(
+        &self,
+        ctx: GeneralContext<'c>,
+        out: &mut Accumulator,
+    ) -> syn::Result<()> {
         match self {
             TE::Ident(_ident, not_in_concat) => {
                 // We *would* support ${concat ident}

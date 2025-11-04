@@ -19,7 +19,7 @@ fn tests_using_driver(
 
         let got = Context::call(&driver, &parse_quote!(crate), None, |ctx| {
             let mut ts = TokenAccumulator::new();
-            input.expand(&ctx, &mut ts);
+            input.expand(ctx.as_general(), &mut ts);
             ts.tokens()
         });
 

@@ -10,7 +10,11 @@ where
     Template<O>: ExpandInfallible<O>,
     O: ExpansionOutput,
 {
-    fn expand(&self, ctx: &Context, out: &mut O) -> syn::Result<()> {
+    fn expand<'c>(
+        &self,
+        ctx: GeneralContext<'c>,
+        out: &mut O,
+    ) -> syn::Result<()> {
         for (condition, consequence) in &self.tests {
             //dbg!(&condition);
             if condition.eval_bool(ctx)? {
@@ -32,7 +36,11 @@ where
     Template<O>: ExpandInfallible<O>,
     O: ExpansionOutput,
 {
-    fn expand_select1(&self, ctx: &Context, out: &mut O) -> syn::Result<()> {
+    fn expand_select1<'c>(
+        &self,
+        ctx: GeneralContext<'c>,
+        out: &mut O,
+    ) -> syn::Result<()> {
         let mut found: Result<Option<(Span, &Template<O>)>, Vec<ErrorLoc>> =
             Ok(None);
 
@@ -45,11 +53,10 @@ where
             match &mut found {
                 Ok(None) => found = Ok(Some((cspan, consequence))),
                 Ok(Some((span1, _))) => {
-                    found = Err(vec![
-                        ctx.error_loc(),
+                    found = Err(ctx.prepend_error_loc(&[
                         error_loc(*span1),
                         error_loc(cspan),
-                    ])
+                    ]))
                 }
                 Err(several) => several.push(error_loc(cspan)),
             }
@@ -59,8 +66,10 @@ where
             .map(|(_cspan, consequence)| consequence)
             .or(self.otherwise.as_deref())
             .ok_or_else(|| {
-                [ctx.error_loc(), (self.kw_span, "select1 expansion")]
-                    .error("no conditions matched, and no else clause")
+                ctx.prepend_error_loc(
+                    &[(self.kw_span, "select1 expansion")], //
+                )
+                .error("no conditions matched, and no else clause")
             })?;
         found.expand(ctx, out);
         Ok(())
@@ -80,10 +89,10 @@ impl SubstVType {
              spec: &Option<Argument<TokenAccumulator>>,
              sd: SubstDetails<TokenAccumulator>| {
                 if let Some(spec) = spec {
-                    spec.expand(ctx, out);
+                    spec.expand(ctx.as_general(), out);
                     Ok(())
                 } else {
-                    sd.expand(ctx, out, kw_span)
+                    sd.expand(ctx.as_general(), out, kw_span)
                 }
             };
 
@@ -166,8 +175,11 @@ impl SubstVPat {
 
         let in_braces = braced_group(kw_span, |mut out| {
             WithinField::for_each(ctx, |ctx, field| {
-                SD::fname::<TokenAccumulator>(())
-                    .expand(ctx, &mut out, kw_span)?;
+                SD::fname::<TokenAccumulator>(()).expand(
+                    ctx.as_general(),
+                    &mut out,
+                    kw_span,
+                )?;
                 out.append_tokens(&((), ()), Token![:](kw_span))?;
 
                 // Do the expansion with the paste machinery, since
@@ -175,7 +187,7 @@ impl SubstVPat {
                 // allow, and how to use it.
                 let mut paste = paste::Items::new(kw_span);
                 if let Some(fprefix) = &self.fprefix {
-                    fprefix.expand(ctx, &mut paste);
+                    fprefix.expand(ctx.as_general(), &mut paste);
                 } else {
                     paste.append_fixed_string("f_");
                 }
@@ -196,7 +208,7 @@ where
     TemplateElement<O>: Expand<O>,
     O: ExpansionOutput,
 {
-    fn expand(&self, ctx_in: &Context, out: &mut O) {
+    fn expand<'c>(&self, ctx_in: GeneralContext<'c>, out: &mut O) {
         let mut ctx_buf;
         let mut definitions_here = vec![];
         let mut defconds_here = vec![];
@@ -214,11 +226,13 @@ where
                     // Doing this with a macro makes it nice and obvious
                     // to the borrow checker.
                     $store.push(def);
-                    ctx_buf = ctx_in.clone();
-                    ctx_buf.definitions.earlier = Some(&ctx_in.definitions);
-                    ctx_buf.definitions.here = &definitions_here;
-                    ctx_buf.definitions.conds = &defconds_here;
-                    ctx = &ctx_buf;
+                    ctx_buf = ctx_in.clone_buf();
+                    ctx_buf.as_mut().defs = Definitions {
+                        earlier: Some(&ctx_in.defs().defs),
+                        here: &definitions_here,
+                        conds: &defconds_here,
+                    };
+                    ctx = ctx_buf.as_ref();
                     continue;
                 }
 
@@ -235,9 +249,9 @@ where
 }
 
 impl Expand<TokenAccumulator> for TemplateElement<TokenAccumulator> {
-    fn expand(
+    fn expand<'c>(
         &self,
-        ctx: &Context,
+        ctx: GeneralContext<'c>,
         out: &mut TokenAccumulator,
     ) -> syn::Result<()> {
         match self {
@@ -274,7 +288,11 @@ where
     O: ExpansionOutput,
     TemplateElement<O>: Expand<O>,
 {
-    fn expand(&self, ctx: &Context, out: &mut O) -> syn::Result<()> {
+    fn expand<'c>(
+        &self,
+        ctx: GeneralContext<'c>,
+        out: &mut O,
+    ) -> syn::Result<()> {
         self.sd.expand(ctx, out, self.kw_span)
     }
 }
@@ -287,16 +305,18 @@ where
     /// Expand this template element, by adding it to `O`
     ///
     /// This is done using `O`'s [`ExpansionOutput`] methods.
-    fn expand(
+    fn expand<'c>(
         &self,
-        ctx: &Context,
+        gctx: GeneralContext<'c>,
         out: &mut O,
         kw_span: Span,
     ) -> syn::Result<()> {
         // eprintln!("@@@@@@@@@@@@@@@@@@@@ EXPAND {:?}", self);
 
+        let ctx = gctx.full_ctx(kw_span);
+
         let do_meta = |sm: &meta::SubstMeta<_>, out, meta| {
-            sm.expand(ctx, kw_span, out, meta)
+            sm.expand(ctx?, kw_span, out, meta)
         };
 
         // Methods for handling generics.  Most take `composable: bool`,
@@ -304,7 +324,9 @@ where
         // because we should include it for expansions like $tgens that the
         // user can append things to, but ideally *not* for expansions like
         // $ttype that the user can't.
-        let do_tgnames = |out: &mut TokenAccumulator, composable| {
+        let do_tgnames = |out: &mut TokenAccumulator,
+                          ctx: &Context,
+                          composable| {
             for pair in ctx.top.generics.params.pairs() {
                 use syn::GenericParam as GP;
                 match pair.value() {
@@ -316,7 +338,7 @@ where
             }
         };
         let do_tgens_nodefs = |out: &mut TokenAccumulator| {
-            for pair in ctx.top.generics.params.pairs() {
+            for pair in ctx?.top.generics.params.pairs() {
                 use syn::GenericParam as GP;
                 let out_attrs = |out: &mut TokenAccumulator, attrs: &[_]| {
                     attrs.iter().for_each(|attr| out.append(attr));
@@ -341,13 +363,15 @@ where
                     pair.punct().to_tokens_punct_composable(out);
                 });
             }
+            Ok::<_, MissingContextError>(())
         };
-        let do_tgens = |out: &mut TokenAccumulator, composable: bool| {
-            out.append_maybe_punct_composable(
-                &ctx.top.generics.params,
-                composable,
-            );
-        };
+        let do_tgens =
+            |out: &mut TokenAccumulator, ctx: &Context, composable: bool| {
+                out.append_maybe_punct_composable(
+                    &ctx.top.generics.params,
+                    composable,
+                );
+            };
 
         // There are three contexts where the top-level type
         // name might occur with generics, and two syntaxes:
@@ -356,7 +380,8 @@ where
         //   defining a new type      $tdeftype  Type<G: bounds>
         // Handles $ttype and $tdeftype, and, indirectly, $vtype
         let do_ttype = |out: &mut O, colons: Option<()>, do_some_gens| {
-            let _: &dyn Fn(&mut _, bool) = do_some_gens; // specify type
+            let _: &dyn Fn(&mut _, _, bool) = do_some_gens; // specify type
+            let ctx = ctx?;
             let gens = &ctx.top.generics;
             let colons = gens
                 .lt_token
@@ -368,12 +393,13 @@ where
                 |out| {
                     out.append(colons);
                     out.append(gens.lt_token);
-                    do_some_gens(out, false);
+                    do_some_gens(out, ctx, false);
                     out.append(gens.gt_token);
                 },
                 Grouping::Ungrouped,
             )
-            .unwrap_or_else(|e| e.unreachable())
+            .unwrap_or_else(|e| e.unreachable());
+            Ok::<_, MissingContextError>(())
         };
 
         let do_maybe_delimited_group = |out, np, delim, content| {
@@ -385,11 +411,11 @@ where
                         delim,
                         kw_span,
                         |inside: &mut TokenAccumulator| {
-                            Ok(content.expand(ctx, inside))
+                            Ok(content.expand(gctx, inside))
                         },
                     )?);
                 } else {
-                    content.expand(ctx, out);
+                    content.expand(gctx, out);
                 }
                 Ok(())
             })
@@ -404,18 +430,18 @@ where
         };
 
         match self {
-            SD::tname(_) => out.append_identfrag_toks(&ctx.top.ident)?,
-            SD::ttype(_) => do_ttype(out, Some(()), &do_tgnames),
-            SD::tdeftype(_) => do_ttype(out, None, &do_tgens),
+            SD::tname(_) => out.append_identfrag_toks(&ctx?.top.ident)?,
+            SD::ttype(_) => do_ttype(out, Some(()), &do_tgnames)?,
+            SD::tdeftype(_) => do_ttype(out, None, &do_tgens)?,
             SD::vname(_) => {
-                out.append_identfrag_toks(&ctx.syn_variant(&kw_span)?.ident)?
+                out.append_identfrag_toks(&ctx?.syn_variant(&kw_span)?.ident)?
             }
             SD::fname(_) => {
-                let fname = ctx.field(&kw_span)?.fname(kw_span);
+                let fname = ctx?.field(&kw_span)?.fname(kw_span);
                 out.append_identfrag_toks(&fname)?;
             }
             SD::ftype(_) => {
-                let f = ctx.field(&kw_span)?;
+                let f = ctx?.field(&kw_span)?;
                 out.append_syn_type(
                     kw_span,
                     f.field.ty.clone(),
@@ -423,19 +449,19 @@ where
                 );
             }
             SD::fpatname(_) => {
-                let f = ctx.field(&kw_span)?;
+                let f = ctx?.field(&kw_span)?;
                 let fpatname =
                     Ident::new(&format!("f_{}", f.fname(kw_span)), kw_span);
                 out.append_identfrag_toks(&fpatname)?;
             }
-            SD::vindex(..) => do_index(out, ctx.variant(&kw_span)?.index)?,
-            SD::findex(..) => do_index(out, ctx.field(&kw_span)?.index)?,
+            SD::vindex(..) => do_index(out, ctx?.variant(&kw_span)?.index)?,
+            SD::findex(..) => do_index(out, ctx?.field(&kw_span)?.index)?,
 
-            SD::Xmeta(sm) => do_meta(sm, out, sm.pmetas(ctx, kw_span)?)?,
-            SD::error(e, _) => e.throw(ctx)?,
+            SD::Xmeta(sm) => do_meta(sm, out, sm.pmetas(ctx?, kw_span)?)?,
+            SD::error(e, _) => e.throw(gctx)?,
 
             SD::Vis(vis, at) => {
-                out.append_tokens(at, vis.syn_vis(ctx, kw_span)?)?
+                out.append_tokens(at, vis.syn_vis(ctx?, kw_span)?)?
             }
             SD::tdefkwd(_) => {
                 fn w<O>(out: &mut O, t: impl ToTokens)
@@ -446,7 +472,7 @@ where
                         .unwrap_or_else(|e| e.unreachable());
                 }
                 use syn::Data::*;
-                match &ctx.top.data {
+                match &ctx?.top.data {
                     Struct(d) => w(out, &d.struct_token),
                     Enum(d) => w(out, &d.enum_token),
                     Union(d) => w(out, &d.union_token),
@@ -454,31 +480,31 @@ where
             }
 
             SD::tattrs(ra, np, ..) => out.append_tokens_with(np, |out| {
-                ra.expand(ctx, out, &ctx.top.attrs)
+                ra.expand(ctx?, out, &ctx?.top.attrs)
             })?,
             SD::vattrs(ra, np, ..) => out.append_tokens_with(np, |out| {
-                let variant = ctx.variant(&kw_span)?.variant;
+                let variant = ctx?.variant(&kw_span)?.variant;
                 let attrs = variant.as_ref().map(|v| &*v.attrs);
-                ra.expand(ctx, out, attrs.unwrap_or_default())
+                ra.expand(ctx?, out, attrs.unwrap_or_default())
             })?,
             SD::fattrs(ra, np, ..) => out.append_tokens_with(np, |out| {
-                ra.expand(ctx, out, &ctx.field(&kw_span)?.field.attrs)
+                ra.expand(ctx?, out, &ctx?.field(&kw_span)?.field.attrs)
             })?,
 
             SD::tgens(np, ..) => out.append_tokens_with(np, |out| {
-                do_tgens_nodefs(out);
+                do_tgens_nodefs(out)?;
                 Ok(())
             })?,
             SD::tdefgens(np, ..) => out.append_tokens_with(np, |out| {
-                do_tgens(out, true);
+                do_tgens(out, ctx?, true);
                 Ok(())
             })?,
             SD::tgnames(np, ..) => out.append_tokens_with(np, |out| {
-                do_tgnames(out, true);
+                do_tgnames(out, ctx?, true);
                 Ok(())
             })?,
             SD::twheres(np, ..) => out.append_tokens_with(np, |out| {
-                if let Some(clause) = &ctx.top.generics.where_clause {
+                if let Some(clause) = &ctx?.top.generics.where_clause {
                     out.with_tokens(|out| {
                         clause.predicates.to_tokens_punct_composable(out);
                     });
@@ -488,14 +514,14 @@ where
 
             SD::vpat(v, np, ..) => out.append_tokens_with(np, |out| {
                 // This comment prevents rustfmt making this unlike the others
-                v.expand(ctx, out, kw_span)
+                v.expand(ctx?, out, kw_span)
             })?,
             SD::vtype(v, np, ..) => out.append_tokens_with(np, |out| {
-                v.expand(ctx, out, kw_span, SD::ttype(Default::default()))
+                v.expand(ctx?, out, kw_span, SD::ttype(Default::default()))
             })?,
 
             SD::tdefvariants(content, np, ..) => {
-                let delim = if ctx.is_enum() {
+                let delim = if ctx?.is_enum() {
                     Some(Delimiter::Brace)
                 } else {
                     None
@@ -504,10 +530,10 @@ where
             }
             SD::fdefine(spec_f, np, ..) => {
                 out.append_tokens_with(np, |out| {
-                    let field = ctx.field(&kw_span)?.field;
+                    let field = ctx?.field(&kw_span)?.field;
                     if let Some(driver_f) = &field.ident {
                         if let Some(spec_f) = spec_f {
-                            spec_f.expand(ctx, out);
+                            spec_f.expand(gctx, out);
                         } else {
                             out.append(driver_f);
                         }
@@ -518,10 +544,10 @@ where
             }
             SD::vdefbody(vname, content, np, ..) => {
                 use syn::Fields as SF;
-                let variant = ctx.variant(&kw_span)?;
+                let variant = ctx?.variant(&kw_span)?;
                 let struct_variant = variant.is_struct_toplevel_as_variant();
                 if !struct_variant {
-                    vname.expand(ctx, out);
+                    vname.expand(gctx, out);
                 }
                 let delim = match variant.fields {
                     SF::Unit => None,
@@ -539,15 +565,17 @@ where
                     out.append_tokens(np, Token![;](kw_span))?;
                 }
             }
-            SD::Crate(np, ..) => out.append_tokens(np, &ctx.template_crate)?,
+            SD::Crate(np, ..) => {
+                out.append_tokens(np, &ctx?.template_crate)?
+            }
 
             SD::paste(content, ..) => {
-                paste::expand(ctx, kw_span, content, out)?;
+                paste::expand(gctx, kw_span, content, out)?;
             }
             SD::paste_spanned(span, content, ..) => {
                 let set_span = (|| {
                     let mut span_tokens = TokenAccumulator::new();
-                    span.expand(ctx, &mut span_tokens);
+                    span.expand(gctx, &mut span_tokens);
                     let span = span_tokens.tokens()?.span();
                     Ok(span)
                 })()
@@ -555,16 +583,16 @@ where
                     out.record_error(e);
                     kw_span
                 });
-                paste::expand(ctx, set_span, content, out)?;
+                paste::expand(gctx, set_span, content, out)?;
             }
             SD::ChangeCase(content, case, ..) => {
                 let mut items = paste::Items::new(kw_span);
-                content.expand(ctx, &mut items);
+                content.expand(gctx, &mut items);
                 items.assemble(out, Some(*case))?;
             }
             SD::concat(content, _not_in_bool, not_in_paste, _) => {
                 let mut accum = concat::Accumulator::new_with_span(kw_span);
-                content.expand(ctx, &mut accum);
+                content.expand(gctx, &mut accum);
                 accum.finish_onto(not_in_paste, out);
             }
 
@@ -579,23 +607,23 @@ where
                 // (There are some parallels between this and `${when }`)
                 "${define } and ${defcond } only allowed in a full template",
             ),
-            SD::UserDefined(name) => name.lookup_expand(ctx, out)?,
+            SD::UserDefined(name) => name.lookup_expand(gctx, out)?,
 
             SD::ignore(content, _) => {
                 let mut ignore = O::new_with_span(kw_span);
-                content.expand(ctx, &mut ignore);
+                content.expand(gctx, &mut ignore);
                 let () = ignore.ignore_impl()?;
             }
             SD::when(..) => out.write_error(
                 &kw_span,
                 "internal error - misplaced ${when } detected too late!",
             ),
-            SD::If(conds, ..) => conds.expand(ctx, out)?,
-            SD::select1(conds, ..) => conds.expand_select1(ctx, out)?,
-            SD::For(repeat, _) => repeat.expand(ctx, out),
+            SD::If(conds, ..) => conds.expand(gctx, out)?,
+            SD::select1(conds, ..) => conds.expand_select1(gctx, out)?,
+            SD::For(repeat, _) => repeat.expand(gctx, out),
 
-            SD::dbg(ddr) => ddr.expand(ctx, out, kw_span),
-            SD::dbg_all_keywords(_) => dbg_allkw::dump(ctx),
+            SD::dbg(ddr) => ddr.expand(gctx, out, kw_span),
+            SD::dbg_all_keywords(_) => dbg_allkw::dump(ctx?),
 
             // ## maint/check-keywords-documented BoolOnly ##
             SD::is_struct(bo)
@@ -617,7 +645,7 @@ where
 }
 
 impl<O: ExpansionOutput> DbgDumpRequest<O> {
-    fn expand(&self, ctx: &Context, out: &mut O, kw_span: Span) {
+    fn expand<'c>(&self, ctx: GeneralContext<'c>, out: &mut O, kw_span: Span) {
         let desc =
             format!("derive-deftly dbg dump {}", self.display_heading(ctx),);
 
@@ -646,24 +674,28 @@ impl<O: ExpansionOutput> DbgDumpRequest<O> {
 }
 
 impl ExplicitError {
-    pub fn throw<T>(&self, ctx: &Context<'_>) -> Result<T, syn::Error> {
-        Err([
-            ctx.error_loc(), //
-            (self.message.span(), "template"),
-        ]
-        .error(self.message.value()))
+    pub fn throw<'c, T>(
+        &self,
+        gctx: GeneralContext<'c>,
+    ) -> Result<T, syn::Error> {
+        Err(gctx
+            .prepend_error_loc(&[
+                (self.message.span(), "template"), //
+            ])
+            .error(self.message.value()))
     }
 }
 
 impl DefinitionName {
-    fn lookup_expand<O: ExpansionOutput>(
+    fn lookup_expand<'c, O: ExpansionOutput>(
         &self,
-        ctx: &Context<'_>,
+        ctx: GeneralContext<'c>,
         out: &mut O,
     ) -> syn::Result<()> {
         let (def, ctx) = ctx.find_definition(self)?.ok_or_else(|| {
             self.error(format!("user-defined expansion `{}` not found", self))
         })?;
+
         let not_in_paste = || {
             O::not_in_paste(self).map_err(|mut unpasteable| {
                 unpasteable.combine(def.body_span.error(
@@ -680,21 +712,22 @@ impl DefinitionName {
                 unconcatable
             })
         };
+        let ctx = ctx.as_ref();
 
         match &def.body {
             DefinitionBody::Paste(content) => {
-                paste::expand(&ctx, def.body_span, content, out)?;
+                paste::expand(ctx, def.body_span, content, out)?;
             }
             DefinitionBody::Concat(content) => {
                 let mut inner =
                     concat::Accumulator::new_with_span(def.body_span);
-                content.expand(&ctx, &mut inner);
+                content.expand(ctx, &mut inner);
                 inner.finish_onto(&not_in_paste()?, out);
             }
             DefinitionBody::Normal(content) => {
                 let ok = (not_in_paste()?, not_in_concat()?);
                 out.append_tokens_with(&ok, |out| {
-                    content.expand(&ctx, out);
+                    content.expand(ctx, out);
                     Ok(())
                 })?;
             }
@@ -758,7 +791,15 @@ where
     Template<O>: ExpandInfallible<O>,
     O: ExpansionOutput,
 {
-    fn expand(&self, ctx: &Context, out: &mut O) {
+    fn expand<'c>(&self, ctx: GeneralContext<'c>, out: &mut O) {
+        let ctx = match ctx.full_ctx(self.span) {
+            Ok(y) => y,
+            Err(e) => {
+                out.record_error(e.into());
+                return;
+            }
+        };
+
         // for_with_within expects a fallible closure, but we want to do
         // infallible work in our infallible context, so we use `Void`
         // as the error type and wrap each call in `Ok`.
@@ -786,7 +827,7 @@ impl<O: ExpansionOutput> RepeatedTemplate<O> {
         ctx.within_loop = WithinLoop::When;
 
         for when in &self.whens {
-            match when.eval_bool(&ctx) {
+            match when.eval_bool(ctx.as_general()) {
                 Ok(true) => continue,
                 Ok(false) => return,
                 Err(e) => {
@@ -797,6 +838,6 @@ impl<O: ExpansionOutput> RepeatedTemplate<O> {
         }
 
         ctx.within_loop = WithinLoop::Body;
-        self.template.expand(&ctx, out)
+        self.template.expand(ctx.as_general(), out)
     }
 }

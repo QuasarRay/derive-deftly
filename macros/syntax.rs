@@ -61,6 +61,7 @@ pub enum TemplateElement<O: SubstParseContext> {
 
 #[derive(Debug)]
 pub struct RepeatedTemplate<O: SubstParseContext> {
+    pub span: Span,
     pub template: Template<O>,
     #[allow(clippy::vec_box)]
     pub whens: Vec<Box<Subst<BooleanContext>>>,
@@ -1048,14 +1049,17 @@ impl<O: SubstParseContext> Parse for DbgDumpRequest<O> {
 impl<O: SubstParseContext> DbgDumpRequest<O> {
     pub fn display_heading<'s>(
         &'s self,
-        ctx: &'s Context,
+        ctx: GeneralContext<'s>,
     ) -> impl Display + 's {
-        struct Adapter<'a, O: SubstParseContext>(
+        struct Adapter<'a, 'c, O: SubstParseContext>(
             &'a DbgDumpRequest<O>,
-            &'a Context<'a>,
+            GeneralContext<'c>,
         );
 
-        impl<O: SubstParseContext> Display for Adapter<'_, O> {
+        impl<O> Display for Adapter<'_, '_, O>
+        where
+            O: SubstParseContext,
+        {
             fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
                 let Adapter(ddr, ctx) = self;
                 if let Some(note) = &ddr.note {
@@ -1288,6 +1292,7 @@ impl<O: SubstParseContext> RepeatedTemplate<O> {
 
         match over {
             Ok(over) => Ok(RepeatedTemplate {
+                span: span.open(),
                 over,
                 template,
                 whens,

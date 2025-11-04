@@ -47,7 +47,7 @@ pub use super::utils::{
 };
 
 pub(super) use super::{accum, adviseable, beta, check, concat};
-pub(super) use super::{dbg_allkw, engine, framework, meta};
+pub(super) use super::{dbg_allkw, engine, framework, general_context, meta};
 
 #[allow(unused_imports)] // used in tests
 pub use super::utils::{Concatenated, Discard};
