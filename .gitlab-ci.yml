@@ -20,6 +20,11 @@ image: "rust:bookworm"
       - target
       - /usr/local/cargo
 
+.cargo-nightly:
+  # See "Using the proper Nightly Rust" in tests/tests.rs
+  image: rustlang/rust@sha256:b3ddf3e263f50345cd3693a93f59f0ba2cc5575a430553b71db48487a5f541dc
+  # ^ this is from tags.2025-02-10T14:08+00:00.gz (see HACKING.md)
+
 # Running tests without --workspace is useful because that way cargo
 # won't add features to our dependencies that we didn't actually enable
 # *in the derive-deftly or derive-deftly-macros crates*.
@@ -73,7 +78,7 @@ maint-check-todos:
 cargo-clippy:
   extends: .cargo
   cache:
-    key: 
+    key: rust-clippy
   stage: test
   image: "rust:1.84.0"
   script:
@@ -106,9 +111,7 @@ check-keywords-documented:
 #   https://github.com/dtolnay/cargo-expand/issues/179
 cargo-test:
   stage: test
-  # See "Using the proper Nightly Rust" in tests/tests.rs
-  image: rustlang/rust@sha256:b3ddf3e263f50345cd3693a93f59f0ba2cc5575a430553b71db48487a5f541dc
-  # ^ this is from tags.2025-02-10T14:08+00:00.gz (see HACKING.md)
+  extends: .cargo-nightly
   script:
     - ./maint/via-cargo-install-in-ci cargo-expand --version=1.0.100 --features=prettyplease
     - maint/cargo-test-locked --workspace --all-features -- --skip directly::check_examples
@@ -122,7 +125,7 @@ cargo-test:
 # is rather baroque and ad-hco).
 test-doc-examples:
   stage: comprehensive
-  image: rustlang/rust@sha256:b3ddf3e263f50345cd3693a93f59f0ba2cc5575a430553b71db48487a5f541dc
+  extends: .cargo-nightly
   allow_failure: true
   script:
     - maint/cargo-test-locked -p derive-deftly-tests --all-features -- --nocapture directly::check_examples
@@ -134,7 +137,7 @@ test-doc-examples:
 # the only commit in an MR will still work.
 every-commit:
   stage: comprehensive
-  image: rustlang/rust@sha256:b3ddf3e263f50345cd3693a93f59f0ba2cc5575a430553b71db48487a5f541dc
+  extends: .cargo-nightly
   script:
     - apt-get -y update
     - apt-get -y install libtoml-perl git
@@ -155,7 +158,7 @@ python3-mypy:
 
 cargo-test-minfeatures:
   stage: comprehensive
-  image: rustlang/rust@sha256:b3ddf3e263f50345cd3693a93f59f0ba2cc5575a430553b71db48487a5f541dc
+  extends: .cargo-nightly
   script:
     - maint/cargo-test-locked  -p derive-deftly-tests --no-default-features --features=derive-deftly-tests/recent,derive-deftly-tests/ui -- --skip directly::check_examples
 
