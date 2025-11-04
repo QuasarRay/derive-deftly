@@ -128,8 +128,9 @@ struct ContextDbgDisplayAdapter<'a>(Option<&'a Context<'a>>);
 
 impl Display for ContextDbgDisplayAdapter<'_> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let Some(ctx) = self.0 else {
-            return write!(f, "[no driver]");
+        let ctx = match self.0 {
+            Some(y) => y,
+            None => return write!(f, "[no driver]"),
         };
 
         write!(f, "for {}", &ctx.top.ident)?;
