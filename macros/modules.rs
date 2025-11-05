@@ -137,7 +137,7 @@ impl SharedDefs {
 
                 if got_d_escaped.discriminant() != exp_d_escaped {
                     return Err(dollar.error(format_args!(
-                   "escaping not as expected: got={:?}, exp={:?}",
+                        "escaping not as expected: got={:?}, exp={:?}",
                         exp_d_escaped,
                         got_d_escaped.discriminant(),
                     )));

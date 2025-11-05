@@ -120,7 +120,8 @@ impl ParseAdviseable for EngineInput {
                 parse_via_mdoules_invocation(input)
             } else {
                 Err(special.error(format!(
-                    "unknown engine special expansion request `{}`", special,
+                    "unknown engine special expansion request `{}`",
+                    special,
                 )))
             };
         }

@@ -600,7 +600,8 @@ fn synthetic_macro_name_check(
     let s = ident.to_string();
     match s.chars().find(|&c| c != '_') {
         None => Err(format!(
-            "{} name cannot consist entirely of underscores", what,
+            "{} name cannot consist entirely of underscores",
+            what,
         )),
         Some(c) => {
             if c.is_lowercase() {
