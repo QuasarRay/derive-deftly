@@ -7,7 +7,9 @@ use super::prelude::*;
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
 pub enum Enabled {}
 
-pub fn with_maybe_enabled<R>(_: Option<Enabled>, f: impl FnOnce() -> R) -> R {
+pub type MaybeEnabled = Result<Enabled, ErrorGenerator<'static>>;
+
+pub fn with_maybe_enabled<R>(_: MaybeEnabled, f: impl FnOnce() -> R) -> R {
     f()
 }
 
@@ -24,13 +26,10 @@ impl Enabled {
         ))
     }
 
-    pub fn new_for_imported_definitions() -> Option<Self> {
-        // No bespoke error here, since this goes into with_maybe_enabled
-        // and would theoretically generate the error from `new_for_syntax`.
-        // This isn't possible unless
-        //  - a module is imported from another crate
-        //  - the two crates have different derive-deftly builds
-        None
+    pub fn new_for_imported_definitions() -> MaybeEnabled {
+        Err(error_generator!(
+ "module containing beta template features (defined using derive-deftly with beta cargo feature enabled)imported into template using derive-deftly with beta cargo feature disabled!"
+        ))
     }
 
     #[allow(dead_code)] // sometimes we might not have any beta features

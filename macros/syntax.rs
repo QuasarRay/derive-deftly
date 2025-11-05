@@ -427,6 +427,10 @@ impl TopTemplate {
         input: ParseStream,
         beta_enabled: Option<beta::Enabled>,
     ) -> syn::Result<Self> {
+        let beta_enabled = beta_enabled.ok_or(error_generator!(
+ "beta derive-deftly feature used, without `beta_deftly` template option"
+        ));
+
         let content = beta::with_maybe_enabled(
             //
             beta_enabled,

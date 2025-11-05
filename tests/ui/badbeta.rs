@@ -38,7 +38,6 @@ define_derive_deftly_module! {
     EmptyModule:
 }
 
-// TODO MODULES this should at least produce a better error.
 define_derive_deftly! {
     use EmptyModule;
     $require_beta
