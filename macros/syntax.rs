@@ -514,7 +514,7 @@ impl<O: SubstParseContext> Deref for Argument<O> {
 /// Do not construct this yourself.
 /// Only `deescape_orig_dollar` is allowed to do that.
 #[derive(Debug, strum::EnumDiscriminants)]
-// XXXX rename Handled
+// TODO MODULES rename Handled
 pub enum OrigDollarDeescaped {
     /// We didn't find any `orig_dollar`
     NotFound,
