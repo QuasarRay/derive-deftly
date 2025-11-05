@@ -42,10 +42,9 @@ pub use super::paste::TokenPastesAsIdent;
 pub use super::utils::{
     braced_group, delimit_token_group, dummy_path, engine_macro_name,
     spans_join, typepath_add_missing_argument_colons, DocAttributes,
-    ErrorAccumulator, ErrorLoc, Grouping, IdentAny, MacroExport, MakeError,
-    ModuleName, ModulePath, TemplateName, TemplatePath,
-    ToTokensPunctComposable, TokenOutputTrimmer,
-    ErrorGenerator,
+    ErrorAccumulator, ErrorGenerator, ErrorLoc, Grouping, IdentAny,
+    MacroExport, MakeError, ModuleName, ModulePath, TemplateName,
+    TemplatePath, ToTokensPunctComposable, TokenOutputTrimmer,
 };
 
 pub(super) use super::{
