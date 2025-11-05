@@ -759,13 +759,15 @@ impl SubstParseContext for Items {
     }
 
     type SpecialParseContext = Option<AngleBrackets>;
+}
 
-    fn special_before_element_hook(
-        special: &mut Option<AngleBrackets>,
+impl SpecialParseContext for Option<AngleBrackets> {
+    fn before_element_hook(
+        &mut self,
         input: ParseStream,
     ) -> syn::Result<Option<SpecialInstructions>> {
         if input.peek(Token![>]) {
-            if let Some(state) = special {
+            if let Some(state) = self {
                 let _: Token![>] = input.parse()?;
                 state.found_close = true;
                 return Ok(Some(SpecialInstructions::EndOfTemplate));

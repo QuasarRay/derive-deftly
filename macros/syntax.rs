@@ -10,7 +10,8 @@ use super::framework::*;
 pub use SubstDetails as SD;
 pub use TemplateElement as TE;
 
-#[derive(Debug)]
+#[derive(Debug, Default)]
+// We deliberately don't make this Clone, to avoid cloning whole parse trees.
 pub struct Template<O: SubstParseContext> {
     /// `TD::Subst` is known not to contain `SD::when`
     pub elements: Vec<TemplateElement<O>>,
@@ -18,7 +19,7 @@ pub struct Template<O: SubstParseContext> {
 
 #[derive(Debug)]
 pub struct TopTemplate {
-    pub content: Template<TokenAccumulator>,
+    content: Template<TokenAccumulator>,
 }
 impl_deref!(TopTemplate, content, Template<TokenAccumulator>);
 
@@ -437,23 +438,23 @@ impl TopTemplate {
 
 impl<O: SubstParseContext> Parse for Template<O> {
     fn parse(input: ParseStream) -> syn::Result<Self> {
-        Template::parse_special(input, &mut Default::default())
+        Template::parse_special(input, &mut O::SpecialParseContext::default())
     }
 }
 
 impl<O: SubstParseContext> Template<O> {
-    fn parse_special(
+    fn parse_special<S: SpecialParseContext>(
         input: ParseStream,
-        special: &mut O::SpecialParseContext,
+        special: &mut S,
     ) -> syn::Result<Self> {
         TemplateWithWhens::parse_special(input, special)?.try_into()
     }
 }
 
 impl<O: SubstParseContext> TemplateWithWhens<O> {
-    fn parse_special(
+    fn parse_special<S: SpecialParseContext>(
         input: ParseStream,
-        mut special: &mut O::SpecialParseContext,
+        mut special: &mut S,
     ) -> syn::Result<Self> {
         // eprintln!("@@@@@@@@@@ PARSE {}", &input);
         let mut good = vec![];
@@ -461,7 +462,7 @@ impl<O: SubstParseContext> TemplateWithWhens<O> {
         while !input.is_empty() {
             let special = &mut special;
             match errors.handle_in(|| {
-                O::special_before_element_hook(special, input)
+                special.before_element_hook(input)
             }) {
                 Some(None) => {},
                 None | // error! quit parsing
@@ -513,12 +514,14 @@ impl<O: SubstParseContext> Deref for Argument<O> {
 ///
 /// Do not construct this yourself.
 /// Only `deescape_orig_dollar` is allowed to do that.
+#[derive(Debug, strum::EnumDiscriminants)]
+// TODO MODULES rename Handled
 pub enum OrigDollarDeescaped {
     /// We didn't find any `orig_dollar`
     NotFound,
     /// We *did* find `orig_dollar`; if we now see *another* `$`
     /// things get even stranger.
-    Found,
+    Found(#[allow(unused)] /* TODO MODULES */ Span),
 }
 
 /// Skip over any `orig_dollar`
@@ -533,7 +536,7 @@ pub fn deescape_orig_dollar(
         let (found, rest) = (|| {
             let (ident, rest) = cursor.ident()?;
             (ident == "orig_dollar").then(|| ())?;
-            Some((OrigDollarDeescaped::Found, rest))
+            Some((OrigDollarDeescaped::Found(ident.span()), rest))
         })()
         .unwrap_or((OrigDollarDeescaped::NotFound, *cursor));
         Ok((found, rest))
@@ -587,9 +590,9 @@ impl<O: SubstParseContext> Parse for TemplateElement<O> {
                     let dollar: Punct = input.parse()?;
                     match deescaped {
                         OrigDollarDeescaped::NotFound => {},
-                        OrigDollarDeescaped::Found => {
+                        OrigDollarDeescaped::Found(_) => {
                             match deescape_orig_dollar(input)? {
-                                OrigDollarDeescaped::Found => {},
+                                OrigDollarDeescaped::Found(_) => {},
                                 OrigDollarDeescaped::NotFound => {
                                     return Err(dollar.error(
  "found `$orig_dollar $` not followed by another orig_dollar!"
@@ -1258,8 +1261,10 @@ impl<O: SubstParseContext> RepeatedTemplate<O> {
     ) -> Result<RepeatedTemplate<O>, syn::Error> {
         use TemplateWithWhens as TWW;
 
-        let TWW { elements } =
-            TWW::parse_special(input, &mut Default::default())?;
+        let TWW { elements } = TWW::parse_special::<O::SpecialParseContext>(
+            input,
+            &mut Default::default(),
+        )?;
 
         // split `when` off
         let mut elements = VecDeque::from(elements);

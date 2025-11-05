@@ -209,12 +209,26 @@ where
     O: ExpansionOutput,
 {
     fn expand<'c>(&self, ctx_in: GeneralContext<'c>, out: &mut O) {
+        Self::expand_iter(&self.elements, ctx_in, out)
+    }
+}
+
+impl<'s, O> Template<O>
+where
+    TemplateElement<O>: Expand<O>,
+    O: ExpansionOutput + 's,
+{
+    fn expand_iter<'c>(
+        elements: impl IntoIterator<Item = &'s TemplateElement<O>>,
+        ctx_in: GeneralContext<'c>,
+        out: &mut O,
+    ) {
         let mut ctx_buf;
         let mut definitions_here = vec![];
         let mut defconds_here = vec![];
         let mut ctx = ctx_in;
 
-        for element in &self.elements {
+        for element in elements {
             macro_rules! handle_definition { {
                 $variant:ident, $store:expr
             } => {

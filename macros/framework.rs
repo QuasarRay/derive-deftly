@@ -40,7 +40,7 @@ pub struct Context<'c> {
 }
 
 /// Part of the context relating to user-defined expansions and conditions
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, Default)]
 pub struct DefinitionsContext<'c> {
     pub defs: Definitions<'c>,
     pub nesting_depth: u16,
@@ -103,7 +103,7 @@ pub struct Definitions<'c> {
 }
 
 /// Special processing instructions returned by
-/// [`special_before_element_hook`](SubstParseContext::special_before_element_hook)
+/// [`before_element_hook`](SpecialParseContext::before_element_hook)
 pub enum SpecialInstructions {
     /// This template is finished
     ///
@@ -194,24 +194,7 @@ pub trait SubstParseContext: Sized {
     ///
     /// Used when parsing `${paste ..}` to handle
     /// the special `>`-based end condition.
-    type SpecialParseContext: Default;
-
-    /// Handle any special syntax for a special kind of template context.
-    ///
-    /// This method is called only when parsing multi-element [`Template`]s,
-    /// It's a hook, called before parsing each `TemplateElement`.
-    ///
-    /// It should consume any special syntax as appropriate,
-    ///
-    /// The default implementation is a no-op.
-    /// The only non-default implementation is in `paste.rs`, for `$<...>` -
-    /// see [`paste::AngleBrackets`].
-    fn special_before_element_hook(
-        _special: &mut Self::SpecialParseContext,
-        _input: ParseStream,
-    ) -> syn::Result<Option<SpecialInstructions>> {
-        Ok(None)
-    }
+    type SpecialParseContext: SpecialParseContext + Default;
 
     /// Parse using `f`, within parens in boolean context, not otherwise
     ///
@@ -249,6 +232,32 @@ pub trait SubstParseContext: Sized {
         Err(kw_span.error(format_args!(
  "missing parameters to expansion keyword (NB: argument must be within {{ }})",
         )))
+    }
+}
+
+pub trait SpecialParseContext {
+    /// Handle any special syntax for a special kind of template context.
+    ///
+    /// This method is called only when parsing multi-element [`Template`]s,
+    /// It's a hook, called before parsing each `TemplateElement`.
+    ///
+    /// It should consume any special syntax as appropriate,
+    ///
+    /// The default implementation is a no-op.
+    /// The only non-default implementation is in `paste.rs`, for `$<...>` -
+    /// see [`paste::AngleBrackets`].
+    fn before_element_hook(
+        &mut self,
+        _input: ParseStream,
+    ) -> syn::Result<Option<SpecialInstructions>>;
+}
+
+impl SpecialParseContext for () {
+    fn before_element_hook(
+        &mut self,
+        _input: ParseStream,
+    ) -> syn::Result<Option<SpecialInstructions>> {
+        Ok(None)
     }
 }
 
