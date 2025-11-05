@@ -563,52 +563,146 @@ impl<'t, 'o> TokenOutputTrimmer<'t, 'o> {
 
 //---------- TemplateName ----------
 
-#[derive(Debug, Clone)]
-pub struct TemplateName(syn::Ident);
-impl_to_tokens!(TemplateName, 0);
-impl_display!(TemplateName, 0);
+pub type TemplateName = SyntheticMacroName<SyntheticMacroTemplate>;
+pub type ModuleName = SyntheticMacroName<SyntheticMacroModule>;
 
-impl TemplateName {
+// Generic arrangements
+
+/// Name of a thing of kind `Kind`
+#[derive(Debug, Clone)]
+pub struct SyntheticMacroName<Kind>(syn::Ident, Kind);
+
+/// Kind marker types
+pub trait SyntheticMacroKind: Default + Copy + Debug {
+    const WHAT: &'static str;
+}
+
+// Kinds
+
+#[derive(Debug, Clone, Copy, Default)]
+pub struct SyntheticMacroTemplate;
+impl SyntheticMacroKind for SyntheticMacroTemplate {
+    const WHAT: &'static str = "template";
+}
+
+#[derive(Debug, Clone, Copy, Default)]
+pub struct SyntheticMacroModule;
+impl SyntheticMacroKind for SyntheticMacroModule {
+    const WHAT: &'static str = "module";
+}
+
+// Non-generic functions, with substantive code
+
+fn synthetic_macro_name_check(
+    ident: &syn::Ident,
+    what: &str,
+) -> syn::Result<()> {
+    let s = ident.to_string();
+    match s.chars().find(|&c| c != '_') {
+        None => Err(format!(
+            "{} name cannot consist entirely of underscores",
+            what,
+        )),
+        Some(c) => {
+            if c.is_lowercase() {
+                Err(format!(
+ "{} name may not start with a lowercase letter (after any underscores)", what,
+                ))
+            } else {
+                Ok(())
+            }
+        }
+    }
+    .map_err(|emsg| ident.error(emsg))
+}
+
+fn synthetic_macro_name_macro_name(
+    ident: &syn::Ident,
+    what: &str,
+) -> syn::Ident {
+    format_ident!("derive_deftly_{}_{}", what, ident)
+}
+
+// Impls, generic
+
+impl_to_tokens!(SyntheticMacroName[K], 0);
+impl_display!(SyntheticMacroName[K], 0);
+
+impl<K: SyntheticMacroKind> SyntheticMacroName<K> {
     pub fn macro_name(&self) -> syn::Ident {
-        format_ident!("derive_deftly_template_{}", &self.0)
+        synthetic_macro_name_macro_name(&self.0, K::WHAT)
     }
 }
 
-impl Parse for TemplateName {
+impl<K: SyntheticMacroKind> Parse for SyntheticMacroName<K> {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let ident: syn::Ident = input.parse()?;
         ident.try_into()
     }
 }
-impl TryFrom<syn::Ident> for TemplateName {
-    type Error = syn::Error;
-    fn try_from(ident: syn::Ident) -> syn::Result<TemplateName> {
-        let s = ident.to_string();
-        match s.chars().find(|&c| c != '_') {
-            None => {
-                Err("template name cannot consist entirely of underscores")
-            }
-            Some(c) => {
-                if c.is_lowercase() {
-                    Err(
- "template name may not start with a lowercase letter (after any underscores)"
-                )
-                } else {
-                    Ok(())
-                }
-            }
-        }
-        .map_err(|emsg| ident.error(emsg))?;
 
-        Ok(TemplateName(ident))
+impl<K: SyntheticMacroKind> TryFrom<syn::Ident> for SyntheticMacroName<K> {
+    type Error = syn::Error;
+    fn try_from(ident: syn::Ident) -> syn::Result<SyntheticMacroName<K>> {
+        synthetic_macro_name_check(&ident, K::WHAT)?;
+        Ok(SyntheticMacroName(ident, K::default()))
     }
 }
-impl quote::IdentFragment for TemplateName {
+impl<K> quote::IdentFragment for SyntheticMacroName<K> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         quote::IdentFragment::fmt(&self.0, f)
     }
     fn span(&self) -> Option<Span> {
         quote::IdentFragment::span(&self.0)
+    }
+}
+
+//---------- TemplatePath ----------
+
+pub type TemplatePath = SyntheticMacroPath<SyntheticMacroTemplate>;
+pub type ModulePath = SyntheticMacroPath<SyntheticMacroModule>;
+
+// Invariant: is valid (so, last segment is a valid TemplateName)
+#[derive(Debug, Clone)]
+pub struct SyntheticMacroPath<Kind>(syn::Path, Kind);
+
+impl_to_tokens!(SyntheticMacroPath[K], 0);
+
+fn synthetic_macro_path_parse(
+    input: ParseStream,
+    what: &str,
+) -> syn::Result<syn::Path> {
+    let path = syn::Path::parse_mod_style(input)?;
+
+    let last = path.segments.last().ok_or_else(|| {
+        path.leading_colon
+            .as_ref()
+            .expect("path with no tokens!")
+            .error("empty path not allowed here")
+    })?;
+
+    synthetic_macro_name_check(&last.ident, what)?;
+
+    Ok(path)
+}
+
+fn synthetic_macro_path_macro_path(path: &syn::Path, what: &str) -> syn::Path {
+    let mut out = path.clone();
+    let last = &mut out.segments.last_mut().expect("became empty!").ident;
+    *last = synthetic_macro_name_macro_name(last, what);
+    out
+}
+
+impl<K: SyntheticMacroKind> Parse for SyntheticMacroPath<K> {
+    fn parse(input: ParseStream) -> syn::Result<Self> {
+        let path = synthetic_macro_path_parse(input, K::WHAT)?;
+        Ok(SyntheticMacroPath(path, K::default()))
+    }
+}
+
+impl<K: SyntheticMacroKind> SyntheticMacroPath<K> {
+    pub fn macro_path(&self) -> syn::Path {
+        synthetic_macro_path_macro_path(&self.0, K::WHAT)
     }
 }
 

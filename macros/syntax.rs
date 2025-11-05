@@ -443,7 +443,7 @@ impl<O: SubstParseContext> Parse for Template<O> {
 }
 
 impl<O: SubstParseContext> Template<O> {
-    fn parse_special<S: SpecialParseContext>(
+    pub fn parse_special<S: SpecialParseContext>(
         input: ParseStream,
         special: &mut S,
     ) -> syn::Result<Self> {
@@ -521,7 +521,14 @@ pub enum OrigDollarDeescaped {
     NotFound,
     /// We *did* find `orig_dollar`; if we now see *another* `$`
     /// things get even stranger.
-    Found(#[allow(unused)] /* TODO MODULES */ Span),
+    Found(Span),
+}
+
+impl OrigDollarDeescaped {
+    // TODO MSRV 1.66, use strum 0.27 which has IntoDiscriminant trait
+    pub fn discriminant(&self) -> OrigDollarDeescapedDiscriminants {
+        self.into()
+    }
 }
 
 /// Skip over any `orig_dollar`
@@ -759,8 +766,7 @@ impl ParseUsingSubkeywords for SubstVPat {
 
 impl<O: SubstParseContext> Subst<O> {
     /// Parses everything including a `$` (which we insist on)
-    #[allow(dead_code)] // This was once used for ${paste }
-    fn parse_entire(input: ParseStream) -> syn::Result<Self> {
+    pub fn parse_entire(input: ParseStream) -> syn::Result<Self> {
         let _dollar: Token![$] = input.parse()?;
         let deescaped = deescape_orig_dollar(input)?;
         let la = input.lookahead1();

@@ -1,6 +1,9 @@
 #![allow(unused)]
 
-use derive_deftly::{define_derive_deftly, derive_deftly_adhoc, Deftly};
+use derive_deftly::{
+    define_derive_deftly, define_derive_deftly_module, derive_deftly_adhoc,
+    Deftly,
+};
 
 #[derive(Deftly)]
 #[derive_deftly_adhoc]
@@ -16,6 +19,30 @@ derive_deftly_adhoc! {
     DataType:
 
     $require_beta
+}
+
+define_derive_deftly_module! {
+    Break:
+
+    ${define X { $require_beta }}
+}
+
+// TODO MODULES this should at least produce a better error.
+define_derive_deftly! {
+    $ignore
+    ${if false {}}
+    ExpansionsWithoutUses:
+}
+
+define_derive_deftly_module! {
+    EmptyModule:
+}
+
+// TODO MODULES this should at least produce a better error.
+define_derive_deftly! {
+    use EmptyModule;
+    $require_beta
+    CannotEnableBetaAbove beta_deftly:
 }
 
 fn main() {}

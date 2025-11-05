@@ -26,6 +26,7 @@ pub(crate) mod concat;
 pub(crate) mod dbg_allkw;
 pub(crate) mod expand;
 pub(crate) mod meta;
+pub(crate) mod modules;
 pub(crate) mod options;
 pub(crate) mod paste;
 pub(crate) mod repeat;
@@ -198,6 +199,7 @@ pub fn derive_deftly_adhoc(
 ///
 /// ```text
 /// define_derive_deftly! {
+///     [use SomeModule; ..]
 ///     [/// DOCS]
 ///     [export] MyMacro OPTIONS,..:
 ///     TEMPLATE
@@ -219,6 +221,9 @@ pub fn derive_deftly_adhoc(
 /// derive-deftly will then also append a note about
 /// how to invoke the template.
 /// (The `#[doc]` attribute syntax can also be used here.)
+///
+/// `use` in the preamble refers not to a Rust language module (`mod`)
+/// but to a module defined with [`define_derive_deftly_module!`].
 ///
 /// ## Template definition macro `derive_deftly_template_MyMacro`
 ///
@@ -473,6 +478,113 @@ pub fn derive_deftly(
     input: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
     wrap_macro_func(derive::derive_deftly, input)
+}
+
+/// Define a module with reuseable template definitions (**beta**)
+///
+/// <!-- @dd-navbar macros . -->
+/// <!-- this line automatically maintained by update-navbars --><nav style="text-align: right; margin-bottom: 12px;">[ <em>docs: <a href="index.html">crate top-level</a> | <a href="index.html#overall-toc">overall toc, <strong>macros</strong></a> | <a href="doc_reference/index.html">template etc. reference</a> | <a href="https://diziet.pages.torproject.net/rust-derive-deftly/latest/guide/">guide/tutorial</a></em> ]</nav>
+///
+/// ```text
+/// define_derive_deftly_module! {
+///     [/// DOCS]
+///     [export] MyModule OPTIONS,..:
+///     [use SubModule; ..]
+///     TEMPLATE_DEFINITIONS
+/// }
+/// ```
+///
+/// Then, `use MyModule` can be used in [`define_derive_deftly!`]
+/// (and, in another `define_derive_deftly_module!`).
+///
+/// TEMPLATE_DEFINITIONS may contain *only* `${define ..}` and `${defcond }`.
+/// (So it cannot define derives as-such, but it could contain
+/// the whole *body* of a derive as a `${define}`.)
+///
+/// This feature is available only with the **beta** cargo option.
+///
+/// ## Scope and (lack of) namespacing
+///
+/// All names defined in a module are accessible within
+/// any tamplate or module that uses the module (directly or indirectly).
+///
+/// So there is no namespacing: names are "global".
+/// Like all `${define }` and `${defcond }`, scope is dynamic, not lexical.
+///
+/// Definitions in imported modules can be shadowed by subsequent definitions,
+/// including subsequent modules, and the importing template or module.
+///
+/// So definitions in general-purpose modules should usually
+/// have a namespace component within their name.
+/// This applies especially to "internal" definitions,
+/// which the module user is not intended to use or redefine.
+///
+/// ## Documentation expansions in `define_derive_deftly!`
+///
+/// In `define_derive_deftly!`, `DOCS` can contain both literal
+/// `#[doc]` attributes, and template expansions
+/// that expand to `#[doc]` attributes.
+/// The template expansions can refer to `${define}`s from imported modules.
+/// This allows re-use of documentation fragments.
+///
+/// The documentation for a *module* cannot contain expansions.
+///
+/// ## Placement of `use`
+///
+/// In `define_derive_deftly!` `use Module` appears in the preamble,
+/// before the name of the template being defined.
+/// `use` statements in the body become part of the expansion,
+/// so will refer to Rust modules.
+///
+/// In `define_derive_deftly_module!`,
+/// `use Module` appears within the body, before the definitions.
+/// (This reflects the fact that the imported module becomes part
+/// of the module being defined, and that imported definitions
+/// cannot be used in the module's documentation.)
+///
+/// ## Options
+///
+/// The only `OPTION` supported is `beta_deftly`.
+///
+/// Beta features can be used in a module, if `beta_deftly` is specified
+/// in the *module definition*.  A module which uses beta features
+/// can be imported by a template or module which does not itself
+/// specify `beta_deftly.`
+///
+/// `use` statements do not themselves require specifying `beta_deftly`;
+/// the cargo feature is sufficient.
+///
+/// ## Module definition macro `derive_deftly_module_MyModule`
+///
+/// The module's definitions are made into a `macro_rules` macro
+/// named `derive_deftly_module_MyModule`,
+/// which is referenced where the module is imported.
+///
+/// The module needs to be in Rust macro scope where it's `use`d.
+/// It does not need to be in scope for `derive` whose template uses it.
+/// (The module's definitions are bodily incorporated into the
+/// importing template (or module) macro_rules macro.)e
+///
+/// ### Semver implications of `export`:
+///
+/// Normally, template code present in different crates can be processed
+/// by different, perhaps semver-incompatible, versions of derive-deftly.
+///
+/// But, a whole derive must be processed by *one* version of
+/// derive-deftly.  Ie, when you `use` a module from another crate, that
+/// other crate's module's template text gets processed with *your*
+/// version of derive-deftly.
+///
+/// Additionally, the lack of namespacing provides ample opportunity
+/// for unintended interactions and uncontrolled dependencies on internals.
+///
+/// There are no features in derive-deftly for helping make
+/// an exported module with a stable API, whatever that means.
+#[cfg_attr(proc_macro, proc_macro)]
+pub fn define_derive_deftly_module(
+    input: proc_macro::TokenStream,
+) -> proc_macro::TokenStream {
+    wrap_macro_func(modules::define_derive_deftly_module, input)
 }
 
 /// Check semver compatibility, for a crate which exports macros

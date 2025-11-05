@@ -3,12 +3,35 @@
 use super::framework::*;
 
 #[derive(Debug, Clone)]
-struct TemplateDefinition {
-    doc_attrs: DocAttributes,
+pub struct TemplateDefinition {
+    // pub for the benefit of mmodules
+    pub imported_definitions_d_escaped: TokenStream,
+    pub doc_attrs: DocAttributes,
     export: Option<MacroExport>,
     templ_name: TemplateName,
     options: UnprocessedOptions,
     template: TokenStream,
+}
+
+#[derive(Debug, Clone)]
+enum DefineMacroInput {
+    WithUses {
+        uses: modules::SomeUseModules,
+        rest: TokenStream,
+    },
+    Immediate(TemplateDefinition),
+}
+
+impl Parse for DefineMacroInput {
+    fn parse(input: ParseStream) -> syn::Result<Self> {
+        let uses = modules::UseModule::parse_several(input)?;
+        if let Some(uses) = modules::SomeUseModules::divert(uses) {
+            let rest = input.parse()?;
+            return Ok(DefineMacroInput::WithUses { uses, rest });
+        }
+
+        input.parse().map(DefineMacroInput::Immediate)
+    }
 }
 
 impl Parse for TemplateDefinition {
@@ -34,6 +57,7 @@ impl Parse for TemplateDefinition {
         };
         let template = input.parse()?;
         Ok(TemplateDefinition {
+            imported_definitions_d_escaped: TokenStream::new(),
             doc_attrs,
             export,
             templ_name,
@@ -156,13 +180,36 @@ pub fn define_derive_deftly_func_macro(
 ) -> Result<TokenStream, syn::Error> {
     dprint_block!(&input, "define_derive_deftly! input");
 
+    let input = syn::parse2(input)?;
+
+    match input {
+        DefineMacroInput::WithUses { uses, rest } => {
+            let output =
+                uses.output(format_ident!("define"), quote! {}, rest)?;
+            dprint_block!(
+                &output,
+                "define_derive_deftly! output, via modules",
+            );
+            Ok(output)
+        }
+        DefineMacroInput::Immediate(definition) => {
+            define_template(definition, "define_derive_deftly! output")
+        }
+    }
+}
+
+pub fn define_template(
+    definition: TemplateDefinition,
+    #[allow(unused)] dprint_prefix: &str,
+) -> syn::Result<TokenStream> {
     let TemplateDefinition {
+        imported_definitions_d_escaped,
         doc_attrs,
         export,
         templ_name,
         options,
         template,
-    } = syn::parse2(input)?;
+    } = definition;
 
     let mut output = TokenStream::new();
 
@@ -230,7 +277,8 @@ To use it, write: `#[derive(Deftly)] #[derive_deftly({})]`."#,
                     [ $($aoptions)* ]
                     ()
                     { # template }
-                    ( $crate; [#options] #templ_name; )
+                    ( $crate; [#options] #templ_name;
+                      { #imported_definitions_d_escaped } )
                     $($tpassthrough)*
                 }
             };
@@ -244,7 +292,6 @@ To use it, write: `#[derive(Deftly)] #[derive_deftly({})]`."#,
         }
     });
 
-    dprint_block!(&output, "define_derive_deftly! output {}", templ_mac_name);
-
+    dprint_block!(&output, "{} {}", dprint_prefix, templ_mac_name);
     Ok(output)
 }

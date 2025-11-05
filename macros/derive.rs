@@ -4,7 +4,7 @@ use super::prelude::*;
 
 /// Contents of an entry in a `#[derive_deftly(..)]` attribute
 enum InvocationEntry {
-    Precanned(syn::Path, UnprocessedOptions),
+    Precanned(TemplatePath, UnprocessedOptions),
 }
 
 // (CannedName, CannedName, ...)
@@ -23,7 +23,7 @@ impl Parse for InvocationEntry {
         let entry = if input.lookahead1().peek(Token![pub]) {
             return Err(input.error("`pub` must be in #[derive_deftly_adhoc]"));
         } else {
-            let path = syn::Path::parse_mod_style(input)?;
+            let path = input.parse()?;
             let options = if input.peek(syn::token::Bracket) {
                 let tokens;
                 let _bracket = bracketed!(tokens in input);
@@ -90,21 +90,6 @@ fn check_for_misplaced_atrs(data: &syn::Data) -> syn::Result<()> {
     }
 }
 
-/// Returns the template macro name, for a given template name (as a path)
-fn templ_mac_name(mut templ_path: syn::Path) -> syn::Result<syn::Path> {
-    if templ_path.segments.is_empty() {
-        return Err(templ_path
-            .leading_colon
-            .as_ref()
-            .expect("path with no tokens!")
-            .error("cannot derive_deftly the empty path!"));
-    }
-    let last = templ_path.segments.last_mut().expect("became empty!");
-    let name = TemplateName::try_from(last.ident.clone())?;
-    last.ident = name.macro_name();
-    Ok(templ_path)
-}
-
 /// This is #[derive(Deftly)]
 pub fn derive_deftly(
     driver_stream: TokenStream,
@@ -118,7 +103,7 @@ pub fn derive_deftly(
     let driver_mac_name =
         format_ident!("derive_deftly_driver_{}", &driver.ident);
 
-    let precanned_paths: Vec<(syn::Path, UnprocessedOptions)> = driver
+    let precanned_paths: Vec<(TemplatePath, UnprocessedOptions)> = driver
         .attrs
         .iter()
         .map(|attr| {
@@ -256,7 +241,7 @@ pub fn derive_deftly(
             precanned_paths
                 .into_iter()
                 .map(|(templ_path, aoptions)| {
-                    let call = templ_mac_name(templ_path)?.to_token_stream();
+                    let call = templ_path.macro_path().to_token_stream();
                     let ao_versions = OpCompatVersions::ours();
                     let after_driver = quote!( [ #ao_versions #aoptions ] () );
                     Ok(ChainNext { call, after_driver })
