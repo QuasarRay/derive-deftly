@@ -524,6 +524,13 @@ pub enum OrigDollarDeescaped {
     Found(Span),
 }
 
+impl OrigDollarDeescaped {
+    // TODO MSRV 1.66, use strum 0.27 which has IntoDiscriminant trait
+    pub fn discriminant(&self) -> OrigDollarDeescapedDiscriminants {
+        self.into()
+    }
+}
+
 /// Skip over any `orig_dollar`
 ///
 /// Call this after seeing a `$`.
