@@ -75,7 +75,7 @@ impl ModuleDefinition {
         let defs = SharedDefs::parse(
             input,
             beta_content,
-            OrigDollarDeescapedDiscriminants::NotFound,
+            OrigDollarHandledDiscriminants::NotFound,
         )?;
 
         Ok(ModuleDefinition {
@@ -93,7 +93,7 @@ impl SharedDefs {
     fn parse(
         input: ParseStream,
         beta_content: Option<beta::Enabled>,
-        exp_d_escaped: OrigDollarDeescapedDiscriminants,
+        exp_d_escaped: OrigDollarHandledDiscriminants,
     ) -> syn::Result<Self> {
         // We want to:
         // 1. parse a `${define...}` or `${defcond...}` to check it ssyntax.
@@ -149,7 +149,7 @@ impl SharedDefs {
                 let g_out;
 
                 match got_d_escaped {
-                    OrigDollarDeescaped::NotFound => {
+                    OrigDollarHandled::NotFound => {
                         o_d_span = dollar.span();
                         let stream_d_escaped = escape_dollars(g_in.stream());
                         let mut g = proc_macro2::Group::new(
@@ -159,7 +159,7 @@ impl SharedDefs {
                         g.set_span(g_in.span());
                         g_out = g;
                     }
-                    OrigDollarDeescaped::Found(span) => {
+                    OrigDollarHandled::Found(span) => {
                         // The outer $ has been escaped as expected.
                         // Trust the inner input is (preperly) escaped too.
                         // This isn't an adversarial context.
@@ -356,7 +356,7 @@ impl ModuleDefinition {
         let imported = SharedDefs::parse(
             prefix_d_escaped,
             beta::Enabled::new_for_imported_definitions(),
-            OrigDollarDeescapedDiscriminants::Found,
+            OrigDollarHandledDiscriminants::Found,
         )?;
         mod_def.defs =
             Concatenated(chain!(imported.0, mod_def.defs.0,).collect_vec());
