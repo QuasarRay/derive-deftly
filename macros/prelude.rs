@@ -21,7 +21,7 @@ pub use itertools::{chain, izip, Either, Either::*, EitherOrBoth, Itertools};
 pub use proc_macro2::{Delimiter, Ident, Punct};
 pub use proc_macro2::{Span, TokenStream, TokenTree};
 pub use quote::{format_ident, quote, quote_spanned, ToTokens};
-pub use strum::IntoEnumIterator as _;
+pub use strum::{IntoDiscriminant as _, IntoEnumIterator as _};
 pub use strum::{AsRefStr, Display};
 pub use strum::{EnumIter, EnumString};
 pub use syn::ext::IdentExt;
@@ -51,6 +51,8 @@ pub use super::utils::{
 
 pub(super) use super::{accum, adviseable, beta, check, concat};
 pub(super) use super::{dbg_allkw, engine, framework, general_context, meta};
+pub(super) use super::{modules};
+pub(super) use super::{define};
 
 #[allow(unused_imports)] // used in tests
 pub use super::utils::{Concatenated, Discard};

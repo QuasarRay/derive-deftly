@@ -79,6 +79,34 @@ impl Enabled {
         Ok(Enabled {})
     }
 
+    /// If the cargo feature is enabled, return `Ok(Enabled)`
+    ///
+    /// Used for things that are inherently part of the modules feature,
+    /// such as `use`s and `define_derive_deftly_module!`.
+    //
+    // Remove when modules are no longer beta
+    //
+    // (In this version of the source code it *always* returns Ok.
+    // Returning Err is done by beta_disabled.rs.)
+    pub fn new_for_modules_feature(_: Span) -> syn::Result<Self> {
+        Ok(Enabled {})
+    }
+
+    /// If the cargo feature is enabled, return `Some`.
+    ///
+    /// Used when parsing template text imported from modules.
+    ///
+    /// The rule is that modules have their own `beta_deftly` option,
+    /// and beta features are allowed in module text iff the module
+    /// enabled them.  The importing template doesn't need to.
+    // ^ XXXX currently that option does not exist
+    //
+    // (In this version of the source code it *always* returns Ok.
+    // Returning Err is done by beta_disabled.rs.)
+    pub fn new_for_imported_definitions() -> Option<Self> {
+        Some(Enabled {})
+    }
+
     /// If the `beta_deftly` template feature is enabled, return `Ok(Enabled)`
     ///
     /// Used when parsing beta syntax, in templates.

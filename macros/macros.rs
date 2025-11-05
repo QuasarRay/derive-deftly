@@ -27,6 +27,7 @@ pub(crate) mod concat;
 pub(crate) mod dbg_allkw;
 pub(crate) mod expand;
 pub(crate) mod meta;
+pub(crate) mod modules;
 pub(crate) mod options;
 pub(crate) mod paste;
 pub(crate) mod repeat;
@@ -474,6 +475,14 @@ pub fn derive_deftly(
     input: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
     wrap_macro_func(derive::derive_deftly, input)
+}
+
+/// XXXX
+#[cfg_attr(proc_macro, proc_macro)]
+pub fn define_derive_deftly_module(
+    input: proc_macro::TokenStream,
+) -> proc_macro::TokenStream {
+    wrap_macro_func(modules::define_derive_deftly_module, input)
 }
 
 /// Check semver compatibility, for a crate which exports macros

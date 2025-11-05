@@ -5,6 +5,7 @@ use super::framework::*;
 #[derive(Debug, Clone)]
 pub struct TemplateDefinition {
     // pub for the benefit of mmodules
+    pub imported_definitions_d_escaped: TokenStream,
     pub doc_attrs: DocAttributes,
     export: Option<MacroExport>,
     templ_name: TemplateName,
@@ -14,11 +15,21 @@ pub struct TemplateDefinition {
 
 #[derive(Debug, Clone)]
 enum DefineMacroInput {
+    WithUses {
+        uses: modules::SomeUseModules,
+        rest: TokenStream,
+    },
     Immediate(TemplateDefinition),
 }
 
 impl Parse for DefineMacroInput {
     fn parse(input: ParseStream) -> syn::Result<Self> {
+        let uses = modules::UseModule::parse_several(input)?;
+        if let Some(uses) = modules::SomeUseModules::divert(uses) {
+            let rest = input.parse()?;
+            return Ok(DefineMacroInput::WithUses { uses, rest });
+        }
+
         input.parse().map(DefineMacroInput::Immediate)
     }
 }
@@ -46,6 +57,7 @@ impl Parse for TemplateDefinition {
         };
         let template = input.parse()?;
         Ok(TemplateDefinition {
+            imported_definitions_d_escaped: TokenStream::new(),
             doc_attrs,
             export,
             templ_name,
@@ -171,6 +183,15 @@ pub fn define_derive_deftly_func_macro(
     let input = syn::parse2(input)?;
 
     match input {
+        DefineMacroInput::WithUses { uses, rest } => {
+            let output =
+                uses.output(format_ident!("define"), quote! {}, rest)?;
+            dprint_block!(
+                &output,
+                "define_derive_deftly! output, via modules",
+            );
+            Ok(output)
+        }
         DefineMacroInput::Immediate(definition) => {
             define_template(definition, "define_derive_deftly! output")
         }
@@ -182,6 +203,7 @@ pub fn define_template(
     #[allow(unused)] dprint_prefix: &str,
 ) -> syn::Result<TokenStream> {
     let TemplateDefinition {
+        imported_definitions_d_escaped,
         doc_attrs,
         export,
         templ_name,
@@ -255,7 +277,8 @@ To use it, write: `#[derive(Deftly)] #[derive_deftly({})]`."#,
                     [ $($aoptions)* ]
                     ()
                     { # template }
-                    ( $crate; [#options] #templ_name; )
+                    ( $crate; [#options] #templ_name;
+                      { #imported_definitions_d_escaped } )
                     $($tpassthrough)*
                 }
             };

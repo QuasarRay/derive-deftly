@@ -2,6 +2,7 @@
 
 use super::framework::*;
 use adviseable::*;
+use modules::ImportedDefinitions;
 
 /// Input to `derive_deftly_engine!`, principal form (template expansion)
 ///
@@ -12,6 +13,7 @@ use adviseable::*;
 struct EngineExpandInput {
     driver: syn::DeriveInput,
     options: DdOptions,
+    imported_definitions: ImportedDefinitions,
     template: TopTemplate,
     template_crate: syn::Path,
     template_name: Option<syn::Path>,
@@ -38,6 +40,8 @@ enum EngineContext {
 enum EngineInput {
     Expand(EngineExpandInput),
     Final(accum::EngineFinalInput),
+    DefinitionViaModules(define::TemplateDefinition),
+    ModuleDefinitionViaModules(modules::ModuleDefinition),
 }
 
 impl Parse for ChainNext {
@@ -57,8 +61,70 @@ impl ToTokens for ChainNext {
     }
 }
 
+fn parse_via_mdoules_invocation(
+    input: ParseStream,
+) -> AdviseableResult<EngineInput> {
+    let chain; // Inside [ ] after via_modules
+    let this_args; // Inside { } and [ ], our arguments
+    let prefix_d_escaped;
+    let main;
+    let extra; // inside the final ( $ ... )
+
+    let _ = bracketed!(chain in input);
+    let _ = braced!(this_args in chain);
+    let mode = syn::Ident::parse_any(&chain)?;
+    let _ = braced!(prefix_d_escaped in input);
+    let _ = braced!(main in input);
+    let _ = parenthesized!(extra in input);
+    let _dollar: Token![$] = extra.parse()?;
+
+    let r = if mode == "define" {
+        let def = parse_unadvised! { main => || {
+            define::TemplateDefinition::parse_from_via_modules(
+                &prefix_d_escaped,
+                main,
+            )
+        } };
+
+        EngineInput::DefinitionViaModules(def)
+    } else if mode == "defmod" {
+        let beta = beta::Enabled::new_for_modules_feature(mode.span())?;
+        let def = parse_unadvised! { main => || {
+            modules::ModuleDefinition::parse_from_via_modules(
+                &prefix_d_escaped,
+                main,
+                beta,
+            )
+        } };
+
+        EngineInput::ModuleDefinitionViaModules(def)
+    } else {
+        return Err(
+            mode.error(format!("unknown engine via_modules mode `{mode}`"))
+        );
+    };
+
+    // Discard at three places where we leave room for expansion
+    let _: TokenStream = extra.parse()?;
+    let _: TokenStream = this_args.parse()?;
+    let _: TokenStream = chain.parse()?;
+
+    Ok(AOk(r))
+}
+
 impl ParseAdviseable for EngineInput {
     fn parse_adviseable(input: ParseStream) -> AdviseableResult<Self> {
+        if input.peek(Ident::peek_any) {
+            let special = syn::Ident::parse_any(input)?;
+            return if special == "via_modules" {
+                parse_via_mdoules_invocation(input)
+            } else {
+                Err(special.error(format!(
+                    "unknown engine special expansion request `{special}`"
+                )))
+            };
+        }
+
         let driver;
         let _ = braced!(driver in input);
         let driver = driver.parse()?;
@@ -130,6 +196,7 @@ impl EngineExpandInput {
 
         let template_crate;
         let template_name;
+        let imported_definitions;
         {
             let through_driver;
             let _ = parenthesized!(through_driver in input);
@@ -152,6 +219,14 @@ impl EngineExpandInput {
                 Some(input.parse()?)
             };
             let _: Token![;] = input.parse()?;
+
+            imported_definitions = if !input.is_empty() {
+                let imported_definitions;
+                let _ = braced!(imported_definitions in input);
+                imported_definitions.parse()?
+            } else {
+                ImportedDefinitions::default()
+            };
 
             let _: TokenStream = input.parse()?;
         }
@@ -185,6 +260,7 @@ impl EngineExpandInput {
         Ok(AOk(EngineExpandInput {
             driver,
             options,
+            imported_definitions,
             template,
             template_crate,
             template_name,
@@ -321,7 +397,14 @@ impl EngineExpandInput {
             self.template_name.as_ref(),
             |ctx| {
                 let mut output = TokenAccumulator::new();
-                self.template.expand(ctx.as_general(), &mut output);
+                Template::expand_iter(
+                    chain!(
+                        &self.imported_definitions.elements,
+                        &self.template.elements,
+                    ),
+                    ctx.as_general(),
+                    &mut output,
+                );
                 let output = output.tokens()?;
 
                 //    dbg!(&&output);
@@ -416,5 +499,15 @@ pub fn derive_deftly_engine_func_macro(
     match input {
         EngineInput::Expand(i) => i.process(),
         EngineInput::Final(i) => i.process(),
+        EngineInput::DefinitionViaModules(def) => define::define_template(
+            def,
+            "derive_deftly_engine! output, define_derive_deftly via modules",
+        ),
+        EngineInput::ModuleDefinitionViaModules(def) => {
+            modules::define_module(
+                def,
+                "derive_deftly_engine! output, define module via modules",
+            )
+        }
     }
 }
