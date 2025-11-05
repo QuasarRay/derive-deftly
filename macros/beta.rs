@@ -29,7 +29,7 @@ use std::panic::{catch_unwind, resume_unwind, AssertUnwindSafe};
 #[non_exhaustive]
 pub struct Enabled {}
 
-#[derive(Debug, Copy, Clone, Eq, PartialEq)]
+#[derive(Copy, Clone)]
 enum ThreadState {
     Unset,
     Set(Option<Enabled>),
@@ -56,7 +56,7 @@ pub fn with_maybe_enabled<R>(
     enabled: Option<Enabled>,
     f: impl FnOnce() -> R,
 ) -> R {
-    assert_eq!(threadlocal_get(), TS::Unset);
+    assert!(matches!(threadlocal_get(), TS::Unset));
     threadlocal_set(TS::Set(enabled));
     // Unwind safety: we re-throw the panic,
     // so even if f or R wasn't, no-one observes any broken invariant.
