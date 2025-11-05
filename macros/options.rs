@@ -15,7 +15,7 @@ use OptionDetails as OD;
 pub enum OpContext {
     /// Just before a precanned template
     ///
-    /// `define_derivae_deftly!{ Template OPTIONS = ...`
+    /// `define_derivae_deftly!{ Template OPTIONS: ...`
     TemplateDefinition,
     /// Just before an adhoc template
     ///
