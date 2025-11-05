@@ -21,9 +21,9 @@ pub use itertools::{chain, izip, Either, Either::*, EitherOrBoth, Itertools};
 pub use proc_macro2::{Delimiter, Ident, Punct};
 pub use proc_macro2::{Span, TokenStream, TokenTree};
 pub use quote::{format_ident, quote, quote_spanned, ToTokens};
-pub use strum::{IntoDiscriminant as _, IntoEnumIterator as _};
 pub use strum::{AsRefStr, Display};
 pub use strum::{EnumIter, EnumString};
+pub use strum::{IntoDiscriminant as _, IntoEnumIterator as _};
 pub use syn::ext::IdentExt;
 pub use syn::parse::{Lookahead1, Parse, ParseBuffer, ParseStream, Parser};
 pub use syn::punctuated::Punctuated;
@@ -43,17 +43,13 @@ pub use super::utils::{
     braced_group, delimit_token_group, dummy_path, engine_macro_name,
     spans_join, typepath_add_missing_argument_colons, DocAttributes,
     ErrorAccumulator, ErrorLoc, Grouping, IdentAny, MacroExport, MakeError,
-    TemplateName, ToTokensPunctComposable, TokenOutputTrimmer,
-    TemplatePath,
-    ModuleName,
-    ModulePath,
+    ModuleName, ModulePath, TemplateName, TemplatePath,
+    ToTokensPunctComposable, TokenOutputTrimmer,
 };
 
 pub(super) use super::{
-    accum, adviseable, beta, check, concat,
-    dbg_allkw, engine, framework, general_context, meta,
-    modules,
-    define,
+    accum, adviseable, beta, check, concat, dbg_allkw, define, engine,
+    framework, general_context, meta, modules,
 };
 
 #[allow(unused_imports)] // used in tests

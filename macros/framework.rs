@@ -15,8 +15,7 @@ pub(super) use super::paste;
 pub(super) use super::paste::{IdentFrag, IdentFragInfallible};
 
 pub(super) use general_context::{
-    DriverlessContext,
-    GeneralContext, GeneralContextBuf, MissingContextError,
+    DriverlessContext, GeneralContext, GeneralContextBuf, MissingContextError,
 };
 
 /// Context during expansion
