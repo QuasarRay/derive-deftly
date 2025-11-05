@@ -423,8 +423,6 @@ pub fn define_derive_deftly(
 /// where `TYPE` is the name of the type
 /// that `#[derive(Deftly)]` is applied to.
 ///
-///
-///
 /// ### Exporting the driver for downstream crates' templates
 ///
 // Really, the documentation about this in `pub-a.rs` and `pub-b.rs`,
