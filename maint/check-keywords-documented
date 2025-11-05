@@ -436,3 +436,6 @@ veEE	for
 
 # User-defined keywords
 v	userdefined
+
+# Undocumented, for testing
+ve	require_beta

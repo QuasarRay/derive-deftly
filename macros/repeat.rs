@@ -202,6 +202,7 @@ impl<O: SubstParseContext> AnalyseRepeat for Subst<O> {
             SD::For(..) => None,
             SD::False(..) | SD::True(..) => None, // condition: ignore.
             SD::error(..) => None,
+            SD::require_beta(..) => None,
             SD::ignore(content, _) => recurse!(content),
             SD::dbg(ddr) => recurse!(ddr.content_parsed),
             SD::dbg_all_keywords(..) => None,
