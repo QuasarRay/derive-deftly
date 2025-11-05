@@ -100,7 +100,7 @@ fn parse_via_mdoules_invocation(
         EngineInput::ModuleDefinitionViaModules(def)
     } else {
         return Err(
-            mode.error(format!("unknown engine via_modules mode `{mode}`"))
+            mode.error(format!("unknown engine via_modules mode `{}`", mode))
         );
     };
 
@@ -120,7 +120,7 @@ impl ParseAdviseable for EngineInput {
                 parse_via_mdoules_invocation(input)
             } else {
                 Err(special.error(format!(
-                    "unknown engine special expansion request `{special}`"
+                    "unknown engine special expansion request `{}`", special,
                 )))
             };
         }

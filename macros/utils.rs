@@ -600,12 +600,12 @@ fn synthetic_macro_name_check(
     let s = ident.to_string();
     match s.chars().find(|&c| c != '_') {
         None => Err(format!(
-            "{what} name cannot consist entirely of underscores"
+            "{} name cannot consist entirely of underscores", what,
         )),
         Some(c) => {
             if c.is_lowercase() {
                 Err(format!(
- "{what} name may not start with a lowercase letter (after any underscores)"
+ "{} name may not start with a lowercase letter (after any underscores)", what,
                 ))
             } else {
                 Ok(())
@@ -619,7 +619,7 @@ fn synthetic_macro_name_macro_name(
     ident: &syn::Ident,
     what: &str,
 ) -> syn::Ident {
-    format_ident!("derive_deftly_{what}_{}", ident)
+    format_ident!("derive_deftly_{}_{}", what, ident)
 }
 
 // Impls, generic
