@@ -4,7 +4,8 @@ use super::framework::*;
 
 #[derive(Debug, Clone)]
 pub struct TemplateDefinition {
-    doc_attrs: DocAttributes,
+    // pub for the benefit of mmodules
+    pub doc_attrs: DocAttributes,
     export: Option<MacroExport>,
     templ_name: TemplateName,
     options: UnprocessedOptions,
