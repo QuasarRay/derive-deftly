@@ -261,8 +261,9 @@ impl Parse for ImportedDefinitions {
         )?;
 
         for te in &parsed.elements {
-            let TE::Subst(subst) = te else {
-                return Err(impossible());
+            let subst = match te {
+                TE::Subst(subst) => subst,
+                _other => return Err(impossible()),
             };
             match &subst.sd {
                 SD::define(..) | SD::defcond(..) => {}
