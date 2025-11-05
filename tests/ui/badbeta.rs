@@ -24,4 +24,22 @@ define_derive_deftly_module! {
     ${define X { $require_beta }}
 }
 
+// TODO MODULES this should at least produce a better error.
+define_derive_deftly! {
+    $ignore
+    ${if false {}}
+    ExpansionsWithoutUses:
+}
+
+define_derive_deftly_module! {
+    EmptyModule:
+}
+
+// TODO MODULES this should at least produce a better error.
+define_derive_deftly! {
+    use EmptyModule;
+    $require_beta
+    CannotEnableBetaAbove beta_deftly:
+}
+
 fn main() {}

@@ -15,3 +15,15 @@ error: beta derive-deftly feature used, without `beta_deftly` template option
    |
 24 |     ${define X { $require_beta }}
    |                   ^^^^^^^^^^^^
+
+error: expected identifier
+  --> ui/badbeta.rs:29:5
+   |
+29 |     $ignore
+   |     ^
+
+error: beta derive-deftly feature used, without `beta_deftly` template option
+  --> ui/badbeta.rs:41:6
+   |
+41 |     $require_beta
+   |      ^^^^^^^^^^^^
