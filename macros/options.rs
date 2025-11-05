@@ -25,6 +25,10 @@ pub enum OpContext {
     ///
     /// `#[derive_deftly(Template[OPTIONS])]`
     DriverApplicationCapture,
+    /// Module definition.
+    ///
+    /// `define_derivae_deftly_module!{ Module OPTIONS: ...`
+    ModuleDefinition,
     /// Driver's application options as they appear in the ultimate expansion
     ///
     /// With the versioning, so `1 1 AOPTIONS`.
@@ -138,6 +142,17 @@ impl DdOptValDescribable for ExpectedDriverKind {
 impl OpContext {
     fn allowed(self, option: &DdOption) -> syn::Result<()> {
         use OpContext as OC;
+        match self {
+            OC::ModuleDefinition => {
+                return match &option.od {
+                    OD::beta_deftly(..) => Ok(()),
+                    _other => Err(option.kw_span.error(
+                        "only beta_deftly is allowed in module definitions",
+                    )),
+                }
+            }
+            _other => {}
+        }
         match &option.od {
             OD::dbg => return Ok(()),
             OD::expect(v) => return check::check_expect_opcontext(v, self),
@@ -152,6 +167,7 @@ impl OpContext {
                     "this derive-deftly option is only supported in templates",
                 ))
             }
+            OC::ModuleDefinition => panic!("handled earlier"),
         }
     }
 
@@ -164,6 +180,7 @@ impl OpContext {
         let got = match self {
             OC::TemplateDefinition
             | OC::TemplateAdhoc
+            | OC::ModuleDefinition
             | OC::DriverApplicationCapture => ours,
             OC::DriverApplicationPassed => input.parse()?,
         };

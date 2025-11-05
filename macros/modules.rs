@@ -65,9 +65,9 @@ impl ModuleDefinition {
         let doc_attrs = input.parse()?;
         let export = MacroExport::parse_option(input)?;
         let name = input.parse()?;
-
-        // XXXX options to enable/diablee beta content
-        let beta_content = None;
+        let mut options =  DdOptions::default();
+        options.parse_update(input, OpContext::ModuleDefinition)?;
+        let beta_content = options.beta_enabled;
 
         let _colon: Token![:] = input.parse()?;
         let uses = UseModule::parse_several(input)?;

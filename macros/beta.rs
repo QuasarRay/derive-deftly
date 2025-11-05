@@ -99,7 +99,6 @@ impl Enabled {
     /// The rule is that modules have their own `beta_deftly` option,
     /// and beta features are allowed in module text iff the module
     /// enabled them.  The importing template doesn't need to.
-    // ^ XXXX currently that option does not exist
     //
     // (In this version of the source code it *always* returns Ok.
     // Returning Err is done by beta_disabled.rs.)
