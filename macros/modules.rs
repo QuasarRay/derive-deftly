@@ -329,11 +329,9 @@ impl TemplateDefinition {
                 ),
                 GeneralContext::NoDriver(&DriverlessContext {
                     defs: DefinitionsContext::default(),
-                    driver_needed: &|span| {
-                        span.error(
+                    driver_needed: error_generator!(
  "not allowed outside the main template body; no driver data structure here"
-                    )
-                    },
+                    ),
                 }),
                 &mut expanded,
             );

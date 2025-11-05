@@ -105,6 +105,12 @@ pub mod dprint {
 
 //---------- misc ----------
 
+pub type ErrorGenerator<'c> = &'c (dyn Fn(Span) -> syn::Error + 'c);
+
+macro_rules! error_generator { { $msg:expr } => {
+    (&|span: Span| span.error($msg)) as ErrorGenerator
+} }
+
 /// Construct a braced group from a token expansion
 ///
 /// Calls `f` to expand tokens, and returns a braced group containing

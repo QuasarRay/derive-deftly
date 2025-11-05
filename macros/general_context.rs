@@ -7,8 +7,6 @@ use GeneralContextBuf as GCB;
 
 //==================== types ====================
 
-pub type ErrorHandler<'c> = &'c (dyn Fn(Span) -> syn::Error + 'c);
-
 pub type FullContextResult<'s, 'c> = Result<
     &'s Context<'c>, //
     MissingContextError<'c>,
@@ -22,7 +20,7 @@ pub type FullContextResult<'s, 'c> = Result<
 #[derive(Clone, Copy)]
 pub struct MissingContextError<'c> {
     span: Span,
-    error_handler: ErrorHandler<'c>,
+    error_handler: ErrorGenerator<'c>,
 }
 
 /// Probably a `Context`, but might not be - there might be no driver
@@ -46,13 +44,13 @@ pub enum GeneralContextBuf<'c> {
 #[derive(Clone, Copy)]
 pub struct DriverlessContext<'c> {
     pub defs: DefinitionsContext<'c>,
-    pub driver_needed: ErrorHandler<'c>,
+    pub driver_needed: ErrorGenerator<'c>,
 }
 
 //==================== methods on GeneralContext ====================
 
 impl<'c> GeneralContext<'c> {
-    pub fn full_ctx_raw(&self) -> Result<&Context<'c>, ErrorHandler<'c>> {
+    pub fn full_ctx_raw(&self) -> Result<&Context<'c>, ErrorGenerator<'c>> {
         match self {
             GC::Full(ctx) => Ok(ctx),
             GC::NoDriver(dc) => Err(dc.driver_needed),
