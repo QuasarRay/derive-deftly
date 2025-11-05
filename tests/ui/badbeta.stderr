@@ -1,0 +1,11 @@
+error: beta derive-deftly feature used, without `beta_deftly` template option
+  --> ui/badbeta.rs:12:6
+   |
+12 |     $require_beta
+   |      ^^^^^^^^^^^^
+
+error: beta derive-deftly feature used, without `beta_deftly` template option
+  --> ui/badbeta.rs:18:6
+   |
+18 |     $require_beta
+   |      ^^^^^^^^^^^^
