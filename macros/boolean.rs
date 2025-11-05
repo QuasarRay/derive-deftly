@@ -192,6 +192,7 @@ impl Subst<BooleanContext> {
             | SD::select1(_, not_in_bool)
             | SD::ignore(_, not_in_bool)
             | SD::error(_, not_in_bool)
+            | SD::require_beta(_, not_in_bool)
             | SD::dbg_all_keywords(not_in_bool)
             | SD::Crate(_, not_in_bool) => void::unreachable(*not_in_bool),
         };

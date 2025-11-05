@@ -187,6 +187,7 @@ pub enum SubstDetails<O: SubstParseContext> {
 
     ignore(Template<O>, O::NotInBool),
     error(ExplicitError, O::NotInBool),
+    require_beta(beta::Enabled, O::NotInBool),
     dbg(DbgDumpRequest<O>),
     dbg_all_keywords(O::NotInBool),
 
@@ -985,6 +986,7 @@ impl<O: SubstParseContext> Parse for Subst<O> {
         keyword! { select1(parse_if(input)?, not_in_bool()?) }
         keyword! { ignore(input.parse()?, not_in_bool()?) }
         keyword! { error(input.parse()?, not_in_bool()?) }
+        keyword! { require_beta(beta()?, not_in_bool()?) }
         keyword! { dbg(input.parse()?) }
         keyword! { dbg_all_keywords(not_in_bool()?) }
         keyword! { "crate": Crate(allow_tokens()?, not_in_bool()?) }
