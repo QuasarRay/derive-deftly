@@ -49,10 +49,12 @@ pub use super::utils::{
     ModulePath,
 };
 
-pub(super) use super::{accum, adviseable, beta, check, concat};
-pub(super) use super::{dbg_allkw, engine, framework, general_context, meta};
-pub(super) use super::{modules};
-pub(super) use super::{define};
+pub(super) use super::{
+    accum, adviseable, beta, check, concat,
+    dbg_allkw, engine, framework, general_context, meta,
+    modules,
+    define,
+};
 
 #[allow(unused_imports)] // used in tests
 pub use super::utils::{Concatenated, Discard};
