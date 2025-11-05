@@ -9,3 +9,9 @@ error: beta derive-deftly feature used, without `beta_deftly` template option
    |
 18 |     $require_beta
    |      ^^^^^^^^^^^^
+
+error: beta derive-deftly feature used, without `beta_deftly` template option
+  --> ui/badbeta.rs:24:19
+   |
+24 |     ${define X { $require_beta }}
+   |                   ^^^^^^^^^^^^

@@ -7,8 +7,8 @@ use derive_deftly::{
 
 define_derive_deftly_module! {
     /// M1-docs
-    M1:
-    ${define M1_DEF { stringify!(D $$ M1) }}
+    M1 beta_deftly:
+    ${define M1_DEF { $require_beta stringify!(D $$ M1) }}
     ${defcond M1_COND tmeta(m1) }
     ${define SHADOW { "S M1" }}
     ${defcond SHADOW_COND_M2 false}
