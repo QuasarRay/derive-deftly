@@ -521,7 +521,7 @@ pub enum OrigDollarDeescaped {
     NotFound,
     /// We *did* find `orig_dollar`; if we now see *another* `$`
     /// things get even stranger.
-    Found(#[allow(unused)] /* TODO MODULES */ Span),
+    Found(Span),
 }
 
 /// Skip over any `orig_dollar`
