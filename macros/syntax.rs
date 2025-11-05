@@ -515,8 +515,7 @@ impl<O: SubstParseContext> Deref for Argument<O> {
 /// Do not construct this yourself.
 /// Only `deescape_orig_dollar` is allowed to do that.
 #[derive(Debug, strum::EnumDiscriminants)]
-// TODO MODULES rename Handled
-pub enum OrigDollarDeescaped {
+pub enum OrigDollarHandled {
     /// We didn't find any `orig_dollar`
     NotFound,
     /// We *did* find `orig_dollar`; if we now see *another* `$`
@@ -524,9 +523,9 @@ pub enum OrigDollarDeescaped {
     Found(Span),
 }
 
-impl OrigDollarDeescaped {
+impl OrigDollarHandled {
     // TODO MSRV 1.66, use strum 0.27 which has IntoDiscriminant trait
-    pub fn discriminant(&self) -> OrigDollarDeescapedDiscriminants {
+    pub fn discriminant(&self) -> OrigDollarHandledDiscriminants {
         self.into()
     }
 }
@@ -538,14 +537,14 @@ impl OrigDollarDeescaped {
 /// [`definition::escape_dollars`](escape_dollars).
 pub fn deescape_orig_dollar(
     input: ParseStream,
-) -> syn::Result<OrigDollarDeescaped> {
+) -> syn::Result<OrigDollarHandled> {
     input.step(|cursor| {
         let (found, rest) = (|| {
             let (ident, rest) = cursor.ident()?;
             (ident == "orig_dollar").then(|| ())?;
-            Some((OrigDollarDeescaped::Found(ident.span()), rest))
+            Some((OrigDollarHandled::Found(ident.span()), rest))
         })()
-        .unwrap_or((OrigDollarDeescaped::NotFound, *cursor));
+        .unwrap_or((OrigDollarHandled::NotFound, *cursor));
         Ok((found, rest))
     })
 }
@@ -596,11 +595,11 @@ impl<O: SubstParseContext> Parse for TemplateElement<O> {
                     // $$
                     let dollar: Punct = input.parse()?;
                     match deescaped {
-                        OrigDollarDeescaped::NotFound => {},
-                        OrigDollarDeescaped::Found(_) => {
+                        OrigDollarHandled::NotFound => {},
+                        OrigDollarHandled::Found(_) => {
                             match deescape_orig_dollar(input)? {
-                                OrigDollarDeescaped::Found(_) => {},
-                                OrigDollarDeescaped::NotFound => {
+                                OrigDollarHandled::Found(_) => {},
+                                OrigDollarHandled::NotFound => {
                                     return Err(dollar.error(
  "found `$orig_dollar $` not followed by another orig_dollar!"
                                     ))
@@ -780,7 +779,7 @@ impl<O: SubstParseContext> Subst<O> {
     fn parse_after_dollar(
         la: Lookahead1,
         input: ParseStream,
-        _deescaped: OrigDollarDeescaped,
+        _deescaped: OrigDollarHandled,
     ) -> syn::Result<Self> {
         if la.peek(token::Brace) {
             let exp;
