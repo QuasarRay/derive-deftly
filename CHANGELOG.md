@@ -57,6 +57,16 @@ or via the [account request form].
 
 ## Changelog
 
+### 1.4.0
+
+#### Added
+
+ * BETA: `define_derive_deftly_module!` for reuseable template fragments.
+
+#### Improved
+
+ * Minor docs improvements.
+
 ### 1.3.0
 
 #### Added
