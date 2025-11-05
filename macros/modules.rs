@@ -67,7 +67,9 @@ impl ModuleDefinition {
         let name = input.parse()?;
         let mut options = DdOptions::default();
         options.parse_update(input, OpContext::ModuleDefinition)?;
-        let beta_content = options.beta_enabled;
+        let beta_content = options.beta_enabled.ok_or(error_generator!(
+ "beta derive-deftly feature used, without `beta_deftly` module option"
+        ));
 
         let _colon: Token![:] = input.parse()?;
         let uses = UseModule::parse_several(input)?;
@@ -92,7 +94,7 @@ impl ModuleDefinition {
 impl SharedDefs {
     fn parse(
         input: ParseStream,
-        beta_content: Option<beta::Enabled>,
+        beta_content: beta::MaybeEnabled,
         exp_d_escaped: OrigDollarHandledDiscriminants,
     ) -> syn::Result<Self> {
         // We want to:
@@ -306,7 +308,9 @@ impl TemplateDefinition {
             syn::parse2(prefix_d_escaped.clone())?;
 
         let doc_attrs = beta::with_maybe_enabled(
-            None, // TODO MODULES improve error messages
+            Err(error_generator!(
+ "beta template features are not available in the docs preamble, even with beta_deftly in the template options; but you could put the beta use into a reuseable module"
+            )),
             || {
                 Template::<TokenAccumulator>::parse_special(
                     main,

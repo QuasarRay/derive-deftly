@@ -29,10 +29,12 @@ use std::panic::{catch_unwind, resume_unwind, AssertUnwindSafe};
 #[non_exhaustive]
 pub struct Enabled {}
 
+pub type MaybeEnabled = Result<Enabled, ErrorGenerator<'static>>;
+
 #[derive(Copy, Clone)]
 enum ThreadState {
     Unset,
-    Set(Option<Enabled>),
+    Set(MaybeEnabled),
 }
 
 use ThreadState as TS;
@@ -53,7 +55,7 @@ fn threadlocal_set(s: ThreadState) {
 ///
 /// Used by the parser for `TopTemplate`
 pub fn with_maybe_enabled<R>(
-    enabled: Option<Enabled>,
+    enabled: MaybeEnabled,
     f: impl FnOnce() -> R,
 ) -> R {
     assert!(matches!(threadlocal_get(), TS::Unset));
@@ -102,8 +104,8 @@ impl Enabled {
     //
     // (In this version of the source code it *always* returns Ok.
     // Returning Err is done by beta_disabled.rs.)
-    pub fn new_for_imported_definitions() -> Option<Self> {
-        Some(Enabled {})
+    pub fn new_for_imported_definitions() -> MaybeEnabled {
+        Ok(Enabled {})
     }
 
     /// If the `beta_deftly` template feature is enabled, return `Ok(Enabled)`
@@ -115,11 +117,7 @@ impl Enabled {
             TS::Unset => {
                 Err(span.error("internal error! beta::ENABLED Unset"))
             }
-            TS::Set(ue) => ue.ok_or_else(|| {
-                span.error(
- "beta derive-deftly feature used, without `beta_deftly` template option"
-                )
-            }),
+            TS::Set(ue) => ue.map_err(|eh| eh(span)),
         }
     }
 
@@ -127,6 +125,6 @@ impl Enabled {
     #[cfg(test)]
     #[allow(dead_code)]
     pub fn test_with_parsing<R>(f: impl FnOnce() -> R) -> R {
-        with_maybe_enabled(Some(Enabled {}), f)
+        with_maybe_enabled(Ok(Enabled {}), f)
     }
 }
