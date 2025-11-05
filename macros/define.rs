@@ -40,6 +40,11 @@ impl Parse for TemplateDefinition {
         // for example `#[derive_deftly(pub)]` ought not to mean to apply
         // a template called `pub`.  See ticket #1.
         let doc_attrs = input.parse()?;
+        if let Some::<Token![$]>(dollar) = input.parse()? {
+            return Err(dollar.error(
+ "expected docs attributes and template name (note that expansions in template docs are only allowed if modules were imported with use `use`)"
+            ));
+        }
         let export = MacroExport::parse_option(input)?;
         let templ_name = input.parse()?;
         let options =

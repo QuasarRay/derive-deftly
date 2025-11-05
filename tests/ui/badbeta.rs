@@ -27,7 +27,6 @@ define_derive_deftly_module! {
     ${define X { $require_beta }}
 }
 
-// TODO MODULES this should at least produce a better error.
 define_derive_deftly! {
     $ignore
     ${if false {}}

@@ -16,14 +16,14 @@ error: beta derive-deftly feature used, without `beta_deftly` module option
 27 |     ${define X { $require_beta }}
    |                   ^^^^^^^^^^^^
 
-error: expected identifier
-  --> ui/badbeta.rs:32:5
+error: expected docs attributes and template name (note that expansions in template docs are only allowed if modules were imported with use `use`)
+  --> ui/badbeta.rs:31:5
    |
-32 |     $ignore
+31 |     $ignore
    |     ^
 
 error: beta template features are not available in the docs preamble, even with beta_deftly in the template options; but you could put the beta use into a reuseable module
-  --> ui/badbeta.rs:43:6
+  --> ui/badbeta.rs:42:6
    |
-43 |     $require_beta
+42 |     $require_beta
    |      ^^^^^^^^^^^^
