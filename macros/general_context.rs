@@ -45,8 +45,8 @@ pub enum GeneralContextBuf<'c> {
 
 #[derive(Clone, Copy)]
 pub struct DriverlessContext<'c> {
-    defs: DefinitionsContext<'c>,
-    driver_needed: ErrorHandler<'c>,
+    pub defs: DefinitionsContext<'c>,
+    pub driver_needed: ErrorHandler<'c>,
 }
 
 //==================== methods on GeneralContext ====================
