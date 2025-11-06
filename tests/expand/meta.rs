@@ -32,6 +32,12 @@ derive_deftly_adhoc! {
     fn $<mixed_ ${fmeta(mixed)}>() {}
     // Ignores the mixed = "no" and finds the inner
     fn $<mixed_ ${fmeta(mixed(inner))}>() {}
+
+    ${if fmeta(multi(hi)) {
+        fn ${fmeta(multi(hi))
+             as ident,
+             default { defaulted_hi }}() {}
+    }}
   )
 
     fn ${tmeta(absent) as ident, default { defaulted }}() {}

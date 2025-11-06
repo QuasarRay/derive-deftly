@@ -13,5 +13,6 @@ fn multi_hi_pfx() {}
 fn just_suffix_sfx() {}
 fn mixed_no() {}
 fn mixed_yes() {}
+fn defaulted_hi() {}
 fn defaulted() {}
 fn main() {}

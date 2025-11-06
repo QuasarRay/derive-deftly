@@ -392,6 +392,12 @@ error: beta derive-deftly feature used, without `beta_deftly` template option
 131 |     ${fmeta(missing) default { 42 }}
     |                      ^^^^^^^
 
+error: meta attribute provided as unit (flag), but is used only with default values, so the unit is ignored
+   --> ui/badmeta.rs:146:10
+    |
+146 | #[deftly(unit)]
+    |          ^^^^
+
 warning: unused macro definition: `derive_deftly_template_WrongRequestSyntax`
    --> ui/badmeta.rs:105:5
     |
