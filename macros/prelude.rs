@@ -46,6 +46,7 @@ pub use super::utils::{
     MacroExport, MakeError, ModuleName, ModulePath, TemplateName,
     TemplatePath, ToTokensPunctComposable, TokenOutputTrimmer,
     group_new_with_span, group_clone_set_stream,
+    respan_hygiene,
 };
 
 pub(super) use super::{

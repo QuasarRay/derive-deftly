@@ -250,6 +250,15 @@ To use it, write: `#[derive(Deftly)] #[derive_deftly({})]`."#,
         templ_name,
     ));
 
+    let imported_definitions_d_escaped = respan_hygiene(
+        imported_definitions_d_escaped,
+        // We use the template name as a proxy for the span of the template
+        // body (which might in principle have come from macro_rules macros
+        // or something, in which case the user is going to have to fun)
+        // (Span::mixed_site() and Span::call_site() are both wrong.)
+        templ_name.span(),
+    );
+
     let engine_macro;
     let export_attr;
     match export {
