@@ -153,13 +153,10 @@ impl SharedDefs {
                 match got_d_escaped {
                     OrigDollarHandled::NotFound => {
                         o_d_span = dollar.span();
-                        let stream_d_escaped = escape_dollars(g_in.stream());
-                        let mut g = proc_macro2::Group::new(
-                            g_in.delimiter(),
-                            stream_d_escaped,
+                        g_out = group_clone_set_stream(
+                            &g_in,
+                            escape_dollars(g_in.stream()),
                         );
-                        g.set_span(g_in.span());
-                        g_out = g;
                     }
                     OrigDollarHandled::Found(span) => {
                         // The outer $ has been escaped as expected.

@@ -279,11 +279,13 @@ impl Expand<TokenAccumulator> for TemplateElement<TokenAccumulator> {
                 template,
                 allow_tokens: _,
             } => {
-                use proc_macro2::Group;
                 let mut content = TokenAccumulator::new();
                 template.expand(ctx, &mut content);
-                let mut group = Group::new(*delimiter, content.tokens()?);
-                group.set_span(*delim_span);
+                let group = group_new_with_span(
+                    *delimiter,
+                    *delim_span,
+                    content.tokens()?,
+                );
                 out.append(TT::Group(group));
             }
             TE::Subst(exp) => {

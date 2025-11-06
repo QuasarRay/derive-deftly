@@ -150,8 +150,7 @@ pub fn escape_dollars(input: TokenStream) -> TokenStream {
                     _ => St::Other,
                 };
                 let stream = handle_ts(stream, st);
-                let mut g = proc_macro2::Group::new(delim, stream);
-                g.set_span(span);
+                let g = group_new_with_span(delim, span, stream);
                 TT::Group(g)
             }
             TT::Punct(p) if p.as_char() == '$' => {
@@ -250,6 +249,15 @@ This is a `derive_deftly` template.  Do not invoke it directly.
 To use it, write: `#[derive(Deftly)] #[derive_deftly({})]`."#,
         templ_name,
     ));
+
+    let imported_definitions_d_escaped = respan_hygiene(
+        imported_definitions_d_escaped,
+        // We use the template name as a proxy for the span of the template
+        // body (which might in principle have come from macro_rules macros
+        // or something, in which case the user is going to have to fun)
+        // (Span::mixed_site() and Span::call_site() are both wrong.)
+        templ_name.span(),
+    );
 
     let engine_macro;
     let export_attr;

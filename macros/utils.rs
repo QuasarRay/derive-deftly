@@ -129,9 +129,7 @@ pub fn delimit_token_group(
 ) -> syn::Result<proc_macro2::Group> {
     let mut out = TokenAccumulator::default();
     f(&mut out)?;
-    let out = out.tokens()?;
-    let mut out = proc_macro2::Group::new(delim, out);
-    out.set_span(delim_span);
+    let out = group_new_with_span(delim, delim_span, out.tokens()?);
     Ok(out)
 }
 
@@ -173,6 +171,52 @@ impl<T: ToTokens> ToTokens for Concatenated<T> {
             item.to_tokens(out);
         }
     }
+}
+
+/// Returns a `Group`, with a specified span
+pub fn group_new_with_span(
+    delimiter: Delimiter,
+    span: Span,
+    ts: TokenStream,
+) -> proc_macro2::Group {
+    let mut g_out = proc_macro2::Group::new(delimiter, ts);
+    g_out.set_span(span);
+    g_out
+}
+
+/// Returns a `Group` that is like `g_in` but with stream `ts`
+pub fn group_clone_set_stream(
+    g_in: &proc_macro2::Group,
+    ts: TokenStream,
+) -> proc_macro2::Group {
+    group_new_with_span(
+        g_in.delimiter(),
+        // We lose some span information here, sadly.
+        g_in.span(),
+        ts,
+    )
+}
+
+/// Respan the resolution hygiene of all identifiers to span
+pub fn respan_hygiene(input: TokenStream, span: Span) -> TokenStream {
+    input
+        .into_iter()
+        .map(|tt| match tt {
+            TT::Group(g_in) => {
+                let mut g_new = proc_macro2::Group::new(
+                    g_in.delimiter(),
+                    respan_hygiene(g_in.stream(), span),
+                );
+                g_new.set_span(g_in.span());
+                TT::Group(g_new)
+            }
+            TT::Ident(mut i) => {
+                i.set_span(i.span().resolved_at(span));
+                TT::Ident(i)
+            }
+            other => other,
+        })
+        .collect()
 }
 
 /// Add any missing colons before `< >`'d generic arguments
