@@ -573,6 +573,7 @@ impl SubstParseContext for TokenAccumulator {
         Ok(())
     }
     fn meta_recog_usage() -> meta::Usage {
+        // XXXX this needs to depend on whether there's `default`
         meta::Usage::VALUE
     }
 

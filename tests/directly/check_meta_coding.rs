@@ -117,6 +117,7 @@ impl Debug for ScenarioDebug<'_> {
             let a = match *a {
                 U::NONE => '-',
                 U::BOOL_ONLY => '?',
+                U::VALUE_ONLY => '+',
                 U::VALUE => '=',
             };
             write!(f, "{}{}", p.to_token_stream(), a)?;
@@ -245,7 +246,7 @@ fn check_matching_for(topkind: &str, variants: &[&str], fields: &[&str]) {
             output_scenario = scenario.clone();
             let (a, b) = output_scenario[0..aliased * 2].split_at_mut(aliased);
             for (a, b) in izip!(a, b) {
-                let u: Usage = cmp::max(a.1, b.1);
+                let u: Usage = a.1 | b.1;
                 a.1 = u;
                 b.1 = u;
             }
