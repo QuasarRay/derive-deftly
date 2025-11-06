@@ -573,7 +573,7 @@ impl SubstParseContext for TokenAccumulator {
         Ok(())
     }
     fn meta_recog_usage() -> meta::Usage {
-        meta::Usage::Value
+        meta::Usage::VALUE
     }
 
     type BoolOnly = Void;

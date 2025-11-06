@@ -37,7 +37,7 @@ impl SubstParseContext for BooleanContext {
         Ok(())
     }
     fn meta_recog_usage() -> meta::Usage {
-        meta::Usage::BoolOnly
+        meta::Usage::BOOL_ONLY
     }
 
     fn not_in_bool(span: &impl Spanned) -> syn::Result<Void> {

@@ -64,8 +64,8 @@ impl Parse for Accumulated {
                     while !input.is_empty() {
                         use meta::Usage as mU;
                         let allow = match input.parse()? {
-                            Some::<Token![?]>(_) => mU::BoolOnly,
-                            None => mU::Value,
+                            Some::<Token![?]>(_) => mU::BOOL_ONLY,
+                            None => mU::VALUE,
                         };
                         let desig = input.parse()?;
                         m.recog.update(desig, allow);

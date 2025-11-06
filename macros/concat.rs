@@ -188,7 +188,7 @@ impl SubstParseContext for Accumulator {
         Ok(())
     }
     fn meta_recog_usage() -> meta::Usage {
-        meta::Usage::Value
+        meta::Usage::VALUE
     }
 }
 
