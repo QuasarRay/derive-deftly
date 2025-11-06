@@ -62,6 +62,15 @@ or via the [account request form].
 #### Breaking changes to beta features
 
  * BETA, modules: Respan identifiers in imported modules.
+ * BETA, `${Xmeta ... default ...}`: may now cause incompatibility
+   errors when templates defined in older derive-deftly
+   versions are also applied to the same struct.
+
+#### Added
+
+ * BETA: `${Xmeta ... default ...}` fills in the default value when
+   `#[deftly(unit)]` is supplied.  If `unit` isn't also tested as a
+   boolen, it's an unused attribute error.
 
 #### Improved
 
