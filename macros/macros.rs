@@ -501,7 +501,10 @@ pub fn derive_deftly(
 /// (So it cannot define derives as-such, but it could contain
 /// the whole *body* of a derive as a `${define}`.)
 ///
-/// This feature is available only with the **beta** cargo option.
+/// This feature is [**beta**](doc_changelog/index.html#t:beta).
+/// It requires the `beta` cargo feature
+/// (but **not** any
+/// [`beta_deftly` template option](doc_reference/index.html#eo:beta_deftly)).
 ///
 /// ## Scope and (lack of) namespacing
 ///

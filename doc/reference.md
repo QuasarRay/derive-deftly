@@ -1550,7 +1550,7 @@ the [`$dbg_all_keywords` expansion](#dbg--dbg_all_keywords--debugging-output).
 Enables
 [beta template features](../doc_changelog/index.html#t:beta).
 
-This option is only allowed in a template,
+This option is only allowed in a template or module,
 not in a driver's `#[derive_deftly]` attribute.
 
 ### Expansion options example
