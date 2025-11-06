@@ -1497,12 +1497,12 @@ fn unrecognised_error(
         // We'd recognise this, but only conditionally, and not now
 
         match used {
-            U::NONE => some_err(&format_args!(
- "meta attribute provided, and (conditionally) recognised; but not used in these particular circumstances"
-            )),
-            U::BOOL_ONLY => some_err(&format_args!(
- "meta attribute provided with value, and (conditionally) recognised with value; but in these particular circumstances only used as a boolean"
-            )),
+            U::NONE => some_err(
+ &"meta attribute provided, and (conditionally) recognised; but not used in these particular circumstances"
+            ),
+            U::BOOL_ONLY => some_err(
+ &"meta attribute provided with value, and (conditionally) recognised with value; but in these particular circumstances only used as a boolean"
+            ),
             U::VALUE => unreachable!(),
         }
     })())?;
@@ -1514,9 +1514,9 @@ fn unrecognised_error(
     try_case((|| {
         //
         match (supplied_usage, used) {
-            (U::VALUE, U::BOOL_ONLY) => some_err(&format_args!(
-                "meta attribute value provided, but is used only as a boolean",
-            )),
+            (U::VALUE, U::BOOL_ONLY) => some_err(
+            &"meta attribute value provided, but is used only as a boolean",
+            ),
             (_, U::NONE) => None,
             (U::BOOL_ONLY, Usage(Some(_))) => unreachable!(),
             (U::VALUE, U::VALUE) => unreachable!(),
