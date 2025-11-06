@@ -83,13 +83,13 @@ Search for section titles containing "template export semver"."#,
     match (version.major, version.minor, version.patch) {
         (0, 0..=11, _) => return too_old(),
         // We tolerate "too new" within the same minor version,
-        // since otherwise updating the minor version is too tedious.
+        // since otherwise updating the patchlevel is too tedious.
         // There are tests to catch failure to update this.
         (0, 12, 0) => return too_old(),
         (0, 12, 1..) => {}
         (0, 13.., _) => {}
-        (1, 0..=4, _) => {}
-        (1, 5.., _) => return too_new(),
+        (1, 0..=5, _) => {}
+        (1, 6.., _) => return too_new(),
         (2.., _, _) => return too_new(),
     }
 

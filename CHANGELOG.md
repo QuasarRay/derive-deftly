@@ -57,6 +57,16 @@ or via the [account request form].
 
 ## Changelog
 
+### 1.5.0
+
+#### Breaking changes to beta features
+
+ * BETA, modules: Respan identifiers in imported modules.
+
+#### Improved
+
+ * Minor docs improvements.
+
 ### 1.4.0
 
 #### Added
