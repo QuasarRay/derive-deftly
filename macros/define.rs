@@ -8,9 +8,9 @@ pub struct TemplateDefinition {
     pub imported_definitions_d_escaped: TokenStream,
     pub doc_attrs: DocAttributes,
     export: Option<MacroExport>,
-    templ_name: TemplateName,
+    pub templ_name: TemplateName,
     options: UnprocessedOptions,
-    template: TokenStream,
+    pub template: TokenStream,
 }
 
 #[derive(Debug, Clone)]
