@@ -392,6 +392,26 @@ error: beta derive-deftly feature used, without `beta_deftly` template option
 131 |     ${fmeta(missing) default { 42 }}
     |                      ^^^^^^^
 
+error: tried to expand attribute which is just a unit, not a literal (attribute value)
+   --> ui/badmeta.rs:5:10
+    |
+5   |   #[deftly(unit)]
+    |            ^^^^
+...
+133 | / derive_deftly_adhoc! {
+134 | |     DataType beta_deftly:
+...   |
+138 | | }
+    | |_- in this macro invocation
+    |
+    = note: this error originates in the macro `derive_deftly_driver_DataType` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: tried to expand attribute which is just a unit, not a literal (template)
+   --> ui/badmeta.rs:137:13
+    |
+137 |     ${tmeta(unit) as token_stream, default {}}
+    |             ^^^^
+
 warning: unused macro definition: `derive_deftly_template_WrongRequestSyntax`
    --> ui/badmeta.rs:105:5
     |
