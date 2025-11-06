@@ -72,13 +72,10 @@ pub fn flatten_none_groups(ts: TokenStream) -> TokenStream {
                     recurse(out, g.stream());
                 }
                 TT::Group(g) => {
-                    let span = g.span();
-                    let mut g = Group::new(
-                        g.delimiter(),
+                    let g = group_clone_set_stream(
+                        &g,
                         flatten_none_groups(g.stream()),
                     );
-                    // We lose some span information here.
-                    g.set_span(span);
                     out.extend([TT::Group(g)]);
                 }
                 _ => out.extend([tt]),

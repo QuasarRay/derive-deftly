@@ -184,6 +184,19 @@ pub fn group_new_with_span(
     g_out
 }
 
+/// Returns a `Group` that is like `g_in` but with stream `ts`
+pub fn group_clone_set_stream(
+    g_in: &proc_macro2::Group,
+    ts: TokenStream,
+) -> proc_macro2::Group {
+    group_new_with_span(
+        g_in.delimiter(),
+        // We lose some span information here, sadly.
+        g_in.span(),
+        ts,
+    )
+}
+
 /// Add any missing colons before `< >`'d generic arguments
 ///
 /// ```rust,ignore
