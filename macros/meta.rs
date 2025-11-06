@@ -1532,8 +1532,11 @@ fn unrecognised_error(
         let recog_allow = supplied_scope
             .recog_search()
             .map(|scope| {
-                recog.map.get(&BorrowedDesig { scope, lpaths })
-                    .copied().unwrap_or_default()
+                recog
+                    .map
+                    .get(&BorrowedDesig { scope, lpaths })
+                    .copied()
+                    .unwrap_or_default()
             })
             .reduce(std::ops::BitOr::bitor)
             .unwrap_or_default();
