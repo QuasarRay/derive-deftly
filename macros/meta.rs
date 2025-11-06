@@ -887,8 +887,23 @@ where
             },
         )?;
 
-        if let (None, Some((def, ..))) = (&found, default) {
-            return Ok(def.expand(ctx.as_general(), out));
+        if let Some((def, ..)) = default {
+            if match found {
+                None => true,
+                Some(FoundNode {
+                    kind: FNK::Unit,
+                    ptree,
+                    ..
+                }) => {
+                    // Specified as unit, but we have a default.
+                    // So ignore the unit for these purposes.
+                    ptree.update_used(Usage::VALUE_ONLY);
+                    true
+                }
+                _ => false,
+            } {
+                return Ok(def.expand(ctx.as_general(), out));
+            }
         }
 
         let found = found.ok_or_else(|| {

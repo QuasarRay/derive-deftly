@@ -188,9 +188,12 @@ pub trait SubstParseContext: Sized {
     /// Used by the template-scanning code, to report whether an `Xmeta`
     /// in the template justifies a value-bearing `Xmeta` attribute
     /// on/in the driver, or just a boolean.
-    fn meta_recog_usage(_: &meta::SubstMeta<Self>) -> meta::Usage {
-        // XXXX this needs to depend on whether there's `default`
-        meta::Usage::VALUE
+    fn meta_recog_usage(m: &meta::SubstMeta<Self>) -> meta::Usage {
+        if m.default.is_some() {
+            meta::Usage::VALUE_ONLY
+        } else {
+            meta::Usage::VALUE
+        }
     }
 
     /// For communicating through `parse_special`
