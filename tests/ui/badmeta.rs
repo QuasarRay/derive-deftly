@@ -2,6 +2,7 @@ use derive_deftly::{define_derive_deftly, derive_deftly_adhoc, Deftly};
 
 #[derive(Deftly)]
 #[derive_deftly_adhoc]
+#[deftly(unit)]
 #[deftly(wrong = "{")]
 #[deftly(dot = ".")]
 #[deftly(several = "first")]
