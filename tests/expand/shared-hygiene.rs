@@ -11,13 +11,19 @@ define_derive_deftly_module! {
     ${define LET_VARIABLE {
         let variable: i32 = 0;
     }}
+    ${define CHECK_CALLER_VAR {
+        let _: i32 = caller_var;
+    }}
 }
 
 define_derive_deftly! {
     use LetVariable;
     UseVariable:
+
     impl $ttype {
         fn use_variable() -> i32 {
+            let caller_var = 42;
+            $CHECK_CALLER_VAR
             ${LET_VARIABLE}
             variable
         }
