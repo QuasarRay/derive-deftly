@@ -45,9 +45,9 @@ fn process_nodes_ctx(ctx: &Context, nc: &mut impl NodeCall) {
 }
 fn process_nodes_top<T>(
     top: &syn::DeriveInput,
-    scenario: &[(&syn::Path, Option<Usage>)],
+    scenario: &[(&syn::Path, Usage)],
     start: impl FnOnce(&Context),
-    mut nc: impl FnMut(&PreprocessedTree, Option<Usage>),
+    mut nc: impl FnMut(&PreprocessedTree, Usage),
     finish: impl FnOnce(Context) -> T,
 ) -> T {
     Context::call(&top, &dummy_path(), None, |ctx| {
@@ -66,7 +66,7 @@ fn process_nodes_top<T>(
 
 //---------- core algorithm ----------
 
-type NodeInScenario<'n> = (&'n syn::Path, Option<Usage>);
+type NodeInScenario<'n> = (&'n syn::Path, Usage);
 struct ScenarioDebug<'a>(&'a [NodeInScenario<'a>]);
 
 fn roundtrip_scenario(
@@ -79,7 +79,7 @@ fn roundtrip_scenario(
         input_scenario,
         |_ctx| {},
         |ptree, allow| {
-            if let Some(allow) = allow {
+            if allow != U::NONE {
                 ptree.update_used(allow);
             }
         },
@@ -114,10 +114,11 @@ impl Debug for ScenarioDebug<'_> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "[ ")?;
         for (p, a) in self.0 {
-            let a = match a {
-                None => '-',
-                Some(U::BoolOnly) => '?',
-                Some(U::Value) => '=',
+            let a = match *a {
+                U::NONE => '-',
+                U::BOOL_ONLY => '?',
+                U::VALUE_ONLY => '+',
+                U::VALUE => '=',
             };
             write!(f, "{}{}", p.to_token_stream(), a)?;
         }
@@ -220,10 +221,10 @@ fn check_matching_for(topkind: &str, variants: &[&str], fields: &[&str]) {
     // trim test matrix:
     // test both values and booleans only if we're short
     let allows = if cell_paths.len() <= 4 {
-        const A: &[U] = &[U::BoolOnly, U::Value];
+        const A: &[U] = &[U::BOOL_ONLY, U::VALUE];
         A
     } else {
-        const A: &[U] = &[U::BoolOnly];
+        const A: &[U] = &[U::BOOL_ONLY];
         A
     };
 
@@ -231,8 +232,8 @@ fn check_matching_for(topkind: &str, variants: &[&str], fields: &[&str]) {
         .iter()
         .map(|path| {
             chain!(
-                [None], //
-                allows.into_iter().copied().map(Some),
+                [U::NONE], //
+                allows.into_iter().copied(),
             )
             .map(move |ra| (path, ra))
         })
@@ -245,7 +246,7 @@ fn check_matching_for(topkind: &str, variants: &[&str], fields: &[&str]) {
             output_scenario = scenario.clone();
             let (a, b) = output_scenario[0..aliased * 2].split_at_mut(aliased);
             for (a, b) in izip!(a, b) {
-                let u: Option<Usage> = cmp::max(a.1, b.1);
+                let u: Usage = a.1 | b.1;
                 a.1 = u;
                 b.1 = u;
             }

@@ -222,6 +222,7 @@ in the following syntax:
   ( // each (..) corresponds to one #[deftly()], and matches its tree
     somemeta(
       value_used =, // value was used
+      value_used +, // value was used but in context with a default
       bool_tested ?, // boolean was tested
       , // skip a node (subtree) not used at all
       .. // trailing skipped notes are omitted
@@ -269,7 +270,8 @@ The information is used only if there are unused attributes,
 to assist with producing good error messages.
 
 `_meta_recog` takes a `[ ]` list containing items like `fmeta(foo(bar))`,
-or ``fmeta(foo(bar))?` when recognised only as a boolean.
+or ``fmeta(foo(bar))?` when recognised only as a boolean,
+or ``fmeta(foo(bar))+` when only used as a value (without any boolean tests).
 
 ### 5. Reporting unused meta attributes
 

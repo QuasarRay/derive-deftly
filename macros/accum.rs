@@ -62,10 +62,17 @@ impl Parse for Accumulated {
                     let _brackets = bracketed!(content in input);
                     let input = content;
                     while !input.is_empty() {
-                        use meta::Usage as mU;
                         let allow = match input.parse()? {
-                            Some::<Token![?]>(_) => mU::BoolOnly,
-                            None => mU::Value,
+                            Some::<proc_macro2::Punct>(p) => {
+                                match p.as_char() {
+                                    '?' => meta::Usage::BOOL_ONLY,
+                                    '+' => meta::Usage::VALUE_ONLY,
+                                    _other => return Err(p.error(
+                                        "unrecognised _meta_recog usage mode",
+                                    )),
+                                }
+                            }
+                            None => meta::Usage::VALUE,
                         };
                         let desig = input.parse()?;
                         m.recog.update(desig, allow);

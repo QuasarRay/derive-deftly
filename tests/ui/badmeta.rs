@@ -2,6 +2,7 @@ use derive_deftly::{define_derive_deftly, derive_deftly_adhoc, Deftly};
 
 #[derive(Deftly)]
 #[derive_deftly_adhoc]
+#[deftly(unit)]
 #[deftly(wrong = "{")]
 #[deftly(dot = ".")]
 #[deftly(several = "first")]
@@ -129,5 +130,20 @@ derive_deftly_adhoc! {
     DataType:
     ${fmeta(missing) default { 42 }}
 }
+derive_deftly_adhoc! {
+    DataType beta_deftly:
+    // This might be allowed to work in future?  See
+    //  https://gitlab.torproject.org/Diziet/rust-derive-deftly/-/issues/48#note_3284656
+    ${tmeta(unit) as token_stream, default {}}
+}
+
+define_derive_deftly! {
+    UnusedUnit beta_deftly:
+    ${tmeta(unit) as token_stream, default { }}
+}
+#[derive(Deftly)]
+#[derive_deftly(UnusedUnit)]
+#[deftly(unit)]
+struct UnusedUnit;
 
 fn main() {}

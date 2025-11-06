@@ -188,7 +188,13 @@ pub trait SubstParseContext: Sized {
     /// Used by the template-scanning code, to report whether an `Xmeta`
     /// in the template justifies a value-bearing `Xmeta` attribute
     /// on/in the driver, or just a boolean.
-    fn meta_recog_usage() -> meta::Usage;
+    fn meta_recog_usage(m: &meta::SubstMeta<Self>) -> meta::Usage {
+        if m.default.is_some() {
+            meta::Usage::VALUE_ONLY
+        } else {
+            meta::Usage::VALUE
+        }
+    }
 
     /// For communicating through `parse_special`
     ///
@@ -571,9 +577,6 @@ impl SubstParseContext for TokenAccumulator {
     }
     fn not_in_bool(_: &impl Spanned) -> syn::Result<()> {
         Ok(())
-    }
-    fn meta_recog_usage() -> meta::Usage {
-        meta::Usage::Value
     }
 
     type BoolOnly = Void;
