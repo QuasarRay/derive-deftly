@@ -566,10 +566,11 @@ impl ToTokens for Label {
         let mut current =
             lpaths.next().expect("empty path!").to_token_stream();
         let r = loop {
-            let span = current.span();
-            let mut group =
-                proc_macro2::Group::new(Delimiter::Parenthesis, current);
-            group.set_span(span);
+            let group = group_new_with_span(
+                Delimiter::Parenthesis,
+                current.span(),
+                current,
+            );
             let wrap = if let Some(y) = lpaths.next() {
                 y
             } else {

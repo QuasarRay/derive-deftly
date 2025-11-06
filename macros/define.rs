@@ -150,8 +150,7 @@ pub fn escape_dollars(input: TokenStream) -> TokenStream {
                     _ => St::Other,
                 };
                 let stream = handle_ts(stream, st);
-                let mut g = proc_macro2::Group::new(delim, stream);
-                g.set_span(span);
+                let g = group_new_with_span(delim, span, stream);
                 TT::Group(g)
             }
             TT::Punct(p) if p.as_char() == '$' => {

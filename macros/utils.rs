@@ -129,9 +129,7 @@ pub fn delimit_token_group(
 ) -> syn::Result<proc_macro2::Group> {
     let mut out = TokenAccumulator::default();
     f(&mut out)?;
-    let out = out.tokens()?;
-    let mut out = proc_macro2::Group::new(delim, out);
-    out.set_span(delim_span);
+    let out = group_new_with_span(delim, delim_span, out.tokens()?);
     Ok(out)
 }
 
@@ -173,6 +171,17 @@ impl<T: ToTokens> ToTokens for Concatenated<T> {
             item.to_tokens(out);
         }
     }
+}
+
+/// Returns a `Group`, with a specified span
+pub fn group_new_with_span(
+    delimiter: Delimiter,
+    span: Span,
+    ts: TokenStream,
+) -> proc_macro2::Group {
+    let mut g_out = proc_macro2::Group::new(delimiter, ts);
+    g_out.set_span(span);
+    g_out
 }
 
 /// Add any missing colons before `< >`'d generic arguments
