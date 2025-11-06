@@ -1469,7 +1469,7 @@ fn unrecognised_error(
     supplied_scope: SuppliedScope,
     supplied_usage: Usage,
     supplied_span: Span,
-    used_usage: Usage,
+    used: Usage,
     lpaths: &[&syn::Path],
 ) -> Result<Void, syn::Error> /* return type allows (ab)use of ? */ {
     // This could have been a method on UsedChecker, but that runs into
@@ -1496,7 +1496,7 @@ fn unrecognised_error(
 
         // We'd recognise this, but only conditionally, and not now
 
-        match used_usage {
+        match used {
             U::NONE => some_err(&format_args!(
  "meta attribute provided, and (conditionally) recognised; but not used in these particular circumstances"
             )),
@@ -1513,7 +1513,7 @@ fn unrecognised_error(
     // Maybe it's just that a value was supplied by mistake
     try_case((|| {
         //
-        match (supplied_usage, used_usage) {
+        match (supplied_usage, used) {
             (U::VALUE, U::BOOL_ONLY) => some_err(&format_args!(
                 "meta attribute value provided, but is used only as a boolean",
             )),
