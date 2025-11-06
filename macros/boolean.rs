@@ -36,7 +36,7 @@ impl SubstParseContext for BooleanContext {
     fn bool_only(_: &impl Spanned) -> syn::Result<()> {
         Ok(())
     }
-    fn meta_recog_usage() -> meta::Usage {
+    fn meta_recog_usage(_: &meta::SubstMeta<Self>) -> meta::Usage {
         meta::Usage::BOOL_ONLY
     }
 

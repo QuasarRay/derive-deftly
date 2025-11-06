@@ -1786,7 +1786,7 @@ impl<O: SubstParseContext> FindRecogMetas for SubstDetails<O> {
 
 impl<O: SubstParseContext> FindRecogMetas for SubstMeta<O> {
     fn find_recog_metas(&self, acc: &mut Recognised) {
-        let recog = O::meta_recog_usage();
+        let recog = O::meta_recog_usage(self);
         acc.update(self.desig.clone(), recog);
     }
 }

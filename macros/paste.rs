@@ -754,9 +754,6 @@ impl SubstParseContext for Items {
         Err(span
             .error("not allowed in within ${paste ...} (or case_changing)"))
     }
-    fn meta_recog_usage() -> meta::Usage {
-        meta::Usage::VALUE // XXXX
-    }
 
     type SpecialParseContext = Option<AngleBrackets>;
 }

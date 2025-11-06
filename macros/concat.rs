@@ -187,9 +187,6 @@ impl SubstParseContext for Accumulator {
     fn concat_only(_: &impl Spanned) -> syn::Result<()> {
         Ok(())
     }
-    fn meta_recog_usage() -> meta::Usage {
-        meta::Usage::VALUE
-    }
 }
 
 impl ExpansionOutput for Accumulator {
