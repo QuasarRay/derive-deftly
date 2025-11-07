@@ -1,0 +1,17 @@
+error[E0425]: cannot find value `a` in this scope
+  --> ui/badhygiene.rs:29:14
+   |
+29 |     let () = a;
+   |              ^ not found in this scope
+
+error[E0425]: cannot find value `b` in this scope
+  --> ui/badhygiene.rs:30:14
+   |
+30 |     let () = b;
+   |              ^ not found in this scope
+
+error[E0425]: cannot find value `c` in this scope
+  --> ui/badhygiene.rs:31:14
+   |
+31 |     let () = c;
+   |              ^ not found in this scope

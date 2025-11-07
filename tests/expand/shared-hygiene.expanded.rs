@@ -3,6 +3,8 @@ use derive_deftly::{define_derive_deftly, define_derive_deftly_module, Deftly};
 struct Data;
 impl Data {
     fn use_variable() -> i32 {
+        let caller_var = 42;
+        let _: i32 = caller_var;
         let variable: i32 = 0;
         variable
     }

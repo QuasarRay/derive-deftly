@@ -321,6 +321,19 @@ impl TemplateDefinition {
             // bu we just consumed all of those from `main`.
             main.parse()?;
 
+        // We thread our code through macro_rules macros, which like to do
+        // hygiene to them - but we want all our identifiers to have the same
+        // span, namely the span they would have had if they'd not been in a
+        // module - that's Span::call_site, meaning (without modules) the call
+        // site of define_derive_deftly and with modules the call site of the
+        // engine, which is ultimately the same place.
+        let respan_span = Span::call_site();
+        let respan = |ts: &mut TokenStream| {
+            *ts = respan_hygiene(ts.clone(), respan_span)
+        };
+        respan(&mut definition.imported_definitions_d_escaped);
+        respan(&mut definition.template);
+
         definition.doc_attrs = {
             let mut expanded = TokenAccumulator::new();
             Template::expand_iter(
