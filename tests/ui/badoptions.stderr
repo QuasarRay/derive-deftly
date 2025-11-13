@@ -135,11 +135,11 @@ error: expected `!`
    |
    = note: this error originates in the macro `derive_deftly_template_FailedExpectation` which comes from the expansion of the derive macro `Deftly` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error: expected identifier, found `$`
- --> $OUT_DIR[derive-deftly-macros]/derive-deftly~expansions~/dd-89fd011ae49619b3b121ff13.rs
+error: expected one of `!` or `::`, found `syntax`
+ --> $OUT_DIR[derive-deftly-macros]/derive-deftly~expansions~/dd-adbc4d0ef1f0204d1697c334.rs
   |
-  | pub use $crate as thing; bad syntax;
-  |         ^ expected identifier
+  | pub use crate as thing; bad syntax;
+  |                             ^^^^^^ expected one of `!` or `::`
 
 error: include macro expected single expression in source
  --> $OUT_DIR[derive-deftly-macros]/derive-deftly~expansions~/dd-9bb48b2e4ab54bba44238094.rs

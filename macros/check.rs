@@ -129,6 +129,25 @@ impl Checking<'_> {
     }
 }
 
+/// Turn every `$crate` `Ident` into `crate`
+fn massage_dollar_crate(input: TokenStream) -> TokenStream {
+    input
+        .into_iter()
+        .update(|tt| match tt {
+            TT::Group(g) => {
+                *g = group_clone_set_stream(
+                    &g,
+                    massage_dollar_crate(g.stream()),
+                )
+            }
+            TT::Ident(i) if i == "$crate" => {
+                *i = Ident::new("crate", i.span())
+            }
+            _other => {}
+        })
+        .collect()
+}
+
 /// Constructs an `include!` which includes the text for `broken`
 ///
 /// Appends the `include` to `checking.output`.
@@ -141,6 +160,17 @@ fn expand_via_file(
 ) -> Result<TokenStream, String> {
     use sha3::{Digest as _, Sha3_256};
     use std::{fs, io, io::Write as _, path::PathBuf};
+
+    // The expansion TS can contain the weird pseudo-identifier `$crate`.
+    // This can be constructed via `macro_rules!`.  It is a `TT::Ident`
+    // which `Display`s as `$crate`.  But that doesn't parse as a string,
+    // because it's not real Rust surface syntax.
+    //
+    // So when we create the demo file, containing the expansion, we
+    // turn those into `crate`.  This is wrong for name resolution,
+    // so the user might see name resolution errors as well as the
+    // intended syntax error.  There is very little we can do about that.
+    let broken = massage_dollar_crate(broken);
 
     let text = format!(
         "// {}, should have been {}:\n{}\n",
