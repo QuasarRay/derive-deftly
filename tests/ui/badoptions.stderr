@@ -124,6 +124,23 @@ error: reference involved in too-deep expansion/condition, depth 0
 71 |     $DEF
    |      ^^^
 
+error: expected `!`
+  --> ui/badoptions.rs:78:34
+   |
+78 |     pub use $crate as thing; bad syntax;
+   |                                  ^^^^^^
+...
+81 | #[derive(Deftly)]
+   |          ------ in this derive macro expansion
+   |
+   = note: this error originates in the macro `derive_deftly_template_FailedExpectation` which comes from the expansion of the derive macro `Deftly` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: expected identifier, found `$`
+ --> $OUT_DIR[derive-deftly-macros]/derive-deftly~expansions~/dd-89fd011ae49619b3b121ff13.rs
+  |
+  | pub use $crate as thing; bad syntax;
+  |         ^ expected identifier
+
 error: include macro expected single expression in source
  --> $OUT_DIR[derive-deftly-macros]/derive-deftly~expansions~/dd-9bb48b2e4ab54bba44238094.rs
   |
