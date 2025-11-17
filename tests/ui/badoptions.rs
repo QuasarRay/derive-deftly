@@ -71,4 +71,15 @@ derive_deftly_adhoc! {
     $DEF
 }
 
+define_derive_deftly! {
+    FailedExpectation expect items:
+
+    // all on one line so effect of $crate shows up in error message
+    pub use $crate as thing; bad syntax;
+}
+
+#[derive(Deftly)]
+#[derive_deftly(FailedExpectation)]
+struct TriggerFailedExpectation;
+
 fn main() {}

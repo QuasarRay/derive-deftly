@@ -1499,6 +1499,13 @@ that part of the expansiuon.
 
 This is useful for debugging.
 
+Due to limitations in Rust, the copy of the template expansion
+cannot properly represent the results of the
+[`$crate` expansion](#x:crate).
+When an `expect` fails for an template imported from another crate,
+you may also see spurious name resolution errors.
+These should be ignored.
+
 Note that a template defined with `define_derive_adhoc!`
 must always expand to items, anyway,
 because Rust insists that a `#[derive]` expands to items.
