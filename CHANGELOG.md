@@ -57,6 +57,12 @@ or via the [account request form].
 
 ## Changelog
 
+### 1.5.1
+
+#### Improved
+
+ * Better error message when `expect` fails and expansion contains `$crate`.
+
 ### 1.5.0
 
 #### Breaking changes to beta features
