@@ -93,7 +93,7 @@ maint-check-todos:
 
 cargo-clippy:
   stage: test
-  image: "rust:1.84.0"
+  image: "rust:1.90.0"
   script:
     - rustup component add clippy
     - cargo clippy --locked --workspace --all-features --
