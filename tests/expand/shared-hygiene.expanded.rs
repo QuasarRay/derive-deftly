@@ -9,6 +9,11 @@ struct Data {
     field: (),
 }
 impl Data {
+    pub fn with_pasted() {
+        let pasted_field = ();
+        let () = pasted_field;
+        let () = pasted_field;
+    }
     fn use_variable() -> i32 {
         let caller_var = 42;
         let _: i32 = caller_var;
@@ -17,5 +22,6 @@ impl Data {
     }
 }
 fn main() {
+    Data::with_pasted();
     std::process::exit(Data::use_variable());
 }

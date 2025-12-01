@@ -8,6 +8,19 @@ use derive_deftly::{
 
 define_derive_deftly_module! {
     LetVariable:
+
+    ${define LET_PASTED {
+        $(
+          let $<pasted_ $fname> = ();
+        )
+    }}
+
+    ${define F_PASTED $<pasted_ $fname>}
+
+    ${define USE_PASTED {
+        let () = $<pasted_ $fname>;
+    }}
+
     ${define LET_VARIABLE {
         let variable: i32 = 0;
     }}
@@ -29,6 +42,14 @@ define_derive_deftly! {
     UseVariable:
 
     impl $ttype {
+        pub fn with_pasted() {
+            $LET_PASTED
+            ${for fields {
+                let () = $F_PASTED;
+                $USE_PASTED
+            }}
+        }
+
         fn use_variable() -> i32 {
             let caller_var = 42;
             $CHECK_CALLER_VAR
@@ -46,5 +67,6 @@ struct Data {
 }
 
 fn main() {
+    Data::with_pasted();
     std::process::exit(Data::use_variable());
 }
