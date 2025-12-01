@@ -331,6 +331,10 @@ impl TemplateDefinition {
         let respan = |ts: &mut TokenStream| {
             *ts = respan_hygiene(ts.clone(), respan_span)
         };
+        // XXXX
+        //   This line is ineffective; imported_definitions_d_escaped
+        //   is overwritten below.  This is a bug, derive-deftly#135.
+        //   Test is ineffective; comment this out and the tests still pass!
         respan(&mut definition.imported_definitions_d_escaped);
         respan(&mut definition.template);
 
