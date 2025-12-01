@@ -321,23 +321,6 @@ impl TemplateDefinition {
             // bu we just consumed all of those from `main`.
             main.parse()?;
 
-        // We thread our code through macro_rules macros, which like to do
-        // hygiene to them - but we want all our identifiers to have the same
-        // span, namely the span they would have had if they'd not been in a
-        // module - that's Span::call_site, meaning (without modules) the call
-        // site of define_derive_deftly and with modules the call site of the
-        // engine, which is ultimately the same place.
-        let respan_span = Span::call_site();
-        let respan = |ts: &mut TokenStream| {
-            *ts = respan_hygiene(ts.clone(), respan_span)
-        };
-        // XXXX
-        //   This line is ineffective; imported_definitions_d_escaped
-        //   is overwritten below.  This is a bug, derive-deftly#135.
-        //   Test is ineffective; comment this out and the tests still pass!
-        respan(&mut definition.imported_definitions_d_escaped);
-        respan(&mut definition.template);
-
         definition.doc_attrs = {
             let mut expanded = TokenAccumulator::new();
             Template::expand_iter(
@@ -357,6 +340,26 @@ impl TemplateDefinition {
             syn::parse2(expanded)?
         };
         definition.imported_definitions_d_escaped = prefix_d_escaped;
+
+        // We thread our code through macro_rules macros, which like to do
+        // hygiene to them - but we want all our identifiers to have the same
+        // span, namely the span they would have had if they'd not been in a
+        // module - that's Span::call_site, meaning (without modules) the call
+        // site of define_derive_deftly and with modules the call site of the
+        // engine, which is ultimately the same place.
+        let respan_span = Span::call_site();
+        let respan = |ts: &mut TokenStream| {
+            *ts = respan_hygiene(ts.clone(), respan_span)
+        };
+        // XXXX
+        //   Test is ineffective; comment this out and the tests still pass!
+        respan(&mut definition.imported_definitions_d_escaped);
+        respan(&mut definition.template);
+        // The following fields in TemplateDefinition aren't respanned:
+        //  * doc_attrs: ought not to contain references to local variables
+        //  * export: just an `export` keyword, span is not importsnt
+        //  * templ_name: came from the real template definition call site, ok
+        //  * options: just options for us, no local variables
 
         Ok(definition)
     }
