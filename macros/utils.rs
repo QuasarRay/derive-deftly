@@ -201,6 +201,8 @@ pub fn group_clone_set_stream(
 pub fn respan_hygiene(input: TokenStream, span: Span) -> TokenStream {
     /// Recursive call.  Separate so we can wrap it, etc.
     pub fn recurse(input: TokenStream, span: Span) -> TokenStream {
+        let map_span = |tok_span: Span| tok_span.resolved_at(span);
+
         input
             .into_iter()
             .map(|tt| match tt {
@@ -213,7 +215,7 @@ pub fn respan_hygiene(input: TokenStream, span: Span) -> TokenStream {
                     TT::Group(g_new)
                 }
                 TT::Ident(mut i) => {
-                    i.set_span(i.span().resolved_at(span));
+                    i.set_span(map_span(i.span()));
                     TT::Ident(i)
                 }
                 other => other,
