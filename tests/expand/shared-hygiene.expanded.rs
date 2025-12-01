@@ -1,4 +1,8 @@
 use derive_deftly::{define_derive_deftly, define_derive_deftly_module, Deftly};
+#[macro_use]
+mod y {
+    use super::*;
+}
 #[derive_deftly(UseVariable)]
 struct Data;
 impl Data {

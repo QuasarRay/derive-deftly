@@ -351,8 +351,6 @@ impl TemplateDefinition {
         let respan = |ts: &mut TokenStream| {
             *ts = respan_hygiene(ts.clone(), respan_span)
         };
-        // XXXX
-        //   Test is ineffective; comment this out and the tests still pass!
         respan(&mut definition.imported_definitions_d_escaped);
         respan(&mut definition.template);
         // The following fields in TemplateDefinition aren't respanned:

@@ -16,7 +16,15 @@ define_derive_deftly_module! {
     }}
 }
 
+#[macro_use]
+// We don't know that this being a `mod` is important, but it seems a good idea
+mod y {
+    use super::*;
+    define_derive_deftly_module! { FromY: }
+}
+
 define_derive_deftly! {
+    use FromY; // induces additional plumbing, causing more excitement
     use LetVariable;
     UseVariable:
 
