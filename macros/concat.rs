@@ -9,7 +9,7 @@ use super::framework::*;
 /// and collects the string to be output.
 #[derive(Debug)]
 pub struct Accumulator {
-    kw_span: Span,
+    def_span: Span,
     out_span: Option<Span>,
     text: String,
     errors: ErrorAccumulator,
@@ -17,7 +17,7 @@ pub struct Accumulator {
 
 impl Accumulator {
     pub fn finish_literal(self) -> syn::Result<syn::LitStr> {
-        let out_span = self.out_span.unwrap_or(self.kw_span);
+        let out_span = self.out_span.unwrap_or(self.def_span);
         let text = self.errors.finish_with(self.text)?;
         let lit = syn::LitStr::new(&text, out_span);
         Ok(lit)
@@ -268,7 +268,7 @@ impl ExpansionOutput for Accumulator {
 
     fn new_with_span(kw_span: Span) -> Self {
         Accumulator {
-            kw_span,
+            def_span: kw_span,
             out_span: None,
             text: String::new(),
             errors: ErrorAccumulator::default(),
