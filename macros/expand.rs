@@ -688,11 +688,24 @@ impl ExplicitError {
     pub fn throw<'c, T>(
         &self,
         gctx: GeneralContext<'c>,
-        _kw_span: Span,
+        kw_span: Span,
     ) -> Result<T, syn::Error> {
-        let message = &self.message;
+        let mut message = concat::Accumulator::new_with_span(kw_span);
+        self.message.expand(gctx, &mut message);
+        let message = message.finish_literal()?;
+
+        let explicit_loc = self
+            .span
+            .as_ref()
+            .map(|(span, _)| {
+                let span = span.span_from_arg(gctx)?;
+                Ok::<_, syn::Error>((span, "reported by template"))
+            })
+            .transpose()?;
+
         let message_loc = (message.span(), "template error message");
         let locs = chain!(
+            explicit_loc, //
             gctx.error_loc(),
             [message_loc],
         )
