@@ -1006,7 +1006,10 @@ impl<O: SubstParseContext> Parse for Subst<O> {
         keyword! { "if": If(parse_if(input)?, not_in_bool()?) }
         keyword! { select1(parse_if(input)?, not_in_bool()?) }
         keyword! { ignore(input.parse()?, not_in_bool()?) }
-        keyword! { error(input.parse()?, not_in_bool()?) }
+        keyword! { error(
+            input.parse()?,
+            not_in_bool()?,
+        ) }
         keyword! { require_beta(beta()?, not_in_bool()?) }
         keyword! { dbg(input.parse()?) }
         keyword! { dbg_all_keywords(not_in_bool()?) }
