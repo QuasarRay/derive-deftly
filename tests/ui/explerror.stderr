@@ -12,7 +12,7 @@ error: basic (in this field)
    |
    = note: this error originates in the macro `derive_deftly_driver_Struct` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error: basic (template)
+error: basic (template error message)
   --> ui/explerror.rs:11:28
    |
 11 |     ${for fields { ${error "basic"}} }

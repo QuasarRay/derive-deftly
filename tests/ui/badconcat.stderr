@@ -43,7 +43,7 @@ error: failure forced in dbg (in this data structure)
    |
    = note: this error originates in the macro `derive_deftly_driver_DataType` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error: failure forced in dbg (template)
+error: failure forced in dbg (template error message)
   --> ui/badconcat.rs:45:30
    |
 45 |     ${concat ${dbg { ${error "failure forced in dbg"} }}}

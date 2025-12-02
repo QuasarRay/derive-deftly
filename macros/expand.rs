@@ -691,7 +691,7 @@ impl ExplicitError {
         _kw_span: Span,
     ) -> Result<T, syn::Error> {
         let message = &self.message;
-        let message_loc = (message.span(), "template");
+        let message_loc = (message.span(), "template error message");
         let locs = chain!(
             gctx.error_loc(),
             [message_loc],
