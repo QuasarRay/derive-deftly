@@ -236,6 +236,13 @@ pub trait WithinRepeatLevel<'w>: 'w {
     where
         'c: 'w,
         F: FnMut(&Context, &Self) -> Result<(), E>;
+
+    fn missing_repeat_level_special_error(
+        _ctx: &'w Context,
+        _span: Span,
+    ) -> Option<syn::Error> {
+        None
+    }
 }
 
 impl<'w> WithinRepeatLevel<'w> for WithinVariant<'w> {
@@ -370,10 +377,13 @@ impl<'c> Context<'c> {
         W: WithinRepeatLevel<'c>,
     {
         W::current(self).ok_or_else(|| {
-            why.span().error(format_args!(
+          let span = why.span();
+          W::missing_repeat_level_special_error(self, span).unwrap_or_else(|| {
+            span.error(format_args!(
                 "must be within a {} (so, in a repeat group)",
                 W::level_display_name(),
             ))
+          })
         })
     }
 
