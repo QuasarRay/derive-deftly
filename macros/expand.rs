@@ -692,10 +692,11 @@ impl ExplicitError {
     ) -> Result<T, syn::Error> {
         let message = &self.message;
         let message_loc = (message.span(), "template");
-        let locs = gctx
-            .prepend_error_loc(&[
-                message_loc,
-            ]);
+        let locs = chain!(
+            gctx.error_loc(),
+            [message_loc],
+        )
+        .collect_vec();
 
         Err(locs.error(message.value()))
     }
