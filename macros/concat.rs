@@ -15,6 +15,12 @@ pub struct Accumulator {
 }
 
 impl Accumulator {
+    pub fn finish_literal(self) -> syn::Result<syn::LitStr> {
+        let text = self.errors.finish_with(self.text)?;
+        let lit = syn::LitStr::new(&text, self.kw_span);
+        Ok(lit)
+    }
+
     pub fn finish_onto<O>(self, np: &O::NotInPaste, out: &mut O)
     where
         O: ExpansionOutput,
@@ -23,8 +29,7 @@ impl Accumulator {
         let _: O::NotInPaste = *np;
 
         (|| {
-            let text = self.errors.finish_with(self.text)?;
-            let lit = syn::LitStr::new(&text, self.kw_span);
+            let lit = self.finish_literal()?;
             out.append_syn_litstr(&lit);
             Ok(())
         })()
