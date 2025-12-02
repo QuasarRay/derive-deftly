@@ -512,6 +512,15 @@ impl<O: SubstParseContext> Deref for Argument<O> {
     }
 }
 
+impl Argument<TokenAccumulator> {
+    pub fn span_from_arg(&self, gctx: GeneralContext) -> syn::Result<Span> {
+        let mut span_tokens = TokenAccumulator::new();
+        self.expand(gctx, &mut span_tokens);
+        let span = span_tokens.tokens()?.span();
+        Ok(span)
+    }
+}
+
 /// Proof token that [`deescape_orig_dollar`] was called
 ///
 /// Demanded by `Subst::parse_after_dollar`.

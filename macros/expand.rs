@@ -589,12 +589,7 @@ where
                 paste::expand(gctx, kw_span, content, out)?;
             }
             SD::paste_spanned(span, content, ..) => {
-                let set_span = (|| {
-                    let mut span_tokens = TokenAccumulator::new();
-                    span.expand(gctx, &mut span_tokens);
-                    let span = span_tokens.tokens()?.span();
-                    Ok(span)
-                })()
+                let set_span = span.span_from_arg(gctx)
                 .unwrap_or_else(|e| {
                     out.record_error(e);
                     kw_span
