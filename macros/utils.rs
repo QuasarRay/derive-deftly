@@ -215,7 +215,8 @@ pub fn respan_hygiene(input: TokenStream, span: Span) -> TokenStream {
                     g.set_span(new_span);
                 }
                 TT::Ident(i) => i.set_span(map_span(i.span())),
-                _other => {}
+                TT::Punct(p) => p.set_span(map_span(p.span())),
+                TT::Literal(l) => l.set_span(map_span(l.span())),
             })
             .collect()
     }
