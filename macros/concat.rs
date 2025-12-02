@@ -231,6 +231,11 @@ impl ExpansionOutput for Accumulator {
         Ok(())
     }
     fn append_syn_litstr(&mut self, lit: &syn::LitStr) {
+        if lit.suffix() != "" {
+            self.errors
+                .push(lit.error("string suffix forbidden in ${concat }"));
+            return;
+        }
         self.append_display(lit.span(), lit.value());
     }
     fn append_syn_type(
