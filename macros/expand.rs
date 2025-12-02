@@ -690,11 +690,14 @@ impl ExplicitError {
         gctx: GeneralContext<'c>,
         _kw_span: Span,
     ) -> Result<T, syn::Error> {
-        Err(gctx
+        let message = &self.message;
+        let message_loc = (message.span(), "template");
+        let locs = gctx
             .prepend_error_loc(&[
-                (self.message.span(), "template"), //
-            ])
-            .error(self.message.value()))
+                message_loc,
+            ]);
+
+        Err(locs.error(message.value()))
     }
 }
 
