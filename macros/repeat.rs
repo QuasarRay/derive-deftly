@@ -377,13 +377,15 @@ impl<'c> Context<'c> {
         W: WithinRepeatLevel<'c>,
     {
         W::current(self).ok_or_else(|| {
-          let span = why.span();
-          W::missing_repeat_level_special_error(self, span).unwrap_or_else(|| {
-            span.error(format_args!(
-                "must be within a {} (so, in a repeat group)",
-                W::level_display_name(),
-            ))
-          })
+            let span = why.span();
+            W::missing_repeat_level_special_error(self, span).unwrap_or_else(
+                || {
+                    span.error(format_args!(
+                        "must be within a {} (so, in a repeat group)",
+                        W::level_display_name(),
+                    ))
+                },
+            )
         })
     }
 
