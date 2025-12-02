@@ -333,6 +333,26 @@ impl<'w> WithinRepeatLevel<'w> for WithinField<'w> {
             Ok(())
         })
     }
+
+    fn missing_repeat_level_special_error(
+        ctx: &'w Context,
+        span: Span,
+    ) -> Option<syn::Error> {
+        if let Some(wv) = &ctx.variant {
+            return Some(span.error(
+                if wv.variant.is_some() {
+                    // Definitely within a variant repeat group.
+                    "must be within a field, so within a field repeat group; but, is only within a variant repeat group"
+                } else {
+                    // We have a WithinVariant but not a syn::Variant.
+                    // The driver isn't an enum.  We can't tell if we're
+                    // lexically within a variant repeat group.
+                    "must be within a field, so within a field repeat group"
+                }
+            ));
+        }
+        None
+    }
 }
 
 impl<'c> Context<'c> {
