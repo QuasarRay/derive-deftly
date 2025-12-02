@@ -32,7 +32,7 @@
       * [`${ignore ..}` -- Expand but then discard](#ignore---expand-but-then-discard)
       * [`${dbg ..}`, `$dbg_all_keywords` -- Debugging output](#dbg--dbg_all_keywords--debugging-output)
       * [`${define ...}`, `${defcond ...}` -- user-defined expansions and conditions](#define--defcond---user-defined-expansions-and-conditions)
-      * [`${error "message"}` -- explicitly throw a compile error](#error-message--explicitly-throw-a-compile-error)
+      * [`${error ...}` -- explicitly throw a compile error](#error---explicitly-throw-a-compile-error)
    * [Conditions](#conditions)
       * [`fvis`, `tvis`, `fdefvis` -- test for public visibility](#fvis-tvis-fdefvis--test-for-public-visibility)
       * [`fmeta(NAME)`, `vmeta(NAME)`, `tmeta(NAME)` -- `#[deftly]` attributes](#fmetaname-vmetaname-tmetaname--deftly-attributes)
