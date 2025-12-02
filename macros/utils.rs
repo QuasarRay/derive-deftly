@@ -205,21 +205,20 @@ pub fn respan_hygiene(input: TokenStream, span: Span) -> TokenStream {
 
         input
             .into_iter()
-            .map(|tt| match tt {
-                TT::Group(g_in) => {
+            .update(|tt| match tt {
+                TT::Group(g) => {
+                    let g_in = &*g;
                     let new_span = map_span(g_in.span());
-                    let mut g_new = proc_macro2::Group::new(
+                    *g = proc_macro2::Group::new(
                         g_in.delimiter(),
                         recurse(g_in.stream(), span),
                     );
-                    g_new.set_span(new_span);
-                    TT::Group(g_new)
+                    g.set_span(new_span);
                 }
-                TT::Ident(mut i) => {
+                TT::Ident(i) => {
                     i.set_span(map_span(i.span()));
-                    TT::Ident(i)
                 }
-                other => other,
+                _other => {}
             })
             .collect()
     }
