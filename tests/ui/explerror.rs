@@ -11,4 +11,10 @@ derive_deftly_adhoc! {
     ${for fields { ${error "basic"}} }
 }
 
+derive_deftly_adhoc! {
+    Struct beta_deftly:
+    ${error message="just message"}
+    $( ${error message=${concat "spanned at ftype for " $fname} span=$ftype} )
+}
+
 fn main() {}
