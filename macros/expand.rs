@@ -474,7 +474,7 @@ where
             SD::findex(..) => do_index(out, ctx?.field(&kw_span)?.index)?,
 
             SD::Xmeta(sm) => do_meta(sm, out, sm.pmetas(ctx?, kw_span)?)?,
-            SD::error(e, _) => e.throw(gctx)?,
+            SD::error(e, _) => e.throw(gctx, kw_span)?,
 
             SD::Vis(vis, at) => {
                 out.append_tokens(at, vis.syn_vis(ctx?, kw_span)?)?
@@ -688,6 +688,7 @@ impl ExplicitError {
     pub fn throw<'c, T>(
         &self,
         gctx: GeneralContext<'c>,
+        _kw_span: Span,
     ) -> Result<T, syn::Error> {
         Err(gctx
             .prepend_error_loc(&[
