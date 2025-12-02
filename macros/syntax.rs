@@ -1101,11 +1101,11 @@ impl<O: SubstParseContext> DbgDumpRequest<O> {
 
 impl ExplicitError {
     fn parse(input: ParseStream, _kw_span: Span) -> syn::Result<Self> {
-        let message: syn::LitStr = input.parse()?;
-        if message.suffix() != "" {
-            return Err(message.error("suffix forbidden on error string"));
-        }
-        Ok(ExplicitError { message })
+            let message: syn::LitStr = input.parse()?;
+            if message.suffix() != "" {
+                return Err(message.error("suffix forbidden on error string"));
+            }
+            Ok(ExplicitError { message })
     }
 }
 
