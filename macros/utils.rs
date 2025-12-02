@@ -207,11 +207,10 @@ pub fn respan_hygiene(input: TokenStream, span: Span) -> TokenStream {
             .into_iter()
             .update(|tt| match tt {
                 TT::Group(g) => {
-                    let g_in = &*g;
-                    let new_span = map_span(g_in.span());
+                    let new_span = map_span(g.span());
                     *g = proc_macro2::Group::new(
-                        g_in.delimiter(),
-                        recurse(g_in.stream(), span),
+                        g.delimiter(),
+                        recurse(g.stream(), span),
                     );
                     g.set_span(new_span);
                 }
