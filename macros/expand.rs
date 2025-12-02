@@ -589,8 +589,7 @@ where
                 paste::expand(gctx, kw_span, content, out)?;
             }
             SD::paste_spanned(span, content, ..) => {
-                let span = span.span_from_arg(gctx)
-                .unwrap_or_else(|e| {
+                let span = span.span_from_arg(gctx).unwrap_or_else(|e| {
                     out.record_error(e);
                     kw_span
                 });
