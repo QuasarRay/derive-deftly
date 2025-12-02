@@ -236,6 +236,13 @@ pub trait WithinRepeatLevel<'w>: 'w {
     where
         'c: 'w,
         F: FnMut(&Context, &Self) -> Result<(), E>;
+
+    fn missing_repeat_level_special_error(
+        _ctx: &'w Context,
+        _span: Span,
+    ) -> Option<syn::Error> {
+        None
+    }
 }
 
 impl<'w> WithinRepeatLevel<'w> for WithinVariant<'w> {
@@ -326,6 +333,26 @@ impl<'w> WithinRepeatLevel<'w> for WithinField<'w> {
             Ok(())
         })
     }
+
+    fn missing_repeat_level_special_error(
+        ctx: &'w Context,
+        span: Span,
+    ) -> Option<syn::Error> {
+        if let Some(wv) = &ctx.variant {
+            return Some(span.error(
+                if wv.variant.is_some() {
+                    // Definitely within a variant repeat group.
+                    "must be within a field, so within a field repeat group; but, is only within a variant repeat group"
+                } else {
+                    // We have a WithinVariant but not a syn::Variant.
+                    // The driver isn't an enum.  We can't tell if we're
+                    // lexically within a variant repeat group.
+                    "must be within a field, so within a field repeat group"
+                }
+            ));
+        }
+        None
+    }
 }
 
 impl<'c> Context<'c> {
@@ -370,10 +397,15 @@ impl<'c> Context<'c> {
         W: WithinRepeatLevel<'c>,
     {
         W::current(self).ok_or_else(|| {
-            why.span().error(format_args!(
-                "must be within a {} (so, in a repeat group)",
-                W::level_display_name(),
-            ))
+            let span = why.span();
+            W::missing_repeat_level_special_error(self, span).unwrap_or_else(
+                || {
+                    span.error(format_args!(
+                        "must be within a {} (so, in a repeat group)",
+                        W::level_display_name(),
+                    ))
+                },
+            )
         })
     }
 

@@ -22,4 +22,23 @@ derive_deftly_adhoc! {
     ${ignore $fname}
 }
 
+define_derive_deftly! {
+    FieldOutsideRepeatGroup:
+    [ stringify!($fname), ] // not in a repeat group at all
+}
+define_derive_deftly! {
+    FieldInVariantsRepeatGroup:
+    [ ${for variants { stringify!($fname), }} ] // insufficient repeat depth
+}
+
+#[derive(Deftly)]
+#[derive_deftly(FieldOutsideRepeatGroup, FieldInVariantsRepeatGroup)]
+struct Struct;
+
+#[derive(Deftly)]
+#[derive_deftly(FieldOutsideRepeatGroup, FieldInVariantsRepeatGroup)]
+enum Enum {
+    Variant,
+}
+
 fn main() {}

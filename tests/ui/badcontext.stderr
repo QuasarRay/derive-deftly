@@ -15,11 +15,55 @@ error: macro expansion ignores `0` and any tokens following
    |
    = note: the usage of `::derive_deftly::derive_deftly_engine!` is likely invalid in item context
 
-error: must be within a field (so, in a repeat group)
+error: must be within a field, so within a field repeat group
   --> ui/badcontext.rs:22:15
    |
 22 |     ${ignore $fname}
    |               ^^^^^
+
+error: must be within a field, so within a field repeat group
+  --> ui/badcontext.rs:27:19
+   |
+27 |     [ stringify!($fname), ] // not in a repeat group at all
+   |                   ^^^^^
+...
+34 | #[derive(Deftly)]
+   |          ------ in this derive macro expansion
+   |
+   = note: this error originates in the macro `derive_deftly_template_FieldOutsideRepeatGroup` which comes from the expansion of the derive macro `Deftly` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: must be within a field, so within a field repeat group
+  --> ui/badcontext.rs:31:36
+   |
+31 |     [ ${for variants { stringify!($fname), }} ] // insufficient repeat depth
+   |                                    ^^^^^
+...
+34 | #[derive(Deftly)]
+   |          ------ in this derive macro expansion
+   |
+   = note: this error originates in the macro `derive_deftly_template_FieldInVariantsRepeatGroup` which comes from the expansion of the derive macro `Deftly` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: must be within a field (so, in a repeat group)
+  --> ui/badcontext.rs:27:19
+   |
+27 |     [ stringify!($fname), ] // not in a repeat group at all
+   |                   ^^^^^
+...
+38 | #[derive(Deftly)]
+   |          ------ in this derive macro expansion
+   |
+   = note: this error originates in the macro `derive_deftly_template_FieldOutsideRepeatGroup` which comes from the expansion of the derive macro `Deftly` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: must be within a field, so within a field repeat group; but, is only within a variant repeat group
+  --> ui/badcontext.rs:31:36
+   |
+31 |     [ ${for variants { stringify!($fname), }} ] // insufficient repeat depth
+   |                                    ^^^^^
+...
+38 | #[derive(Deftly)]
+   |          ------ in this derive macro expansion
+   |
+   = note: this error originates in the macro `derive_deftly_template_FieldInVariantsRepeatGroup` which comes from the expansion of the derive macro `Deftly` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: cannot find macro `derive_deftly_template_FieldNames` in this scope
   --> ui/badcontext.rs:10:17

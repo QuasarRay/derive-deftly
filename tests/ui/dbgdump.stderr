@@ -1,4 +1,4 @@
-error: must be within a field (so, in a repeat group)
+error: must be within a field, so within a field repeat group
   --> ui/dbgdump.rs:13:14
    |
 13 |     ${dbg { $fname }}
@@ -9,7 +9,7 @@ error: must be within a field (so, in a repeat group)
    |
    = note: this error originates in the macro `derive_deftly_template_BasicDbgs` which comes from the expansion of the derive macro `Deftly` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error: must be within a field (so, in a repeat group)
+error: must be within a field, so within a field repeat group
   --> ui/dbgdump.rs:14:22
    |
 14 |     ${dbg "error" { $fname }}
@@ -20,7 +20,7 @@ error: must be within a field (so, in a repeat group)
    |
    = note: this error originates in the macro `derive_deftly_template_BasicDbgs` which comes from the expansion of the derive macro `Deftly` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error: must be within a field (so, in a repeat group)
+error: must be within a field, so within a field repeat group
   --> ui/dbgdump.rs:15:24
    |
 15 |     ${if dbg(is_empty($fname)) {}}
@@ -31,7 +31,7 @@ error: must be within a field (so, in a repeat group)
    |
    = note: this error originates in the macro `derive_deftly_template_BasicDbgs` which comes from the expansion of the derive macro `Deftly` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error: must be within a field (so, in a repeat group)
+error: must be within a field, so within a field repeat group
   --> ui/dbgdump.rs:16:33
    |
 16 |     ${if dbg("error", is_empty($fname)) {}}
@@ -64,7 +64,7 @@ error: expansion only valid in enums
    |
    = note: this error originates in the macro `derive_deftly_template_Contexts` which comes from the expansion of the derive macro `Deftly` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error: must be within a field (so, in a repeat group)
+error: must be within a field, so within a field repeat group
   --> ui/dbgdump.rs:34:34
    |
 34 |     $<${dbg "paste error" { "x" $fname "y" }}>

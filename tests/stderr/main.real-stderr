@@ -13,13 +13,13 @@ fn struct_noted() {}
 derive-deftly dbg condition for DataType from BasicDbgs evaluated to true
 derive-deftly dbg condition "noted" for DataType from BasicDbgs evaluated to false
 ---------- derive-deftly dbg dump for DataType from BasicDbgs expansion (start) ----------
-/* ERROR: must be within a field (so, in a repeat group) */
+/* ERROR: must be within a field, so within a field repeat group */
 ---------- derive-deftly dbg dump for DataType from BasicDbgs expansion (end) ----------
 ---------- derive-deftly dbg dump "error" for DataType from BasicDbgs expansion (start) ----------
-/* ERROR: must be within a field (so, in a repeat group) */
+/* ERROR: must be within a field, so within a field repeat group */
 ---------- derive-deftly dbg dump "error" for DataType from BasicDbgs expansion (end) ----------
-derive-deftly dbg condition for DataType from BasicDbgs evaluated to error: must be within a field (so, in a repeat group)
-derive-deftly dbg condition "error" for DataType from BasicDbgs evaluated to error: must be within a field (so, in a repeat group)
+derive-deftly dbg condition for DataType from BasicDbgs evaluated to error: must be within a field, so within a field repeat group
+derive-deftly dbg condition "error" for DataType from BasicDbgs evaluated to error: must be within a field, so within a field repeat group
 ---------- derive-deftly dbg dump for Tuple from Contexts expansion (start) ----------
 /* ERROR: expansion only valid in enums */
 ---------- derive-deftly dbg dump for Tuple from Contexts expansion (end) ----------
@@ -60,7 +60,7 @@ f
 "pasting_" ""+"WithGenerics"+":: < T >" "_pasted"
 ---------- derive-deftly dbg dump "paste" for WithGenerics from Pastes expansion (end) ----------
 ---------- derive-deftly dbg dump "paste error" for WithGenerics from Pastes expansion (start) ----------
-ERROR: must be within a field (so, in a repeat group)
+ERROR: must be within a field, so within a field repeat group
 "x" "y"
 ---------- derive-deftly dbg dump "paste error" for WithGenerics from Pastes expansion (end) ----------
 ---------- derive-deftly dbg dump for DataType expansion (start) ----------
