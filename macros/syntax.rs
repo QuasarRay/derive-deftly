@@ -1007,7 +1007,7 @@ impl<O: SubstParseContext> Parse for Subst<O> {
         keyword! { select1(parse_if(input)?, not_in_bool()?) }
         keyword! { ignore(input.parse()?, not_in_bool()?) }
         keyword! { error(
-            input.parse()?,
+            ExplicitError::parse(input, kw.span())?,
             not_in_bool()?,
         ) }
         keyword! { require_beta(beta()?, not_in_bool()?) }
@@ -1099,8 +1099,8 @@ impl<O: SubstParseContext> DbgDumpRequest<O> {
     }
 }
 
-impl Parse for ExplicitError {
-    fn parse(input: ParseStream) -> syn::Result<Self> {
+impl ExplicitError {
+    fn parse(input: ParseStream, _kw_span: Span) -> syn::Result<Self> {
         let message: syn::LitStr = input.parse()?;
         if message.suffix() != "" {
             return Err(message.error("suffix forbidden on error string"));
