@@ -1156,6 +1156,13 @@ write `${error }` several times.
 Good practice is to use the same message for each location,
 and distinguish them by appending notes in the form `" (LOCATION)"`.
 
+#### Examples
+
+ * `${error "simple error"}`: error, ``simple error``
+ * `${error message="as arg"}`: error, ``as arg``
+ * `${error message="with span" span=$ftype}`: error, ``with span``
+ * `${error message=${concat "bad " ${tmeta(simple) as str}}}` for `Unit`: error, ``bad String``
+
 ## Conditions
 
 Conditions all start with a `KEYWORD`.
