@@ -477,10 +477,12 @@ impl EngineExpandInput {
         } else {
             chain_call = TokenStream::new();
         };
-        dprint_block!(&chain_call, "derive_deftly_engine! chain call");
 
         let mut out = expanded.unwrap_or_else(|e| e.into_compile_error());
+        dprint_block!(&out, "derive_deftly_engine! expansion output");
+        dprint_block!(&chain_call, "derive_deftly_engine! chain call");
         out.extend(chain_call);
+
         Ok(out)
     }
 }

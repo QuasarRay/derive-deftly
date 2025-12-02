@@ -199,24 +199,28 @@ pub fn group_clone_set_stream(
 
 /// Respan the resolution hygiene of all identifiers to span
 pub fn respan_hygiene(input: TokenStream, span: Span) -> TokenStream {
-    input
-        .into_iter()
-        .map(|tt| match tt {
-            TT::Group(g_in) => {
-                let mut g_new = proc_macro2::Group::new(
-                    g_in.delimiter(),
-                    respan_hygiene(g_in.stream(), span),
-                );
-                g_new.set_span(g_in.span());
-                TT::Group(g_new)
-            }
-            TT::Ident(mut i) => {
-                i.set_span(i.span().resolved_at(span));
-                TT::Ident(i)
-            }
-            other => other,
-        })
-        .collect()
+    /// Recursive call.  Separate so we can wrap it, etc.
+    pub fn recurse(input: TokenStream, span: Span) -> TokenStream {
+        let map_span = |tok_span: Span| tok_span.resolved_at(span);
+
+        input
+            .into_iter()
+            .update(|tt| match tt {
+                TT::Group(g) => {
+                    let new_span = map_span(g.span());
+                    *g = proc_macro2::Group::new(
+                        g.delimiter(),
+                        recurse(g.stream(), span),
+                    );
+                    g.set_span(new_span);
+                }
+                TT::Ident(i) => i.set_span(map_span(i.span())),
+                TT::Punct(p) => p.set_span(map_span(p.span())),
+                TT::Literal(l) => l.set_span(map_span(l.span())),
+            })
+            .collect()
+    }
+    recurse(input, span)
 }
 
 /// Add any missing colons before `< >`'d generic arguments
