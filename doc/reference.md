@@ -1124,15 +1124,37 @@ const ALL_STRUCT_FIELDS: StructFields = {
 
 <div id="x:error">
 
-### `${error "message"}` -- explicitly throw a compile error
+### `${error ...}` -- explicitly throw a compile error
 
 </div>
+
+ * `${error "message"}`: equivalent to `${error message="message"}`.
+ * `${error message=MESSAGE [span=SPAN]}`,
+   ([**beta**]),
+   using the usual
+[syntax for named arguments](#named-and-positional-template-arguments-to-expansions-and-conditions).
 
 Generates a compilation error, if expanded.
 
 This can be used anywhere a derive-deftly expansion is allowed;
 (unlike std's `compile_error!`,
 which, like any Rust macro, is permitted only in certain syntactic contexts).
+
+`MESSAGE` must be valid within [`${concat }`](#x:concat).
+
+#### Spans (locations at which the error is reported)
+
+`SPAN` specifies the principal location of the error.
+
+derive-deftly will also always produce a copy of the error
+pointing at the specific driver, variant, and field,
+in the context of which this `${error }` was expanded,
+so use of `span=SPAN` is not normally necessary.
+
+To report error which was caused by the interaction of multiple inputs,
+write `${error }` several times.
+Good practice is to use the same message for each location,
+and distinguish them by appending notes in the form `" (LOCATION)"`.
 
 ## Conditions
 
