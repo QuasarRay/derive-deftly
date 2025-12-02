@@ -40,7 +40,10 @@ define_derive_deftly! {
 
 #[derive(Deftly)]
 #[derive_deftly(UseVariable)]
-struct Data;
+struct Data {
+    #[allow(unused)]
+    field: (),
+}
 
 fn main() {
     std::process::exit(Data::use_variable());

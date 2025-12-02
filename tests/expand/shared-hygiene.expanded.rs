@@ -4,7 +4,10 @@ mod y {
     use super::*;
 }
 #[derive_deftly(UseVariable)]
-struct Data;
+struct Data {
+    #[allow(unused)]
+    field: (),
+}
 impl Data {
     fn use_variable() -> i32 {
         let caller_var = 42;
