@@ -57,6 +57,26 @@ or via the [account request form].
 
 ## Changelog
 
+### 1.6.0
+
+#### Breaking changes to beta features
+
+ * BETA, `${concat }`: Forbid suffixed string literals.
+
+#### Added
+
+ * BETA, `${error message=MESSAGE [span=SPAN]}` supporting use of
+   `${concat }`, for more sophisticated error reporting from templates.
+
+#### Improved
+
+ * Fixed span of `$ftype` to reference the actual type, in error messages.
+ * `${error }`: Improve location report for error message string slightly.
+ * Clarified/improved error messages about missing field repeat context.
+ * BETA, `${concat }`: Span of the output is now that of the (first) input.
+ * BETA, modules: Correctly adjust the hygiene span of imported definitions.
+ * BETA, modules: Correctly adjust the hygiene span of groups and punctuation.
+
 ### 1.5.1
 
 #### Improved
