@@ -621,7 +621,7 @@ impl ExpansionOutput for TokenAccumulator {
         };
 
         match inner.tokens() {
-            Ok(ts) => self.append(grouping.surround(ts)),
+            Ok(ts) => self.append(grouping.surround(ident.span(), ts)),
             Err(e) => self.record_error(e),
         }
         Ok(())
@@ -635,7 +635,7 @@ impl ExpansionOutput for TokenAccumulator {
         ty: syn::Type,
         grouping: Grouping,
     ) {
-        self.append(grouping.surround(ty));
+        self.append(grouping.surround(ty.span(), ty));
     }
     fn append_tokens_with(
         &mut self,

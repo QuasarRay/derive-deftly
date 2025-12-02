@@ -40,10 +40,10 @@ error: just message (template error message)
    |                     ^^^^^^^^^^^^^^
 
 error: spanned at ftype for field (reported by template)
-  --> ui/explerror.rs:3:10
+  --> ui/explerror.rs:6:12
    |
-3  |   #[derive(Deftly)]
-   |            ^^^^^^
+6  |       field: usize,
+   |              ^^^^^
 ...
 14 | / derive_deftly_adhoc! {
 15 | |     Struct beta_deftly:
@@ -52,7 +52,7 @@ error: spanned at ftype for field (reported by template)
 18 | | }
    | |_- in this macro invocation
    |
-   = note: this error originates in the macro `::derive_deftly::derive_deftly_engine` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+   = note: this error originates in the macro `derive_deftly_driver_Struct` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: spanned at ftype for field (in this field)
   --> ui/explerror.rs:6:5
