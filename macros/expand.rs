@@ -703,14 +703,15 @@ impl ExplicitError {
                     let ctx = gctx.full_ctx_raw().ok()?;
                     let templ = ctx.template_name?.to_token_stream();
                     Some(format!("reported by {templ}"))
-                })().unwrap_or_else(|| format!("reported by template"));
+                })()
+                .unwrap_or_else(|| format!("reported by template"));
                 Ok::<_, syn::Error>((span, frag))
             })
             .transpose()?;
 
         let message_loc = (message.span(), "template error message");
         let locs = chain!(
-            explicit_loc.as_ref().map(|(s,f)| (*s, &**f)), //
+            explicit_loc.as_ref().map(|(s, f)| (*s, &**f)), //
             gctx.error_loc(),
             [message_loc],
         )
