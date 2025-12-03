@@ -92,7 +92,7 @@ error: just from Throws (template error message)
    |
    = note: this error originates in the macro `derive_deftly_template_Throws` which comes from the expansion of the derive macro `Deftly` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error: from Throw at ftype (reported by template)
+error: from Throw at ftype (reported by Throws)
   --> ui/explerror.rs:29:13
    |
 29 |     field2: u32,
