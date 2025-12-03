@@ -12,8 +12,105 @@ error: basic (in this field)
    |
    = note: this error originates in the macro `derive_deftly_driver_Struct` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error: basic (template)
+error: basic (template error message)
   --> ui/explerror.rs:11:28
    |
 11 |     ${for fields { ${error "basic"}} }
    |                            ^^^^^^^
+
+error: just message (in this data structure)
+  --> ui/explerror.rs:4:1
+   |
+4  |   #[derive_deftly_adhoc]
+   |   ^
+...
+14 | / derive_deftly_adhoc! {
+15 | |     Struct beta_deftly:
+16 | |     ${error message="just message"}
+17 | |     $( ${error message=${concat "spanned at ftype for " $fname} span=$ftype} )
+18 | | }
+   | |_- in this macro invocation
+   |
+   = note: this error originates in the macro `derive_deftly_driver_Struct` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: just message (template error message)
+  --> ui/explerror.rs:16:21
+   |
+16 |     ${error message="just message"}
+   |                     ^^^^^^^^^^^^^^
+
+error: spanned at ftype for field (reported by template)
+  --> ui/explerror.rs:6:12
+   |
+6  |       field: usize,
+   |              ^^^^^
+...
+14 | / derive_deftly_adhoc! {
+15 | |     Struct beta_deftly:
+16 | |     ${error message="just message"}
+17 | |     $( ${error message=${concat "spanned at ftype for " $fname} span=$ftype} )
+18 | | }
+   | |_- in this macro invocation
+   |
+   = note: this error originates in the macro `derive_deftly_driver_Struct` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: spanned at ftype for field (in this field)
+  --> ui/explerror.rs:6:5
+   |
+6  |       field: usize,
+   |       ^^^^^
+...
+14 | / derive_deftly_adhoc! {
+15 | |     Struct beta_deftly:
+16 | |     ${error message="just message"}
+17 | |     $( ${error message=${concat "spanned at ftype for " $fname} span=$ftype} )
+18 | | }
+   | |_- in this macro invocation
+   |
+   = note: this error originates in the macro `derive_deftly_driver_Struct` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: spanned at ftype for field (template error message)
+  --> ui/explerror.rs:17:33
+   |
+17 |     $( ${error message=${concat "spanned at ftype for " $fname} span=$ftype} )
+   |                                 ^^^^^^^^^^^^^^^^^^^^^^^
+
+error: just from Throws (in this data structure)
+  --> ui/explerror.rs:27:1
+   |
+27 | #[derive_deftly(Throws)]
+   | ^
+
+error: just from Throws (template error message)
+  --> ui/explerror.rs:22:21
+   |
+22 |     ${error message="just from Throws"}
+   |                     ^^^^^^^^^^^^^^^^^^
+...
+26 | #[derive(Deftly)]
+   |          ------ in this derive macro expansion
+   |
+   = note: this error originates in the macro `derive_deftly_template_Throws` which comes from the expansion of the derive macro `Deftly` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: from Throw at ftype (reported by Throws)
+  --> ui/explerror.rs:29:13
+   |
+29 |     field2: u32,
+   |             ^^^
+
+error: from Throw at ftype (in this field)
+  --> ui/explerror.rs:29:5
+   |
+29 |     field2: u32,
+   |     ^^^^^^
+
+error: from Throw at ftype (template error message)
+  --> ui/explerror.rs:23:24
+   |
+23 |     $( ${error message="from Throw at ftype" span=$ftype} )
+   |                        ^^^^^^^^^^^^^^^^^^^^^
+...
+26 | #[derive(Deftly)]
+   |          ------ in this derive macro expansion
+   |
+   = note: this error originates in the macro `derive_deftly_template_Throws` which comes from the expansion of the derive macro `Deftly` (in Nightly builds, run with -Z macro-backtrace for more info)

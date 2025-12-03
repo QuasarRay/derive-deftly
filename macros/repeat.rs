@@ -201,7 +201,13 @@ impl<O: SubstParseContext> AnalyseRepeat for Subst<O> {
             // Has a RepeatOver, but does not imply anything about its context.
             SD::For(..) => None,
             SD::False(..) | SD::True(..) => None, // condition: ignore.
-            SD::error(..) => None,
+            SD::error(ee, _) => {
+                ee.message.analyse_repeat(visitor)?;
+                if let Some((span, _)) = &ee.span {
+                    span.analyse_repeat(visitor)?;
+                }
+                None
+            }
             SD::require_beta(..) => None,
             SD::ignore(content, _) => recurse!(content),
             SD::dbg(ddr) => recurse!(ddr.content_parsed),

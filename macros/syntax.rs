@@ -218,7 +218,8 @@ pub type DefCondBody = Box<Condition>;
 
 #[derive(Debug)]
 pub struct ExplicitError {
-    pub message: syn::LitStr,
+    pub message: Argument<concat::Accumulator>,
+    pub span: Option<(Argument, beta::Enabled)>,
 }
 
 #[derive(Debug)]
@@ -509,6 +510,15 @@ impl<O: SubstParseContext> Deref for Argument<O> {
     type Target = Template<O>;
     fn deref(&self) -> &Template<O> {
         &self.0
+    }
+}
+
+impl Argument<TokenAccumulator> {
+    pub fn span_from_arg(&self, gctx: GeneralContext) -> syn::Result<Span> {
+        let mut span_tokens = TokenAccumulator::new();
+        self.expand(gctx, &mut span_tokens);
+        let span = span_tokens.tokens()?.span();
+        Ok(span)
     }
 }
 
@@ -997,7 +1007,10 @@ impl<O: SubstParseContext> Parse for Subst<O> {
         keyword! { "if": If(parse_if(input)?, not_in_bool()?) }
         keyword! { select1(parse_if(input)?, not_in_bool()?) }
         keyword! { ignore(input.parse()?, not_in_bool()?) }
-        keyword! { error(input.parse()?, not_in_bool()?) }
+        keyword! { error(
+            ExplicitError::parse(input, kw.span())?,
+            not_in_bool()?,
+        ) }
         keyword! { require_beta(beta()?, not_in_bool()?) }
         keyword! { dbg(input.parse()?) }
         keyword! { dbg_all_keywords(not_in_bool()?) }
@@ -1087,13 +1100,52 @@ impl<O: SubstParseContext> DbgDumpRequest<O> {
     }
 }
 
-impl Parse for ExplicitError {
-    fn parse(input: ParseStream) -> syn::Result<Self> {
-        let message: syn::LitStr = input.parse()?;
-        if message.suffix() != "" {
-            return Err(message.error("suffix forbidden on error string"));
+#[derive(Default, Debug)]
+struct ExplicitErrorNamedArgs {
+    message: Option<Argument<concat::Accumulator>>,
+    span: Option<Argument<TokenAccumulator>>,
+}
+impl_parse_one_subkeyword! {
+    ExplicitErrorNamedArgs:
+    (message),
+    (span),
+}
+impl ParseUsingSubkeywords for ExplicitErrorNamedArgs {
+    fn new_default(_: Span) -> syn::Result<Self> {
+        Ok(Self::default())
+    }
+}
+
+impl ExplicitError {
+    fn parse(input: ParseStream, kw_span: Span) -> syn::Result<Self> {
+        let la = input.lookahead1();
+
+        if la.peek(syn::LitStr) {
+            let message: syn::LitStr = input.parse()?;
+            if message.suffix() != "" {
+                return Err(message.error("suffix forbidden on error string"));
+            }
+            let message = Argument(Template {
+                elements: vec![TE::LitStr(message)],
+            });
+            Ok(ExplicitError {
+                message,
+                span: None,
+            })
+        } else if la.peek(Ident::peek_any) {
+            let beta_ok = beta::Enabled::new_for_syntax(input.span())?;
+            let parsed = ParseUsingSubkeywords::parse(input, kw_span)?;
+            let ExplicitErrorNamedArgs { message, span } = parsed;
+
+            let message = message.ok_or_else(|| {
+                kw_span.error("${error} needs `message=` argument")
+            })?;
+            let span = span.map(|span| (span, beta_ok));
+
+            Ok(ExplicitError { message, span })
+        } else {
+            Err(la.error())
         }
-        Ok(ExplicitError { message })
     }
 }
 

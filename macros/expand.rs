@@ -474,7 +474,7 @@ where
             SD::findex(..) => do_index(out, ctx?.field(&kw_span)?.index)?,
 
             SD::Xmeta(sm) => do_meta(sm, out, sm.pmetas(ctx?, kw_span)?)?,
-            SD::error(e, _) => e.throw(gctx)?,
+            SD::error(e, _) => e.throw(gctx, kw_span)?,
 
             SD::Vis(vis, at) => {
                 out.append_tokens(at, vis.syn_vis(ctx?, kw_span)?)?
@@ -589,17 +589,11 @@ where
                 paste::expand(gctx, kw_span, content, out)?;
             }
             SD::paste_spanned(span, content, ..) => {
-                let set_span = (|| {
-                    let mut span_tokens = TokenAccumulator::new();
-                    span.expand(gctx, &mut span_tokens);
-                    let span = span_tokens.tokens()?.span();
-                    Ok(span)
-                })()
-                .unwrap_or_else(|e| {
+                let span = span.span_from_arg(gctx).unwrap_or_else(|e| {
                     out.record_error(e);
                     kw_span
                 });
-                paste::expand(gctx, set_span, content, out)?;
+                paste::expand(gctx, span, content, out)?;
             }
             SD::ChangeCase(content, case, ..) => {
                 let mut items = paste::Items::new(kw_span);
@@ -694,12 +688,36 @@ impl ExplicitError {
     pub fn throw<'c, T>(
         &self,
         gctx: GeneralContext<'c>,
+        kw_span: Span,
     ) -> Result<T, syn::Error> {
-        Err(gctx
-            .prepend_error_loc(&[
-                (self.message.span(), "template"), //
-            ])
-            .error(self.message.value()))
+        let mut message = concat::Accumulator::new_with_span(kw_span);
+        self.message.expand(gctx, &mut message);
+        let message = message.finish_literal()?;
+
+        let explicit_loc = self
+            .span
+            .as_ref()
+            .map(|(span, _)| {
+                let span = span.span_from_arg(gctx)?;
+                let frag = (|| {
+                    let ctx = gctx.full_ctx_raw().ok()?;
+                    let templ = ctx.template_name?.to_token_stream();
+                    Some(format!("reported by {}", templ))
+                })()
+                .unwrap_or_else(|| format!("reported by template"));
+                Ok::<_, syn::Error>((span, frag))
+            })
+            .transpose()?;
+
+        let message_loc = (message.span(), "template error message");
+        let locs = chain!(
+            explicit_loc.as_ref().map(|(s, f)| (*s, &**f)), //
+            gctx.error_loc(),
+            [message_loc],
+        )
+        .collect_vec();
+
+        Err(locs.error(message.value()))
     }
 }
 

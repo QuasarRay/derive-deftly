@@ -1034,7 +1034,8 @@ impl<'l> FoundNode<'l> {
             as_ @ SA::expr(.., at, supported) => {
                 let expr = metavalue_lit_as(lit, tspan, as_)?;
                 supported.infer_type(&expr);
-                out.append_tokens(at, Grouping::Parens.surround(expr))?;
+                let span = expr.span();
+                out.append_tokens(at, Grouping::Parens.surround(span, expr))?;
             }
             as_ @ SA::ident(..) => {
                 let ident: IdentAny = metavalue_lit_as(lit, tspan, as_)?;

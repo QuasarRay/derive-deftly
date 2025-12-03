@@ -473,14 +473,33 @@ pub enum Grouping {
 }
 
 impl Grouping {
-    pub fn surround(&self, ts: impl ToTokens) -> TokenStream {
+    /// Surround `ts` as specified by this `Grouping`
+    ///
+    /// `none_span` is the span to use for `None`-delimiters.
+    /// It should generally be the principal span of the contained thing,
+    /// whatever that is.  For a type, that's the primary ident.
+    pub fn surround(&self, none_span: Span, ts: impl ToTokens) -> TokenStream {
         let ts = ts.to_token_stream();
         match self {
             Grouping::Ungrouped => ts,
             Grouping::Invisible => {
-                proc_macro2::Group::new(Delimiter::None, ts).to_token_stream()
+                let mut g = proc_macro2::Group::new(Delimiter::None, ts);
+                g.set_span(none_span);
+                g.to_token_stream()
             }
             Grouping::Parens => {
+                // We must use call site span (the default for Group::new
+                // since if we surround a type with `( )` with the same
+                // span as its contents, Rust generates an "unnecessary parens"
+                // warning.  We add actual `( )` mostly in ${Xmeta as ty}.
+                // We also *replace* any `( )` which are in the outside
+                // of a type in `TokenAccumulator::append_syn_type`.
+                //
+                // When we do that we mangle the original span.  That may
+                // produces worse errors if there is an error, but it avoids
+                // needless warnings.  This ought to be very rare.
+                // (but it does happen in tests/expand/idpaste.rs, which
+                // deliberately has this weird construct.)
                 proc_macro2::Group::new(Delimiter::Parenthesis, ts)
                     .to_token_stream()
             }

@@ -9,12 +9,20 @@ use super::framework::*;
 /// and collects the string to be output.
 #[derive(Debug)]
 pub struct Accumulator {
-    kw_span: Span,
+    def_span: Span,
+    out_span: Option<Span>,
     text: String,
     errors: ErrorAccumulator,
 }
 
 impl Accumulator {
+    pub fn finish_literal(self) -> syn::Result<syn::LitStr> {
+        let out_span = self.out_span.unwrap_or(self.def_span);
+        let text = self.errors.finish_with(self.text)?;
+        let lit = syn::LitStr::new(&text, out_span);
+        Ok(lit)
+    }
+
     pub fn finish_onto<O>(self, np: &O::NotInPaste, out: &mut O)
     where
         O: ExpansionOutput,
@@ -23,15 +31,15 @@ impl Accumulator {
         let _: O::NotInPaste = *np;
 
         (|| {
-            let text = self.errors.finish_with(self.text)?;
-            let lit = syn::LitStr::new(&text, self.kw_span);
+            let lit = self.finish_literal()?;
             out.append_syn_litstr(&lit);
             Ok(())
         })()
         .unwrap_or_else(|err| out.record_error(err))
     }
 
-    fn append_display(&mut self, plain: impl Display) {
+    fn append_display(&mut self, span: Span, plain: impl Display + Spanned) {
+        self.out_span.get_or_insert(span);
         write!(&mut self.text, "{}", plain).expect("Display onto String")
     }
 
@@ -194,7 +202,7 @@ impl ExpansionOutput for Accumulator {
         &mut self,
         ident: &I,
     ) -> Result<(), I::BadIdent> {
-        self.append_display(ident.fragment());
+        self.append_display(ident.span(), ident.fragment());
         Ok(())
     }
     fn append_idpath<A, B, I>(
@@ -223,7 +231,12 @@ impl ExpansionOutput for Accumulator {
         Ok(())
     }
     fn append_syn_litstr(&mut self, lit: &syn::LitStr) {
-        self.append_display(lit.value());
+        if lit.suffix() != "" {
+            self.errors
+                .push(lit.error("string suffix forbidden in ${concat }"));
+            return;
+        }
+        self.append_display(lit.span(), lit.value());
     }
     fn append_syn_type(
         &mut self,
@@ -260,7 +273,8 @@ impl ExpansionOutput for Accumulator {
 
     fn new_with_span(kw_span: Span) -> Self {
         Accumulator {
-            kw_span,
+            def_span: kw_span,
+            out_span: None,
             text: String::new(),
             errors: ErrorAccumulator::default(),
         }
