@@ -34,7 +34,7 @@ nor compared for equality.
 #### Examples
 
  * `${stringify $fvis}`: `"pub(crate)"`
- * `${concat $%{stringify $fvis}}`: `"pub(crate)"`
+ * `${concat ${stringify $fvis}}`: `"pub(crate)"`
  * `${stringify "requoted"}`: `"\"requoted\""`
  * `${stringify ${concat $fvis}}`: `"\"pub(crate)\""`
 
