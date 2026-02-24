@@ -230,16 +230,16 @@ Use `is_enum` (say) as an example.
 
 We *do* run clippy, but we turn off all `style` and `complexity` lints.
 
-In CI, we test with a pinned version of clippy, currently 1.79.0,
+In CI, we test with a pinned version of clippy, currently 1.93.0,
 because clippy often introduces new lints,
 and we want to handle that breakage in a controlled fashion.
 
 If your MR branch fails the clippy job, you can repro locally with:
 
 ```text
-rustup toolchain add 1.79
+rustup toolchain add 1.93
 rustup component add clippy
-cargo +1.79 clippy --locked --workspace --all-features
+cargo +1.93 clippy --locked --workspace --all-features
 ```
 
 ### Updating the pinned clippy (housekeeping task)
