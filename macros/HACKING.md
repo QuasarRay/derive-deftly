@@ -245,7 +245,14 @@ cargo +1.93 clippy --locked --workspace --all-features
 ### Updating the pinned clippy (housekeeping task)
 
  * Update the version in `.gitlab-ci.yml`, and above.
+ * Also update the same Rust version in the `cargo-doc-all` job,
+   and in `maint/update-dependencies`.
  * Run the new clippy and fix or allow lints as appropriate.
+ * Make an MR of all of this.  Commit structure is not critical
+   for clippy lints, since we run clippy on the MR tip only.
+
+(Typically the pinned non-nightly used for clippy and cargo doc
+will be older than the pinned nightly used for most tests.)
 
 ### clippy `#[allow]`s - strategy and policy
 
