@@ -1,0 +1,24 @@
+#!/bin/bash
+#
+# Update Cargo.lock.
+#
+# Run manually as needed.
+#
+# Any arguments are passed through to "cargo update".
+
+set -euo pipefail
+
+# CARGO=nailing-cargo maint/update-dependencies
+
+# We need to piss abouthere because we can otherwise pick up versions
+# which are incompatible with our pinned nightly.
+# https://github.com/rust-lang/cargo/issues/16672
+
+tomls=$(git-ls-files | grep Cargo.toml)
+perl -i~ -pe 's/\b\Q1.56\E\b/1.79/ if m/^rust-version/' $tomls
+
+${CARGO-cargo} update							   \
+	       --config 'resolver.incompatible-rust-versions = "fallback"' \
+	       "$@"
+
+git checkout HEAD $tomls
