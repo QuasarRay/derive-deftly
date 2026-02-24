@@ -19,6 +19,7 @@ top-level:
 variant Unit:
         $vname       =>  Unit
         $vtype       =>  Enum :: Unit
+        $vindex      =>  0
         $vpat        =>  Enum :: Unit {}
         ${vdefbody VNAME FIELDS ..} => VNAME FIELDS .. ,
         v_is_unit    =   true
@@ -28,6 +29,7 @@ variant Unit:
 variant Tuple:
         $vname       =>  Tuple
         $vtype       =>  Enum :: Tuple
+        $vindex      =>  1
         $vpat        =>  Enum :: Tuple { 0 : f_0, }
         ${vdefbody VNAME FIELDS ..} => VNAME(FIELDS ..),
         v_is_unit    =   false
@@ -37,6 +39,7 @@ variant Tuple:
 variant Tuple, field 0:
         $fname       =>  0
         $ftype       =>  usize
+        $findex      =>  0
         $fvis        =>  
         $fdefvis     =>  
         $fpatname    =>  f_0
@@ -47,6 +50,7 @@ variant Tuple, field 0:
 variant Struct:
         $vname       =>  Struct
         $vtype       =>  Enum :: Struct
+        $vindex      =>  2
         $vpat        =>  Enum :: Struct { field : f_field, }
         ${vdefbody VNAME FIELDS ..} => VNAME { FIELDS .. },
         v_is_unit    =   false
@@ -56,6 +60,7 @@ variant Struct:
 variant Struct, field field:
         $fname       =>  field
         $ftype       =>  String
+        $findex      =>  0
         $fvis        =>  
         $fdefvis     =>  
         $fpatname    =>  f_field
@@ -85,6 +90,7 @@ top-level:
 variant Unit:
         $vname       =>  Unit
         $vtype       =>  Enum :: Unit
+        $vindex      =>  0
         $vpat        =>  Enum :: Unit {}
         ${vdefbody VNAME FIELDS ..} => VNAME FIELDS .. ,
         v_is_unit    =   true
@@ -94,6 +100,7 @@ variant Unit:
 variant Unit, no field:
         $fname       =>  <error: must be within a field, so within a field repeat group; but, is only within a variant repeat group>
         $ftype       =>  <error: must be within a field, so within a field repeat group; but, is only within a variant repeat group>
+        $findex      =>  <error: must be within a field, so within a field repeat group; but, is only within a variant repeat group>
         $fvis        =>  <error: must be within a field, so within a field repeat group; but, is only within a variant repeat group>
         $fdefvis     =>  <error: must be within a field, so within a field repeat group; but, is only within a variant repeat group>
         $fpatname    =>  <error: must be within a field, so within a field repeat group; but, is only within a variant repeat group>
@@ -123,6 +130,7 @@ top-level:
 variant Tuple:
         $vname       =>  Tuple
         $vtype       =>  Enum :: Tuple
+        $vindex      =>  1
         $vpat        =>  Enum :: Tuple { 0 : f_0, }
         ${vdefbody VNAME FIELDS ..} => VNAME(FIELDS ..),
         v_is_unit    =   false
@@ -132,6 +140,7 @@ variant Tuple:
 variant Tuple, no field:
         $fname       =>  <error: must be within a field, so within a field repeat group; but, is only within a variant repeat group>
         $ftype       =>  <error: must be within a field, so within a field repeat group; but, is only within a variant repeat group>
+        $findex      =>  <error: must be within a field, so within a field repeat group; but, is only within a variant repeat group>
         $fvis        =>  <error: must be within a field, so within a field repeat group; but, is only within a variant repeat group>
         $fdefvis     =>  <error: must be within a field, so within a field repeat group; but, is only within a variant repeat group>
         $fpatname    =>  <error: must be within a field, so within a field repeat group; but, is only within a variant repeat group>
@@ -161,6 +170,7 @@ top-level:
 variant Struct:
         $vname       =>  Struct
         $vtype       =>  Enum :: Struct
+        $vindex      =>  2
         $vpat        =>  Enum :: Struct { field : f_field, }
         ${vdefbody VNAME FIELDS ..} => VNAME { FIELDS .. },
         v_is_unit    =   false
@@ -170,6 +180,7 @@ variant Struct:
 variant Struct, no field:
         $fname       =>  <error: must be within a field, so within a field repeat group; but, is only within a variant repeat group>
         $ftype       =>  <error: must be within a field, so within a field repeat group; but, is only within a variant repeat group>
+        $findex      =>  <error: must be within a field, so within a field repeat group; but, is only within a variant repeat group>
         $fvis        =>  <error: must be within a field, so within a field repeat group; but, is only within a variant repeat group>
         $fdefvis     =>  <error: must be within a field, so within a field repeat group; but, is only within a variant repeat group>
         $fpatname    =>  <error: must be within a field, so within a field repeat group; but, is only within a variant repeat group>
@@ -199,6 +210,7 @@ top-level:
 variant Tuple:
         $vname       =>  Tuple
         $vtype       =>  Enum :: Tuple
+        $vindex      =>  1
         $vpat        =>  Enum :: Tuple { 0 : f_0, }
         ${vdefbody VNAME FIELDS ..} => VNAME(FIELDS ..),
         v_is_unit    =   false
@@ -208,6 +220,7 @@ variant Tuple:
 variant Tuple, field 0:
         $fname       =>  0
         $ftype       =>  usize
+        $findex      =>  0
         $fvis        =>  
         $fdefvis     =>  
         $fpatname    =>  f_0
@@ -237,6 +250,7 @@ top-level:
 variant Struct:
         $vname       =>  Struct
         $vtype       =>  Enum :: Struct
+        $vindex      =>  2
         $vpat        =>  Enum :: Struct { field : f_field, }
         ${vdefbody VNAME FIELDS ..} => VNAME { FIELDS .. },
         v_is_unit    =   false
@@ -246,6 +260,7 @@ variant Struct:
 variant Struct, field field:
         $fname       =>  field
         $ftype       =>  String
+        $findex      =>  0
         $fvis        =>  
         $fdefvis     =>  
         $fpatname    =>  f_field
@@ -275,6 +290,7 @@ top-level:
 variant Tuple:
         $vname       =>  Tuple
         $vtype       =>  Enum :: Tuple
+        $vindex      =>  1
         $vpat        =>  Enum :: Tuple { 0 : f_0, }
         ${vdefbody VNAME FIELDS ..} => VNAME(FIELDS ..),
         v_is_unit    =   false
@@ -284,6 +300,7 @@ variant Tuple:
 variant Tuple, field 0:
         $fname       =>  0
         $ftype       =>  usize
+        $findex      =>  0
         $fvis        =>  
         $fdefvis     =>  
         $fpatname    =>  f_0
@@ -317,6 +334,7 @@ top-level:
 variant Struct:
         $vname       =>  Struct
         $vtype       =>  Enum :: Struct
+        $vindex      =>  2
         $vpat        =>  Enum :: Struct { field : f_field, }
         ${vdefbody VNAME FIELDS ..} => VNAME { FIELDS .. },
         v_is_unit    =   false
@@ -326,6 +344,7 @@ variant Struct:
 variant Struct, field field:
         $fname       =>  field
         $ftype       =>  String
+        $findex      =>  0
         $fvis        =>  
         $fdefvis     =>  
         $fpatname    =>  f_field
@@ -359,6 +378,7 @@ top-level:
 value:
         $vname       =>  <error: expansion only valid in enums>
         $vtype       =>  Unit
+        $vindex      =>  0
         $vpat        =>  Unit {}
         ${vdefbody VNAME FIELDS ..} => FIELDS .. ;
         v_is_unit    =   true
@@ -387,6 +407,7 @@ top-level:
 value:
         $vname       =>  <error: expansion only valid in enums>
         $vtype       =>  Tuple
+        $vindex      =>  0
         $vpat        =>  Tuple { 0 : f_0, }
         ${vdefbody VNAME FIELDS ..} => (FIELDS ..);
         v_is_unit    =   false
@@ -396,6 +417,7 @@ value:
 value, field 0:
         $fname       =>  0
         $ftype       =>  usize
+        $findex      =>  0
         $fvis        =>  
         $fdefvis     =>  
         $fpatname    =>  f_0
@@ -425,6 +447,7 @@ top-level:
 value:
         $vname       =>  <error: expansion only valid in enums>
         $vtype       =>  Struct
+        $vindex      =>  0
         $vpat        =>  Struct { field : f_field, }
         ${vdefbody VNAME FIELDS ..} => { FIELDS .. }
         v_is_unit    =   false
@@ -434,6 +457,7 @@ value:
 value, field field:
         $fname       =>  field
         $ftype       =>  String
+        $findex      =>  0
         $fvis        =>  
         $fdefvis     =>  
         $fpatname    =>  f_field
@@ -538,6 +562,7 @@ top-level:
 variant Unit:
         $vname       =>  Unit
         $vtype       =>  EnumReference :: Unit :: < 'reference, F, >
+        $vindex      =>  0
         $vpat        =>  EnumReference :: Unit {}
         ${vdefbody VNAME FIELDS ..} => VNAME FIELDS .. ,
         v_is_unit    =   true
@@ -547,6 +572,7 @@ variant Unit:
 variant Tuple:
         $vname       =>  Tuple
         $vtype       =>  EnumReference :: Tuple :: < 'reference, F, >
+        $vindex      =>  1
         $vpat        =>  EnumReference :: Tuple { 0 : f_0, }
         ${vdefbody VNAME FIELDS ..} => VNAME(FIELDS ..),
         v_is_unit    =   false
@@ -556,6 +582,7 @@ variant Tuple:
 variant Tuple, field 0:
         $fname       =>  0
         $ftype       =>  & 'reference F
+        $findex      =>  0
         $fvis        =>  
         $fdefvis     =>  
         $fpatname    =>  f_0
@@ -566,6 +593,7 @@ variant Tuple, field 0:
 variant Struct:
         $vname       =>  Struct
         $vtype       =>  EnumReference :: Struct :: < 'reference, F, >
+        $vindex      =>  2
         $vpat        =>  EnumReference :: Struct { field : f_field, }
         ${vdefbody VNAME FIELDS ..} => VNAME { FIELDS .. },
         v_is_unit    =   false
@@ -575,6 +603,7 @@ variant Struct:
 variant Struct, field field:
         $fname       =>  field
         $ftype       =>  & 'reference F
+        $findex      =>  0
         $fvis        =>  
         $fdefvis     =>  
         $fpatname    =>  f_field

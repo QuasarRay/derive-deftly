@@ -905,8 +905,8 @@ impl<O: SubstParseContext> Parse for Subst<O> {
         keyword! { fname(not_in_bool()?) }
         keyword! { ftype(not_in_bool()?) }
         keyword! { fpatname(not_in_bool()?) }
-        keyword! { vindex(not_in_bool()?) } // XXXX Fix dbg_allkw.rs
-        keyword! { findex(not_in_bool()?) } // XXXX Fix dbg_allkw.rs
+        keyword! { vindex(not_in_bool()?) }
+        keyword! { findex(not_in_bool()?) }
         keyword! { tdefkwd(not_in_bool()?) }
 
         keyword! { "tvis": Vis(SubstVis::T, allow_tokens()?) }
