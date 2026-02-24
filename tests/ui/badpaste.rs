@@ -54,20 +54,4 @@ derive_deftly_adhoc! {
     $<${kebab_case $tname}>
 }
 
-derive_deftly_adhoc! {
-    DataType beta_deftly:
-
-    fn unspanned_unimpl() {
-      $(
-        let _: $ftype = (42).$<into>();
-      )
-    }
-
-    fn spanned_unimpl() {
-      $(
-        let _: $ftype = (42).${paste_spanned $fname into}();
-      )
-    }
-}
-
 fn main() {}

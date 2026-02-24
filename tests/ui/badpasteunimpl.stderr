@@ -1,0 +1,44 @@
+error[E0277]: the trait bound `Vec<String>: From<{integer}>` is not satisfied
+  --> ui/badpasteunimpl.rs:16:31
+   |
+16 |         let _: $ftype = (42).$<into>();
+   |                               ^ the trait `From<{integer}>` is not implemented for `Vec<String>`
+   |
+   = help: the following other types implement trait `From<T>`:
+             `Vec<T, A>` implements `From<BinaryHeap<T, A>>`
+             `Vec<T, A>` implements `From<Box<[T], A>>`
+             `Vec<T, A>` implements `From<VecDeque<T, A>>`
+             `Vec<T>` implements `From<&[T; N]>`
+             `Vec<T>` implements `From<&[T]>`
+             `Vec<T>` implements `From<&mut [T; N]>`
+             `Vec<T>` implements `From<&mut [T]>`
+             `Vec<T>` implements `From<Cow<'_, [T]>>`
+           and $N others
+   = note: required for `{integer}` to implement `Into<Vec<String>>`
+
+error[E0277]: the trait bound `Vec<String>: From<{integer}>` is not satisfied
+  --> ui/badpasteunimpl.rs:8:5
+   |
+8  |       bar: Vec<String>,
+   |       ^^^ the trait `From<{integer}>` is not implemented for `Vec<String>`
+...
+11 | / derive_deftly_adhoc! {
+12 | |     DataType beta_deftly:
+13 | |
+14 | |     fn unspanned_unimpl() {
+...  |
+25 | | }
+   | |_- in this macro invocation
+   |
+   = help: the following other types implement trait `From<T>`:
+             `Vec<T, A>` implements `From<BinaryHeap<T, A>>`
+             `Vec<T, A>` implements `From<Box<[T], A>>`
+             `Vec<T, A>` implements `From<VecDeque<T, A>>`
+             `Vec<T>` implements `From<&[T; N]>`
+             `Vec<T>` implements `From<&[T]>`
+             `Vec<T>` implements `From<&mut [T; N]>`
+             `Vec<T>` implements `From<&mut [T]>`
+             `Vec<T>` implements `From<Cow<'_, [T]>>`
+           and $N others
+   = note: required for `{integer}` to implement `Into<Vec<String>>`
+   = note: this error originates in the macro `derive_deftly_driver_DataType` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
