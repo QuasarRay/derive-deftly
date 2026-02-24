@@ -26,11 +26,20 @@ image: "rust:bookworm"
       - .cargo-home
       # The 1.56 compiler is also considerably slower.
       - target
+  tags:
+    # gitlab CI cache is actually over the network!  This tag causes
+    # the job to run on a host actually nearby the actual cache.
+    # This is especially necessasry because the cargo data we're
+    # cacheing can be stupidly large.
+    - tpa
 .rust-msrv-prep-script: &rust-msrv-prep-script
     - mv Cargo.lock.minimal Cargo.lock
     # Use a CARGO_HOME here, where we can cache it.
     - export CARGO_HOME="$PWD/.cargo-home"
     - export PATH="$CARGO_HOME/bin:$PATH"
+    # Remove old files from the cache, which old cargo doesn't by itself
+    - mkdir -p target
+    - find target -mtime +2.1 -type f -print0 | xargs -0r rm --
 
 .rust-nightly:
   # See "Using the proper Nightly Rust" in tests/tests.rs
