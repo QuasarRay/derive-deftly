@@ -27,6 +27,7 @@ and, especially, testing them can be complex.
       * [Update the nightly version number](#update-the-nightly-version-number)
       * [Update the cargo-expand version](#update-the-cargo-expand-version)
       * [Prepare and merge the changes](#prepare-and-merge-the-changes)
+      * [Possible version skew](#possible-version-skew)
    * [Compatibility testing (and semver updates)](#compatibility-testing-and-semver-updates)
 
 ## Required reading
@@ -245,7 +246,14 @@ cargo +1.93 clippy --locked --workspace --all-features
 ### Updating the pinned clippy (housekeeping task)
 
  * Update the version in `.gitlab-ci.yml`, and above.
+ * Also update the same Rust version in the `cargo-doc-all` job,
+   and in `maint/update-dependencies`.
  * Run the new clippy and fix or allow lints as appropriate.
+ * Make an MR of all of this.  Commit structure is not critical
+   for clippy lints, since we run clippy on the MR tip only.
+
+(Typically the pinned non-nightly used for clippy and cargo doc
+will be older than the pinned nightly used for most tests.)
 
 ### clippy `#[allow]`s - strategy and policy
 
@@ -341,6 +349,17 @@ Edit `.gitlab-ci.yml` with search-and-replace to fix all the occurrences.
     <p></p>
 
  3. Finally, make an MR for any changes you wish to make to this doc.
+
+### Possible version skew
+
+The procedure given above involves picking a date, getting the
+corresponding container image, and then inferring the right nightly
+date to use in `rustup`.  Normally this works.
+
+If CI fails on the updates MR, with discrepancies in test output,
+look at the version number printed by rustc at the top of the CI log.
+Then add one day and use that as your `rustp` version, and try again.
+Hopefully it will work.
 
 ## Compatibility testing (and semver updates)
 
