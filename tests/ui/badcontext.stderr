@@ -7,7 +7,7 @@ error: predefined templates must always expand to items
 error: macro expansion ignores `0` and any tokens following
   --> ui/badcontext.rs:17:27
    |
-9  | #[derive(Deftly)]
+ 9 | #[derive(Deftly)]
    |          ------ caused by the macro expansion here
 ...
 17 |     ${for fields { 1 + }} 0

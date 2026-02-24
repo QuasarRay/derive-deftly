@@ -31,8 +31,10 @@ error: not allowed in within ${paste ...} (or case_changing)
 error: failure forced in dbg (in this data structure)
   --> ui/badconcat.rs:4:1
    |
-4  |   #[derive_deftly_adhoc]
-   |   ^
+ 4 | / #[derive_deftly_adhoc]
+ 5 | | #[deftly(something = "Box<char>")]
+ 6 | | struct DataType {
+   | |_________________^
 ...
 42 | / derive_deftly_adhoc! {
 43 | |     DataType beta_deftly:

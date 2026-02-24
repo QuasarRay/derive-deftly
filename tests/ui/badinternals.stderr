@@ -1,7 +1,7 @@
 error: wrong input to derive-deftly driver inner macro derive_deftly_driver_Driver; might be due to incompatible derive-deftly versions(s)
   --> ui/badinternals.rs:9:10
    |
-9  | #[derive(Deftly)]
+ 9 | #[derive(Deftly)]
    |          ^^^^^^
 ...
 17 | derive_deftly_driver_Driver! { GARBAGE -> DRIVER }

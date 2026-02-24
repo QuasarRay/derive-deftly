@@ -23,10 +23,10 @@ error: multiple nontrivial entries in ${paste ...}
    |                     ^^^^^
 
 error: multiple nontrivial entries in ${paste ...}
-  --> ui/badpaste.rs:28:35
+  --> ui/badpaste.rs:28:29
    |
 28 |     struct ${paste $ttype ${tmeta(something) as ty}};
-   |                                   ^^^^^^^^^
+   |                             ^^^^^^^^^^^^^^^
 
 error: expected one of `!` or `::`, found `Broken`
   --> ui/badpaste.rs:35:23

@@ -64,7 +64,7 @@ warning: unused macro definition: `derive_deftly_template__0unused`
 57 |     _0unused:
    |     ^^^^^^^^
    |
-   = note: `#[warn(unused_macros)]` on by default
+   = note: `#[warn(unused_macros)]` (part of `#[warn(unused)]`) on by default
 
 warning: unused macro definition: `derive_deftly_template__Unused`
   --> ui/badreserved.rs:61:5

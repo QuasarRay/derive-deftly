@@ -1,10 +1,10 @@
 error: basic (in this field)
   --> ui/explerror.rs:6:5
    |
-6  |       field: usize,
-   |       ^^^^^
+ 6 |       field: usize,
+   |       ^^^^^^^^^^^^
 ...
-9  | / derive_deftly_adhoc! {
+ 9 | / derive_deftly_adhoc! {
 10 | |     Struct:
 11 | |     ${for fields { ${error "basic"}} }
 12 | | }
@@ -21,8 +21,9 @@ error: basic (template error message)
 error: just message (in this data structure)
   --> ui/explerror.rs:4:1
    |
-4  |   #[derive_deftly_adhoc]
-   |   ^
+ 4 | / #[derive_deftly_adhoc]
+ 5 | | struct Struct {
+   | |_______________^
 ...
 14 | / derive_deftly_adhoc! {
 15 | |     Struct beta_deftly:
@@ -42,7 +43,7 @@ error: just message (template error message)
 error: spanned at ftype for field (reported by template)
   --> ui/explerror.rs:6:12
    |
-6  |       field: usize,
+ 6 |       field: usize,
    |              ^^^^^
 ...
 14 | / derive_deftly_adhoc! {
@@ -57,8 +58,8 @@ error: spanned at ftype for field (reported by template)
 error: spanned at ftype for field (in this field)
   --> ui/explerror.rs:6:5
    |
-6  |       field: usize,
-   |       ^^^^^
+ 6 |       field: usize,
+   |       ^^^^^^^^^^^^
 ...
 14 | / derive_deftly_adhoc! {
 15 | |     Struct beta_deftly:
@@ -78,8 +79,11 @@ error: spanned at ftype for field (template error message)
 error: just from Throws (in this data structure)
   --> ui/explerror.rs:27:1
    |
-27 | #[derive_deftly(Throws)]
-   | ^
+27 | / #[derive_deftly(Throws)]
+28 | | struct Struct2 {
+29 | |     field2: u32,
+30 | | }
+   | |_^
 
 error: just from Throws (template error message)
   --> ui/explerror.rs:22:21
@@ -102,7 +106,7 @@ error: from Throw at ftype (in this field)
   --> ui/explerror.rs:29:5
    |
 29 |     field2: u32,
-   |     ^^^^^^
+   |     ^^^^^^^^^^^
 
 error: from Throw at ftype (template error message)
   --> ui/explerror.rs:23:24

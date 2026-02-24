@@ -19,7 +19,7 @@ error[E0277]: the trait bound `Vec<String>: From<{integer}>` is not satisfied
 error[E0277]: the trait bound `Vec<String>: From<{integer}>` is not satisfied
   --> ui/badpasteunimpl.rs:8:5
    |
-8  |       bar: Vec<String>,
+ 8 |       bar: Vec<String>,
    |       ^^^ the trait `From<{integer}>` is not implemented for `Vec<String>`
 ...
 11 | / derive_deftly_adhoc! {
