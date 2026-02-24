@@ -1,7 +1,7 @@
 error: expected one of `!` or `::`, found `template`
   --> ui/badoptions.rs:7:12
    |
-7  |     broken template;
+ 7 |     broken template;
    |            ^^^^^^^^ expected one of `!` or `::`
 ...
 10 | #[derive(Deftly)]
@@ -30,8 +30,10 @@ error: template defined for union, but applied to struct (expected kind)
 error: template defined for union, but applied to struct (actual kind)
   --> ui/badoptions.rs:11:1
    |
-11 |   #[derive_deftly(BadOptionsTemplate[dbg])]
-   |   ^
+11 | / #[derive_deftly(BadOptionsTemplate[dbg])]
+12 | | #[derive_deftly_adhoc]
+13 | | struct BadOptionsDriver;
+   | |________________________^
 ...
 23 | / derive_deftly_adhoc! {
 24 | |     BadOptionsDriver for union:
@@ -140,11 +142,3 @@ error: expected one of `!` or `::`, found `syntax`
   |
   | pub use crate as thing; bad syntax;
   |                             ^^^^^^ expected one of `!` or `::`
-
-error: include macro expected single expression in source
- --> $OUT_DIR[derive-deftly-macros]/derive-deftly~expansions~/dd-9bb48b2e4ab54bba44238094.rs
-  |
-  | 1,
-  |  ^
-  |
-  = note: `#[deny(incomplete_include)]` on by default

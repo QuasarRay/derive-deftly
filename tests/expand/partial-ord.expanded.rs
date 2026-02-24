@@ -92,15 +92,7 @@ fn main() {
 /// Without too many macros cluttering the expanded output
 fn expect(ok: bool) {
     if !ok {
-        {
-            #[cold]
-            #[track_caller]
-            #[inline(never)]
-            const fn panic_cold_explicit() -> ! {
-                ::core::panicking::panic_explicit()
-            }
-            panic_cold_explicit();
-        };
+        ::core::panicking::panic("explicit panic");
     }
 }
 fn expect_none<T: PartialOrd>(a: T, b: T) {

@@ -7,15 +7,7 @@ use derive_deftly::{define_derive_deftly, derive_deftly_adhoc, Deftly};
 use std::fmt::Display;
 fn assert(ok: bool) {
     if !ok {
-        {
-            #[cold]
-            #[track_caller]
-            #[inline(never)]
-            const fn panic_cold_explicit() -> ! {
-                ::core::panicking::panic_explicit()
-            }
-            panic_cold_explicit();
-        }
+        ::core::panicking::panic("explicit panic")
     }
 }
 #[derive_deftly_adhoc]

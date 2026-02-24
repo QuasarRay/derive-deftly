@@ -1,7 +1,7 @@
 error: cannot parse string into token stream
   --> ui/badmeta.rs:3:10
    |
-3  |   #[derive(Deftly)]
+ 3 |   #[derive(Deftly)]
    |            ^^^^^^
 ...
 15 | / derive_deftly_adhoc! {
@@ -22,7 +22,7 @@ error: constructed identifier "Bad." is invalid
 error: probably-invalid input to identifier pasting
   --> ui/badmeta.rs:7:16
    |
-7  |   #[deftly(dot = ".")]
+ 7 |   #[deftly(dot = ".")]
    |                  ^^^
 ...
 26 | / derive_deftly_adhoc! {
@@ -39,7 +39,7 @@ error: probably-invalid input to identifier pasting
 error: expected a list with sub-attributes, found a simple value
   --> ui/badmeta.rs:7:10
    |
-7  |   #[deftly(dot = ".")]
+ 7 |   #[deftly(dot = ".")]
    |            ^^^
 ...
 26 | / derive_deftly_adhoc! {
@@ -56,8 +56,14 @@ error: expected a list with sub-attributes, found a simple value
 error: attribute value expanded, but no suitable value in data structure definition (in this data structure)
   --> ui/badmeta.rs:4:1
    |
-4  |   #[derive_deftly_adhoc]
-   |   ^
+ 4 | / #[derive_deftly_adhoc]
+ 5 | | #[deftly(unit)]
+ 6 | | #[deftly(wrong = "{")]
+ 7 | | #[deftly(dot = ".")]
+...  |
+12 | | #[deftly(int128 = "0x12345678_12345678_12345678_12345678")]
+13 | | struct DataType {}
+   | |_________________^
 ...
 26 | / derive_deftly_adhoc! {
 27 | |     DataType:
@@ -71,15 +77,15 @@ error: attribute value expanded, but no suitable value in data structure definit
    = note: this error originates in the macro `derive_deftly_driver_DataType` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: attribute value expanded, but no suitable value in data structure definition (expansion)
-  --> ui/badmeta.rs:31:36
+  --> ui/badmeta.rs:31:26
    |
 31 |     struct ${paste Bad ${tmeta(dot(has_equals)) as str}};
-   |                                    ^^^^^^^^^^
+   |                          ^^^^^^^^^^^^^^^^^^^^
 
 error: tried to expand just attribute value, but it was specified multiple times (first occurrence)
   --> ui/badmeta.rs:8:10
    |
-8  |   #[deftly(several = "first")]
+ 8 |   #[deftly(several = "first")]
    |            ^^^^^^^
 ...
 26 | / derive_deftly_adhoc! {
@@ -96,7 +102,7 @@ error: tried to expand just attribute value, but it was specified multiple times
 error: tried to expand just attribute value, but it was specified multiple times (second occurrence)
   --> ui/badmeta.rs:9:10
    |
-9  |   #[deftly(several = "second")]
+ 9 |   #[deftly(several = "second")]
    |            ^^^^^^^
 ...
 26 | / derive_deftly_adhoc! {
@@ -111,10 +117,10 @@ error: tried to expand just attribute value, but it was specified multiple times
    = note: this error originates in the macro `derive_deftly_driver_DataType` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: tried to expand just attribute value, but it was specified multiple times (expansion)
-  --> ui/badmeta.rs:33:32
+  --> ui/badmeta.rs:33:26
    |
 33 |     struct ${paste Bad ${tmeta(several) as str}};
-   |                                ^^^^^^^
+   |                          ^^^^^^^^^^^^^
 
 error: tried to expand just attribute value, but it was specified multiple times (first occurrence)
   --> ui/badmeta.rs:10:24
@@ -151,16 +157,22 @@ error: tried to expand just attribute value, but it was specified multiple times
    = note: this error originates in the macro `derive_deftly_driver_DataType` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: tried to expand just attribute value, but it was specified multiple times (expansion)
-  --> ui/badmeta.rs:34:46
+  --> ui/badmeta.rs:34:26
    |
 34 |     struct ${paste Bad ${tmeta(several_inner(several)) as str}};
-   |                                              ^^^^^^^
+   |                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 error: attribute value expanded, but no value in data structure definition (in this data structure)
   --> ui/badmeta.rs:4:1
    |
-4  |   #[derive_deftly_adhoc]
-   |   ^
+ 4 | / #[derive_deftly_adhoc]
+ 5 | | #[deftly(unit)]
+ 6 | | #[deftly(wrong = "{")]
+ 7 | | #[deftly(dot = ".")]
+...  |
+12 | | #[deftly(int128 = "0x12345678_12345678_12345678_12345678")]
+13 | | struct DataType {}
+   | |_________________^
 ...
 39 | / derive_deftly_adhoc! {
 40 | |     DataType:
@@ -171,10 +183,10 @@ error: attribute value expanded, but no value in data structure definition (in t
    = note: this error originates in the macro `derive_deftly_driver_DataType` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: attribute value expanded, but no value in data structure definition (expansion)
-  --> ui/badmeta.rs:43:40
+  --> ui/badmeta.rs:43:26
    |
 43 |     struct ${paste Bad ${tmeta(barelit(is_value)) as str}};
-   |                                        ^^^^^^^^
+   |                          ^^^^^^^^^^^^^^^^^^^^^^
 
 error: expected a leaf node, found a list with sub-attributes
   --> ui/badmeta.rs:10:10
@@ -193,8 +205,14 @@ error: expected a leaf node, found a list with sub-attributes
 error: attribute value expanded, but no suitable value in data structure definition (in this data structure)
   --> ui/badmeta.rs:4:1
    |
-4  |   #[derive_deftly_adhoc]
-   |   ^
+ 4 | / #[derive_deftly_adhoc]
+ 5 | | #[deftly(unit)]
+ 6 | | #[deftly(wrong = "{")]
+ 7 | | #[deftly(dot = ".")]
+...  |
+12 | | #[deftly(int128 = "0x12345678_12345678_12345678_12345678")]
+13 | | struct DataType {}
+   | |_________________^
 ...
 46 | / derive_deftly_adhoc! {
 47 | |     DataType:
@@ -205,10 +223,10 @@ error: attribute value expanded, but no suitable value in data structure definit
    = note: this error originates in the macro `derive_deftly_driver_DataType` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: attribute value expanded, but no suitable value in data structure definition (expansion)
-  --> ui/badmeta.rs:50:32
+  --> ui/badmeta.rs:50:26
    |
 50 |     struct ${paste Bad ${tmeta(several_inner) as str}};
-   |                                ^^^^^^^^^^^^^
+   |                          ^^^^^^^^^^^^^^^^^^^
 
 error: expected identifier
   --> ui/badmeta.rs:55:10
@@ -334,15 +352,15 @@ error: expected curly braces
     |                           ^^^^^^^^^^^^^^
 
 error: missing `as ...` in meta expansion
-   --> ui/badmeta.rs:117:13
+   --> ui/badmeta.rs:117:7
     |
 117 |     ${tmeta(dot)} // forgot `.. as`, so `"."` not even parsed
-    |             ^^^
+    |       ^^^^^^^^^
 
 error: comparison of string/byte/character literals with suffixes is not supported (literal)
    --> ui/badmeta.rs:11:40
     |
-11  |   #[deftly(integer = "42", with_suffix = "42"x)]
+ 11 |   #[deftly(integer = "42", with_suffix = "42"x)]
     |                                          ^^^^^
 ...
 120 | / derive_deftly_adhoc! {
@@ -368,7 +386,7 @@ error: integer literal comparison with both values >u64 is not supported (left: 
 error: integer literal comparison with both values >u64 is not supported (right: number too large to fit in target type)
    --> ui/badmeta.rs:12:19
     |
-12  |   #[deftly(int128 = "0x12345678_12345678_12345678_12345678")]
+ 12 |   #[deftly(int128 = "0x12345678_12345678_12345678_12345678")]
     |                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 ...
 124 | / derive_deftly_adhoc! {
@@ -404,4 +422,4 @@ warning: unused macro definition: `derive_deftly_template_WrongRequestSyntax`
 105 |     WrongRequestSyntax:
     |     ^^^^^^^^^^^^^^^^^^
     |
-    = note: `#[warn(unused_macros)]` on by default
+    = note: `#[warn(unused_macros)]` (part of `#[warn(unused)]`) on by default

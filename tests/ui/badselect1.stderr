@@ -1,8 +1,10 @@
 error: multiple conditions matched (in this field)
   --> ui/badselect1.rs:19:5
    |
-19 |       #[deftly(right)]
-   |       ^
+19 | /     #[deftly(right)]
+20 | |     #[deftly(left)]
+21 | |     c: usize,
+   | |____________^
 ...
 24 | / derive_deftly_adhoc! {
 25 | |     Both:
@@ -29,8 +31,9 @@ error: multiple conditions matched (true condition)
 error: no conditions matched, and no else clause (in this field)
   --> ui/badselect1.rs:15:5
    |
-15 |       #[deftly(left)]
-   |       ^
+15 | /     #[deftly(left)]
+16 | |     a: usize,
+   | |____________^
 ...
 24 | / derive_deftly_adhoc! {
 25 | |     Both:
@@ -56,11 +59,15 @@ error[E0433]: failed to resolve: use of undeclared type `Left`
    |
 help: there is an enum variant `core::fmt::Alignment::Left` and 4 others; try using the variant's enum
    |
-48 |     assert_eq!(format!("{:?}", &core::fmt::Alignment::default()), "Left { a: 0 }",)
-   |                                 ~~~~~~~~~~~~~~~~~~~~
-48 |     assert_eq!(format!("{:?}", &itertools::Either::default()), "Left { a: 0 }",)
-   |                                 ~~~~~~~~~~~~~~~~~
-48 |     assert_eq!(format!("{:?}", &itertools::EitherOrBoth::default()), "Left { a: 0 }",)
-   |                                 ~~~~~~~~~~~~~~~~~~~~~~~
-48 |     assert_eq!(format!("{:?}", &std::fmt::Alignment::default()), "Left { a: 0 }",)
-   |                                 ~~~~~~~~~~~~~~~~~~~
+48 -     assert_eq!(format!("{:?}", &Left::default()), "Left { a: 0 }",)
+48 +     assert_eq!(format!("{:?}", &core::fmt::Alignment::default()), "Left { a: 0 }",)
+   |
+48 -     assert_eq!(format!("{:?}", &Left::default()), "Left { a: 0 }",)
+48 +     assert_eq!(format!("{:?}", &itertools::Either::default()), "Left { a: 0 }",)
+   |
+48 -     assert_eq!(format!("{:?}", &Left::default()), "Left { a: 0 }",)
+48 +     assert_eq!(format!("{:?}", &itertools::EitherOrBoth::default()), "Left { a: 0 }",)
+   |
+48 -     assert_eq!(format!("{:?}", &Left::default()), "Left { a: 0 }",)
+48 +     assert_eq!(format!("{:?}", &std::fmt::Alignment::default()), "Left { a: 0 }",)
+   |
