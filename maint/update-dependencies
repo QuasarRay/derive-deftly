@@ -14,8 +14,11 @@ set -euo pipefail
 # which are incompatible with our pinned nightly.
 # https://github.com/rust-lang/cargo/issues/16672
 
+msrv=$(perl -ne 'print $1 if m/^rust-version = \"([0-9.]+)\"\s*/' Cargo.toml)
+pinned=$(${CARGO-cargo} version | perl -pe 's/^\w+ //; s/-nightly.*//')
+
 tomls=$(git-ls-files | grep Cargo.toml)
-perl -i~ -pe 's/\b\Q1.56\E\b/1.79/ if m/^rust-version/' $tomls
+perl -i~ -pe 's/\b\Q'"$msrv"'\E\b/'"$pinned"'/ if m/^rust-version/' $tomls
 
 ${CARGO-cargo} update							   \
 	       --config 'resolver.incompatible-rust-versions = "fallback"' \
