@@ -37,6 +37,9 @@ image: "rust:bookworm"
     # Use a CARGO_HOME here, where we can cache it.
     - export CARGO_HOME="$PWD/.cargo-home"
     - export PATH="$CARGO_HOME/bin:$PATH"
+    # Remove old files from the cache, which old cargo doesn't by itself
+    - mkdir -p target
+    - find target -mtime +2.1 -type f -print0 | xargs -0r rm --
 
 .rust-nightly:
   # See "Using the proper Nightly Rust" in tests/tests.rs
