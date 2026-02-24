@@ -1403,9 +1403,9 @@ pub fn preprocess_attrs(
             if attr.path().leading_colon.is_some() {
                 return None;
             }
-            // #[warn(unstable_name_collisions)] warns about .exactly_one;
-            // let's not trust Rust upstream not to break this
             let segment = Itertools::exactly_one(
+                // #[warn(unstable_name_collisions)] warns about .exactly_one;
+                // let's not trust Rust upstream not to break this
                 attr.path().segments.iter()
             ).ok()?;
             if segment.ident != "deftly" {
