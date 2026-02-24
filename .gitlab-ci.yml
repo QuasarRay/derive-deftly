@@ -26,6 +26,12 @@ image: "rust:bookworm"
       - .cargo-home
       # The 1.56 compiler is also considerably slower.
       - target
+  tags:
+    # gitlab CI cache is actually over the network!  This tag causes
+    # the job to run on a host actually nearby the actual cache.
+    # This is especially necessasry because the cargo data we're
+    # cacheing can be stupidly large.
+    - tpa
 .rust-msrv-prep-script: &rust-msrv-prep-script
     - mv Cargo.lock.minimal Cargo.lock
     # Use a CARGO_HOME here, where we can cache it.
