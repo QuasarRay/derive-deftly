@@ -455,7 +455,7 @@ so for full support of generic types the template must expand both.
 Accesses macro parameters passed via `#[deftly(...)]` attributes.
 
  * **`${Xmeta(NAME)}`**:
-   Looks for `#[deftly(NAME="VALUE")]`, and expands to `VALUE`.
+   Looks for `#[deftly(NAME = "VALUE")]`, and expands to `VALUE`.
    `"VALUE"` must be be a string literal,
    which is parsed as a piece of Rust code, and then expanded.
    Normally,
@@ -463,11 +463,11 @@ Accesses macro parameters passed via `#[deftly(...)]` attributes.
    within `$(paste ..}`, `as str` is the default.
 
  * **`${Xmeta(SUB(NAME))}`**:
-   Looks for `#[deftly(SUB(NAME="VALUE"))]`.
+   Looks for `#[deftly(SUB(NAME = "VALUE"))]`.
    The `#[deftly()]` is parsed as
    a set of nested, comma-separated, lists.
    So this would find `NAME` 
-   in `#[deftly(SUB1,SUB(N1,NAME="VALUE",N2),SUB2)]`.
+   in `#[deftly(SUB1, SUB(N1, NAME = "VALUE", N2), SUB2)]`.
    The label can be arbitrarily deep, e.g.: `${Xmeta(L1(L2(L3(ATTR))))}`.
 
  * **`${Xmeta(...) as SYNTYPE}`**:
