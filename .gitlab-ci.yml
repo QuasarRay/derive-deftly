@@ -12,7 +12,7 @@ default:
     # See tests/stderr.rs
     - export STDERRTEST_CARGO_OPTIONS=--locked
 
-image: "rust:bookworm"
+image: "rust:trixie"
 
 .rust-msrv:
   image: "rust:1.56.0"
@@ -175,7 +175,7 @@ every-commit:
 
 python3-mypy:
   stage: test
-  image: debian:bookworm-slim
+  image: debian:trixie-slim
   script:
     - apt-get update && apt-get install -y mypy python3-toml
     - mypy --strict maint/build-docs-local
