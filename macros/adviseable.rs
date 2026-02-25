@@ -44,6 +44,7 @@ pub type AdviseableResult<T> = syn::Result<AdviseableInnerResult<T>>;
 
 /// Typically found as `syn::Result<AdvisedResult<T>>`
 #[derive(Debug)]
+#[must_use]
 pub enum AdviseableInnerResult<T> {
     /// Success
     Ok(T),
