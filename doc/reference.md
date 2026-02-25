@@ -475,48 +475,48 @@ Accesses macro parameters passed via `#[deftly(...)]` attributes.
    `SYNTYPE`s available are:
 
     * **`str`**: Expands to a string literal
-     with the same contents as
-     the string provided for `VALUE`.
-     Ie, the attribute's string value is *not* parsed.
-     This is the default within pasting and case changing,
-     if no `as` was specified.
-     Within pasting and case changing,
-     the provided string becomes part of the pasted identifier
-     (and so must consist of legal identifier characters).
+      with the same contents as
+      the string provided for `VALUE`.
+      Ie, the attribute's string value is *not* parsed.
+      This is the default within pasting and case changing,
+      if no `as` was specified.
+      Within pasting and case changing,
+      the provided string becomes part of the pasted identifier
+      (and so must consist of legal identifier characters).
 
     * **`ty`**:
-     `VALUE` is parsed as a type,
-     possibly with generics etc. (`syn::Type`).
-     When expanded, generic arguments have any missing `::` inserted,
-     so that the expansion is suitable for use in any context,
-     (such as invoking an inherent or trait method).
+      `VALUE` is parsed as a type,
+      possibly with generics etc. (`syn::Type`).
+      When expanded, generic arguments have any missing `::` inserted,
+      so that the expansion is suitable for use in any context,
+      (such as invoking an inherent or trait method).
 
     * **`path`**:
-     `VALUE` is parsed as a path,
-     possibly with generics etc. (`syn::Path`).
-     Like `as ty` but non-path types are forbidden.
-     Rust uses the same path syntax for types and modules,
-     so this is suitable for accepting a module path, too.
+      `VALUE` is parsed as a path,
+      possibly with generics etc. (`syn::Path`).
+      Like `as ty` but non-path types are forbidden.
+      Rust uses the same path syntax for types and modules,
+      so this is suitable for accepting a module path, too.
 
     * **`expr`**:
-     `VALUE` is parsed as an expression.
-     When expanded, it is surrounded with `( )`
-     to ensure correct precedence.
+      `VALUE` is parsed as an expression.
+      When expanded, it is surrounded with `( )`
+      to ensure correct precedence.
 
     * **`ident`**:
-     `VALUE` is parsed as an identifier (or keyword).
-     (Within pasting, prefer `as str`, the default;
-     `as ident` rejects initial digits, and the empty string.)
+      `VALUE` is parsed as an identifier (or keyword).
+      (Within pasting, prefer `as str`, the default;
+      `as ident` rejects initial digits, and the empty string.)
 
     * **`items`**:
-     `VALUE` is parsed as zero or more Rust Items (`syn::Item`).
-     Note that the driver must pass the items' source code in `"..."`.
+      `VALUE` is parsed as zero or more Rust Items (`syn::Item`).
+      Note that the driver must pass the items' source code in `"..."`.
 
     * **`token_stream`**:
-     `VALUE` is parsed as an arbtitrary sequence of tokens
-     (`TokenStream`).
-     When using this option, be careful about operator precedence:
-     see [Precedence considerations](#precedence-considerations).
+      `VALUE` is parsed as an arbtitrary sequence of tokens
+      (`TokenStream`).
+      When using this option, be careful about operator precedence:
+      see [Precedence considerations](#precedence-considerations).
 
  * **`${Xmeta(...) .. , default DEFAULT}`** ([**beta**]):
    If there is no `VALUE` expands
