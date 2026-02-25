@@ -555,6 +555,19 @@ Accesses macro parameters passed via `#[deftly(...)]` attributes.
       (Within pasting, prefer `as str`, the default;
       `as ident` rejects initial digits, and the empty string.)
 
+    * **`attrs`**:
+      `VALUE` is treated as a series of meta attributes,
+      in one of the two following forms:
+
+      * `attrname ... , attrname ...`
+        where `attrname`s are paths,
+        and `...` is anything not containing commas.
+        Each `attrname ...` becomes `#[attrname ...]` in the expansion.
+      * `#[attrname ...] #[attrname ...]`
+        which are simply reproduced in the expansion.
+
+      XXXX beta.
+
     * **`items`**:
       `VALUE` is parsed as zero or more Rust Items (`syn::Item`).
 
