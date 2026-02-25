@@ -91,6 +91,50 @@ But perhaps we should declare
 that we reserve the right to check this statically,
 and that wouldn't be a breaking change?
 
+## Filtering for `${Xmeta(...) as attrs}`
+
+### Option 1 --- filtering
+
+In the `${Xmeta as ...}` table:
+
+  * **`attrs(A1, A2, ....)`**, **`attrs(! A1, A2, ....)`**:
+	Expands to a subset of the `#[attrname ]`s:
+	Only any attributes matching `A1` and `A2`,
+	or all attributes except those,
+	respectively.
+
+	It is not an error if there are no matching attributes.
+	It is also not an error if the driver specified attributes
+	that are filtered out.
+
+	However, if there are any attributes supplied by the driver,
+	but not used, it is an error.
+
+    The filtering is as for `${Xattrs }`,
+	but does not filter out `#[deftly]` or `#[derive_deftly]`
+	by default.
+
+This is as proposed in
+<https://gitlab.torproject.org/Diziet/rust-derive-deftly/-/issues/139>.
+
+### Options 2 --- lifting
+
+In the `${Xmeta as ...}` table:
+
+  * **`attrs(A1(A2))`**:
+
+	Each `attrname ...` generates `#[A1(A2(attrname ...))]`.
+
+Advantages: the template can rename the attributes.
+The template can stuff things into deeper levels of the tree.
+(But perhaps it could without needing to
+mess about with the meta attr specific code:
+if you want to pass through a specific serde attr, say,
+you can probably just use `as expr` or whatever.)
+
+Disadvantages: the template must define a new meta attr
+for each attr it wants to pass through.
+
 ## Scopes (for meta, and loops)
 
 See [discussion in #36](https://gitlab.torproject.org/Diziet/rust-derive-deftly/-/issues/36#note_3015721)
