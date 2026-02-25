@@ -459,7 +459,7 @@ Accesses macro parameters passed via `#[deftly(...)]` attributes.
    `"VALUE"` must be be a string literal,
    which is parsed as a piece of Rust code, and then expanded.
    Normally,
-   `aa ..` must be given, to specify how `VALUE` should be parsed;
+   `as ..` must be given, to specify how `VALUE` should be parsed;
    within `$(paste ..}`, `as str` is the default.
 
  * **`${Xmeta(SUB(NAME))}`**:
