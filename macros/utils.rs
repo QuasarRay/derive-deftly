@@ -357,6 +357,7 @@ where
 ///
 /// You must call one of the consuming methods, eg `finish`
 #[derive(Debug, Default)]
+#[must_use]
 pub struct ErrorAccumulator {
     bad: Option<syn::Error>,
     defused: bool,
