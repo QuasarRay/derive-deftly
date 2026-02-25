@@ -1627,6 +1627,24 @@ the [`${dbg ..}` expansion](#dbg--dbg_all_keywords--debugging-output),
 the [`dbg` condition](#dbg--debug-dump-of-condition-value),
 the [`$dbg_all_keywords` expansion](#dbg--dbg_all_keywords--debugging-output).
 
+<div id="eo:expr_unquoted">
+
+### `expr_unquoted` -- expect `#[deftly]` attribute values to be unquoted
+
+</div>
+
+Changes
+[`${Xmeta(...) as expr}`](#x:fmeta))
+to work like `as expr_unquoted`:
+
+Always expects unquoted `NAME = VALUE`
+and never strips `" "`,
+so that specifying `NAME = "VALUE"`
+means that `$Xmeta` expands to the string literal `"VALUE"`.
+
+This option is only allowed in a template or module,
+not in a driver's `#[derive_deftly]` attribute.
+
 <div id="eo:beta_deftly">
 
 ### `beta_deftly` -- Enable unstable template features
