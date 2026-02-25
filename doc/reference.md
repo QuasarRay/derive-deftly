@@ -455,15 +455,27 @@ so for full support of generic types the template must expand both.
 Accesses macro parameters passed via `#[deftly(...)]` attributes.
 
  * **`${Xmeta(NAME)}`**:
-   Looks for `#[deftly(NAME = "VALUE")]`, and expands to `VALUE`.
-   `"VALUE"` must be be a string literal,
-   which is parsed as a piece of Rust code, and then expanded.
+   Looks for `#[deftly(NAME = ...)]`.
+   `NAME = ...` can be
+
+   * **`NAME = { VALUE }`**: Rust code, enclosed in in curly brackets.
+   * **`NAME = VALUE`**: Rust code (nonempty),
+     terminated by the next comma, or closing `)`.
+   * **`NAME = "VALUE"`**: a string literal, which is re-parsed as Rust code
+     (unless otherwise stated, below).
+
+   The choice of value syntax is up to the driver,
+   and is not made available to the template,
+   except for the `as`-specific restrictions described below.
+
+   XXXX mark new syntax as beta.
+
    Normally,
-   `as ..` must be given, to specify how `VALUE` should be parsed;
+   `as ..` must be given, to specify how `VALUE` should be treated;
    within `$(paste ..}`, `as str` is the default.
 
  * **`${Xmeta(SUB(NAME))}`**:
-   Looks for `#[deftly(SUB(NAME = "VALUE"))]`.
+   Looks for `#[deftly(SUB(NAME = ...))]`.
    The `#[deftly()]` is parsed as
    a set of nested, comma-separated, lists.
    So this would find `NAME` 
@@ -476,13 +488,16 @@ Accesses macro parameters passed via `#[deftly(...)]` attributes.
 
     * **`str`**: Expands to a string literal
       with the same contents as
-      the string provided for `VALUE`.
+      the string provided for `"VALUE"`.
+
       Ie, the attribute's string value is *not* parsed.
       This is the default within pasting and case changing,
       if no `as` was specified.
       Within pasting and case changing,
       the provided string becomes part of the pasted identifier
       (and so must consist of legal identifier characters).
+
+      `NAME = { VALUE }` and bare `NAME = VALUE` are not allowed.
 
     * **`ty`**:
       `VALUE` is parsed as a type,
@@ -498,10 +513,42 @@ Accesses macro parameters passed via `#[deftly(...)]` attributes.
       Rust uses the same path syntax for types and modules,
       so this is suitable for accepting a module path, too.
 
-    * **`expr`**:
+    * **`expr`**,
+      or **`expr_auto`**, **`expr_unquoted`**, or **`expr_quoted`**:
       `VALUE` is parsed as an expression.
+
       When expanded, it is surrounded with `( )`
       to ensure correct precedence.
+      With `{ VALUE }`, the surrounding `{ }` are not stripped,
+      and replace the usual `( )`.
+
+      **`"VALUE"`** is handled specially.
+      By default, with `expr`, the `" "` are stripped
+      and the contents re-parsed.
+      So `NAME = 2` and `NAME = "2"` would both expand to `(2)`.
+
+      | expansion of `as ...` when `NAME = ...` | `  VALUE `  | `{ VALUE }` | `  "VALUE"  ` |
+      |-----------------------------------------|-------------|-------------|---------------|
+      | `expr` (by default), `expr_auto`        | `( VALUE )` | `{ VALUE }` | `( VALUE ) `  |
+      | `expr_unquoted`                         | `( VALUE )` | `{ VALUE }` | `( "VALUE" )` |
+      | `expr_quoted`                           | rejected    | rejected    | `( VALUE ) `  |
+
+      Just `expr` behaves like `expr_auto` by default;
+      this can be changed by the `expr_unquoted` template/module option.
+
+      XXXX The sense here is kind of odd.  `... as expr_quoted`
+      takes *quoted* as input; the *output* (expression) is
+      "as expression but with the quotes removed"
+      which is arguably the opposite of being quoted.
+      I think that's OK.  I tried other wordings and they seem worse.
+
+      XXXX Do we need all four of `expr`, `expr_auto`,
+      `expr_unquoted`, and `expr_quoted`?
+      `expr_unquoted` is arguably the behaviour
+      we would like as default if we could go back in time.
+      I think we need at least the behaviour of `expr_auto`
+      and we need a way to request it if `expr_unquoted` is in force globally.
+      Do we need `expr_quoted`?
 
     * **`ident`**:
       `VALUE` is parsed as an identifier (or keyword).
@@ -510,13 +557,18 @@ Accesses macro parameters passed via `#[deftly(...)]` attributes.
 
     * **`items`**:
       `VALUE` is parsed as zero or more Rust Items (`syn::Item`).
-      Note that the driver must pass the items' source code in `"..."`.
+
+      The bare form `NAME = VALUE` is not allowed,
+      because Rust items can contain commas.
 
     * **`token_stream`**:
       `VALUE` is parsed as an arbtitrary sequence of tokens
       (`TokenStream`).
+
       When using this option, be careful about operator precedence:
       see [Precedence considerations](#precedence-considerations).
+
+      The bare form `NAME = VALUE` is not allowed.
 
  * **`${Xmeta(...) .. , default DEFAULT}`** ([**beta**]):
    If there is no `VALUE` expands
@@ -1219,7 +1271,7 @@ the corresponding driver attribute does not need to be a `LIT`.
 
 So `Xmeta(SUB(NAME))` is true if the driver has
 `#[deftly(SUB(NAME(INNER=...)))]` or `#[deftly(SUB(NAME))]` or
-`#[deftly(SUB(NAME=LIT))]` or even `#[deftly(SUB(NAME()))]`.
+`#[deftly(SUB(NAME=...))]` or even `#[deftly(SUB(NAME()))]`.
 
 `Xmeta(SUB(NAME))` works, just as with the `${Xmeta ...}` expansion.
 See [`${Xmeta ...}`](#tmeta-vmeta-fmeta--deftly-attributes)
@@ -1668,6 +1720,8 @@ This is done for
 
 The example expansions in the syntax reference 
 are those generated for the following driver types:
+
+XXXX convert `#[deftly]` attrs to unquoted syntax at some point.
 
 <!--##examples-structs##-->
 
