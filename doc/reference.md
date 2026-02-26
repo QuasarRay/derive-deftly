@@ -469,7 +469,7 @@ Accesses macro parameters passed via `#[deftly(...)]` attributes.
 
    The choice of value syntax is up to the driver,
    and is not made available to the template,
-   except for the `as`-specific restrictions described below.
+   except as described below.
 
    Normally,
    `as ..` must be given, to specify how `VALUE` should be treated;
@@ -523,34 +523,6 @@ Accesses macro parameters passed via `#[deftly(...)]` attributes.
       With `{ VALUE }`, the surrounding `{ }` are not stripped,
       and replace the usual `( )`.
 
-      **`"VALUE"`** is handled specially.
-      By default, with `expr`, the `" "` are stripped
-      and the contents re-parsed.
-      So `NAME = 2` and `NAME = "2"` would both expand to `(2)`.
-
-      | expansion of `as ...` when `NAME = ...` | `  VALUE `  | `{ VALUE }` | `  "VALUE"  ` |
-      |-----------------------------------------|-------------|-------------|---------------|
-      | `expr` (by default), `expr_auto`        | `( VALUE )` | `{ VALUE }` | `( VALUE ) `  |
-      | `expr_unquoted`                         | `( VALUE )` | `{ VALUE }` | `( "VALUE" )` |
-      | `expr_quoted`                           | rejected    | rejected    | `( VALUE ) `  |
-
-      Just `expr` behaves like `expr_auto` by default;
-      this can be changed by the `expr_unquoted` template/module option.
-
-      XXXX The sense here is kind of odd.  `... as expr_quoted`
-      takes *quoted* as input; the *output* (expression) is
-      "as expression but with the quotes removed"
-      which is arguably the opposite of being quoted.
-      I think that's OK.  I tried other wordings and they seem worse.
-
-      XXXX Do we need all four of `expr`, `expr_auto`,
-      `expr_unquoted`, and `expr_quoted`?
-      `expr_unquoted` is arguably the behaviour
-      we would like as default if we could go back in time.
-      I think we need at least the behaviour of `expr_auto`
-      and we need a way to request it if `expr_unquoted` is in force globally.
-      Do we need `expr_quoted`?
-
     * **`ident`**:
       `VALUE` is parsed as an identifier (or keyword).
       (Within pasting, prefer `as str`, the default;
@@ -591,6 +563,45 @@ Accesses macro parameters passed via `#[deftly(...)]` attributes.
    *not* affected by any `as ..` clause;
    *not* surrounded with additional `( )` (for `as expr`),
    nor any additional [`None`-delimited group](#t:none-delimiters).
+
+ * **`${Xmeta(...) .. , quoted strip | quoted retain}`** ([**beta**]):
+
+   Specifies how to handle `NAME = "..."` in a `#[deftly]`:
+
+   * **Neither `quoted strip` nor `quoted retain`** specified:
+
+     Only `NAME = "VALUE"` is supported.
+     The quotes are always stripped and the content re-parsed as Rust code.
+
+     This is currently the default.
+
+   * **`quoted strip`**:
+
+     If `NAME = "VALUE"` is specified, the quotes are stripped,
+     and the content is reparsed as Rust code.
+
+     This will become the default in future.
+
+   * **`quoted retain`**:
+
+     For `as expr`,
+     `NAME = "VALUE"` is treated as specifying a string literal,
+     i.e., as just another instance of `NAME = VALUE`.
+     The quotes are not stripped.
+
+     With `SYNTYPE`s other than `as expr`
+     a string literal is not a valid fragment,
+     so the quotes are always stripped and the contents reparsed.
+
+   Available only in [**beta**].
+
+   The default can be overridden by the
+   [`meta_quoted` template option](#eo:meta_quoted).
+
+   XXXX When this feature is stabilised, it will affect only
+   `as expr`, and we can change its summary to:
+
+   > Specifies how to handle `NAME = "..."` with `as expr` in a `#[deftly]`
 
 When expanding `${Xmeta}`,
 it is an error if the value was not specified in the driver,
@@ -1641,25 +1652,30 @@ the [`${dbg ..}` expansion](#dbg--dbg_all_keywords--debugging-output),
 the [`dbg` condition](#dbg--debug-dump-of-condition-value),
 the [`$dbg_all_keywords` expansion](#dbg--dbg_all_keywords--debugging-output).
 
-<div id="eo:expr_unquoted">
+<div id="eo:meta_quoted">
 
-### `expr_unquoted` -- expect `#[deftly]` attribute values to be unquoted
+### `meta_quoted strip`, `meta_quoted retain` -- control (de)quoting of attribute values ([**beta**])
 
 </div>
 
-Changes
-[`${Xmeta(...) as expr}`](#x:fmeta))
-to work like `as expr_unquoted`:
+Changes the default for [`${Xmeta(...) as ...}`](#x:fmeta),
+in this module or template, to:
 
-Always expects unquoted `NAME = VALUE`
-and never strips `" "`,
-so that specifying `NAME = "VALUE"`
-means that `$Xmeta` expands to the string literal `"VALUE"`.
+  * **`quoted strip`** (allow unquoted values, strip any quotes), or
+  * **`quoted retain`** (allow unquoted values,
+    `as expr` does not strip `"..."` and yields the provided literal).
 
 This option is only allowed in a template or module,
 not in a driver's `#[derive_deftly]` attribute.
 
 Available only in [**beta**].
+In the future, `quoted strip` will become the default.
+
+XXXX When this feature is stabilised, it will affect only
+`as expr`, and we can change its summary to:
+
+> Changes the default for [`${Xmeta(...) as expr}`](#x:fmeta),
+> in this module or template, to:
 
 <div id="eo:beta_deftly">
 
