@@ -460,16 +460,16 @@ Accesses macro parameters passed via `#[deftly(...)]` attributes.
    `NAME = ...` can be
 
    * **`NAME = { VALUE }`**: Rust code, enclosed in in curly brackets.
+     (**beta**)
    * **`NAME = VALUE`**: Rust code (nonempty),
      terminated by the next comma, or closing `)`.
+     (**beta**)
    * **`NAME = "VALUE"`**: a string literal, which is re-parsed as Rust code
      (unless otherwise stated, below).
 
    The choice of value syntax is up to the driver,
    and is not made available to the template,
    except for the `as`-specific restrictions described below.
-
-   XXXX mark new syntax as beta.
 
    Normally,
    `as ..` must be given, to specify how `VALUE` should be treated;
@@ -567,7 +567,7 @@ Accesses macro parameters passed via `#[deftly(...)]` attributes.
       * `#[attrname ...] #[attrname ...]`
         which are simply reproduced in the expansion.
 
-      XXXX beta.
+      Available only in [**beta**].
 
     * **`items`**:
       `VALUE` is parsed as zero or more Rust Items (`syn::Item`).
@@ -1658,6 +1658,8 @@ means that `$Xmeta` expands to the string literal `"VALUE"`.
 
 This option is only allowed in a template or module,
 not in a driver's `#[derive_deftly]` attribute.
+
+Available only in [**beta**].
 
 <div id="eo:beta_deftly">
 
