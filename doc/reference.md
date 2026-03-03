@@ -654,6 +654,9 @@ These checks are disabled by `#[derive_deftly_adhoc]`.
  * `${vmeta(value) as ident}`: `unit_toplevel`, `enum_variant`
  * `${fmeta(nested(inner)) as expr}` for `field` in `Struct`: `(42)`
  * `${vmeta(items) as items}` for `TupleVariant`: `type T = i32; const K: T = 7;`
+ * `${vmeta(items) as token_stream}` for `TupleVariant`: `type T = i32; const K: T = 7;`
+ * `${tmeta(items_quoted) as items}` for `Struct`: `type T = i8;`
+ * `${tmeta(items_quoted) as token_stream}` for `Struct`: `type T = i8;`
  * `${fmeta(nested)}`: rejected, ``expected a leaf node, found a list with sub-attributes``
 
 #### Examples involving pasting
@@ -1800,6 +1803,7 @@ struct Tuple<'a, 'l: 'a, T: Display = usize, const C: usize = 1>(
 );
 
 #[derive(Deftly)]
+#[deftly(items_quoted = "type T = i8;")]
 struct Struct<'a, 'l: 'a, T: Display = usize, const C: usize = 1>
 where T: 'l, T: TryInto<u8>
 {
