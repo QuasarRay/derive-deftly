@@ -540,6 +540,10 @@ Accesses macro parameters passed via `#[deftly(...)]` attributes.
       * `#[attrname ...] #[attrname ...]`
         which are simply reproduced in the expansion.
 
+      Unlike the other `${Xmeta as ...}` expansions,
+      it is not an error for the the driver to supply zero, or several,
+      matching `#[deftly]` meta values.
+
       Available only in [**beta**].
 
     * **`items`**:
