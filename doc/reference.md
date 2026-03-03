@@ -520,7 +520,8 @@ Accesses macro parameters passed via `#[deftly(...)]` attributes.
       When expanded, it is surrounded with `( )`
       to ensure correct precedence.
       With `{ VALUE }`, the surrounding `{ }` are not stripped,
-      and replace the usual `( )`.
+      and replace the usual `( )`;
+      this permits a block expression surrounded by only one pair of `{ }`.
 
     * **`ident`**:
       `VALUE` is parsed as an identifier (or keyword).
