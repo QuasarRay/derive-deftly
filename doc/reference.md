@@ -514,8 +514,7 @@ Accesses macro parameters passed via `#[deftly(...)]` attributes.
       Rust uses the same path syntax for types and modules,
       so this is suitable for accepting a module path, too.
 
-    * **`expr`**,
-      or **`expr_auto`**, **`expr_unquoted`**, or **`expr_quoted`**:
+    * **`expr`**:
       `VALUE` is parsed as an expression.
 
       When expanded, it is surrounded with `( )`
