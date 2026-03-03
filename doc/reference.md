@@ -456,8 +456,9 @@ so for full support of generic types the template must expand both.
 Accesses macro parameters passed via `#[deftly(...)]` attributes.
 
  * **`${Xmeta(NAME)}`**:
-   Looks for `#[deftly(NAME = ...)]`.
-   `NAME = ...` can be
+   Looks for `#[deftly(NAME = ...VALUE...)]`,
+   and expands to the driver-specified `VALUE`.
+   `NAME = ...VALUE...` can be
 
    * **`NAME = { VALUE }`**: Rust code, enclosed in in curly brackets.
      (**beta**)
