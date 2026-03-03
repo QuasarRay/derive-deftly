@@ -1786,8 +1786,8 @@ struct SimpleUnit;
 
 #[derive(Deftly)]
 #[derive(Clone)]
-#[deftly(simple="String", gentype="Vec<i32>")]
-#[deftly(value="unit_toplevel")]
+#[deftly(simple = "String", gentype = "Vec<i32>")]
+#[deftly(value = "unit_toplevel")]
 pub struct Unit<const C: usize = 1>;
 
 #[derive(Deftly, Clone)]
@@ -1812,9 +1812,9 @@ where T: 'l, T: TryInto<u8>
 pub enum Enum<'a, 'l: 'a, T: Display = usize, const C: usize = 1>
 where T: 'l, T: TryInto<u8>
 {
-    #[deftly(value="enum_variant")]
+    #[deftly(value = "enum_variant")]
     UnitVariant,
-	#[deftly(items="type T = i32; const K: T = 7;")]
+	#[deftly(items = "type T = i32; const K: T = 7;")]
     TupleVariant(std::iter::Once::<T>),
     NamedVariant { 
         field: &'l &'a T,
