@@ -589,8 +589,7 @@ Accesses macro parameters passed via `#[deftly(...)]` attributes.
      The quotes are not stripped.
 
      With `SYNTYPE`s other than `as expr`
-     a string literal is not a valid fragment,
-     so the quotes are always stripped and the contents reparsed.
+     the quotes are always stripped and the contents reparsed.
 
    Available only in [**beta**].
 
