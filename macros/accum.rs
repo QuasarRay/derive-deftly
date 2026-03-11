@@ -38,8 +38,6 @@ impl EngineFinalInput {
 
 impl Parse for Accumulated {
     fn parse(input: ParseStream) -> syn::Result<Self> {
-        use meta::CheckUsed as mCU;
-
         let mut metas = mCU::Check(meta::Accum::default());
 
         struct Ignore;
