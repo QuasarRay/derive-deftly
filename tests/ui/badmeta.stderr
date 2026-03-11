@@ -245,13 +245,7 @@ error: expected identifier
    |
    = note: this error originates in the macro `derive_deftly_driver_TopLevelMetaLitForbidden` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error: expected literal
-  --> ui/badmeta.rs:61:18
-   |
-61 | #[deftly(value = wrong)]
-   |                  ^^^^^
-
-error: expected literal
+error: expected string literal, for conversion to tokens (attribute value)
   --> ui/badmeta.rs:61:18
    |
 61 |   #[deftly(value = wrong)]
@@ -265,11 +259,17 @@ error: expected literal
    |
    = note: this error originates in the macro `derive_deftly_driver_MetaValueMustBeLit` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error: expected literal
-  --> ui/badmeta.rs:70:18
+error: expected string literal, for conversion to tokens (template)
+  --> ui/badmeta.rs:65:7
+   |
+65 |     ${tmeta(value) as token_stream}
+   |       ^^^^^^^^^^^
+
+error: un-braced, un-quoted meta values may not contain any of `<` `>` `=`
+  --> ui/badmeta.rs:70:23
    |
 70 | #[deftly(value = very < wrong)]
-   |                  ^^^^
+   |                       ^
 
 error: expected identifier
   --> ui/badmeta.rs:75:18
