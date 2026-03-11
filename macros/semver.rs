@@ -88,8 +88,8 @@ Search for section titles containing "template export semver"."#,
         (0, 12, 0) => return too_old(),
         (0, 12, 1..) => {}
         (0, 13.., _) => {}
-        (1, 0..=6, _) => {}
-        (1, 7.., _) => return too_new(),
+        (1, 0..=7, _) => {}
+        (1, 8.., _) => return too_new(),
         (2.., _, _) => return too_new(),
     }
 

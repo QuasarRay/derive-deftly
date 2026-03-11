@@ -57,6 +57,19 @@ or via the [account request form].
 
 ## Changelog
 
+### 1.7.0
+
+#### Added
+
+ * `$findex` and `$vindex` are stabilised (no longer beta).
+
+#### Improved
+
+ * Minor documentation fixes.
+ * CI: Routine updates for pinned test dependencies.
+ * Fixed some compiler warnings etc. seen with recent Nightly Rust.
+ * Relaxed upper dependency bounds for `strum` and `toml`.
+
 ### 1.6.0
 
 #### Breaking changes to beta features
