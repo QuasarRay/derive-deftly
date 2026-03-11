@@ -123,12 +123,12 @@ pub enum SubstAs<O: SubstParseContext> {
 
 /// A part like `(foo,bar(baz),zonk="value")`
 #[derive(Debug)]
-pub struct PreprocessedValueList {
+pub struct PreprocessedContentList {
     pub content: Punctuated<PreprocessedTree, token::Comma>,
 }
 
 /// `#[deftly(...)]` helper attributes
-pub type PreprocessedMetas = Vec<PreprocessedValueList>;
+pub type PreprocessedMetas = Vec<PreprocessedContentList>;
 
 /// An `#[deftly()]` attribute, or a sub-tree within one
 ///
@@ -137,7 +137,7 @@ pub type PreprocessedMetas = Vec<PreprocessedValueList>;
 #[derive(Debug)]
 pub struct PreprocessedTree {
     pub path: syn::Path,
-    pub value: PreprocessedValue,
+    pub content: PreprocessedContent,
     pub used: Cell<Usage>,
 }
 
@@ -147,13 +147,13 @@ pub struct PreprocessedTree {
 /// `PreprocessedMeta.path` of `foo`,
 /// ie the examples are for `#[deftly(foo ..)]`.
 #[derive(Debug)]
-pub enum PreprocessedValue {
+pub enum PreprocessedContent {
     /// `#[deftly(foo)]`
     Unit,
     /// `#[deftly(foo = "lit")]`
     Value { value: syn::Lit },
     /// `#[deftly(foo(...))]`
-    List(PreprocessedValueList),
+    List(PreprocessedContentList),
 }
 
 //---------- search and match results ----------
@@ -415,7 +415,7 @@ impl<O: SubstParseContext> SubstMeta<O> {
 
 //---------- driver parsing ----------
 
-impl PreprocessedValueList {
+impl PreprocessedContentList {
     fn parse_outer(input: ParseStream) -> syn::Result<Self> {
         let meta;
         let _paren = parenthesized!(meta in input);
@@ -423,33 +423,33 @@ impl PreprocessedValueList {
     }
 }
 
-impl PreprocessedValueList {
+impl PreprocessedContentList {
     pub fn parse_inner(input: ParseStream) -> syn::Result<Self> {
         let content = Punctuated::parse_terminated(input)?;
-        Ok(PreprocessedValueList { content })
+        Ok(PreprocessedContentList { content })
     }
 }
 
 impl Parse for PreprocessedTree {
     fn parse(input: ParseStream) -> syn::Result<Self> {
-        use PreprocessedValue as PV;
+        use PreprocessedContent as PC;
 
         let path = input.call(syn::Path::parse_mod_style)?;
         let la = input.lookahead1();
-        let value = if la.peek(Token![=]) {
+        let content = if la.peek(Token![=]) {
             let _: Token![=] = input.parse()?;
             let value = input.parse()?;
-            PV::Value { value }
+            PC::Value { value }
         } else if la.peek(token::Paren) {
-            let list = input.call(PreprocessedValueList::parse_outer)?;
-            PV::List(list)
+            let list = input.call(PreprocessedContentList::parse_outer)?;
+            PC::List(list)
         } else if la.peek(Token![,]) || input.is_empty() {
-            PV::Unit
+            PC::Unit
         } else {
             return Err(la.error());
         };
         let used = Usage::default().into(); // will be filled in later
-        Ok(PreprocessedTree { path, value, used })
+        Ok(PreprocessedTree { path, content, used })
     }
 }
 
@@ -488,7 +488,7 @@ impl Label {
     /// Caller must note meta attrs that end up being used!
     pub fn search<'a, F, G, E>(
         &self,
-        pmetas: &'a [PreprocessedValueList],
+        pmetas: &'a [PreprocessedContentList],
         f: &mut F,
         g: &mut G,
     ) -> Result<(), E>
@@ -515,7 +515,7 @@ impl Label {
         F: FnMut(FoundNode<'a>) -> Result<(), E>,
         G: FnMut(FoundNearbyNode<'a>) -> Result<(), E>,
     {
-        use PreprocessedValue as PV;
+        use PreprocessedContent as PC;
 
         if ptree.path != lpaths[0] {
             return Ok(());
@@ -537,21 +537,21 @@ impl Label {
             Some(&lpaths[1..])
         };
 
-        match (deeper, &ptree.value) {
-            (None, PV::Unit) => f(FoundNode {
+        match (deeper, &ptree.content) {
+            (None, PC::Unit) => f(FoundNode {
                 path_span,
                 kind: FNK::Unit,
                 ptree,
             })?,
-            (None, PV::List(_)) => nearby(FNNK::List)?,
-            (None, PV::Value { value, .. }) => f(FoundNode {
+            (None, PC::List(_)) => nearby(FNNK::List)?,
+            (None, PC::Value { value, .. }) => f(FoundNode {
                 path_span,
                 kind: FNK::Lit(value),
                 ptree,
             })?,
-            (Some(_), PV::Value { .. }) => nearby(FNNK::Lit)?,
-            (Some(_), PV::Unit) => nearby(FNNK::Unit)?,
-            (Some(d), PV::List(l)) => {
+            (Some(_), PC::Value { .. }) => nearby(FNNK::Lit)?,
+            (Some(_), PC::Unit) => nearby(FNNK::Unit)?,
+            (Some(d), PC::List(l)) => {
                 for m in l.content.iter() {
                     Self::search_1(d, m, &mut *f, &mut *g)?;
                 }
@@ -1122,9 +1122,9 @@ impl PreprocessedTree {
 
 //---------- decoding used metas ----------
 
-impl PreprocessedValueList {
+impl PreprocessedContentList {
     fn decode_update_used(&self, input: ParseStream) -> syn::Result<()> {
-        use PreprocessedValue as PV;
+        use PreprocessedContent as PC;
 
         for ptree in &self.content {
             if input.is_empty() {
@@ -1158,14 +1158,14 @@ impl PreprocessedValueList {
                 if input.peek(token::Paren) {
                     let inner;
                     let paren = parenthesized!(inner in input);
-                    let sub_list = match &ptree.value {
-                        PV::Unit | PV::Value { .. } => return Err([
+                    let sub_list = match &ptree.content {
+                        PC::Unit | PC::Value { .. } => return Err([
                             (paren.span.open(), "found"),
                             (ptree.path.span(), "defined"),
                         ].error(
  "mismatch (tree vs terminal) incorporating previous expansions' used metas"
                         )),
-                        PV::List(l) => l,
+                        PC::List(l) => l,
                     };
                     sub_list.decode_update_used(&inner)?;
                 }
@@ -1272,7 +1272,7 @@ impl<'c> Context<'c> {
 impl PreprocessedTree {
     /// Returns `(....)`
     fn encode_useds(
-        list: &PreprocessedValueList,
+        list: &PreprocessedContentList,
     ) -> Option<proc_macro2::Group> {
         let preamble = syn::parse::Nothing;
         let sep = Token![,](Span::call_site());
@@ -1291,7 +1291,7 @@ impl PreprocessedTree {
 
     /// Writes `path?=(...)` (or, rather, the parts of it that are needed)
     fn encode_used(&self, out: &mut TokenOutputTrimmer) {
-        use PreprocessedValue as PV;
+        use PreprocessedContent as PC;
 
         struct OutputTrimmerWrapper<'or, 'o, 't, 'p> {
             // None if we have written the path already
@@ -1322,9 +1322,9 @@ impl PreprocessedTree {
             Usage::NONE => {}
         }
 
-        match &self.value {
-            PV::Unit | PV::Value { .. } => {}
-            PV::List(l) => {
+        match &self.content {
+            PC::Unit | PC::Value { .. } => {}
+            PC::List(l) => {
                 if let Some(group) = PreprocessedTree::encode_useds(l) {
                     out.push_reified(&group);
                 }
@@ -1454,10 +1454,10 @@ impl PreprocessedTree {
             }
         };
 
-        match &self.value {
-            PreprocessedValue::Unit => need(UsageMode::Unit),
-            PreprocessedValue::Value { .. } => need(UsageMode::Value),
-            PreprocessedValue::List(l) => {
+        match &self.content {
+            PreprocessedContent::Unit => need(UsageMode::Unit),
+            PreprocessedContent::Value { .. } => need(UsageMode::Value),
+            PreprocessedContent::List(l) => {
                 if l.content.is_empty() {
                     err(self.path.error(
  "empty nested list in #[deftly], is not useable by any template"

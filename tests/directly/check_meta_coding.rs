@@ -3,7 +3,7 @@
 use super::*;
 use macros::meta::*;
 
-use PreprocessedValue as PV;
+use PreprocessedContent as PC;
 use Usage as U;
 
 //---------- ctx and pmetas and ptrees walker ----------
@@ -13,18 +13,18 @@ impl<F> NodeCall for F where F: FnMut(&PreprocessedTree) {}
 
 fn process_nodes_ptree(ptree: &PreprocessedTree, nc: &mut impl NodeCall) {
     nc(ptree);
-    match &ptree.value {
-        PV::List(l) => process_nodes_pvl(l, nc),
-        PV::Unit | PV::Value { .. } => {}
+    match &ptree.content {
+        PC::List(l) => process_nodes_pvl(l, nc),
+        PC::Unit | PC::Value { .. } => {}
     }
 }
-fn process_nodes_pvl(pvl: &PreprocessedValueList, nc: &mut impl NodeCall) {
+fn process_nodes_pvl(pvl: &PreprocessedContentList, nc: &mut impl NodeCall) {
     for ptree in &pvl.content {
         process_nodes_ptree(ptree, nc);
     }
 }
 fn process_nodes_pmetas(
-    pmetas: &[PreprocessedValueList],
+    pmetas: &[PreprocessedContentList],
     nc: &mut impl NodeCall,
 ) -> Result<(), Void> {
     for pvl in pmetas {
