@@ -1112,7 +1112,7 @@ impl<'l> FoundNode<'l> {
                 out.append_identfrag_toks(&*ident)?;
             }
             SA::items(_, np, supported) => {
-                let items = metavalue_lit_as(val, tspan, &"items")?;
+                let items = metavalue_lit_as(val, tspan, as_)?;
                 supported.infer_type(&items);
                 out.append_tokens(np, items)?;
             }
