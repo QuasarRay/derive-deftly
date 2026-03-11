@@ -1101,13 +1101,13 @@ impl<'l> FoundNode<'l> {
         };
 
         match as_ {
-            as_ @ SA::expr(.., at, supported) => {
+            SA::expr(.., at, supported) => {
                 let expr = metavalue_lit_as(val, tspan, as_)?;
                 supported.infer_type(&expr);
                 let span = expr.span();
                 out.append_tokens(at, Grouping::Parens.surround(span, expr))?;
             }
-            as_ @ SA::ident(..) => {
+            SA::ident(..) => {
                 let ident: IdentAny = metavalue_lit_as(val, tspan, as_)?;
                 out.append_identfrag_toks(&*ident)?;
             }
@@ -1116,7 +1116,7 @@ impl<'l> FoundNode<'l> {
                 supported.infer_type(&items);
                 out.append_tokens(np, items)?;
             }
-            as_ @ SA::path(..) => out.append_syn_type(
+            SA::path(..) => out.append_syn_type(
                 tspan,
                 syn::Type::Path(metavalue_lit_as(val, tspan, as_)?),
                 Grouping::Invisible,
@@ -1129,7 +1129,7 @@ impl<'l> FoundNode<'l> {
                 )?;
                 out.append_syn_litstr(s);
             }
-            as_ @ SA::ty(..) => out.append_syn_type(
+            SA::ty(..) => out.append_syn_type(
                 tspan,
                 metavalue_lit_as(val, tspan, as_)?,
                 Grouping::Invisible,
