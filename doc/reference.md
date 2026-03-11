@@ -18,7 +18,7 @@
       * [`$tgens`, `$tgnames`, `$twheres`, `$tdefgens` -- generics](#tgens-tgnames-twheres-tdefgens--generics)
       * [`${tmeta(...)}` `${vmeta(...)}` `${fmeta(...)}` -- `#[deftly]` attributes](#tmeta-vmeta-fmeta--deftly-attributes)
       * [`${fattrs ...}` `${vattrs ...}` `${tattrs ...}` -- other attributes](#fattrs--vattrs--tattrs---other-attributes)
-      * [`$findex` `$vindex` -- field/variant numerical index (**beta**)](#findex-vindex--fieldvariant-numerical-index-beta)
+      * [`$findex` `$vindex` -- field/variant numerical index](#findex-vindex--fieldvariant-numerical-index)
       * [`${paste ...}`, `$<...>`, `${paste_spanned}` -- identifier pasting](#paste---paste_spanned--identifier-pasting)
       * [`${concat ...}` - string literal concatenation (**beta**)](#concat----string-literal-concatenation-beta)
       * [`${CASE_CHANGE ...}` -- case changing](#case_change---case-changing)
@@ -658,7 +658,7 @@ that come *after* the `#[derive(..., Deftly, ...)]`.
 <div id="x:findex">
 <div id="x:vindex">
 
-### `$findex` `$vindex` -- field/variant numerical index (**beta**)
+### `$findex` `$vindex` -- field/variant numerical index
 
 </div>
 </div>
@@ -666,8 +666,6 @@ that come *after* the `#[derive(..., Deftly, ...)]`.
 The numerical index of the field or variant, starting at 0.
 
 Can be used as a number, or a tuple field name.
-
-This feature is available only in [**beta**].
 
 #### Examples
 
