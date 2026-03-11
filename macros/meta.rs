@@ -29,6 +29,7 @@ use super::framework::*;
 
 use indexmap::IndexMap;
 
+use PreprocessedContent as PC;
 use Usage as U;
 
 //---------- common definitions ----------
@@ -432,8 +433,6 @@ impl PreprocessedContentList {
 
 impl Parse for PreprocessedTree {
     fn parse(input: ParseStream) -> syn::Result<Self> {
-        use PreprocessedContent as PC;
-
         let path = input.call(syn::Path::parse_mod_style)?;
         let la = input.lookahead1();
         let content = if la.peek(Token![=]) {
@@ -519,8 +518,6 @@ impl Label {
         F: FnMut(FoundNode<'a>) -> Result<(), E>,
         G: FnMut(FoundNearbyNode<'a>) -> Result<(), E>,
     {
-        use PreprocessedContent as PC;
-
         if ptree.path != lpaths[0] {
             return Ok(());
         }
@@ -1128,8 +1125,6 @@ impl PreprocessedTree {
 
 impl PreprocessedContentList {
     fn decode_update_used(&self, input: ParseStream) -> syn::Result<()> {
-        use PreprocessedContent as PC;
-
         for ptree in &self.content {
             if input.is_empty() {
                 return Ok(());
@@ -1295,8 +1290,6 @@ impl PreprocessedTree {
 
     /// Writes `path?=(...)` (or, rather, the parts of it that are needed)
     fn encode_used(&self, out: &mut TokenOutputTrimmer) {
-        use PreprocessedContent as PC;
-
         struct OutputTrimmerWrapper<'or, 'o, 't, 'p> {
             // None if we have written the path already
             path: Option<&'p syn::Path>,
@@ -1459,9 +1452,9 @@ impl PreprocessedTree {
         };
 
         match &self.content {
-            PreprocessedContent::Unit => need(UsageMode::Unit),
-            PreprocessedContent::Value { .. } => need(UsageMode::Value),
-            PreprocessedContent::List(l) => {
+            PC::Unit => need(UsageMode::Unit),
+            PC::Value { .. } => need(UsageMode::Value),
+            PC::List(l) => {
                 if l.content.is_empty() {
                     err(self.path.error(
  "empty nested list in #[deftly], is not useable by any template"
