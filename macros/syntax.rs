@@ -1416,7 +1416,7 @@ pub fn preprocess_attrs(
             Some(attr)
         })
         .map(|attr| {
-            attr.call_in_parens(meta::PreprocessedValueList::parse_inner)
+            attr.call_in_parens(meta::PreprocessedContentList::parse_inner)
         })
         .collect()
 }
