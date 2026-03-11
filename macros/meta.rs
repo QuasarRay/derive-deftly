@@ -449,7 +449,11 @@ impl Parse for PreprocessedTree {
             return Err(la.error());
         };
         let used = Usage::default().into(); // will be filled in later
-        Ok(PreprocessedTree { path, content, used })
+        Ok(PreprocessedTree {
+            path,
+            content,
+            used,
+        })
     }
 }
 
