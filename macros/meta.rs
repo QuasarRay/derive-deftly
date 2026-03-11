@@ -1067,13 +1067,27 @@ fn metavalue_litstr<'l>(
     }
 }
 
+/// Common arguments to `metavalue_as`
+///
+/// Logically speaking, these are arguments to `metavalue_as`.
+/// They're the ones that are the same for (nearly) all the arms in
+/// [`FoundNode::expand`].
+/// That it much easier to see the wood for the trees there.
+struct MetaValueAsInput<'i> {
+    val: &'i PreprocessedValue,
+    tspan: Span,
+    into_what: &'i dyn Display,
+}
+
 /// Convert a literal found in a meta item into `T`
 ///
 /// `into_what` is used only for error reporting
-pub fn metavalue_lit_as<T>(
-    val: &PreprocessedValue,
-    tspan: Span,
-    into_what: &dyn Display,
+fn metavalue_as<T>(
+    MetaValueAsInput {
+        val,
+        tspan,
+        into_what,
+    }: MetaValueAsInput<'_>,
 ) -> syn::Result<T>
 where
     T: Parse + ToTokens,
@@ -1141,9 +1155,15 @@ impl<'l> FoundNode<'l> {
             }
         };
 
+        let input = MetaValueAsInput {
+            val,
+            tspan,
+            into_what: as_,
+        };
+
         match as_ {
             SA::expr(.., at, supported) => {
-                let expr = metavalue_lit_as(val, tspan, as_)?;
+                let expr = metavalue_as(input)?;
                 supported.infer_type(&expr);
                 let content = match val {
                     PV::Braced { brace_token, .. } => {
@@ -1163,17 +1183,17 @@ impl<'l> FoundNode<'l> {
                 out.append_tokens(at, content)?;
             }
             SA::ident(..) => {
-                let ident: IdentAny = metavalue_lit_as(val, tspan, as_)?;
+                let ident: IdentAny = metavalue_as(input)?;
                 out.append_identfrag_toks(&*ident)?;
             }
             SA::items(_, np, supported) => {
-                let items = metavalue_lit_as(val, tspan, as_)?;
+                let items = metavalue_as(input)?;
                 supported.infer_type(&items);
                 out.append_tokens(np, items)?;
             }
             SA::path(..) => out.append_syn_type(
                 tspan,
-                syn::Type::Path(metavalue_lit_as(val, tspan, as_)?),
+                syn::Type::Path(metavalue_as(input)?),
                 Grouping::Invisible,
             ),
             SA::str(..) => {
@@ -1186,12 +1206,15 @@ impl<'l> FoundNode<'l> {
             }
             SA::ty(..) => out.append_syn_type(
                 tspan,
-                metavalue_lit_as(val, tspan, as_)?,
+                metavalue_as(input)?,
                 Grouping::Invisible,
             ),
             SA::token_stream(_, np) => {
                 let tokens: TokenStream =
-                    metavalue_lit_as(val, tspan, &"tokens")?;
+                    metavalue_as(MetaValueAsInput {
+                        into_what: &"tokens",
+                        ..input
+                    })?;
                 out.append_tokens(np, tokens)?;
             }
         }
