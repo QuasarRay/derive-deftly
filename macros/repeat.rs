@@ -4,7 +4,8 @@ use super::framework::*;
 
 pub const NESTING_LIMIT: u16 = 100;
 
-pub use RepeatOver as RO;
+// TODO hopefully remove these self::'s rust-lang/rust#153730
+pub use self::RepeatOver as RO;
 
 #[derive(Debug, Copy, Clone, Eq, PartialEq, Display)]
 #[strum(serialize_all = "snake_case")]

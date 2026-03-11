@@ -7,8 +7,9 @@
 
 use super::framework::*;
 
-pub use SubstDetails as SD;
-pub use TemplateElement as TE;
+// TODO hopefully remove these self::'s rust-lang/rust#153730
+pub use self::SubstDetails as SD;
+pub use self::TemplateElement as TE;
 
 #[derive(Debug, Default)]
 // We deliberately don't make this Clone, to avoid cloning whole parse trees.
