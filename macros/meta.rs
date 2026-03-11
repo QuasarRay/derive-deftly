@@ -1145,8 +1145,22 @@ impl<'l> FoundNode<'l> {
             SA::expr(.., at, supported) => {
                 let expr = metavalue_lit_as(val, tspan, as_)?;
                 supported.infer_type(&expr);
-                let span = expr.span();
-                out.append_tokens(at, Grouping::Parens.surround(span, expr))?;
+                let content = match val {
+                    PV::Braced { brace_token, .. } => {
+                        let span = brace_token.span.span();
+                        let mut group = proc_macro2::Group::new(
+                            Delimiter::Brace,
+                            expr.to_token_stream(),
+                        );
+                        group.set_span(span);
+                        group.to_token_stream()
+                    }
+                    _ => {
+                        let span = expr.span();
+                        Grouping::Parens.surround(span, expr)
+                    }
+                };
+                out.append_tokens(at, content)?;
             }
             SA::ident(..) => {
                 let ident: IdentAny = metavalue_lit_as(val, tspan, as_)?;
