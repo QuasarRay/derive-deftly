@@ -1,4 +1,7 @@
-use derive_deftly::{define_derive_deftly, derive_deftly_adhoc, Deftly};
+use derive_deftly::{
+    define_derive_deftly, derive_deftly_adhoc,
+    Deftly,
+};
 
 #[derive(Deftly)]
 #[derive_deftly_adhoc]
@@ -75,6 +78,10 @@ define_derive_deftly! {
     ${tmeta(value) as expr, quoted strip}
     ${tmeta(value) as expr, quoted retain}
 }
+
+
+
+
 
 #[derive(Deftly)]
 #[derive_deftly_adhoc]

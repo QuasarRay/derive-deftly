@@ -1,446 +1,446 @@
 error: cannot parse string into token stream
-  --> ui/badmeta.rs:3:10
+  --> ui/badmeta.rs:6:10
    |
- 3 |   #[derive(Deftly)]
+ 6 |   #[derive(Deftly)]
    |            ^^^^^^
 ...
-15 | / derive_deftly_adhoc! {
-16 | |     DataType:
-17 | |
-18 | |     const K: () = ${tmeta(wrong) as expr}
-19 | | }
+18 | / derive_deftly_adhoc! {
+19 | |     DataType:
+20 | |
+21 | |     const K: () = ${tmeta(wrong) as expr}
+22 | | }
    | |_- in this macro invocation
    |
    = note: this error originates in the macro `::derive_deftly::derive_deftly_engine` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: constructed identifier "Bad." is invalid
-  --> ui/badmeta.rs:29:14
+  --> ui/badmeta.rs:32:14
    |
-29 |     struct ${paste Bad ${tmeta(dot) as str}};
+32 |     struct ${paste Bad ${tmeta(dot) as str}};
    |              ^^^^^
 
 error: probably-invalid input to identifier pasting
-  --> ui/badmeta.rs:7:16
+  --> ui/badmeta.rs:10:16
    |
- 7 |   #[deftly(dot = ".")]
+10 |   #[deftly(dot = ".")]
    |                  ^^^
 ...
-26 | / derive_deftly_adhoc! {
-27 | |     DataType:
-28 | |
-29 | |     struct ${paste Bad ${tmeta(dot) as str}};
+29 | / derive_deftly_adhoc! {
+30 | |     DataType:
+31 | |
+32 | |     struct ${paste Bad ${tmeta(dot) as str}};
 ...  |
-34 | |     struct ${paste Bad ${tmeta(several_inner(several)) as str}};
-35 | | }
+37 | |     struct ${paste Bad ${tmeta(several_inner(several)) as str}};
+38 | | }
    | |_- in this macro invocation
    |
    = note: this error originates in the macro `derive_deftly_driver_DataType` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: expected a list with sub-attributes, found a simple value
-  --> ui/badmeta.rs:7:10
+  --> ui/badmeta.rs:10:10
    |
- 7 |   #[deftly(dot = ".")]
+10 |   #[deftly(dot = ".")]
    |            ^^^
 ...
-26 | / derive_deftly_adhoc! {
-27 | |     DataType:
-28 | |
-29 | |     struct ${paste Bad ${tmeta(dot) as str}};
+29 | / derive_deftly_adhoc! {
+30 | |     DataType:
+31 | |
+32 | |     struct ${paste Bad ${tmeta(dot) as str}};
 ...  |
-34 | |     struct ${paste Bad ${tmeta(several_inner(several)) as str}};
-35 | | }
+37 | |     struct ${paste Bad ${tmeta(several_inner(several)) as str}};
+38 | | }
    | |_- in this macro invocation
    |
    = note: this error originates in the macro `derive_deftly_driver_DataType` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: attribute value expanded, but no suitable value in data structure definition (in this data structure)
-  --> ui/badmeta.rs:4:1
+  --> ui/badmeta.rs:7:1
    |
- 4 | / #[derive_deftly_adhoc]
- 5 | | #[deftly(unit)]
- 6 | | #[deftly(wrong = "{")]
- 7 | | #[deftly(dot = ".")]
+ 7 | / #[derive_deftly_adhoc]
+ 8 | | #[deftly(unit)]
+ 9 | | #[deftly(wrong = "{")]
+10 | | #[deftly(dot = ".")]
 ...  |
-12 | | #[deftly(int128 = "0x12345678_12345678_12345678_12345678")]
-13 | | struct DataType {}
+15 | | #[deftly(int128 = "0x12345678_12345678_12345678_12345678")]
+16 | | struct DataType {}
    | |_________________^
 ...
-26 | / derive_deftly_adhoc! {
-27 | |     DataType:
-28 | |
-29 | |     struct ${paste Bad ${tmeta(dot) as str}};
+29 | / derive_deftly_adhoc! {
+30 | |     DataType:
+31 | |
+32 | |     struct ${paste Bad ${tmeta(dot) as str}};
 ...  |
-34 | |     struct ${paste Bad ${tmeta(several_inner(several)) as str}};
-35 | | }
+37 | |     struct ${paste Bad ${tmeta(several_inner(several)) as str}};
+38 | | }
    | |_- in this macro invocation
    |
    = note: this error originates in the macro `derive_deftly_driver_DataType` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: attribute value expanded, but no suitable value in data structure definition (expansion)
-  --> ui/badmeta.rs:31:26
+  --> ui/badmeta.rs:34:26
    |
-31 |     struct ${paste Bad ${tmeta(dot(has_equals)) as str}};
+34 |     struct ${paste Bad ${tmeta(dot(has_equals)) as str}};
    |                          ^^^^^^^^^^^^^^^^^^^^
 
 error: tried to expand just attribute value, but it was specified multiple times (first occurrence)
-  --> ui/badmeta.rs:8:10
+  --> ui/badmeta.rs:11:10
    |
- 8 |   #[deftly(several = "first")]
+11 |   #[deftly(several = "first")]
    |            ^^^^^^^
 ...
-26 | / derive_deftly_adhoc! {
-27 | |     DataType:
-28 | |
-29 | |     struct ${paste Bad ${tmeta(dot) as str}};
+29 | / derive_deftly_adhoc! {
+30 | |     DataType:
+31 | |
+32 | |     struct ${paste Bad ${tmeta(dot) as str}};
 ...  |
-34 | |     struct ${paste Bad ${tmeta(several_inner(several)) as str}};
-35 | | }
+37 | |     struct ${paste Bad ${tmeta(several_inner(several)) as str}};
+38 | | }
    | |_- in this macro invocation
    |
    = note: this error originates in the macro `derive_deftly_driver_DataType` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: tried to expand just attribute value, but it was specified multiple times (second occurrence)
-  --> ui/badmeta.rs:9:10
+  --> ui/badmeta.rs:12:10
    |
- 9 |   #[deftly(several = "second")]
+12 |   #[deftly(several = "second")]
    |            ^^^^^^^
 ...
-26 | / derive_deftly_adhoc! {
-27 | |     DataType:
-28 | |
-29 | |     struct ${paste Bad ${tmeta(dot) as str}};
+29 | / derive_deftly_adhoc! {
+30 | |     DataType:
+31 | |
+32 | |     struct ${paste Bad ${tmeta(dot) as str}};
 ...  |
-34 | |     struct ${paste Bad ${tmeta(several_inner(several)) as str}};
-35 | | }
+37 | |     struct ${paste Bad ${tmeta(several_inner(several)) as str}};
+38 | | }
    | |_- in this macro invocation
    |
    = note: this error originates in the macro `derive_deftly_driver_DataType` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: tried to expand just attribute value, but it was specified multiple times (expansion)
-  --> ui/badmeta.rs:33:26
+  --> ui/badmeta.rs:36:26
    |
-33 |     struct ${paste Bad ${tmeta(several) as str}};
+36 |     struct ${paste Bad ${tmeta(several) as str}};
    |                          ^^^^^^^^^^^^^
 
 error: tried to expand just attribute value, but it was specified multiple times (first occurrence)
-  --> ui/badmeta.rs:10:24
+  --> ui/badmeta.rs:13:24
    |
-10 |   #[deftly(several_inner(several = "first", several = "second"))]
+13 |   #[deftly(several_inner(several = "first", several = "second"))]
    |                          ^^^^^^^
 ...
-26 | / derive_deftly_adhoc! {
-27 | |     DataType:
-28 | |
-29 | |     struct ${paste Bad ${tmeta(dot) as str}};
+29 | / derive_deftly_adhoc! {
+30 | |     DataType:
+31 | |
+32 | |     struct ${paste Bad ${tmeta(dot) as str}};
 ...  |
-34 | |     struct ${paste Bad ${tmeta(several_inner(several)) as str}};
-35 | | }
+37 | |     struct ${paste Bad ${tmeta(several_inner(several)) as str}};
+38 | | }
    | |_- in this macro invocation
    |
    = note: this error originates in the macro `derive_deftly_driver_DataType` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: tried to expand just attribute value, but it was specified multiple times (second occurrence)
-  --> ui/badmeta.rs:10:43
+  --> ui/badmeta.rs:13:43
    |
-10 |   #[deftly(several_inner(several = "first", several = "second"))]
+13 |   #[deftly(several_inner(several = "first", several = "second"))]
    |                                             ^^^^^^^
 ...
-26 | / derive_deftly_adhoc! {
-27 | |     DataType:
-28 | |
-29 | |     struct ${paste Bad ${tmeta(dot) as str}};
+29 | / derive_deftly_adhoc! {
+30 | |     DataType:
+31 | |
+32 | |     struct ${paste Bad ${tmeta(dot) as str}};
 ...  |
-34 | |     struct ${paste Bad ${tmeta(several_inner(several)) as str}};
-35 | | }
+37 | |     struct ${paste Bad ${tmeta(several_inner(several)) as str}};
+38 | | }
    | |_- in this macro invocation
    |
    = note: this error originates in the macro `derive_deftly_driver_DataType` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: tried to expand just attribute value, but it was specified multiple times (expansion)
-  --> ui/badmeta.rs:34:26
+  --> ui/badmeta.rs:37:26
    |
-34 |     struct ${paste Bad ${tmeta(several_inner(several)) as str}};
+37 |     struct ${paste Bad ${tmeta(several_inner(several)) as str}};
    |                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 error: attribute value expanded, but no value in data structure definition (in this data structure)
-  --> ui/badmeta.rs:4:1
+  --> ui/badmeta.rs:7:1
    |
- 4 | / #[derive_deftly_adhoc]
- 5 | | #[deftly(unit)]
- 6 | | #[deftly(wrong = "{")]
- 7 | | #[deftly(dot = ".")]
+ 7 | / #[derive_deftly_adhoc]
+ 8 | | #[deftly(unit)]
+ 9 | | #[deftly(wrong = "{")]
+10 | | #[deftly(dot = ".")]
 ...  |
-12 | | #[deftly(int128 = "0x12345678_12345678_12345678_12345678")]
-13 | | struct DataType {}
+15 | | #[deftly(int128 = "0x12345678_12345678_12345678_12345678")]
+16 | | struct DataType {}
    | |_________________^
 ...
-39 | / derive_deftly_adhoc! {
-40 | |     DataType:
+42 | / derive_deftly_adhoc! {
+43 | |     DataType:
 ...  |
-44 | | }
+47 | | }
    | |_- in this macro invocation
    |
    = note: this error originates in the macro `derive_deftly_driver_DataType` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: attribute value expanded, but no value in data structure definition (expansion)
-  --> ui/badmeta.rs:43:26
+  --> ui/badmeta.rs:46:26
    |
-43 |     struct ${paste Bad ${tmeta(barelit(is_value)) as str}};
+46 |     struct ${paste Bad ${tmeta(barelit(is_value)) as str}};
    |                          ^^^^^^^^^^^^^^^^^^^^^^
 
 error: expected a leaf node, found a list with sub-attributes
-  --> ui/badmeta.rs:10:10
+  --> ui/badmeta.rs:13:10
    |
-10 |   #[deftly(several_inner(several = "first", several = "second"))]
+13 |   #[deftly(several_inner(several = "first", several = "second"))]
    |            ^^^^^^^^^^^^^
 ...
-46 | / derive_deftly_adhoc! {
-47 | |     DataType:
+49 | / derive_deftly_adhoc! {
+50 | |     DataType:
 ...  |
-51 | | }
+54 | | }
    | |_- in this macro invocation
    |
    = note: this error originates in the macro `derive_deftly_driver_DataType` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: attribute value expanded, but no suitable value in data structure definition (in this data structure)
-  --> ui/badmeta.rs:4:1
+  --> ui/badmeta.rs:7:1
    |
- 4 | / #[derive_deftly_adhoc]
- 5 | | #[deftly(unit)]
- 6 | | #[deftly(wrong = "{")]
- 7 | | #[deftly(dot = ".")]
+ 7 | / #[derive_deftly_adhoc]
+ 8 | | #[deftly(unit)]
+ 9 | | #[deftly(wrong = "{")]
+10 | | #[deftly(dot = ".")]
 ...  |
-12 | | #[deftly(int128 = "0x12345678_12345678_12345678_12345678")]
-13 | | struct DataType {}
+15 | | #[deftly(int128 = "0x12345678_12345678_12345678_12345678")]
+16 | | struct DataType {}
    | |_________________^
 ...
-46 | / derive_deftly_adhoc! {
-47 | |     DataType:
+49 | / derive_deftly_adhoc! {
+50 | |     DataType:
 ...  |
-51 | | }
+54 | | }
    | |_- in this macro invocation
    |
    = note: this error originates in the macro `derive_deftly_driver_DataType` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: attribute value expanded, but no suitable value in data structure definition (expansion)
-  --> ui/badmeta.rs:50:26
+  --> ui/badmeta.rs:53:26
    |
-50 |     struct ${paste Bad ${tmeta(several_inner) as str}};
+53 |     struct ${paste Bad ${tmeta(several_inner) as str}};
    |                          ^^^^^^^^^^^^^^^^^^^
 
 error: expected identifier
-  --> ui/badmeta.rs:55:10
+  --> ui/badmeta.rs:58:10
    |
-55 | #[deftly("forbidden")]
+58 | #[deftly("forbidden")]
    |          ^^^^^^^^^^^
 
 error: expected identifier
-  --> ui/badmeta.rs:55:10
+  --> ui/badmeta.rs:58:10
    |
-55 | #[deftly("forbidden")]
+58 | #[deftly("forbidden")]
    |          ^^^^^^^^^^^
-56 | struct TopLevelMetaLitForbidden;
-57 | derive_deftly_adhoc! { TopLevelMetaLitForbidden: }
+59 | struct TopLevelMetaLitForbidden;
+60 | derive_deftly_adhoc! { TopLevelMetaLitForbidden: }
    | -------------------------------------------------- in this macro invocation
    |
    = note: this error originates in the macro `derive_deftly_driver_TopLevelMetaLitForbidden` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: expected string literal, for conversion to tokens (attribute value)
-  --> ui/badmeta.rs:61:18
+  --> ui/badmeta.rs:64:18
    |
-61 |   #[deftly(value = wrong)]
+64 |   #[deftly(value = wrong)]
    |                    ^^^^^
-62 |   struct MetaValueMustBeLit;
-63 | / derive_deftly_adhoc! {
-64 | |     MetaValueMustBeLit:
-65 | |     ${tmeta(value) as token_stream}
-66 | | }
+65 |   struct MetaValueMustBeLit;
+66 | / derive_deftly_adhoc! {
+67 | |     MetaValueMustBeLit:
+68 | |     ${tmeta(value) as token_stream}
+69 | | }
    | |_- in this macro invocation
    |
    = note: this error originates in the macro `derive_deftly_driver_MetaValueMustBeLit` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: expected string literal, for conversion to tokens (template)
-  --> ui/badmeta.rs:65:7
+  --> ui/badmeta.rs:68:7
    |
-65 |     ${tmeta(value) as token_stream}
+68 |     ${tmeta(value) as token_stream}
    |       ^^^^^^^^^^^
 
 error: un-braced, un-quoted meta values may not contain any of `<` `>` `=`
-  --> ui/badmeta.rs:70:23
+  --> ui/badmeta.rs:73:23
    |
-70 | #[deftly(value = very < wrong)]
+73 | #[deftly(value = very < wrong)]
    |                       ^
 
 error: beta derive-deftly feature used, without `beta_deftly` template option
-  --> ui/badmeta.rs:75:36
+  --> ui/badmeta.rs:78:36
    |
-75 |     ${tmeta(value) as expr, quoted strip}
+78 |     ${tmeta(value) as expr, quoted strip}
    |                                    ^^^^^
 
 error: beta derive-deftly feature used, without `beta_deftly` template option
-  --> ui/badmeta.rs:76:36
+  --> ui/badmeta.rs:79:36
    |
-76 |     ${tmeta(value) as expr, quoted retain}
+79 |     ${tmeta(value) as expr, quoted retain}
    |                                    ^^^^^^
 
 error: expected identifier
-  --> ui/badmeta.rs:81:18
+  --> ui/badmeta.rs:88:18
    |
-81 | #[deftly(barelit("42"))]
+88 | #[deftly(barelit("42"))]
    |                  ^^^^
 
 error: expected identifier
-  --> ui/badmeta.rs:86:16
+  --> ui/badmeta.rs:93:16
    |
-86 | #[deftly(multi("1", "2"))]
+93 | #[deftly(multi("1", "2"))]
    |                ^^^
 
 error: expected identifier
-  --> ui/badmeta.rs:81:18
+  --> ui/badmeta.rs:88:18
    |
-81 |   #[deftly(barelit("42"))]
+88 |   #[deftly(barelit("42"))]
    |                    ^^^^
 ...
-89 | / derive_deftly_adhoc! {
-90 | |     WithBareLit:
-91 | |     struct ${paste Bad ${tmeta(barelit) as str}};
-92 | | }
+96 | / derive_deftly_adhoc! {
+97 | |     WithBareLit:
+98 | |     struct ${paste Bad ${tmeta(barelit) as str}};
+99 | | }
    | |_- in this macro invocation
    |
    = note: this error originates in the macro `derive_deftly_driver_WithBareLit` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: expected identifier
-  --> ui/badmeta.rs:86:16
-   |
-86 |   #[deftly(multi("1", "2"))]
-   |                  ^^^
+   --> ui/badmeta.rs:93:16
+    |
+ 93 |   #[deftly(multi("1", "2"))]
+    |                  ^^^
 ...
-94 | / derive_deftly_adhoc! {
-95 | |     WithBareLitMulti:
-96 | |     struct ${paste Bad ${tmeta(multi) as str}};
-97 | | }
-   | |_- in this macro invocation
-   |
-   = note: this error originates in the macro `derive_deftly_driver_WithBareLitMulti` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+101 | / derive_deftly_adhoc! {
+102 | |     WithBareLitMulti:
+103 | |     struct ${paste Bad ${tmeta(multi) as str}};
+104 | | }
+    | |_- in this macro invocation
+    |
+    = note: this error originates in the macro `derive_deftly_driver_WithBareLitMulti` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: expected path segment after `::`
-   --> ui/badmeta.rs:101:49
+   --> ui/badmeta.rs:108:49
     |
-101 |     struct ${paste Bad ${tmeta(std::cell::Cell::<String>::ne)w as str}};
+108 |     struct ${paste Bad ${tmeta(std::cell::Cell::<String>::ne)w as str}};
     |                                                 ^
 
 error: expected path segment after `::`
-   --> ui/badmeta.rs:107:27
+   --> ui/badmeta.rs:114:27
     |
-107 | #[deftly(std::cell::Cell::<String>::new)]
+114 | #[deftly(std::cell::Cell::<String>::new)]
     |                           ^
 
 error: expected path segment after `::`
-   --> ui/badmeta.rs:107:27
+   --> ui/badmeta.rs:114:27
     |
-107 |   #[deftly(std::cell::Cell::<String>::new)]
+114 |   #[deftly(std::cell::Cell::<String>::new)]
     |                             ^
 ...
-110 | / derive_deftly_adhoc! {
-111 | |     WithFunkyPath:
-112 | | }
+117 | / derive_deftly_adhoc! {
+118 | |     WithFunkyPath:
+119 | | }
     | |_- in this macro invocation
     |
     = note: this error originates in the macro `derive_deftly_driver_WithFunkyPath` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: missing parameters to expansion keyword (NB: argument must be within { })
-   --> ui/badmeta.rs:121:6
+   --> ui/badmeta.rs:128:6
     |
-121 |     $tmeta(something)
+128 |     $tmeta(something)
     |      ^^^^^
 
 error: missing parameters to condition
-   --> ui/badmeta.rs:122:10
+   --> ui/badmeta.rs:129:10
     |
-122 |     ${if tmeta}
+129 |     ${if tmeta}
     |          ^^^^^
 
 error: unknown option in `${Xmeta }`
-   --> ui/badmeta.rs:124:24
+   --> ui/badmeta.rs:131:24
     |
-124 |     ${tmeta(something) unknown_option}
+131 |     ${tmeta(something) unknown_option}
     |                        ^^^^^^^^^^^^^^
 
 error: expected curly braces
-   --> ui/badmeta.rs:125:27
+   --> ui/badmeta.rs:132:27
     |
-125 |     ${if tmeta(something) unknown_option {}}
+132 |     ${if tmeta(something) unknown_option {}}
     |                           ^^^^^^^^^^^^^^
 
 error: missing `as ...` in meta expansion
-   --> ui/badmeta.rs:131:7
+   --> ui/badmeta.rs:138:7
     |
-131 |     ${tmeta(dot)} // forgot `.. as`, so `"."` not even parsed
+138 |     ${tmeta(dot)} // forgot `.. as`, so `"."` not even parsed
     |       ^^^^^^^^^
 
 error: comparison of string/byte/character literals with suffixes is not supported (literal)
-   --> ui/badmeta.rs:11:40
+   --> ui/badmeta.rs:14:40
     |
- 11 |   #[deftly(integer = "42", with_suffix = "42"x)]
+ 14 |   #[deftly(integer = "42", with_suffix = "42"x)]
     |                                          ^^^^^
 ...
-134 | / derive_deftly_adhoc! {
-135 | |     DataType:
-136 | |     ${if approx_equal("42", ${tmeta(with_suffix) as str}) {}}
-137 | | }
+141 | / derive_deftly_adhoc! {
+142 | |     DataType:
+143 | |     ${if approx_equal("42", ${tmeta(with_suffix) as str}) {}}
+144 | | }
     | |_- in this macro invocation
     |
     = note: this error originates in the macro `derive_deftly_driver_DataType` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: comparison of string/byte/character literals with suffixes is not supported (comparison)
-   --> ui/badmeta.rs:136:10
+   --> ui/badmeta.rs:143:10
     |
-136 |     ${if approx_equal("42", ${tmeta(with_suffix) as str}) {}}
+143 |     ${if approx_equal("42", ${tmeta(with_suffix) as str}) {}}
     |          ^^^^^^^^^^^^
 
 error: integer literal comparison with both values >u64 is not supported (left: number too large to fit in target type)
-   --> ui/badmeta.rs:140:23
+   --> ui/badmeta.rs:147:23
     |
-140 |     ${if approx_equal(0x12345678_12345678_12345678_aaaaaaaa,
+147 |     ${if approx_equal(0x12345678_12345678_12345678_aaaaaaaa,
     |                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 error: integer literal comparison with both values >u64 is not supported (right: number too large to fit in target type)
-   --> ui/badmeta.rs:12:19
+   --> ui/badmeta.rs:15:19
     |
- 12 |   #[deftly(int128 = "0x12345678_12345678_12345678_12345678")]
+ 15 |   #[deftly(int128 = "0x12345678_12345678_12345678_12345678")]
     |                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 ...
-138 | / derive_deftly_adhoc! {
-139 | |     DataType:
-140 | |     ${if approx_equal(0x12345678_12345678_12345678_aaaaaaaa,
-141 | |                       ${tmeta(int128) as token_stream}) {}}
-142 | | }
+145 | / derive_deftly_adhoc! {
+146 | |     DataType:
+147 | |     ${if approx_equal(0x12345678_12345678_12345678_aaaaaaaa,
+148 | |                       ${tmeta(int128) as token_stream}) {}}
+149 | | }
     | |_- in this macro invocation
     |
     = note: this error originates in the macro `derive_deftly_driver_DataType` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: integer literal comparison with both values >u64 is not supported (comparison)
-   --> ui/badmeta.rs:140:10
+   --> ui/badmeta.rs:147:10
     |
-140 |     ${if approx_equal(0x12345678_12345678_12345678_aaaaaaaa,
+147 |     ${if approx_equal(0x12345678_12345678_12345678_aaaaaaaa,
     |          ^^^^^^^^^^^^
 
 error: beta derive-deftly feature used, without `beta_deftly` template option
-   --> ui/badmeta.rs:145:22
+   --> ui/badmeta.rs:152:22
     |
-145 |     ${fmeta(missing) default { 42 }}
+152 |     ${fmeta(missing) default { 42 }}
     |                      ^^^^^^^
 
 error: meta attribute provided as unit (flag), but is used only with default values, so the unit is ignored
-   --> ui/badmeta.rs:160:10
+   --> ui/badmeta.rs:167:10
     |
-160 | #[deftly(unit)]
+167 | #[deftly(unit)]
     |          ^^^^
 
 warning: unused macro definition: `derive_deftly_template_WrongRequestSyntax`
-   --> ui/badmeta.rs:119:5
+   --> ui/badmeta.rs:126:5
     |
-119 |     WrongRequestSyntax:
+126 |     WrongRequestSyntax:
     |     ^^^^^^^^^^^^^^^^^^
     |
     = note: `#[warn(unused_macros)]` (part of `#[warn(unused)]`) on by default
