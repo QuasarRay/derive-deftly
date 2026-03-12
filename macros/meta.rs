@@ -168,7 +168,6 @@ pub enum PreprocessedValue {
     /// `#[deftly(foo = { ... })]`
     Braced {
         brace_token: syn::token::Brace,
-        #[allow(unused)] // XXXX
         value: TokenStream,
     },
 
@@ -950,7 +949,6 @@ enum AsValueHandling {
 ///
 /// `quoted strip`, `meta_quoted retain` etc.
 #[derive(Debug, Clone, Copy)]
-#[allow(unused)] // XXXX
 pub struct QuotedMode {
     pub mode: QuotedModeMode,
     #[allow(unused)]
@@ -1121,19 +1119,43 @@ fn metavalue_as<T>(
 where
     T: Parse + ToTokens,
 {
-    let _ = quoted; // XXXX
-    let _ = as_value_handling; // XXXX
+    use AsValueHandling as AVH;
+    use QuotedModeMode as QMM;
 
-    let s = metavalue_litstr(
-        val,
-        tspan,
-        format_args!(
-            "expected string literal, for conversion to {}",
-            into_what,
-        ),
-    )?;
+    let err = |m| {
+        Err([(val.span(), "attribute value"), (tspan, "template")].error(m))
+    };
 
-    let t = metavalue_lit_reparse(s)?;
+    let quoted = match (quoted, val) {
+        (None, PV::Braced { .. }) | (None, PV::Bare { .. }) => {
+            return err(format_args!(
+                "expected string literal, for conversion to {}",
+                into_what,
+            ))
+        }
+        (None, PV::Quoted { .. }) => QMM::Strip, // future default
+        (Some(q), _) => q,
+    };
+
+    let t = match val {
+        PV::Braced { value, .. } => value.clone(),
+        PV::Quoted { value } => match as_value_handling {
+            AVH::Normal | AVH::NoBare => metavalue_lit_reparse(value)?,
+            AVH::Expr => match quoted {
+                QMM::Strip => metavalue_lit_reparse(value)?,
+                QMM::Retain => value.to_token_stream(),
+            },
+        },
+        PV::Bare { value } => match as_value_handling {
+            AVH::Normal | AVH::Expr => value.clone(),
+            AVH::NoBare => {
+                return err(format_args!(
+                    r#"attribute value for conversion to {} must be enclosed in braces {{..}} or quotes "..""#,
+                    into_what,
+                ))
+            }
+        },
+    };
 
     let thing: T = syn::parse2(t)?;
     Ok(thing)
