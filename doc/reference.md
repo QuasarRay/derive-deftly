@@ -464,6 +464,8 @@ Accesses macro parameters passed via `#[deftly(...)]` attributes.
      (**beta**)
    * **`NAME = VALUE`**: Rust code (nonempty),
      terminated by the next comma, or closing `)`.
+     Angle brackets `< >` and equals `=` are only allowed in `VALUE`
+	 inside `( )` or `{ }`, to avoid ambiguity.
      (**beta**)
    * **`NAME = "VALUE"`**: a string literal, which is re-parsed as Rust code
      (unless otherwise stated, below).

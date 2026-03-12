@@ -1,5 +1,37 @@
 # **Notes and plans (`NOTES.md`)**
 
+# Why un-grouped `< >` are forbidden in bare `#[deftly(NAME = VALUE)]`
+
+Both types and expressions can contain commas within `< >`.
+For example, `B<C, D=E>` is a valid type,
+and `B::<C, D=E>::f()` is a valid expression.
+
+This means that ending at the first comma can be wrong:
+the comma might be part of the expression, or the type,
+according to Rust syntax.
+
+Worse, the rules for whether a comma is "within `< >`" depend on
+whether it's a type or an expression.  Consider:
+
+```rust,ignore
+#[deftly(a = b < c , d = e > + f)]
+# struct X;
+```
+
+If we think we're parsing types it's `a = { b::<c, d=e> + f }`,
+ie, setting one template argument `a` to a trait bound consisting of
+`b` and `f` where where b is parameterised by `c` and `d = e`.
+
+If we think we're parsing expressions it's `a = { b < c }, d = { e > +f }`,
+ie, setting two template arguments `a` and `d` to two boolean
+comparison expressions involving variables `b` `c` `e` and `f`.
+
+But we must be able to determine where the VALUE ends
+without knowing yet whether it's an expression, type, or whatever.
+
+See also
+[Bastion of the Turbofish](https://github.com/rust-lang/rust/blob/main/tests/ui/parser/bastion-of-the-turbofish.rs).
+
 # Future template features
 
 ## Stringification enhancements
