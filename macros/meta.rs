@@ -107,6 +107,7 @@ pub struct SubstMeta<O: SubstParseContext> {
     pub desig: Desig,
     pub as_: Option<SubstAs<O>>,
     pub default: Option<(Argument<O>, O::NotInBool, beta::Enabled)>,
+    pub quoted: Option<(QuotedMode, O::NotInBool)>,
 }
 
 #[derive(Debug, Clone, AsRefStr, Display)]
@@ -407,6 +408,7 @@ impl<O: SubstParseContext> SubstMeta<O> {
 
         let mut as_ = None::<(Span, SubstAs<O>)>;
         let mut default = None;
+        let mut quoted = None::<(Span, (QuotedMode, O::NotInBool))>;
 
         while !O::IS_BOOL && !input.is_empty() {
             let keyword = Ident::parse_any(input)?;
@@ -419,6 +421,8 @@ impl<O: SubstParseContext> SubstMeta<O> {
                 store(kw_span, &mut default, || {
                     Ok((input.parse()?, nb, ue()?))
                 })?;
+            } else if keyword == "quoted" {
+                store(kw_span, &mut quoted, || Ok((input.parse()?, nb)))?;
             } else {
                 return Err(keyword.error("unknown option in `${Xmeta }`"));
             }
@@ -438,6 +442,7 @@ impl<O: SubstParseContext> SubstMeta<O> {
         Ok(ret! {
             as_
             default
+            quoted
         })
     }
 }
@@ -964,12 +969,15 @@ where
             desig,
             as_,
             default,
+            quoted,
         } = self;
         let mut found = None::<FoundNode>;
         let mut hint = None::<FoundNearbyNode>;
         let span_whole = self.span_whole(kw_span);
         let self_loc = || (span_whole, "expansion");
         let error_loc = || [ctx.error_loc(), self_loc()];
+
+        let _ = quoted; // XXXX
 
         desig.label.search(
             pmetas,
