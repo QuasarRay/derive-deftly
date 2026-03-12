@@ -1133,6 +1133,13 @@ where
         ),
     )?;
 
+    let t = metavalue_lit_reparse(s)?;
+
+    let thing: T = syn::parse2(t)?;
+    Ok(thing)
+}
+
+fn metavalue_lit_reparse(s: &syn::LitStr) -> syn::Result<TokenStream> {
     let t: TokenStream = s.parse().map_err(|e| {
         // Empirically, parsing a LitStr in actual proc macro context, with
         // proc_macro2, into tokens, can generate a lexical error with a
@@ -1149,12 +1156,11 @@ where
             Some(())
         })() {
             Some(()) => e,
-            None => val.span().error(e.to_string()),
+            None => s.span().error(e.to_string()),
         }
     })?;
 
-    let thing: T = syn::parse2(t)?;
-    Ok(thing)
+    Ok(t)
 }
 
 impl<'l> FoundNode<'l> {
