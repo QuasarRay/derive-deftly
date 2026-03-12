@@ -60,7 +60,10 @@ derive_deftly_adhoc! { TopLevelMetaLitForbidden: }
 #[derive_deftly_adhoc]
 #[deftly(value = wrong)]
 struct MetaValueMustBeLit;
-derive_deftly_adhoc! { MetaValueMustBeLit: }
+derive_deftly_adhoc! {
+    MetaValueMustBeLit:
+    ${tmeta(value) as token_stream}
+}
 
 #[derive(Deftly)]
 #[derive_deftly_adhoc]
