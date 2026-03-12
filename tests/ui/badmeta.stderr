@@ -271,6 +271,18 @@ error: un-braced, un-quoted meta values may not contain any of `<` `>` `=`
 70 | #[deftly(value = very < wrong)]
    |                       ^
 
+error: beta derive-deftly feature used, without `beta_deftly` template option
+  --> ui/badmeta.rs:75:36
+   |
+75 |     ${tmeta(value) as expr, quoted strip}
+   |                                    ^^^^^
+
+error: beta derive-deftly feature used, without `beta_deftly` template option
+  --> ui/badmeta.rs:76:36
+   |
+76 |     ${tmeta(value) as expr, quoted retain}
+   |                                    ^^^^^^
+
 error: expected identifier
   --> ui/badmeta.rs:81:18
    |
