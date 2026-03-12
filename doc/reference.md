@@ -1668,14 +1668,16 @@ the [`$dbg_all_keywords` expansion](#dbg--dbg_all_keywords--debugging-output).
 </div>
 
 Changes the default for [`${Xmeta(...) as ...}`](#x:fmeta),
-in this module or template, to:
+in template, to:
 
   * **`quoted strip`** (allow unquoted values, strip any quotes), or
   * **`quoted retain`** (allow unquoted values,
     `as expr` does not strip `"..."` and yields the provided literal).
 
-This option is only allowed in a template or module,
+This option is only allowed in a template,
 not in a driver's `#[derive_deftly]` attribute.
+If affects the whole template including `$Xmeta` expansions
+in any imported modules.
 
 Available only in [**beta**].
 In the future, `quoted strip` will become the default.
