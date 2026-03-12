@@ -913,6 +913,39 @@ impl ToTokens for MetaUnsupported {
     }
 }
 
+//---------- quoted modes and allows ----------
+
+/// Quote handling mode specified by template
+///
+/// `quoted strip`, `meta_quoted retain` etc.
+#[derive(Debug, Clone, Copy)]
+#[allow(unused)] // XXXX
+pub struct QuotedMode {
+    pub mode: QuotedModeMode,
+    #[allow(unused)]
+    pub beta: beta::Enabled,
+}
+
+/// Just the quote handling mode specified by template
+///
+/// Beta is unchecked here and there is no span.
+#[derive(Debug, Clone, Copy, Eq, PartialEq, EnumString)]
+#[strum(serialize_all = "snake_case")]
+pub enum QuotedModeMode {
+    /// Future default
+    Strip,
+    Retain,
+}
+
+impl Parse for QuotedMode {
+    fn parse(input: ParseStream) -> syn::Result<Self> {
+        let mode: DdOptVal<QuotedModeMode> = input.parse()?;
+        let beta = beta::Enabled::new_for_syntax(mode.span)?;
+        let mode = mode.value;
+        Ok(QuotedMode { mode, beta })
+    }
+}
+
 //---------- template expansion ----------
 
 impl<O> SubstMeta<O>

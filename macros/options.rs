@@ -137,6 +137,11 @@ impl DdOptValDescribable for ExpectedDriverKind {
     const DESCRIPTION: &'static str = "expected driver kind (in `for` option)";
 }
 
+impl DdOptValDescribable for meta::QuotedModeMode {
+    const DESCRIPTION: &'static str =
+ "default handling of quoted meta attr values (in `meta_quoted` option)";
+}
+
 //---------- parsing ----------
 
 impl OpContext {
