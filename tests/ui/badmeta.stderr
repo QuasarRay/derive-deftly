@@ -272,98 +272,98 @@ error: un-braced, un-quoted meta values may not contain any of `<` `>` `=`
    |                       ^
 
 error: expected identifier
-  --> ui/badmeta.rs:75:18
+  --> ui/badmeta.rs:81:18
    |
-75 | #[deftly(barelit("42"))]
+81 | #[deftly(barelit("42"))]
    |                  ^^^^
 
 error: expected identifier
-  --> ui/badmeta.rs:80:16
+  --> ui/badmeta.rs:86:16
    |
-80 | #[deftly(multi("1", "2"))]
+86 | #[deftly(multi("1", "2"))]
    |                ^^^
 
 error: expected identifier
-  --> ui/badmeta.rs:75:18
+  --> ui/badmeta.rs:81:18
    |
-75 |   #[deftly(barelit("42"))]
+81 |   #[deftly(barelit("42"))]
    |                    ^^^^
 ...
-83 | / derive_deftly_adhoc! {
-84 | |     WithBareLit:
-85 | |     struct ${paste Bad ${tmeta(barelit) as str}};
-86 | | }
+89 | / derive_deftly_adhoc! {
+90 | |     WithBareLit:
+91 | |     struct ${paste Bad ${tmeta(barelit) as str}};
+92 | | }
    | |_- in this macro invocation
    |
    = note: this error originates in the macro `derive_deftly_driver_WithBareLit` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: expected identifier
-  --> ui/badmeta.rs:80:16
+  --> ui/badmeta.rs:86:16
    |
-80 |   #[deftly(multi("1", "2"))]
+86 |   #[deftly(multi("1", "2"))]
    |                  ^^^
 ...
-88 | / derive_deftly_adhoc! {
-89 | |     WithBareLitMulti:
-90 | |     struct ${paste Bad ${tmeta(multi) as str}};
-91 | | }
+94 | / derive_deftly_adhoc! {
+95 | |     WithBareLitMulti:
+96 | |     struct ${paste Bad ${tmeta(multi) as str}};
+97 | | }
    | |_- in this macro invocation
    |
    = note: this error originates in the macro `derive_deftly_driver_WithBareLitMulti` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: expected path segment after `::`
-  --> ui/badmeta.rs:95:49
-   |
-95 |     struct ${paste Bad ${tmeta(std::cell::Cell::<String>::ne)w as str}};
-   |                                                 ^
+   --> ui/badmeta.rs:101:49
+    |
+101 |     struct ${paste Bad ${tmeta(std::cell::Cell::<String>::ne)w as str}};
+    |                                                 ^
 
 error: expected path segment after `::`
-   --> ui/badmeta.rs:101:27
+   --> ui/badmeta.rs:107:27
     |
-101 | #[deftly(std::cell::Cell::<String>::new)]
+107 | #[deftly(std::cell::Cell::<String>::new)]
     |                           ^
 
 error: expected path segment after `::`
-   --> ui/badmeta.rs:101:27
+   --> ui/badmeta.rs:107:27
     |
-101 |   #[deftly(std::cell::Cell::<String>::new)]
+107 |   #[deftly(std::cell::Cell::<String>::new)]
     |                             ^
 ...
-104 | / derive_deftly_adhoc! {
-105 | |     WithFunkyPath:
-106 | | }
+110 | / derive_deftly_adhoc! {
+111 | |     WithFunkyPath:
+112 | | }
     | |_- in this macro invocation
     |
     = note: this error originates in the macro `derive_deftly_driver_WithFunkyPath` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: missing parameters to expansion keyword (NB: argument must be within { })
-   --> ui/badmeta.rs:115:6
+   --> ui/badmeta.rs:121:6
     |
-115 |     $tmeta(something)
+121 |     $tmeta(something)
     |      ^^^^^
 
 error: missing parameters to condition
-   --> ui/badmeta.rs:116:10
+   --> ui/badmeta.rs:122:10
     |
-116 |     ${if tmeta}
+122 |     ${if tmeta}
     |          ^^^^^
 
 error: unknown option in `${Xmeta }`
-   --> ui/badmeta.rs:118:24
+   --> ui/badmeta.rs:124:24
     |
-118 |     ${tmeta(something) unknown_option}
+124 |     ${tmeta(something) unknown_option}
     |                        ^^^^^^^^^^^^^^
 
 error: expected curly braces
-   --> ui/badmeta.rs:119:27
+   --> ui/badmeta.rs:125:27
     |
-119 |     ${if tmeta(something) unknown_option {}}
+125 |     ${if tmeta(something) unknown_option {}}
     |                           ^^^^^^^^^^^^^^
 
 error: missing `as ...` in meta expansion
-   --> ui/badmeta.rs:125:7
+   --> ui/badmeta.rs:131:7
     |
-125 |     ${tmeta(dot)} // forgot `.. as`, so `"."` not even parsed
+131 |     ${tmeta(dot)} // forgot `.. as`, so `"."` not even parsed
     |       ^^^^^^^^^
 
 error: comparison of string/byte/character literals with suffixes is not supported (literal)
@@ -372,24 +372,24 @@ error: comparison of string/byte/character literals with suffixes is not support
  11 |   #[deftly(integer = "42", with_suffix = "42"x)]
     |                                          ^^^^^
 ...
-128 | / derive_deftly_adhoc! {
-129 | |     DataType:
-130 | |     ${if approx_equal("42", ${tmeta(with_suffix) as str}) {}}
-131 | | }
+134 | / derive_deftly_adhoc! {
+135 | |     DataType:
+136 | |     ${if approx_equal("42", ${tmeta(with_suffix) as str}) {}}
+137 | | }
     | |_- in this macro invocation
     |
     = note: this error originates in the macro `derive_deftly_driver_DataType` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: comparison of string/byte/character literals with suffixes is not supported (comparison)
-   --> ui/badmeta.rs:130:10
+   --> ui/badmeta.rs:136:10
     |
-130 |     ${if approx_equal("42", ${tmeta(with_suffix) as str}) {}}
+136 |     ${if approx_equal("42", ${tmeta(with_suffix) as str}) {}}
     |          ^^^^^^^^^^^^
 
 error: integer literal comparison with both values >u64 is not supported (left: number too large to fit in target type)
-   --> ui/badmeta.rs:134:23
+   --> ui/badmeta.rs:140:23
     |
-134 |     ${if approx_equal(0x12345678_12345678_12345678_aaaaaaaa,
+140 |     ${if approx_equal(0x12345678_12345678_12345678_aaaaaaaa,
     |                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 error: integer literal comparison with both values >u64 is not supported (right: number too large to fit in target type)
@@ -398,37 +398,37 @@ error: integer literal comparison with both values >u64 is not supported (right:
  12 |   #[deftly(int128 = "0x12345678_12345678_12345678_12345678")]
     |                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 ...
-132 | / derive_deftly_adhoc! {
-133 | |     DataType:
-134 | |     ${if approx_equal(0x12345678_12345678_12345678_aaaaaaaa,
-135 | |                       ${tmeta(int128) as token_stream}) {}}
-136 | | }
+138 | / derive_deftly_adhoc! {
+139 | |     DataType:
+140 | |     ${if approx_equal(0x12345678_12345678_12345678_aaaaaaaa,
+141 | |                       ${tmeta(int128) as token_stream}) {}}
+142 | | }
     | |_- in this macro invocation
     |
     = note: this error originates in the macro `derive_deftly_driver_DataType` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: integer literal comparison with both values >u64 is not supported (comparison)
-   --> ui/badmeta.rs:134:10
+   --> ui/badmeta.rs:140:10
     |
-134 |     ${if approx_equal(0x12345678_12345678_12345678_aaaaaaaa,
+140 |     ${if approx_equal(0x12345678_12345678_12345678_aaaaaaaa,
     |          ^^^^^^^^^^^^
 
 error: beta derive-deftly feature used, without `beta_deftly` template option
-   --> ui/badmeta.rs:139:22
+   --> ui/badmeta.rs:145:22
     |
-139 |     ${fmeta(missing) default { 42 }}
+145 |     ${fmeta(missing) default { 42 }}
     |                      ^^^^^^^
 
 error: meta attribute provided as unit (flag), but is used only with default values, so the unit is ignored
-   --> ui/badmeta.rs:154:10
+   --> ui/badmeta.rs:160:10
     |
-154 | #[deftly(unit)]
+160 | #[deftly(unit)]
     |          ^^^^
 
 warning: unused macro definition: `derive_deftly_template_WrongRequestSyntax`
-   --> ui/badmeta.rs:113:5
+   --> ui/badmeta.rs:119:5
     |
-113 |     WrongRequestSyntax:
+119 |     WrongRequestSyntax:
     |     ^^^^^^^^^^^^^^^^^^
     |
     = note: `#[warn(unused_macros)]` (part of `#[warn(unused)]`) on by default
