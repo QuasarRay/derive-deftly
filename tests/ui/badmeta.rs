@@ -1,5 +1,5 @@
 use derive_deftly::{
-    define_derive_deftly, derive_deftly_adhoc,
+    define_derive_deftly, define_derive_deftly_module, derive_deftly_adhoc,
     Deftly,
 };
 
@@ -79,9 +79,9 @@ define_derive_deftly! {
     ${tmeta(value) as expr, quoted retain}
 }
 
-
-
-
+define_derive_deftly! { export MetaQuotedOptionNoBeta1 meta_quoted strip: }
+define_derive_deftly! { export MetaQuotedOptionNoBeta2 meta_quoted retain: }
+define_derive_deftly_module! { export MetaQuotedModule meta_quoted retain: }
 
 #[derive(Deftly)]
 #[derive_deftly_adhoc]

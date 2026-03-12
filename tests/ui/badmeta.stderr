@@ -283,6 +283,24 @@ error: beta derive-deftly feature used, without `beta_deftly` template option
 79 |     ${tmeta(value) as expr, quoted retain}
    |                                    ^^^^^^
 
+error: meta_quoted is a beta feature; the beta_deftly option must also be specified
+  --> ui/badmeta.rs:82:56
+   |
+82 | define_derive_deftly! { export MetaQuotedOptionNoBeta1 meta_quoted strip: }
+   |                                                        ^^^^^^^^^^^
+
+error: meta_quoted is a beta feature; the beta_deftly option must also be specified
+  --> ui/badmeta.rs:83:56
+   |
+83 | define_derive_deftly! { export MetaQuotedOptionNoBeta2 meta_quoted retain: }
+   |                                                        ^^^^^^^^^^^
+
+error: only beta_deftly is allowed in module definitions
+  --> ui/badmeta.rs:84:56
+   |
+84 | define_derive_deftly_module! { export MetaQuotedModule meta_quoted retain: }
+   |                                                        ^^^^^^^^^^^
+
 error: expected identifier
   --> ui/badmeta.rs:88:18
    |
