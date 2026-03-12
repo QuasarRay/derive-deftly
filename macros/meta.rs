@@ -1003,8 +1003,6 @@ where
         let self_loc = || (span_whole, "expansion");
         let error_loc = || [ctx.error_loc(), self_loc()];
 
-        let _ = quoted; // XXXX
-
         desig.label.search(
             pmetas,
             &mut |av: FoundNode| {
@@ -1065,8 +1063,10 @@ where
             }
         })?;
 
+        let quoted = quoted.map(|(q, _nb)| q).or(ctx.meta_quoted);
+
         found.ptree.update_used(Usage::VALUE);
-        found.expand(span_whole, as_, out)?;
+        found.expand(span_whole, as_, quoted, out)?;
 
         Ok(())
     }
@@ -1101,6 +1101,7 @@ fn metavalue_litstr<'l>(
 /// That it much easier to see the wood for the trees there.
 struct MetaValueAsInput<'i> {
     val: &'i PreprocessedValue,
+    quoted: Option<QuotedModeMode>,
     tspan: Span,
     into_what: &'i dyn Display,
 }
@@ -1112,6 +1113,7 @@ fn metavalue_as<T>(
     as_value_handling: AsValueHandling,
     MetaValueAsInput {
         val,
+        quoted,
         tspan,
         into_what,
     }: MetaValueAsInput<'_>,
@@ -1119,6 +1121,7 @@ fn metavalue_as<T>(
 where
     T: Parse + ToTokens,
 {
+    let _ = quoted; // XXXX
     let _ = as_value_handling; // XXXX
 
     let s = metavalue_litstr(
@@ -1159,6 +1162,7 @@ impl<'l> FoundNode<'l> {
         &self,
         tspan: Span,
         as_: &Option<SubstAs<O>>,
+        quoted: Option<QuotedMode>,
         out: &mut O,
     ) -> syn::Result<()>
     where
@@ -1184,10 +1188,12 @@ impl<'l> FoundNode<'l> {
                 &default_buf
             }
         };
+        let quoted = quoted.map(|q| q.mode);
 
         let input = MetaValueAsInput {
             val,
             tspan,
+            quoted,
             into_what: as_,
         };
 
