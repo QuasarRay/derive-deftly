@@ -920,6 +920,32 @@ impl ToTokens for MetaUnsupported {
 
 //---------- quoted modes and allows ----------
 
+/// Handling mode derived from the `as`
+///
+/// This is the distillation of the `as`-specific
+/// quoted/braced/bare handling,
+/// from the `as` arms in [`FoundNode::expand`].
+#[derive(Debug)]
+enum AsValueHandling {
+    /// "Normal" handling
+    ///
+    /// * double quotes are always stripped and content reparsed
+    /// * bare values *are* allowed
+    Normal,
+
+    /// Handling for `as expr`
+    ///
+    /// * double quotes are *sometimes* stripped depending on `quoted` options
+    /// * bare values *are* allowed
+    Expr,
+
+    /// Syntax is not suitable for including bare
+    ///
+    /// * double quotes are always stripped and content reparsed
+    /// * bare values are *not* allowed
+    NoBare,
+}
+
 /// Quote handling mode specified by template
 ///
 /// `quoted strip`, `meta_quoted retain` etc.
@@ -1083,6 +1109,7 @@ struct MetaValueAsInput<'i> {
 ///
 /// `into_what` is used only for error reporting
 fn metavalue_as<T>(
+    as_value_handling: AsValueHandling,
     MetaValueAsInput {
         val,
         tspan,
@@ -1092,6 +1119,8 @@ fn metavalue_as<T>(
 where
     T: Parse + ToTokens,
 {
+    let _ = as_value_handling; // XXXX
+
     let s = metavalue_litstr(
         val,
         tspan,
@@ -1144,6 +1173,7 @@ impl<'l> FoundNode<'l> {
             FNK::Value(value) => value,
         };
 
+        use AsValueHandling as AVH;
         use SubstAs as SA;
 
         let default_buf;
@@ -1163,7 +1193,7 @@ impl<'l> FoundNode<'l> {
 
         match as_ {
             SA::expr(.., at, supported) => {
-                let expr = metavalue_as(input)?;
+                let expr = metavalue_as(AVH::Expr, input)?;
                 supported.infer_type(&expr);
                 let content = match val {
                     PV::Braced { brace_token, .. } => {
@@ -1183,17 +1213,17 @@ impl<'l> FoundNode<'l> {
                 out.append_tokens(at, content)?;
             }
             SA::ident(..) => {
-                let ident: IdentAny = metavalue_as(input)?;
+                let ident: IdentAny = metavalue_as(AVH::Normal, input)?;
                 out.append_identfrag_toks(&*ident)?;
             }
             SA::items(_, np, supported) => {
-                let items = metavalue_as(input)?;
+                let items = metavalue_as(AVH::NoBare, input)?;
                 supported.infer_type(&items);
                 out.append_tokens(np, items)?;
             }
             SA::path(..) => out.append_syn_type(
                 tspan,
-                syn::Type::Path(metavalue_as(input)?),
+                syn::Type::Path(metavalue_as(AVH::Normal, input)?),
                 Grouping::Invisible,
             ),
             SA::str(..) => {
@@ -1206,12 +1236,12 @@ impl<'l> FoundNode<'l> {
             }
             SA::ty(..) => out.append_syn_type(
                 tspan,
-                metavalue_as(input)?,
+                metavalue_as(AVH::Normal, input)?,
                 Grouping::Invisible,
             ),
             SA::token_stream(_, np) => {
                 let tokens: TokenStream =
-                    metavalue_as(MetaValueAsInput {
+                    metavalue_as(AVH::NoBare, MetaValueAsInput {
                         into_what: &"tokens",
                         ..input
                     })?;
