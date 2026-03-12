@@ -67,6 +67,11 @@ derive_deftly_adhoc! {
 
 #[derive(Deftly)]
 #[derive_deftly_adhoc]
+#[deftly(value = very < wrong)]
+struct MetaValueBareForbidden;
+
+#[derive(Deftly)]
+#[derive_deftly_adhoc]
 #[deftly(barelit("42"))]
 struct WithBareLit;
 
