@@ -7,7 +7,7 @@ pub fn for_every_example_context<E>(
     mut call: impl FnMut(&Context<'_>) -> Result<(), E>,
 ) -> Result<(), E> {
     for driver in drivers {
-        Context::call(driver, &parse_quote!(crate), None, |ctx| {
+        Context::call(driver, &parse_quote!(crate), None, None, |ctx| {
             Ok::<_, syn::Error>((|| {
                 call(&ctx)?;
                 ctx.for_with_within::<WithinVariant, _, _>(|ctx, _| {

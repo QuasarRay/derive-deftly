@@ -33,7 +33,7 @@ impl Example for ForToplevelsConcatExample {
 
                     let crate_ = &parse_quote!(crate);
                     got.extend(
-                        Context::call(driver, crate_, None, |ctx| {
+                        Context::call(driver, crate_, None, None, |ctx| {
                             let mut out = TokenAccumulator::new();
                             template.expand(ctx.as_general(), &mut out);
                             out.tokens()

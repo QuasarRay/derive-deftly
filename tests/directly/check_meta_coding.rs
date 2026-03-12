@@ -50,7 +50,7 @@ fn process_nodes_top<T>(
     mut nc: impl FnMut(&PreprocessedTree, Usage),
     finish: impl FnOnce(Context) -> T,
 ) -> T {
-    Context::call(&top, &dummy_path(), None, |ctx| {
+    Context::call(&top, &dummy_path(), None, None, |ctx| {
         start(&ctx);
         let mut rs = scenario.iter();
         process_nodes_ctx(&ctx, &mut |ptree: &PreprocessedTree| {

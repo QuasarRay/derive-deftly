@@ -55,6 +55,7 @@ pub struct DdOptions {
     pub dbg: bool,
     pub driver_kind: Option<DdOptVal<ExpectedDriverKind>>,
     pub expect_target: Option<DdOptVal<check::Target>>,
+    pub meta_quoted: Option<DdOptVal<meta::QuotedModeMode>>,
     pub beta_enabled: Option<beta::Enabled>,
 }
 
@@ -72,6 +73,7 @@ enum OptionDetails {
     dbg,
     For(DdOptVal<ExpectedDriverKind>),
     expect(DdOptVal<check::Target>),
+    meta_quoted(DdOptVal<meta::QuotedModeMode>),
     beta_deftly(beta::Enabled),
 }
 
@@ -163,6 +165,7 @@ impl OpContext {
             OD::expect(v) => return check::check_expect_opcontext(v, self),
             OD::For(..) => {}
             OD::beta_deftly(..) => {}
+            OD::meta_quoted(..) => {}
         }
         match self {
             OC::TemplateDefinition => Ok(()),
@@ -237,14 +240,29 @@ impl UnprocessedOptions {
     ) -> syn::Result<Self> {
         let mut beta_enabled = None;
 
+        let mut beta_required = vec![];
+        #[allow(unused)] // unused when there are no beta-only options
+        let mut note_beta = |o: &DdOption| beta_required.push(o.kw_span);
+
         // Scan ahead for a syntax check (and beta enablement)
         DdOption::parse_several(&input.fork(), opcontext, |opt| {
             match &opt.od {
                 OD::beta_deftly(be) => beta_enabled = Some(*be),
+                OD::meta_quoted(..) => note_beta(&opt),
                 _ => {}
             };
             Ok(())
         })?;
+
+        if beta_enabled.is_none() {
+            let mut errs = ErrorAccumulator::default();
+            for span in beta_required {
+                errs.push(span.error(
+ "meta_quoted is a beta feature; the beta_deftly option must also be specified"
+                ));
+            }
+            errs.finish()?;
+        }
 
         // Collect everything until the : or =
         let mut out = TokenStream::new();
@@ -326,6 +344,7 @@ impl Parse for DdOption {
         keyword! { dbg }
         keyword! { "for": For(input.parse()?) }
         keyword! { expect(input.parse()?) }
+        keyword! { meta_quoted(input.parse()?) }
         keyword! { beta_deftly(beta::Enabled::new_for_dd_option(kw.span())?) }
 
         Err(kw.error("unknown derive-deftly option"))
@@ -386,6 +405,22 @@ impl DdOptions {
             OD::expect(spec) => store(&mut self.expect_target, spec)?,
             OD::For(spec) => store(&mut self.driver_kind, spec)?,
             OD::beta_deftly(be) => self.beta_enabled = Some(be),
+            OD::meta_quoted(spec) => store(&mut self.meta_quoted, spec)?,
         })
+    }
+
+    pub fn meta_quoted_default(
+        &self,
+    ) -> syn::Result<Option<meta::QuotedMode>> {
+        #[allow(unused)] // unused if beta compiled out
+        self.meta_quoted
+            .map(|spec| {
+                let beta = self.beta_enabled.expect(
+                    "beta should have been checked during option parsing",
+                );
+                let mode = spec.value;
+                Ok(meta::QuotedMode { mode, beta })
+            })
+            .transpose()
     }
 }

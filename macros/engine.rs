@@ -37,6 +37,7 @@ enum EngineContext {
 }
 
 #[derive(Debug)]
+#[allow(clippy::large_enum_variant)]
 enum EngineInput {
     Expand(EngineExpandInput),
     Final(accum::EngineFinalInput),
@@ -281,6 +282,7 @@ impl<'c> Context<'c> {
         driver: &syn::DeriveInput,
         template_crate: &syn::Path,
         template_name: Option<&syn::Path>,
+        meta_quoted: Option<meta::QuotedMode>,
         f: impl FnOnce(Context) -> syn::Result<T>,
     ) -> Result<T, syn::Error> {
         let tmetas = preprocess_attrs(&driver.attrs)?;
@@ -340,6 +342,7 @@ impl<'c> Context<'c> {
             template_crate,
             template_name,
             pmetas: &tmetas,
+            meta_quoted,
             field: None,
             variant: variant.as_ref(),
             pvariants: &pvariants,
@@ -359,11 +362,14 @@ impl EngineExpandInput {
     fn process(self) -> syn::Result<TokenStream> {
         dprintln!("derive_deftly_engine! crate = {:?}", &self.template_crate);
 
+        let meta_quoted = self.options.meta_quoted_default()?;
+
         let DdOptions {
             dbg,
             driver_kind,
             expect_target,
             beta_enabled,
+            meta_quoted: _,
             //
         } = self.options;
 
@@ -396,6 +402,7 @@ impl EngineExpandInput {
             &self.driver,
             &self.template_crate,
             self.template_name.as_ref(),
+            meta_quoted,
             |ctx| {
                 let mut output = TokenAccumulator::new();
                 Template::expand_iter(
