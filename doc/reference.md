@@ -553,6 +553,7 @@ Accesses macro parameters passed via `#[deftly(...)]` attributes.
       Unlike the other `${Xmeta as ...}` expansions,
       it is not an error for the the driver to supply zero, or several,
       matching `#[deftly]` meta values.
+      `default` is not supported.
 
       Available only in [**beta**].
 
