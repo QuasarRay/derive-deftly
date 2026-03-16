@@ -539,6 +539,14 @@ Accesses macro parameters passed via `#[deftly(...)]` attributes.
         where `attrname`s are paths,
         and `...` is anything not containing commas.
         Each `attrname ...` becomes `#[attrname ...]` in the expansion.
+
+        (With the bare `NAME = VALUE` syntax, the value can only
+        contain one attribute.  To specify more than one, write
+        `NAME = "... "`,
+        `NAME = { ... }`,
+        or
+        `NAME = attrname ..., NAME = attrname ...`.)
+
       * `#[attrname ...] #[attrname ...]`
         which are simply reproduced in the expansion.
 
