@@ -1797,8 +1797,6 @@ This is done for
 The example expansions in the syntax reference 
 are those generated for the following driver types:
 
-XXXX convert `#[deftly]` attrs to unquoted syntax at some point.
-
 <!--##examples-structs##-->
 
 ```rust,dd-directly
