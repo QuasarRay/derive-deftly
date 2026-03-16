@@ -531,7 +531,10 @@ Accesses macro parameters passed via `#[deftly(...)]` attributes.
       (Within pasting, prefer `as str`, the default;
       `as ident` rejects initial digits, and the empty string.)
 
-    * **`attrs`**:
+      <!--
+
+      TODO Move the next line left again!
+        * **`attrs`**:
       `VALUE` is treated as a series of meta attributes,
       in one of the two following forms:
 
@@ -555,6 +558,8 @@ Accesses macro parameters passed via `#[deftly(...)]` attributes.
       matching `#[deftly]` meta values.
 
       Available only in [**beta**].
+
+      -->
 
     * **`items`**:
       `VALUE` is parsed as zero or more Rust Items (`syn::Item`).
