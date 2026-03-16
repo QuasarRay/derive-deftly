@@ -71,7 +71,7 @@ impl DirectiveTrackUsed {
 fn read_preprocess(errs: &mut Errors) -> Preprocessed {
     let _ = dbg!(std::env::current_dir());
 
-    let file = File::open(format!("../{INPUT_FILE}")).unwrap();
+    let file = File::open(format!("../{}", input_file().input_file)).unwrap();
 
     let is_directive = |l: &str| m!(l, r"\s*<!--##examples\b");
 

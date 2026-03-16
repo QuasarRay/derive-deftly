@@ -77,7 +77,26 @@ use contexts::{for_every_example_context, ContextExt as _, Limit};
 use for_toplevels_concat::ForToplevelsConcatExample;
 use possibilities::PossibilitiesExample;
 
-const INPUT_FILE: &str = "doc/reference.md";
+const MAIN_INPUT_FILE: &str = "doc/reference.md";
+
+#[derive(Clone)]
+struct InputFile {
+    input_file: &'static str,
+}
+
+thread_local! {
+    /// Which `reference.md` input file we are processing.
+    ///
+    /// Sometimes there can be more than one version
+    /// eg if we need to do extensive changes for beta features.
+    /// Used for error reporting and control of global template options.
+    static INPUT_FILE: RefCell<Option<InputFile>> = RefCell::new(None);
+}
+fn input_file() -> InputFile {
+    INPUT_FILE
+        .with_borrow(|i| i.clone())
+        .expect("INPUT_FILE not set")
+}
 
 pub type DocLoc = usize;
 
@@ -96,7 +115,7 @@ impl Errors {
         Errors { ok: Ok(()) }
     }
     fn wrong(&mut self, loc: DocLoc, msg: impl Display) {
-        eprintln!("{INPUT_FILE}:{loc}: {msg}");
+        eprintln!("{}:{loc}: {msg}", input_file().input_file);
         self.ok = Err(());
     }
 }
@@ -113,8 +132,9 @@ fn bail(loc: DocLoc, msg: impl Display) -> ! {
     panic!("Errors should have panicked already!");
 }
 
-#[test]
-fn check_examples() {
+#[cfg(test)]
+fn check_examples_in(input_file: InputFile) {
+    INPUT_FILE.set(Some(input_file));
     macros::beta::Enabled::test_with_parsing(|| {
         let mut errs = Errors::new();
         let (structs, examples) = reference_extract::extract(&mut errs);
@@ -123,5 +143,12 @@ fn check_examples() {
             example.check(&mut errs, &structs);
         }
         eprintln!("checked {} examples", examples.len());
+    });
+}
+
+#[test]
+fn check_examples() {
+    check_examples_in(InputFile {
+        input_file: MAIN_INPUT_FILE,
     });
 }
