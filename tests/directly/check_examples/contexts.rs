@@ -6,8 +6,9 @@ pub fn for_every_example_context<E>(
     drivers: &[syn::DeriveInput],
     mut call: impl FnMut(&Context<'_>) -> Result<(), E>,
 ) -> Result<(), E> {
+    let qm = input_file().quoted_mode;
     for driver in drivers {
-        Context::call(driver, &parse_quote!(crate), None, None, |ctx| {
+        Context::call(driver, &parse_quote!(crate), None, qm, |ctx| {
             Ok::<_, syn::Error>((|| {
                 call(&ctx)?;
                 ctx.for_with_within::<WithinVariant, _, _>(|ctx, _| {
