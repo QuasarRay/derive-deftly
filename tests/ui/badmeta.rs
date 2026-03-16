@@ -73,6 +73,11 @@ derive_deftly_adhoc! {
 #[deftly(value = very < wrong)]
 struct MetaValueBareForbidden;
 
+#[derive(Deftly)]
+#[derive_deftly_adhoc]
+#[deftly(value2 = )]
+struct MetaValueBareForbidden2;
+
 define_derive_deftly! {
     export MetaQuotedWithoutBeta:
     ${tmeta(value) as expr, quoted strip}
