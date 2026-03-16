@@ -500,6 +500,11 @@ impl Parse for PreprocessedValue {
             let value = value.parse()?;
             PV::Braced { brace_token, value }
         } else {
+            if input.is_empty() {
+                return Err(input.error(
+                    "un-bracked, un-quoted meta values may not be empty",
+                ));
+            }
             let mut value = TokenStream::new();
             while !(input.is_empty() || input.peek(Token![,])) {
                 let tt: TT = input.parse()?;
