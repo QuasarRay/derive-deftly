@@ -105,9 +105,16 @@ struct BorrowedDesig<'p> {
 #[derive(Debug)]
 pub struct SubstMeta<O: SubstParseContext> {
     pub desig: Desig,
-    pub as_: Option<SubstAs<O>>,
+    pub as_: Option<SubstAsSpecified<O>>,
     pub default: Option<(Argument<O>, O::NotInBool, beta::Enabled)>,
     pub quoted: Option<(QuotedMode, O::NotInBool)>,
+}
+
+#[derive(Debug)]
+pub struct SubstAsSpecified<O: SubstParseContext> {
+    #[allow(unused)] // XXXX
+    pub kw_span: Span,
+    pub as_: SubstAs<O>,
 }
 
 #[derive(Debug, Clone, AsRefStr, Display)]
@@ -349,10 +356,16 @@ impl Label {
     }
 }
 
-impl<O: SubstParseContext> SubstAs<O> {
+impl<O: SubstParseContext> SubstAsSpecified<O> {
     fn parse(input: ParseStream, nb: O::NotInBool) -> syn::Result<Self> {
         let kw: IdentAny = input.parse()?;
-        let from_sma = |sma: SubstAs<_>| Ok(sma);
+        let kw_span = kw.span();
+        let from_sma = |as_: SubstAs<_>| {
+            Ok(SubstAsSpecified {
+                as_,
+                kw_span,
+            })
+        };
 
         // See keyword_general! in utils.rs
         macro_rules! keyword { { $($args:tt)* } => {
@@ -405,7 +418,7 @@ impl<O: SubstParseContext> SubstMeta<O> {
             Ok(())
         }
 
-        let mut as_ = None::<(Span, SubstAs<O>)>;
+        let mut as_ = None::<(Span, SubstAsSpecified<O>)>;
         let mut default = None;
         let mut quoted = None::<(Span, (QuotedMode, O::NotInBool))>;
 
@@ -416,7 +429,7 @@ impl<O: SubstParseContext> SubstMeta<O> {
             let ue = || beta::Enabled::new_for_syntax(kw_span);
             if keyword == "as" {
                 store(kw_span, &mut as_, || {
-                    SubstAs::parse(input, nb)
+                    SubstAsSpecified::parse(input, nb)
                 })?;
             } else if keyword == "default" {
                 store(kw_span, &mut default, || {
@@ -1196,7 +1209,7 @@ impl<'l> FoundNode<'l> {
     fn expand<O>(
         &self,
         tspan: Span,
-        as_: &Option<SubstAs<O>>,
+        as_: &Option<SubstAsSpecified<O>>,
         quoted: Option<QuotedMode>,
         out: &mut O,
     ) -> syn::Result<()>
@@ -1217,7 +1230,7 @@ impl<'l> FoundNode<'l> {
 
         let default_buf;
         let as_ = match as_ {
-            Some(as_) => as_,
+            Some(as_) => &as_.as_,
             None => {
                 default_buf = O::default_subst_meta_as(tspan)?;
                 &default_buf

@@ -99,14 +99,14 @@ impl Subst<BooleanContext> {
                 }
                 use meta::SubstAs as mSA;
                 if let Some(as_) = as_ {
-                    match as_ {
+                    match as_.as_ {
                         mSA::expr(nb, ..)
                         | mSA::ident(nb, ..)
                         | mSA::items(nb, ..)
                         | mSA::path(nb)
                         | mSA::str(nb)
                         | mSA::token_stream(nb, ..)
-                        | mSA::ty(nb) => void::unreachable(*nb),
+                        | mSA::ty(nb) => void::unreachable(nb),
                     }
                 };
                 is_found(label.search_eval_bool(sm.pmetas(ctx?, kw_span)?))
