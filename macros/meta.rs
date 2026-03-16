@@ -115,18 +115,19 @@ pub struct SubstAsSpecified<O: SubstParseContext> {
     #[allow(unused)] // XXXX
     pub kw_span: Span,
     pub as_: SubstAs<O>,
+    pub nb: O::NotInBool,
 }
 
 #[derive(Debug, Clone, AsRefStr, Display)]
 #[allow(non_camel_case_types)] // clearer to use the exact ident
 pub enum SubstAs<O: SubstParseContext> {
-    expr(O::NotInBool, AllowTokens<O>, SubstAsSupported<ValueExpr>),
-    ident(O::NotInBool),
-    items(O::NotInBool, AllowTokens<O>, SubstAsSupported<ValueItems>),
-    path(O::NotInBool),
-    str(O::NotInBool),
-    token_stream(O::NotInBool, AllowTokens<O>),
-    ty(O::NotInBool),
+    expr(AllowTokens<O>, SubstAsSupported<ValueExpr>),
+    ident,
+    items(AllowTokens<O>, SubstAsSupported<ValueItems>),
+    path,
+    str,
+    token_stream(AllowTokens<O>),
+    ty,
 }
 
 //---------- meta attrs in a driver ----------
@@ -363,6 +364,7 @@ impl<O: SubstParseContext> SubstAsSpecified<O> {
         let from_sma = |as_: SubstAs<_>| {
             Ok(SubstAsSpecified {
                 as_,
+                nb,
                 kw_span,
             })
         };
@@ -380,13 +382,13 @@ impl<O: SubstParseContext> SubstAsSpecified<O> {
             SubstAsSupportStatus::new(&kw)
         }
 
-        keyword! { expr(nb, allow_tokens()?, supported(&kw)?) }
-        keyword! { ident(nb) }
-        keyword! { items(nb, allow_tokens()?, supported(&kw)?) }
-        keyword! { path(nb) }
-        keyword! { str(nb) }
-        keyword! { token_stream(nb, allow_tokens()?) }
-        keyword! { ty(nb) }
+        keyword! { expr(allow_tokens()?, supported(&kw)?) }
+        keyword! { ident }
+        keyword! { items(allow_tokens()?, supported(&kw)?) }
+        keyword! { path }
+        keyword! { str }
+        keyword! { token_stream(allow_tokens()?) }
+        keyword! { ty }
 
         Err(kw.error("unknown derive-deftly 'as' syntax type keyword"))
     }
@@ -1266,21 +1268,21 @@ impl<'l> FoundNode<'l> {
                 };
                 out.append_tokens(at, content)?;
             }
-            SA::ident(..) => {
+            SA::ident => {
                 let ident: IdentAny = metavalue_as(AVH::Normal, input)?;
                 out.append_identfrag_toks(&*ident)?;
             }
-            SA::items(_, np, supported) => {
+            SA::items(np, supported) => {
                 let items = metavalue_as(AVH::NoBare, input)?;
                 supported.infer_type(&items);
                 out.append_tokens(np, items)?;
             }
-            SA::path(..) => out.append_syn_type(
+            SA::path => out.append_syn_type(
                 tspan,
                 syn::Type::Path(metavalue_as(AVH::Normal, input)?),
                 Grouping::Invisible,
             ),
-            SA::str(..) => {
+            SA::str => {
                 let s = metavalue_litstr(
                     val,
                     tspan,
@@ -1288,12 +1290,12 @@ impl<'l> FoundNode<'l> {
                 )?;
                 out.append_syn_litstr(s);
             }
-            SA::ty(..) => out.append_syn_type(
+            SA::ty => out.append_syn_type(
                 tspan,
                 metavalue_as(AVH::Normal, input)?,
                 Grouping::Invisible,
             ),
-            SA::token_stream(_, np) => {
+            SA::token_stream(np) => {
                 let tokens: TokenStream = metavalue_as(
                     AVH::NoBare,
                     MetaValueAsInput {
