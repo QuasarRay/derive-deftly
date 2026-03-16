@@ -415,7 +415,9 @@ impl<O: SubstParseContext> SubstMeta<O> {
             let nb = O::not_in_bool(&kw_span).expect("checked already");
             let ue = || beta::Enabled::new_for_syntax(kw_span);
             if keyword == "as" {
-                store(kw_span, &mut as_, || SubstAs::parse(input, nb))?;
+                store(kw_span, &mut as_, || {
+                    SubstAs::parse(input, nb)
+                })?;
             } else if keyword == "default" {
                 store(kw_span, &mut default, || {
                     Ok((input.parse()?, nb, ue()?))
