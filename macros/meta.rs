@@ -1020,8 +1020,8 @@ where
         let mut found = None::<FoundNode>;
         let mut hint = None::<FoundNearbyNode>;
         let span_whole = self.span_whole(kw_span);
-        let self_loc = || (span_whole, "expansion");
-        let error_loc = || [ctx.error_loc(), self_loc()];
+        let self_loc = (span_whole, "expansion");
+        let error_loc = [ctx.error_loc(), self_loc];
 
         desig.label.search(
             pmetas,
@@ -1029,7 +1029,7 @@ where
                 if let Some(first) = &found {
                     return Err([(first.path_span, "first occurrence"),
                             (av.path_span, "second occurrence"),
-                            self_loc()].error(
+                            self_loc].error(
  "tried to expand just attribute value, but it was specified multiple times"
                     ));
                 }
@@ -1072,12 +1072,12 @@ where
  "expected a leaf node, found a list with sub-attributes",
                 };
                 let mut err = hint.path_span.error(hint_msg);
-                err.combine(error_loc().error(
+                err.combine(error_loc.error(
  "attribute value expanded, but no suitable value in data structure definition"
                 ));
                 err
             } else {
-                error_loc().error(
+                error_loc.error(
  "attribute value expanded, but no value in data structure definition"
                 )
             }
