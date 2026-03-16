@@ -116,6 +116,10 @@ pub struct SubstAsSpecified<O: SubstParseContext> {
     pub kw_span: Span,
     pub as_: SubstAs<O>,
     pub nb: O::NotInBool,
+
+    /// This is checked at parse time vs the rest of the struct.
+    /// Technically we don't need to store it, but this makes that clearer.
+    pub multiplicity: MultiplicityCollector<Void>,
 }
 
 #[derive(Debug, Clone, AsRefStr, Display)]
@@ -235,6 +239,104 @@ pub enum FoundNearbyNodeKind {
 
 pub use FoundNearbyNodeKind as FNNK;
 pub use FoundNodeKind as FNK;
+
+//---------- multiplicity ----------
+
+/// `as`-specific accumulator for found attribute values of type `T`
+///
+/// Used as `MultiplicityCollector<FoundNode<'_>>` in [`SubstMeta::expand`].
+///
+/// The variant selected is determined solely by the `as`
+/// (or `Singleton` if not present).
+///
+/// Also present in `SubstAsSpecified`, as `MultiplicityCollector<Void>`,
+/// mostly to prompt us to do the errors cross-checks
+/// of the various elements of the [`SubstMeta`].
+/// Specifically, that we don't use `default` with any `as` that
+/// has `MultiplicityCollector::Several`.
+///
+/// Always absent in boolean context, because it lives in `SubstAsSpecified`.
+#[derive(Debug)]
+pub enum MultiplicityCollector<T> {
+    /// Value can only be specified once.  Defaults are supported.
+    Singleton(Option<T>),
+
+    /// Zero or more are allowed.  Defaults are not supported.
+    ///
+    /// When expanding, the expansions for each value
+    /// can just be concatenated in the output.
+    #[allow(unused)] // XXXX
+    Several(Vec<T>),
+}
+
+impl<T> Default for MultiplicityCollector<T> {
+    fn default() -> Self {
+        MultiplicityCollector::Singleton(Default::default())
+    }
+}
+
+impl<T> MultiplicityCollector<T> {
+    pub fn as_singleton_for_default(
+        &self,
+    ) -> Result<&Option<T>, impl Display + Debug> {
+        use MultiplicityCollector as MC;
+        match self {
+            MC::Singleton(s) => Ok(s),
+            _ => Err("`default` is not allowed with this `as`"),
+        }
+    }
+}
+
+impl MultiplicityCollector<Void> {
+    fn start_collecting<'n>(&self) -> MultiplicityCollector<FoundNode<'n>> {
+        use MultiplicityCollector as MC;
+        macro_rules! variants { { $( $v:ident ),* } => {
+            match self { $(
+                MC::$v(_) => MC::$v(Default::default()),
+            )* }
+        } }
+        variants! { Singleton, Several }
+    }
+}
+
+impl<'f> MultiplicityCollector<FoundNode<'f>> {
+    pub fn found(
+        &mut self,
+        self_loc: ErrorLoc<'_>,
+        this: FoundNode<'f>,
+    ) -> syn::Result<()> {
+        use MultiplicityCollector as MC;
+        match self {
+            MC::Singleton(found) => {
+                if let Some(first) = found {
+                    return Err([(first.path_span, "first occurrence"),
+                     (this.path_span, "second occurrence"),
+                     self_loc].error(
+ "tried to expand just attribute value, but it was specified multiple times"
+                    ));
+                }
+                *found = Some(this);
+                Ok(())
+            }
+            MC::Several(found) => {
+                found.push(this);
+                Ok(())
+            }
+        }
+    }
+
+    pub fn iter_for_expand_or_else(
+        self,
+        on_none: impl FnOnce() -> syn::Error,
+    ) -> syn::Result<impl Iterator<Item = FoundNode<'f>>> {
+        use MultiplicityCollector as MC;
+        Ok(match self {
+            MC::Singleton(None) => return Err(on_none()),
+            MC::Singleton(Some(n)) => Left(iter::once(n)),
+            MC::Several(l) => Right(l.into_iter()),
+        })
+    }
+}
 
 //---------- meta attr enumeration and checking ----------
 
@@ -362,11 +464,13 @@ impl<O: SubstParseContext> SubstAsSpecified<O> {
         let kw: IdentAny = input.parse()?;
         let kw_span = kw.span();
         let from_sma = |as_: SubstAs<_>| {
+            let multiplicity = as_.multiplicity();
             Ok(SubstAsSpecified {
                 //
                 as_,
                 nb,
                 kw_span,
+                multiplicity,
             })
         };
 
@@ -392,6 +496,15 @@ impl<O: SubstParseContext> SubstAsSpecified<O> {
         keyword! { ty }
 
         Err(kw.error("unknown derive-deftly 'as' syntax type keyword"))
+    }
+}
+
+impl<O: SubstParseContext> SubstAs<O> {
+    fn multiplicity(&self) -> MultiplicityCollector<Void> {
+        use MultiplicityCollector as MC;
+        match self {
+            _ => MC::Singleton(None),
+        }
     }
 }
 
@@ -447,6 +560,18 @@ impl<O: SubstParseContext> SubstMeta<O> {
                 break;
             }
             let _: Token![,] = input.parse()?;
+        }
+
+        if let Some((_, as_)) = &as_ {
+            if let Some((def_span, _)) = default {
+                let _: &Option<Void> = as_
+                    .multiplicity
+                    .as_singleton_for_default()
+                    .map_err(|m| {
+                        [(as_.kw_span, "`as` value"), (def_span, "`default`")]
+                            .error(m)
+                    })?;
+            }
         }
 
         macro_rules! ret { { $( $f:ident )* } => {
@@ -1018,25 +1143,20 @@ where
             default,
             quoted,
         } = self;
-        let mut found = None::<FoundNode>;
         let mut hint = None::<FoundNearbyNode>;
         let span_whole = self.span_whole(kw_span);
         let self_loc = (span_whole, "expansion");
         let error_loc = [ctx.error_loc(), self_loc];
 
+        let mut found = self
+            .as_
+            .as_ref()
+            .map(|as_| as_.multiplicity.start_collecting())
+            .unwrap_or_default();
+
         desig.label.search(
             pmetas,
-            &mut |av: FoundNode| {
-                if let Some(first) = &found {
-                    return Err([(first.path_span, "first occurrence"),
-                            (av.path_span, "second occurrence"),
-                            self_loc].error(
- "tried to expand just attribute value, but it was specified multiple times"
-                    ));
-                }
-                found = Some(av);
-                Ok(())
-            },
+            &mut |av: FoundNode| found.found(self_loc, av),
             &mut |nearby| {
                 hint.get_or_insert(nearby);
                 Ok(())
@@ -1044,7 +1164,10 @@ where
         )?;
 
         if let Some((def, ..)) = default {
-            if match found {
+            if match found
+                .as_singleton_for_default()
+                .expect("erroneous multiplicity not detected at parse")
+            {
                 None => true,
                 Some(FoundNode {
                     kind: FNK::Unit,
@@ -1062,7 +1185,7 @@ where
             }
         }
 
-        let found = found.ok_or_else(|| {
+        let found = found.iter_for_expand_or_else(|| {
             if let Some(hint) = hint {
                 let hint_msg = match hint.kind {
                     FNNK::Unit =>
@@ -1086,8 +1209,10 @@ where
 
         let quoted = quoted.map(|(q, _nb)| q).or(ctx.meta_quoted);
 
+      for found in found {
         found.ptree.update_used(Usage::VALUE);
         found.expand(span_whole, as_, quoted, out)?;
+      }
 
         Ok(())
     }
