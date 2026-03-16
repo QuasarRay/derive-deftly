@@ -271,6 +271,14 @@ error: un-braced, un-quoted meta values may not contain any of `<` `>` `=`
 73 | #[deftly(value = very < wrong)]
    |                       ^
 
+error: unexpected end of input, un-bracked, un-quoted meta values may not be empty
+  --> ui/badmeta.rs:76:10
+   |
+76 | #[derive(Deftly)]
+   |          ^^^^^^
+   |
+   = note: this error originates in the macro `::derive_deftly::derive_deftly_engine` (in Nightly builds, run with -Z macro-backtrace for more info)
+
 error: beta derive-deftly feature used, without `beta_deftly` template option
   --> ui/badmeta.rs:83:36
    |
