@@ -112,7 +112,6 @@ pub struct SubstMeta<O: SubstParseContext> {
 
 #[derive(Debug)]
 pub struct SubstAsSpecified<O: SubstParseContext> {
-    #[allow(unused)] // TODO
     pub kw_span: Span,
     pub as_: SubstAs<O>,
     pub nb: O::NotInBool,
@@ -132,6 +131,7 @@ pub enum SubstAs<O: SubstParseContext> {
     str,
     token_stream(AllowTokens<O>),
     ty,
+    attrs(AllowTokens<O>),
 }
 
 //---------- meta attrs in a driver ----------
@@ -265,7 +265,6 @@ pub enum MultiplicityCollector<T> {
     ///
     /// When expanding, the expansions for each value
     /// can just be concatenated in the output.
-    #[allow(unused)] // XXXX
     Several(Vec<T>),
 }
 
@@ -494,6 +493,7 @@ impl<O: SubstParseContext> SubstAsSpecified<O> {
         keyword! { str }
         keyword! { token_stream(allow_tokens()?) }
         keyword! { ty }
+        keyword! { attrs(allow_tokens()?) }
 
         Err(kw.error("unknown derive-deftly 'as' syntax type keyword"))
     }
@@ -502,7 +502,9 @@ impl<O: SubstParseContext> SubstAsSpecified<O> {
 impl<O: SubstParseContext> SubstAs<O> {
     fn multiplicity(&self) -> MultiplicityCollector<Void> {
         use MultiplicityCollector as MC;
+        use SubstAs as SA;
         match self {
+            SA::attrs(..) => MC::Several(vec![]),
             _ => MC::Singleton(None),
         }
     }
@@ -1421,6 +1423,10 @@ impl<'l> FoundNode<'l> {
                 metavalue_as(AVH::Normal, input)?,
                 Grouping::Invisible,
             ),
+            SA::attrs(np) => {
+                let attrs: UserAttrs = metavalue_as(AVH::Normal, input)?;
+                out.append_tokens(np, attrs)?;
+            }
             SA::token_stream(np) => {
                 let tokens: TokenStream = metavalue_as(
                     AVH::NoBare,
@@ -1433,6 +1439,73 @@ impl<'l> FoundNode<'l> {
             }
         }
         Ok(())
+    }
+}
+
+//---------- UserAttrs - values for `as attrs` ----------
+
+struct UserAttrs {
+    attrs: Vec<UserAttr>,
+}
+
+struct UserAttr {
+    hash: Token![#],
+    content: proc_macro2::Group,
+}
+
+impl Parse for UserAttrs {
+    fn parse(input: ParseStream) -> syn::Result<Self> {
+        let la = input.lookahead1();
+        let mut attrs = vec![];
+        if la.peek(Ident::peek_any) {
+            while !input.is_empty() {
+                let mut content = TokenStream::new();
+                let kw: IdentAny = input.parse()?;
+                let span = kw.span();
+                content.extend([TT::Ident(kw.0)]);
+                loop {
+                    if input.peek(Token![,]) {
+                        let _: Token![,] = input.parse()?;
+                        break;
+                    }
+                    if input.is_empty() {
+                        break;
+                    }
+                    let tt: TokenTree = input.parse()?;
+                    content.extend([tt]);
+                }
+                let mut content =
+                    proc_macro2::Group::new(Delimiter::Bracket, content);
+                content.set_span(span);
+                let hash = Token![#](span);
+                attrs.push(UserAttr { hash, content });
+                // We have eaten the comma, or found EOF
+            }
+        } else if la.peek(Token![#]) {
+            while !input.is_empty() {
+                let hash = input.parse()?;
+                let content: proc_macro2::Group = input.parse()?;
+                if content.delimiter() != Delimiter::Bracket {
+                    return Err(content
+                        .span_open()
+                        .error("expected #[ ], not some other delimiter"));
+                }
+                attrs.push(UserAttr { hash, content });
+            }
+        } else if input.is_empty() {
+        } else {
+            return Err(la.error());
+        }
+        Ok(UserAttrs { attrs })
+    }
+}
+
+impl ToTokens for UserAttrs {
+    fn to_tokens(&self, out: &mut TokenStream) {
+        for UserAttr { hash, content } in &self.attrs {
+            hash.to_tokens(out);
+            content.to_tokens(out);
+        }
     }
 }
 
