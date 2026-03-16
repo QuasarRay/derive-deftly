@@ -172,6 +172,11 @@ impl PossibilitiesExample {
 
 #[test]
 fn poc() {
+    INPUT_FILE.set(Some(InputFile {
+        input_file: "<poc>",
+        quoted_mode: None,
+    }));
+
     let driver: syn::DeriveInput = parse_quote! {
         pub(crate) enum Enum<'a, 'l: 'a, T: Display = usize,
                              const C: usize = 1>

@@ -32,6 +32,7 @@ pub struct Context<'c> {
     pub template_crate: &'c syn::Path,
     pub template_name: Option<&'c syn::Path>,
     pub pmetas: &'c meta::PreprocessedMetas,
+    pub meta_quoted: Option<meta::QuotedMode>,
     pub variant: Option<&'c WithinVariant<'c>>,
     pub field: Option<&'c WithinField<'c>>,
     pub within_loop: WithinLoop,

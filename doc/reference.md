@@ -47,6 +47,7 @@
       * [`expect items`, `expect expr` -- syntax check the expansion](#expect-items-expect-expr--syntax-check-the-expansion)
       * [`for struct`, `for enum`, `for union` -- Insist on a particular driver kind](#for-struct-for-enum-for-union--insist-on-a-particular-driver-kind)
       * [`dbg` -- Print the expansion to stderr, for debugging](#dbg--print-the-expansion-to-stderr-for-debugging)
+      * [`meta_quoted strip`, `meta_quoted retain` -- control (de)quoting of attribute values ([**beta**])](#meta_quoted-strip-meta_quoted-retain--control-dequoting-of-attribute-values-beta)
       * [`beta_deftly` -- Enable unstable template features](#beta_deftly--enable-unstable-template-features)
       * [Expansion options example](#expansion-options-example)
    * [Precedence considerations](#precedence-considerations)
@@ -455,15 +456,30 @@ so for full support of generic types the template must expand both.
 Accesses macro parameters passed via `#[deftly(...)]` attributes.
 
  * **`${Xmeta(NAME)}`**:
-   Looks for `#[deftly(NAME = "VALUE")]`, and expands to `VALUE`.
-   `"VALUE"` must be be a string literal,
-   which is parsed as a piece of Rust code, and then expanded.
+   Looks for `#[deftly(NAME = ...VALUE...)]`,
+   and expands to the driver-specified `VALUE`.
+   `NAME = ...VALUE...` can be
+
+   * **`NAME = { VALUE }`**: Rust code, enclosed in in curly brackets.
+     (**beta**)
+   * **`NAME = VALUE`**: Rust code (nonempty),
+     terminated by the next comma, or closing `)`.
+     Angle brackets `< >` and equals `=` are only allowed in `VALUE`
+	 inside `( )` or `{ }`, to avoid ambiguity.
+     (**beta**)
+   * **`NAME = "VALUE"`**: a string literal, which is re-parsed as Rust code
+     (unless otherwise stated, below).
+
+   The choice of value syntax is up to the driver,
+   and is not made available to the template,
+   except as described below.
+
    Normally,
-   `as ..` must be given, to specify how `VALUE` should be parsed;
+   `as ..` must be given, to specify how `VALUE` should be treated;
    within `$(paste ..}`, `as str` is the default.
 
  * **`${Xmeta(SUB(NAME))}`**:
-   Looks for `#[deftly(SUB(NAME = "VALUE"))]`.
+   Looks for `#[deftly(SUB(NAME = ...))]`.
    The `#[deftly()]` is parsed as
    a set of nested, comma-separated, lists.
    So this would find `NAME` 
@@ -476,13 +492,16 @@ Accesses macro parameters passed via `#[deftly(...)]` attributes.
 
     * **`str`**: Expands to a string literal
       with the same contents as
-      the string provided for `VALUE`.
+      the string provided for `"VALUE"`.
+
       Ie, the attribute's string value is *not* parsed.
       This is the default within pasting and case changing,
       if no `as` was specified.
       Within pasting and case changing,
       the provided string becomes part of the pasted identifier
       (and so must consist of legal identifier characters).
+
+      `NAME = { VALUE }` and bare `NAME = VALUE` are not allowed.
 
     * **`ty`**:
       `VALUE` is parsed as a type,
@@ -500,23 +519,62 @@ Accesses macro parameters passed via `#[deftly(...)]` attributes.
 
     * **`expr`**:
       `VALUE` is parsed as an expression.
+
       When expanded, it is surrounded with `( )`
       to ensure correct precedence.
+      With `{ VALUE }`, the surrounding `{ }` are not stripped,
+      and replace the usual `( )`;
+      this permits a block expression surrounded by only one pair of `{ }`.
 
     * **`ident`**:
       `VALUE` is parsed as an identifier (or keyword).
       (Within pasting, prefer `as str`, the default;
       `as ident` rejects initial digits, and the empty string.)
 
+      <!--
+
+      TODO Move the next line left again!
+        * **`attrs`**:
+      `VALUE` is treated as a series of meta attributes,
+      in one of the two following forms:
+
+      * `attrname ... , attrname ...`
+        where `attrname`s are paths,
+        and `...` is anything not containing commas.
+        Each `attrname ...` becomes `#[attrname ...]` in the expansion.
+
+        (With the bare `NAME = VALUE` syntax, the value can only
+        contain one attribute.  To specify more than one, write
+        `NAME = "... "`,
+        `NAME = { ... }`,
+        or
+        `NAME = attrname ..., NAME = attrname ...`.)
+
+      * `#[attrname ...] #[attrname ...]`
+        which are simply reproduced in the expansion.
+
+      Unlike the other `${Xmeta as ...}` expansions,
+      it is not an error for the the driver to supply zero, or several,
+      matching `#[deftly]` meta values.
+
+      Available only in [**beta**].
+
+      -->
+
     * **`items`**:
       `VALUE` is parsed as zero or more Rust Items (`syn::Item`).
-      Note that the driver must pass the items' source code in `"..."`.
+
+      The bare form `NAME = VALUE` is not allowed,
+      because Rust items can contain commas.
 
     * **`token_stream`**:
       `VALUE` is parsed as an arbtitrary sequence of tokens
       (`TokenStream`).
+
       When using this option, be careful about operator precedence:
       see [Precedence considerations](#precedence-considerations).
+
+      The bare form `NAME = VALUE` is not allowed.
 
  * **`${Xmeta(...) .. , default DEFAULT}`** ([**beta**]):
    If there is no `VALUE` expands
@@ -525,6 +583,48 @@ Accesses macro parameters passed via `#[deftly(...)]` attributes.
    *not* affected by any `as ..` clause;
    *not* surrounded with additional `( )` (for `as expr`),
    nor any additional [`None`-delimited group](#t:none-delimiters).
+
+ * **`${Xmeta(...) .. , quoted strip | quoted retain}`** ([**beta**]):
+
+   Specifies how to handle `NAME = "..."` in a `#[deftly]`:
+
+   * **Neither `quoted strip` nor `quoted retain`** specified:
+
+     Only `NAME = "VALUE"` is supported.
+     The quotes are always stripped and the content re-parsed as Rust code.
+
+     This is currently the default.
+
+   * **`quoted strip`**:
+
+     If `NAME = "VALUE"` is specified, the quotes are stripped,
+     and the content is reparsed as Rust code.
+
+     This will become the default in future.
+
+   * **`quoted retain`**:
+
+     For `as expr`,
+     `NAME = "VALUE"` is treated as specifying a string literal,
+     i.e., as just another instance of `NAME = VALUE`.
+     The quotes are not stripped.
+
+     With `SYNTYPE`s other than `as expr`
+     the quotes are always stripped and the contents reparsed.
+
+   Available only in [**beta**].
+
+   The default can be overridden by the
+   [`meta_quoted` template option](#eo:meta_quoted).
+
+   <!--
+
+   TODO When this feature is stabilised, it will affect only
+   `as expr`, and we can change its summary to:
+
+   > Specifies how to handle `NAME = "..."` with `as expr` in a `#[deftly]`
+
+   -->
 
 When expanding `${Xmeta}`,
 it is an error if the value was not specified in the driver,
@@ -577,7 +677,11 @@ These checks are disabled by `#[derive_deftly_adhoc]`.
  * `${tmeta(gentype) as token_stream}`: `Vec<i32>`
  * `${vmeta(value) as ident}`: `unit_toplevel`, `enum_variant`
  * `${fmeta(nested(inner)) as expr}` for `field` in `Struct`: `(42)`
+ * `${fmeta(nested(inner)) as expr, quoted retain}` for `field` in `Struct`: `("42")`
  * `${vmeta(items) as items}` for `TupleVariant`: `type T = i32; const K: T = 7;`
+ * `${vmeta(items) as token_stream}` for `TupleVariant`: `type T = i32; const K: T = 7;`
+ * `${tmeta(items_quoted) as items}` for `Struct`: `type T = i8;`
+ * `${tmeta(items_quoted) as token_stream}` for `Struct`: `type T = i8;`
  * `${fmeta(nested)}`: rejected, ``expected a leaf node, found a list with sub-attributes``
 
 #### Examples involving pasting
@@ -1219,7 +1323,7 @@ the corresponding driver attribute does not need to be a `LIT`.
 
 So `Xmeta(SUB(NAME))` is true if the driver has
 `#[deftly(SUB(NAME(INNER=...)))]` or `#[deftly(SUB(NAME))]` or
-`#[deftly(SUB(NAME=LIT))]` or even `#[deftly(SUB(NAME()))]`.
+`#[deftly(SUB(NAME=...))]` or even `#[deftly(SUB(NAME()))]`.
 
 `Xmeta(SUB(NAME))` works, just as with the `${Xmeta ...}` expansion.
 See [`${Xmeta ...}`](#tmeta-vmeta-fmeta--deftly-attributes)
@@ -1575,6 +1679,36 @@ the [`${dbg ..}` expansion](#dbg--dbg_all_keywords--debugging-output),
 the [`dbg` condition](#dbg--debug-dump-of-condition-value),
 the [`$dbg_all_keywords` expansion](#dbg--dbg_all_keywords--debugging-output).
 
+<div id="eo:meta_quoted">
+
+### `meta_quoted strip`, `meta_quoted retain` -- control (de)quoting of attribute values ([**beta**])
+
+</div>
+
+Changes the default for [`${Xmeta(...) as ...}`](#x:fmeta),
+in template, to:
+
+  * **`quoted strip`** (allow unquoted values, strip any quotes), or
+  * **`quoted retain`** (allow unquoted values,
+    `as expr` does not strip `"..."` and yields the provided literal).
+
+This option is only allowed in a template,
+not in a driver's `#[derive_deftly]` attribute.
+If affects the whole template including `$Xmeta` expansions
+in any imported modules.
+
+Available only in [**beta**].
+In the future, `quoted strip` will become the default.
+
+<!--
+TODO When this feature is stabilised, it will affect only
+`as expr`, and we can change its summary to:
+
+> Changes the default for [`${Xmeta(...) as expr}`](#x:fmeta),
+> in this module or template, to:
+
+-->
+
 <div id="eo:beta_deftly">
 
 ### `beta_deftly` -- Enable unstable template features
@@ -1683,8 +1817,8 @@ struct SimpleUnit;
 
 #[derive(Deftly)]
 #[derive(Clone)]
-#[deftly(simple="String", gentype="Vec<i32>")]
-#[deftly(value="unit_toplevel")]
+#[deftly(simple = "String", gentype = "Vec<i32>")]
+#[deftly(value = "unit_toplevel")]
 pub struct Unit<const C: usize = 1>;
 
 #[derive(Deftly, Clone)]
@@ -1697,6 +1831,7 @@ struct Tuple<'a, 'l: 'a, T: Display = usize, const C: usize = 1>(
 );
 
 #[derive(Deftly)]
+#[deftly(items_quoted = "type T = i8;")]
 struct Struct<'a, 'l: 'a, T: Display = usize, const C: usize = 1>
 where T: 'l, T: TryInto<u8>
 {
@@ -1709,9 +1844,9 @@ where T: 'l, T: TryInto<u8>
 pub enum Enum<'a, 'l: 'a, T: Display = usize, const C: usize = 1>
 where T: 'l, T: TryInto<u8>
 {
-    #[deftly(value="enum_variant")]
+    #[deftly(value = "enum_variant")]
     UnitVariant,
-	#[deftly(items="type T = i32; const K: T = 7;")]
+	#[deftly(items = "type T = i32; const K: T = 7;")]
     TupleVariant(std::iter::Once::<T>),
     NamedVariant { 
         field: &'l &'a T,

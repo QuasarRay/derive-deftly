@@ -104,6 +104,7 @@ impl EngineFinalInput {
             &self.driver,
             &dummy_path(), // template_crate, not used by our f
             None,          // template_name
+            None,          // meta_quoted (default value)
             |ctx| {
                 if let mCU::Check(m) = &self.accum.metas {
                     for group in &m.used {

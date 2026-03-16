@@ -30,6 +30,7 @@ use super::framework::*;
 use indexmap::IndexMap;
 
 use PreprocessedContent as PC;
+use PreprocessedValue as PV;
 use Usage as U;
 
 //---------- common definitions ----------
@@ -106,6 +107,7 @@ pub struct SubstMeta<O: SubstParseContext> {
     pub desig: Desig,
     pub as_: Option<SubstAs<O>>,
     pub default: Option<(Argument<O>, O::NotInBool, beta::Enabled)>,
+    pub quoted: Option<(QuotedMode, O::NotInBool)>,
 }
 
 #[derive(Debug, Clone, AsRefStr, Display)]
@@ -152,9 +154,35 @@ pub enum PreprocessedContent {
     /// `#[deftly(foo)]`
     Unit,
     /// `#[deftly(foo = "lit")]`
-    Value { value: syn::Lit },
+    Value { value: PreprocessedValue },
     /// `#[deftly(foo(...))]`
     List(PreprocessedContentList),
+}
+
+/// Value of a meta attribute with a value
+#[derive(Debug)]
+pub enum PreprocessedValue {
+    /// `#[deftly(foo = "lit")]`
+    Quoted { value: syn::LitStr },
+
+    /// `#[deftly(foo = { ... })]`
+    Braced {
+        brace_token: syn::token::Brace,
+        value: TokenStream,
+    },
+
+    /// `#[deftly(foo = ... )]` terminating at a comma
+    ///
+    /// Parsing is very relaxed at this stage.
+    /// Actually *using* this attribute value should insist on
+    /// only values that make sense to have bare.
+    /// So definitely nothing that can have a `,` in it.
+    ///
+    /// Things that could start with `{ }` are fun but tolerated
+    /// at this stage.    Eg, expressions: if we find `{ }`
+    /// we parse it as `Braced` and therefore an expression of the form
+    /// `{ BLOCK }.method` must be inside another pair of `{ }`.
+    Bare { value: TokenStream },
 }
 
 //---------- search and match results ----------
@@ -171,7 +199,7 @@ pub struct FoundNode<'l> {
 #[derive(Debug)]
 pub enum FoundNodeKind<'l> {
     Unit,
-    Lit(&'l syn::Lit),
+    Value(&'l PreprocessedValue),
 }
 
 /// Information about a nearby meta node we found
@@ -379,6 +407,7 @@ impl<O: SubstParseContext> SubstMeta<O> {
 
         let mut as_ = None::<(Span, SubstAs<O>)>;
         let mut default = None;
+        let mut quoted = None::<(Span, (QuotedMode, O::NotInBool))>;
 
         while !O::IS_BOOL && !input.is_empty() {
             let keyword = Ident::parse_any(input)?;
@@ -391,6 +420,8 @@ impl<O: SubstParseContext> SubstMeta<O> {
                 store(kw_span, &mut default, || {
                     Ok((input.parse()?, nb, ue()?))
                 })?;
+            } else if keyword == "quoted" {
+                store(kw_span, &mut quoted, || Ok((input.parse()?, nb)))?;
             } else {
                 return Err(keyword.error("unknown option in `${Xmeta }`"));
             }
@@ -410,6 +441,7 @@ impl<O: SubstParseContext> SubstMeta<O> {
         Ok(ret! {
             as_
             default
+            quoted
         })
     }
 }
@@ -453,6 +485,47 @@ impl Parse for PreprocessedTree {
             content,
             used,
         })
+    }
+}
+
+impl Parse for PreprocessedValue {
+    fn parse(input: ParseStream) -> syn::Result<Self> {
+        let la = input.lookahead1();
+        let value = if la.peek(syn::LitStr) {
+            let value = input.parse()?;
+            PV::Quoted { value }
+        } else if la.peek(syn::token::Brace) {
+            let value;
+            let brace_token = braced!(value in input);
+            let value = value.parse()?;
+            PV::Braced { brace_token, value }
+        } else {
+            let mut value = TokenStream::new();
+            while !(input.is_empty() || input.peek(Token![,])) {
+                let tt: TT = input.parse()?;
+                const FORBID: &[char] = &['<', '>', '='];
+                if let TT::Punct(p) = &tt {
+                    if FORBID.contains(&p.as_char()) {
+                        return Err(tt.error(
+ "un-braced, un-quoted meta values may not contain any of `<` `>` `=`"
+                        ));
+                    }
+                }
+                value.extend([tt]);
+            }
+            PV::Bare { value }
+        };
+        Ok(value)
+    }
+}
+
+impl PreprocessedValue {
+    pub fn span(&self) -> Span {
+        match self {
+            PV::Quoted { value } => value.span(),
+            PV::Braced { brace_token, .. } => brace_token.span.span(),
+            PV::Bare { value } => value.span(),
+        }
     }
 }
 
@@ -547,7 +620,7 @@ impl Label {
             (None, PC::List(_)) => nearby(FNNK::List)?,
             (None, PC::Value { value, .. }) => f(FoundNode {
                 path_span,
-                kind: FNK::Lit(value),
+                kind: FNK::Value(value),
                 ptree,
             })?,
             (Some(_), PC::Value { .. }) => nearby(FNNK::Lit)?,
@@ -844,6 +917,64 @@ impl ToTokens for MetaUnsupported {
     }
 }
 
+//---------- quoted modes and allows ----------
+
+/// Handling mode derived from the `as`
+///
+/// This is the distillation of the `as`-specific
+/// quoted/braced/bare handling,
+/// from the `as` arms in [`FoundNode::expand`].
+#[derive(Debug)]
+enum AsValueHandling {
+    /// "Normal" handling
+    ///
+    /// * double quotes are always stripped and content reparsed
+    /// * bare values *are* allowed
+    Normal,
+
+    /// Handling for `as expr`
+    ///
+    /// * double quotes are *sometimes* stripped depending on `quoted` options
+    /// * bare values *are* allowed
+    Expr,
+
+    /// Syntax is not suitable for including bare
+    ///
+    /// * double quotes are always stripped and content reparsed
+    /// * bare values are *not* allowed
+    NoBare,
+}
+
+/// Quote handling mode specified by template
+///
+/// `quoted strip`, `meta_quoted retain` etc.
+#[derive(Debug, Clone, Copy)]
+pub struct QuotedMode {
+    pub mode: QuotedModeMode,
+    #[allow(unused)]
+    pub beta: beta::Enabled,
+}
+
+/// Just the quote handling mode specified by template
+///
+/// Beta is unchecked here and there is no span.
+#[derive(Debug, Clone, Copy, Eq, PartialEq, EnumString)]
+#[strum(serialize_all = "snake_case")]
+pub enum QuotedModeMode {
+    /// Future default
+    Strip,
+    Retain,
+}
+
+impl Parse for QuotedMode {
+    fn parse(input: ParseStream) -> syn::Result<Self> {
+        let mode: DdOptVal<QuotedModeMode> = input.parse()?;
+        let beta = beta::Enabled::new_for_syntax(mode.span)?;
+        let mode = mode.value;
+        Ok(QuotedMode { mode, beta })
+    }
+}
+
 //---------- template expansion ----------
 
 impl<O> SubstMeta<O>
@@ -862,6 +993,7 @@ where
             desig,
             as_,
             default,
+            quoted,
         } = self;
         let mut found = None::<FoundNode>;
         let mut hint = None::<FoundNearbyNode>;
@@ -929,8 +1061,10 @@ where
             }
         })?;
 
+        let quoted = quoted.map(|(q, _nb)| q).or(ctx.meta_quoted);
+
         found.ptree.update_used(Usage::VALUE);
-        found.expand(span_whole, as_, out)?;
+        found.expand(span_whole, as_, quoted, out)?;
 
         Ok(())
     }
@@ -945,38 +1079,89 @@ fn metavalue_spans(tspan: Span, vspan: Span) -> [ErrorLoc<'static>; 2] {
 /// This is the thing we actually use.
 /// Non-string-literal values are not allowed.
 fn metavalue_litstr<'l>(
-    lit: &'l syn::Lit,
+    val: &'l PreprocessedValue,
     tspan: Span,
     msg: fmt::Arguments<'_>,
 ) -> syn::Result<&'l syn::LitStr> {
-    match lit {
-        syn::Lit::Str(s) => Ok(s),
+    match val {
+        PV::Quoted { value } => Ok(value),
         // having checked derive_builder, it doesn't handle
         // Lit::Verbatim so I guess we don't need to either.
-        _ => Err(metavalue_spans(tspan, lit.span()).error(msg)),
+        _ => Err(metavalue_spans(tspan, val.span()).error(msg)),
     }
+}
+
+/// Common arguments to `metavalue_as`
+///
+/// Logically speaking, these are arguments to `metavalue_as`.
+/// They're the ones that are the same for (nearly) all the arms in
+/// [`FoundNode::expand`].
+/// That it much easier to see the wood for the trees there.
+struct MetaValueAsInput<'i> {
+    val: &'i PreprocessedValue,
+    quoted: Option<QuotedModeMode>,
+    tspan: Span,
+    into_what: &'i dyn Display,
 }
 
 /// Convert a literal found in a meta item into `T`
 ///
 /// `into_what` is used only for error reporting
-pub fn metavalue_lit_as<T>(
-    lit: &syn::Lit,
-    tspan: Span,
-    into_what: &dyn Display,
+fn metavalue_as<T>(
+    as_value_handling: AsValueHandling,
+    MetaValueAsInput {
+        val,
+        quoted,
+        tspan,
+        into_what,
+    }: MetaValueAsInput<'_>,
 ) -> syn::Result<T>
 where
     T: Parse + ToTokens,
 {
-    let s = metavalue_litstr(
-        lit,
-        tspan,
-        format_args!(
-            "expected string literal, for conversion to {}",
-            into_what,
-        ),
-    )?;
+    use AsValueHandling as AVH;
+    use QuotedModeMode as QMM;
 
+    let err = |m| {
+        Err([(val.span(), "attribute value"), (tspan, "template")].error(m))
+    };
+
+    let quoted = match (quoted, val) {
+        (None, PV::Braced { .. }) | (None, PV::Bare { .. }) => {
+            return err(format_args!(
+                "expected string literal, for conversion to {}",
+                into_what,
+            ))
+        }
+        (None, PV::Quoted { .. }) => QMM::Strip, // future default
+        (Some(q), _) => q,
+    };
+
+    let t = match val {
+        PV::Braced { value, .. } => value.clone(),
+        PV::Quoted { value } => match as_value_handling {
+            AVH::Normal | AVH::NoBare => metavalue_lit_reparse(value)?,
+            AVH::Expr => match quoted {
+                QMM::Strip => metavalue_lit_reparse(value)?,
+                QMM::Retain => value.to_token_stream(),
+            },
+        },
+        PV::Bare { value } => match as_value_handling {
+            AVH::Normal | AVH::Expr => value.clone(),
+            AVH::NoBare => {
+                return err(format_args!(
+                    r#"attribute value for conversion to {} must be enclosed in braces {{..}} or quotes "..""#,
+                    into_what,
+                ))
+            }
+        },
+    };
+
+    let thing: T = syn::parse2(t)?;
+    Ok(thing)
+}
+
+fn metavalue_lit_reparse(s: &syn::LitStr) -> syn::Result<TokenStream> {
     let t: TokenStream = s.parse().map_err(|e| {
         // Empirically, parsing a LitStr in actual proc macro context, with
         // proc_macro2, into tokens, can generate a lexical error with a
@@ -993,12 +1178,11 @@ where
             Some(())
         })() {
             Some(()) => e,
-            None => lit.span().error(e.to_string()),
+            None => s.span().error(e.to_string()),
         }
     })?;
 
-    let thing: T = syn::parse2(t)?;
-    Ok(thing)
+    Ok(t)
 }
 
 impl<'l> FoundNode<'l> {
@@ -1006,6 +1190,7 @@ impl<'l> FoundNode<'l> {
         &self,
         tspan: Span,
         as_: &Option<SubstAs<O>>,
+        quoted: Option<QuotedMode>,
         out: &mut O,
     ) -> syn::Result<()>
     where
@@ -1013,13 +1198,14 @@ impl<'l> FoundNode<'l> {
     {
         let spans = |vspan| metavalue_spans(tspan, vspan);
 
-        let lit = match self.kind {
+        let val = match self.kind {
             FNK::Unit => return Err(spans(self.path_span).error(
  "tried to expand attribute which is just a unit, not a literal"
             )),
-            FNK::Lit(lit) => lit,
+            FNK::Value(value) => value,
         };
 
+        use AsValueHandling as AVH;
         use SubstAs as SA;
 
         let default_buf;
@@ -1030,44 +1216,71 @@ impl<'l> FoundNode<'l> {
                 &default_buf
             }
         };
+        let quoted = quoted.map(|q| q.mode);
+
+        let input = MetaValueAsInput {
+            val,
+            tspan,
+            quoted,
+            into_what: as_,
+        };
 
         match as_ {
-            as_ @ SA::expr(.., at, supported) => {
-                let expr = metavalue_lit_as(lit, tspan, as_)?;
+            SA::expr(.., at, supported) => {
+                let expr = metavalue_as(AVH::Expr, input)?;
                 supported.infer_type(&expr);
-                let span = expr.span();
-                out.append_tokens(at, Grouping::Parens.surround(span, expr))?;
+                let content = match val {
+                    PV::Braced { brace_token, .. } => {
+                        let span = brace_token.span.span();
+                        let mut group = proc_macro2::Group::new(
+                            Delimiter::Brace,
+                            expr.to_token_stream(),
+                        );
+                        group.set_span(span);
+                        group.to_token_stream()
+                    }
+                    _ => {
+                        let span = expr.span();
+                        Grouping::Parens.surround(span, expr)
+                    }
+                };
+                out.append_tokens(at, content)?;
             }
-            as_ @ SA::ident(..) => {
-                let ident: IdentAny = metavalue_lit_as(lit, tspan, as_)?;
+            SA::ident(..) => {
+                let ident: IdentAny = metavalue_as(AVH::Normal, input)?;
                 out.append_identfrag_toks(&*ident)?;
             }
             SA::items(_, np, supported) => {
-                let items = metavalue_lit_as(lit, tspan, &"items")?;
+                let items = metavalue_as(AVH::NoBare, input)?;
                 supported.infer_type(&items);
                 out.append_tokens(np, items)?;
             }
-            as_ @ SA::path(..) => out.append_syn_type(
+            SA::path(..) => out.append_syn_type(
                 tspan,
-                syn::Type::Path(metavalue_lit_as(lit, tspan, as_)?),
+                syn::Type::Path(metavalue_as(AVH::Normal, input)?),
                 Grouping::Invisible,
             ),
             SA::str(..) => {
                 let s = metavalue_litstr(
-                    lit,
+                    val,
                     tspan,
                     format_args!("expected string literal, for meta value",),
                 )?;
                 out.append_syn_litstr(s);
             }
-            as_ @ SA::ty(..) => out.append_syn_type(
+            SA::ty(..) => out.append_syn_type(
                 tspan,
-                metavalue_lit_as(lit, tspan, as_)?,
+                metavalue_as(AVH::Normal, input)?,
                 Grouping::Invisible,
             ),
             SA::token_stream(_, np) => {
-                let tokens: TokenStream =
-                    metavalue_lit_as(lit, tspan, &"tokens")?;
+                let tokens: TokenStream = metavalue_as(
+                    AVH::NoBare,
+                    MetaValueAsInput {
+                        into_what: &"tokens",
+                        ..input
+                    },
+                )?;
                 out.append_tokens(np, tokens)?;
             }
         }

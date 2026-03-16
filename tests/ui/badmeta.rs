@@ -1,4 +1,7 @@
-use derive_deftly::{define_derive_deftly, derive_deftly_adhoc, Deftly};
+use derive_deftly::{
+    define_derive_deftly, define_derive_deftly_module, derive_deftly_adhoc,
+    Deftly,
+};
 
 #[derive(Deftly)]
 #[derive_deftly_adhoc]
@@ -60,7 +63,25 @@ derive_deftly_adhoc! { TopLevelMetaLitForbidden: }
 #[derive_deftly_adhoc]
 #[deftly(value = wrong)]
 struct MetaValueMustBeLit;
-derive_deftly_adhoc! { MetaValueMustBeLit: }
+derive_deftly_adhoc! {
+    MetaValueMustBeLit:
+    ${tmeta(value) as token_stream}
+}
+
+#[derive(Deftly)]
+#[derive_deftly_adhoc]
+#[deftly(value = very < wrong)]
+struct MetaValueBareForbidden;
+
+define_derive_deftly! {
+    export MetaQuotedWithoutBeta:
+    ${tmeta(value) as expr, quoted strip}
+    ${tmeta(value) as expr, quoted retain}
+}
+
+define_derive_deftly! { export MetaQuotedOptionNoBeta1 meta_quoted strip: }
+define_derive_deftly! { export MetaQuotedOptionNoBeta2 meta_quoted retain: }
+define_derive_deftly_module! { export MetaQuotedModule meta_quoted retain: }
 
 #[derive(Deftly)]
 #[derive_deftly_adhoc]

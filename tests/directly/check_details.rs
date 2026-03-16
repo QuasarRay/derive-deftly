@@ -17,11 +17,12 @@ fn tests_using_driver(
         let input: Template<_> = syn::parse_str(input_s).unwrap();
         let exp = ExpectedOutput::parse(*exp, grouping).unwrap();
 
-        let got = Context::call(&driver, &parse_quote!(crate), None, |ctx| {
-            let mut ts = TokenAccumulator::new();
-            input.expand(ctx.as_general(), &mut ts);
-            ts.tokens()
-        });
+        let got =
+            Context::call(&driver, &parse_quote!(crate), None, None, |ctx| {
+                let mut ts = TokenAccumulator::new();
+                input.expand(ctx.as_general(), &mut ts);
+                ts.tokens()
+            });
 
         exp.compare(got, input_s).unwrap_or_else(|m| {
             m.eprintln_initial();

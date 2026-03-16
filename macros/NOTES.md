@@ -1,5 +1,37 @@
 # **Notes and plans (`NOTES.md`)**
 
+# Why un-grouped `< >` are forbidden in bare `#[deftly(NAME = VALUE)]`
+
+Both types and expressions can contain commas within `< >`.
+For example, `B<C, D=E>` is a valid type,
+and `B::<C, D=E>::f()` is a valid expression.
+
+This means that ending at the first comma can be wrong:
+the comma might be part of the expression, or the type,
+according to Rust syntax.
+
+Worse, the rules for whether a comma is "within `< >`" depend on
+whether it's a type or an expression.  Consider:
+
+```rust,ignore
+#[deftly(a = b < c , d = e > + f)]
+# struct X;
+```
+
+If we think we're parsing types it's `a = { b::<c, d=e> + f }`,
+ie, setting one template argument `a` to a trait bound consisting of
+`b` and `f` where where b is parameterised by `c` and `d = e`.
+
+If we think we're parsing expressions it's `a = { b < c }, d = { e > +f }`,
+ie, setting two template arguments `a` and `d` to two boolean
+comparison expressions involving variables `b` `c` `e` and `f`.
+
+But we must be able to determine where the VALUE ends
+without knowing yet whether it's an expression, type, or whatever.
+
+See also
+[Bastion of the Turbofish](https://github.com/rust-lang/rust/blob/main/tests/ui/parser/bastion-of-the-turbofish.rs).
+
 # Future template features
 
 ## Stringification enhancements
@@ -90,6 +122,50 @@ We could detect the invalid utf-8 at expansion time.
 But perhaps we should declare
 that we reserve the right to check this statically,
 and that wouldn't be a breaking change?
+
+## Filtering for `${Xmeta(...) as attrs}`
+
+### Option 1 --- filtering
+
+In the `${Xmeta as ...}` table:
+
+  * **`attrs(A1, A2, ....)`**, **`attrs(! A1, A2, ....)`**:
+	Expands to a subset of the `#[attrname ]`s:
+	Only any attributes matching `A1` and `A2`,
+	or all attributes except those,
+	respectively.
+
+	It is not an error if there are no matching attributes.
+	It is also not an error if the driver specified attributes
+	that are filtered out.
+
+	However, if there are any attributes supplied by the driver,
+	but not used, it is an error.
+
+    The filtering is as for `${Xattrs }`,
+	but does not filter out `#[deftly]` or `#[derive_deftly]`
+	by default.
+
+This is as proposed in
+<https://gitlab.torproject.org/Diziet/rust-derive-deftly/-/issues/139>.
+
+### Options 2 --- lifting
+
+In the `${Xmeta as ...}` table:
+
+  * **`attrs(A1(A2))`**:
+
+	Each `attrname ...` generates `#[A1(A2(attrname ...))]`.
+
+Advantages: the template can rename the attributes.
+The template can stuff things into deeper levels of the tree.
+(But perhaps it could without needing to
+mess about with the meta attr specific code:
+if you want to pass through a specific serde attr, say,
+you can probably just use `as expr` or whatever.)
+
+Disadvantages: the template must define a new meta attr
+for each attr it wants to pass through.
 
 ## Scopes (for meta, and loops)
 

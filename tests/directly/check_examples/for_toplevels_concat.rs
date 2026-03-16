@@ -14,6 +14,7 @@ impl Example for ForToplevelsConcatExample {
         println!("checking :{} blockquotes input/output", self.loc);
     }
     fn check(&self, errs: &mut Errors, drivers: &[syn::DeriveInput]) {
+        let qm = input_file().quoted_mode;
         let (got, exp) = match (|| {
             let mut got = TokenStream::new();
 
@@ -33,7 +34,7 @@ impl Example for ForToplevelsConcatExample {
 
                     let crate_ = &parse_quote!(crate);
                     got.extend(
-                        Context::call(driver, crate_, None, |ctx| {
+                        Context::call(driver, crate_, None, qm, |ctx| {
                             let mut out = TokenAccumulator::new();
                             template.expand(ctx.as_general(), &mut out);
                             out.tokens()
