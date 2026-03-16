@@ -612,10 +612,14 @@ Accesses macro parameters passed via `#[deftly(...)]` attributes.
    The default can be overridden by the
    [`meta_quoted` template option](#eo:meta_quoted).
 
-   XXXX When this feature is stabilised, it will affect only
+   <!--
+
+   TODO When this feature is stabilised, it will affect only
    `as expr`, and we can change its summary to:
 
    > Specifies how to handle `NAME = "..."` with `as expr` in a `#[deftly]`
+
+   -->
 
 When expanding `${Xmeta}`,
 it is an error if the value was not specified in the driver,
@@ -1690,11 +1694,14 @@ in any imported modules.
 Available only in [**beta**].
 In the future, `quoted strip` will become the default.
 
-XXXX When this feature is stabilised, it will affect only
+<!--
+TODO When this feature is stabilised, it will affect only
 `as expr`, and we can change its summary to:
 
 > Changes the default for [`${Xmeta(...) as expr}`](#x:fmeta),
 > in this module or template, to:
+
+-->
 
 <div id="eo:beta_deftly">
 
