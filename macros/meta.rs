@@ -363,6 +363,7 @@ impl<O: SubstParseContext> SubstAsSpecified<O> {
         let kw_span = kw.span();
         let from_sma = |as_: SubstAs<_>| {
             Ok(SubstAsSpecified {
+                //
                 as_,
                 nb,
                 kw_span,
