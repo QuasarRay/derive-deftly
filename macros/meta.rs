@@ -1274,11 +1274,13 @@ impl<'l> FoundNode<'l> {
                 Grouping::Invisible,
             ),
             SA::token_stream(_, np) => {
-                let tokens: TokenStream =
-                    metavalue_as(AVH::NoBare, MetaValueAsInput {
+                let tokens: TokenStream = metavalue_as(
+                    AVH::NoBare,
+                    MetaValueAsInput {
                         into_what: &"tokens",
                         ..input
-                    })?;
+                    },
+                )?;
                 out.append_tokens(np, tokens)?;
             }
         }
