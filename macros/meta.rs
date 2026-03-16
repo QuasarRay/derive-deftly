@@ -1209,10 +1209,10 @@ where
 
         let quoted = quoted.map(|(q, _nb)| q).or(ctx.meta_quoted);
 
-      for found in found {
-        found.ptree.update_used(Usage::VALUE);
-        found.expand(span_whole, as_, quoted, out)?;
-      }
+        for found in found {
+            found.ptree.update_used(Usage::VALUE);
+            found.expand(span_whole, as_, quoted, out)?;
+        }
 
         Ok(())
     }
