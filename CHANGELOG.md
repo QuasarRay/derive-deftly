@@ -57,6 +57,13 @@ or via the [account request form].
 
 ## Changelog
 
+### 1.8.0
+
+#### Added
+
+ * BETA: Unquoted values in `#[deftly]`, when enabled by template.
+ * BETA: `$Xmeta as attrs`
+
 ### 1.7.0
 
 #### Added
