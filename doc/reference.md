@@ -531,10 +531,7 @@ Accesses macro parameters passed via `#[deftly(...)]` attributes.
       (Within pasting, prefer `as str`, the default;
       `as ident` rejects initial digits, and the empty string.)
 
-      <!--
-
-      TODO Move the next line left again!
-        * **`attrs`**:
+    * **`attrs`**:
       `VALUE` is treated as a series of meta attributes,
       in one of the two following forms:
 
@@ -556,10 +553,9 @@ Accesses macro parameters passed via `#[deftly(...)]` attributes.
       Unlike the other `${Xmeta as ...}` expansions,
       it is not an error for the the driver to supply zero, or several,
       matching `#[deftly]` meta values.
+      `default` is not supported.
 
       Available only in [**beta**].
-
-      -->
 
     * **`items`**:
       `VALUE` is parsed as zero or more Rust Items (`syn::Item`).
@@ -683,6 +679,16 @@ These checks are disabled by `#[derive_deftly_adhoc]`.
  * `${tmeta(items_quoted) as items}` for `Struct`: `type T = i8;`
  * `${tmeta(items_quoted) as token_stream}` for `Struct`: `type T = i8;`
  * `${fmeta(nested)}`: rejected, ``expected a leaf node, found a list with sub-attributes``
+
+#### Examples of `as attrs` value handing
+
+<!--##examples-ignore##-->
+In `Enum::NamedVariant`:
+
+ * `${fmeta(same_attrs) as attrs}` for `field`: `#[some] #[other(y)]`
+ * `${fmeta(same_attrs) as attrs}` for `field_b`: `#[some] #[other(y)]`
+ * `${fmeta(same_attrs) as attrs}` for `field_e`: `#[some] #[other(y)]`
+ * `${fmeta(exciting_attrs) as attrs}`: `#[with = funny::<A,B>::syntax]`
 
 #### Examples involving pasting
 
@@ -1849,8 +1855,12 @@ where T: 'l, T: TryInto<u8>
     #[deftly(items = "type T = i32; const K: T = 7;")]
     TupleVariant(std::iter::Once::<T>),
     NamedVariant { 
+        #[deftly(same_attrs = "some", same_attrs = "other(y)")]
+        #[deftly(exciting_attrs = "#[with = funny::<A,B>::syntax]")]
         field: &'l &'a T,
+        #[deftly(same_attrs = "some, other(y)")]
         field_b: String,
+        #[deftly(same_attrs = "#[some] #[other(y)]")]
         field_e: <T as TryInto<u8>>::Error,
         field_o: Option<i32>,
      },

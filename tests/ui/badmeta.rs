@@ -78,6 +78,11 @@ struct MetaValueBareForbidden;
 #[deftly(value2 = )]
 struct MetaValueBareForbidden2;
 
+#[derive(Deftly)]
+#[derive_deftly_adhoc]
+#[deftly(value3 = setting = inner_value)]
+struct MetaValueBareForbidden3;
+
 define_derive_deftly! {
     export MetaQuotedWithoutBeta:
     ${tmeta(value) as expr, quoted strip}
