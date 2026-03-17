@@ -678,6 +678,16 @@ These checks are disabled by `#[derive_deftly_adhoc]`.
  * `${tmeta(items_quoted) as token_stream}` for `Struct`: `type T = i8;`
  * `${fmeta(nested)}`: rejected, ``expected a leaf node, found a list with sub-attributes``
 
+#### Examples of `as attrs` value handing
+
+<!--##examples-ignore##-->
+In `Enum::NamedVariant`:
+
+ * `${fmeta(same_attrs) as attrs}` for `field`: `#[some] #[other(y)]`
+ * `${fmeta(same_attrs) as attrs}` for `field_b`: `#[some] #[other(y)]`
+ * `${fmeta(same_attrs) as attrs}` for `field_e`: `#[some] #[other(y)]`
+ * `${fmeta(exciting_attrs) as attrs}`: `#[with = funny::<A,B>::syntax]`
+
 #### Examples involving pasting
 
  * `$<Small ${tmeta(simple)}>`: `SmallString`
@@ -1843,8 +1853,12 @@ where T: 'l, T: TryInto<u8>
     #[deftly(items = { type T = i32; const K: T = 7; })]
     TupleVariant(std::iter::Once::<T>),
     NamedVariant { 
+        #[deftly(same_attrs = "some", same_attrs = "other(y)")]
+        #[deftly(exciting_attrs = "#[with = funny::<A,B>::syntax]")]
         field: &'l &'a T,
+        #[deftly(same_attrs = "some, other(y)")]
         field_b: String,
+        #[deftly(same_attrs = "#[some] #[other(y)]")]
         field_e: <T as TryInto<u8>>::Error,
         field_o: Option<i32>,
      },
