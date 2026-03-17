@@ -279,6 +279,12 @@ error: unexpected end of input, un-bracked, un-quoted meta values may not be emp
    |
    = note: this error originates in the macro `::derive_deftly::derive_deftly_engine` (in Nightly builds, run with -Z macro-backtrace for more info)
 
+error: un-braced, un-quoted meta values may not contain any of `<` `>` `=`
+  --> ui/badmeta.rs:83:27
+   |
+83 | #[deftly(value3 = setting = inner_value)]
+   |                           ^
+
 error: beta derive-deftly feature used, without `beta_deftly` template option
   --> ui/badmeta.rs:88:36
    |
