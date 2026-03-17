@@ -112,7 +112,7 @@ pub struct SubstMeta<O: SubstParseContext> {
 
 #[derive(Debug)]
 pub struct SubstAsSpecified<O: SubstParseContext> {
-    #[allow(unused)] // XXXX
+    #[allow(unused)] // TODO
     pub kw_span: Span,
     pub as_: SubstAs<O>,
     pub nb: O::NotInBool,
