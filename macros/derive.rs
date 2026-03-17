@@ -96,9 +96,9 @@ pub fn derive_deftly(
 ) -> Result<TokenStream, syn::Error> {
     use engine::ChainNext;
 
-    let driver: syn::DeriveInput = syn::parse2(driver_stream.clone())?;
-
     dprint_block!(&driver_stream, "#[derive(Deftly)] input");
+
+    let driver: syn::DeriveInput = syn::parse2(driver_stream.clone())?;
 
     let driver_mac_name =
         format_ident!("derive_deftly_driver_{}", &driver.ident);
