@@ -97,17 +97,8 @@ impl Subst<BooleanContext> {
                     None => {}
                     Some((_, nb)) => void::unreachable(*nb),
                 }
-                use meta::SubstAs as mSA;
                 if let Some(as_) = as_ {
-                    match as_ {
-                        mSA::expr(nb, ..)
-                        | mSA::ident(nb, ..)
-                        | mSA::items(nb, ..)
-                        | mSA::path(nb)
-                        | mSA::str(nb)
-                        | mSA::token_stream(nb, ..)
-                        | mSA::ty(nb) => void::unreachable(*nb),
-                    }
+                    void::unreachable(as_.nb)
                 };
                 is_found(label.search_eval_bool(sm.pmetas(ctx?, kw_span)?))
             }

@@ -105,21 +105,29 @@ struct BorrowedDesig<'p> {
 #[derive(Debug)]
 pub struct SubstMeta<O: SubstParseContext> {
     pub desig: Desig,
-    pub as_: Option<SubstAs<O>>,
+    pub as_: Option<SubstAsSpecified<O>>,
     pub default: Option<(Argument<O>, O::NotInBool, beta::Enabled)>,
     pub quoted: Option<(QuotedMode, O::NotInBool)>,
+}
+
+#[derive(Debug)]
+pub struct SubstAsSpecified<O: SubstParseContext> {
+    #[allow(unused)] // TODO
+    pub kw_span: Span,
+    pub as_: SubstAs<O>,
+    pub nb: O::NotInBool,
 }
 
 #[derive(Debug, Clone, AsRefStr, Display)]
 #[allow(non_camel_case_types)] // clearer to use the exact ident
 pub enum SubstAs<O: SubstParseContext> {
-    expr(O::NotInBool, AllowTokens<O>, SubstAsSupported<ValueExpr>),
-    ident(O::NotInBool),
-    items(O::NotInBool, AllowTokens<O>, SubstAsSupported<ValueItems>),
-    path(O::NotInBool),
-    str(O::NotInBool),
-    token_stream(O::NotInBool, AllowTokens<O>),
-    ty(O::NotInBool),
+    expr(AllowTokens<O>, SubstAsSupported<ValueExpr>),
+    ident,
+    items(AllowTokens<O>, SubstAsSupported<ValueItems>),
+    path,
+    str,
+    token_stream(AllowTokens<O>),
+    ty,
 }
 
 //---------- meta attrs in a driver ----------
@@ -349,10 +357,18 @@ impl Label {
     }
 }
 
-impl<O: SubstParseContext> SubstAs<O> {
+impl<O: SubstParseContext> SubstAsSpecified<O> {
     fn parse(input: ParseStream, nb: O::NotInBool) -> syn::Result<Self> {
         let kw: IdentAny = input.parse()?;
-        let from_sma = |sma: SubstAs<_>| Ok(sma);
+        let kw_span = kw.span();
+        let from_sma = |as_: SubstAs<_>| {
+            Ok(SubstAsSpecified {
+                //
+                as_,
+                nb,
+                kw_span,
+            })
+        };
 
         // See keyword_general! in utils.rs
         macro_rules! keyword { { $($args:tt)* } => {
@@ -367,13 +383,13 @@ impl<O: SubstParseContext> SubstAs<O> {
             SubstAsSupportStatus::new(&kw)
         }
 
-        keyword! { expr(nb, allow_tokens()?, supported(&kw)?) }
-        keyword! { ident(nb) }
-        keyword! { items(nb, allow_tokens()?, supported(&kw)?) }
-        keyword! { path(nb) }
-        keyword! { str(nb) }
-        keyword! { token_stream(nb, allow_tokens()?) }
-        keyword! { ty(nb) }
+        keyword! { expr(allow_tokens()?, supported(&kw)?) }
+        keyword! { ident }
+        keyword! { items(allow_tokens()?, supported(&kw)?) }
+        keyword! { path }
+        keyword! { str }
+        keyword! { token_stream(allow_tokens()?) }
+        keyword! { ty }
 
         Err(kw.error("unknown derive-deftly 'as' syntax type keyword"))
     }
@@ -405,7 +421,7 @@ impl<O: SubstParseContext> SubstMeta<O> {
             Ok(())
         }
 
-        let mut as_ = None::<(Span, SubstAs<O>)>;
+        let mut as_ = None::<(Span, SubstAsSpecified<O>)>;
         let mut default = None;
         let mut quoted = None::<(Span, (QuotedMode, O::NotInBool))>;
 
@@ -415,7 +431,9 @@ impl<O: SubstParseContext> SubstMeta<O> {
             let nb = O::not_in_bool(&kw_span).expect("checked already");
             let ue = || beta::Enabled::new_for_syntax(kw_span);
             if keyword == "as" {
-                store(kw_span, &mut as_, || SubstAs::parse(input, nb))?;
+                store(kw_span, &mut as_, || {
+                    SubstAsSpecified::parse(input, nb)
+                })?;
             } else if keyword == "default" {
                 store(kw_span, &mut default, || {
                     Ok((input.parse()?, nb, ue()?))
@@ -1003,8 +1021,8 @@ where
         let mut found = None::<FoundNode>;
         let mut hint = None::<FoundNearbyNode>;
         let span_whole = self.span_whole(kw_span);
-        let self_loc = || (span_whole, "expansion");
-        let error_loc = || [ctx.error_loc(), self_loc()];
+        let self_loc = (span_whole, "expansion");
+        let error_loc = [ctx.error_loc(), self_loc];
 
         desig.label.search(
             pmetas,
@@ -1012,7 +1030,7 @@ where
                 if let Some(first) = &found {
                     return Err([(first.path_span, "first occurrence"),
                             (av.path_span, "second occurrence"),
-                            self_loc()].error(
+                            self_loc].error(
  "tried to expand just attribute value, but it was specified multiple times"
                     ));
                 }
@@ -1055,12 +1073,12 @@ where
  "expected a leaf node, found a list with sub-attributes",
                 };
                 let mut err = hint.path_span.error(hint_msg);
-                err.combine(error_loc().error(
+                err.combine(error_loc.error(
  "attribute value expanded, but no suitable value in data structure definition"
                 ));
                 err
             } else {
-                error_loc().error(
+                error_loc.error(
  "attribute value expanded, but no value in data structure definition"
                 )
             }
@@ -1194,7 +1212,7 @@ impl<'l> FoundNode<'l> {
     fn expand<O>(
         &self,
         tspan: Span,
-        as_: &Option<SubstAs<O>>,
+        as_: &Option<SubstAsSpecified<O>>,
         quoted: Option<QuotedMode>,
         out: &mut O,
     ) -> syn::Result<()>
@@ -1215,7 +1233,7 @@ impl<'l> FoundNode<'l> {
 
         let default_buf;
         let as_ = match as_ {
-            Some(as_) => as_,
+            Some(as_) => &as_.as_,
             None => {
                 default_buf = O::default_subst_meta_as(tspan)?;
                 &default_buf
@@ -1251,21 +1269,21 @@ impl<'l> FoundNode<'l> {
                 };
                 out.append_tokens(at, content)?;
             }
-            SA::ident(..) => {
+            SA::ident => {
                 let ident: IdentAny = metavalue_as(AVH::Normal, input)?;
                 out.append_identfrag_toks(&*ident)?;
             }
-            SA::items(_, np, supported) => {
+            SA::items(np, supported) => {
                 let items = metavalue_as(AVH::NoBare, input)?;
                 supported.infer_type(&items);
                 out.append_tokens(np, items)?;
             }
-            SA::path(..) => out.append_syn_type(
+            SA::path => out.append_syn_type(
                 tspan,
                 syn::Type::Path(metavalue_as(AVH::Normal, input)?),
                 Grouping::Invisible,
             ),
-            SA::str(..) => {
+            SA::str => {
                 let s = metavalue_litstr(
                     val,
                     tspan,
@@ -1273,12 +1291,12 @@ impl<'l> FoundNode<'l> {
                 )?;
                 out.append_syn_litstr(s);
             }
-            SA::ty(..) => out.append_syn_type(
+            SA::ty => out.append_syn_type(
                 tspan,
                 metavalue_as(AVH::Normal, input)?,
                 Grouping::Invisible,
             ),
-            SA::token_stream(_, np) => {
+            SA::token_stream(np) => {
                 let tokens: TokenStream = metavalue_as(
                     AVH::NoBare,
                     MetaValueAsInput {

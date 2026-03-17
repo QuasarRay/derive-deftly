@@ -911,7 +911,7 @@ impl ExpansionOutput for Items {
     }
 
     fn default_subst_meta_as(_: Span) -> syn::Result<meta::SubstAs<Self>> {
-        Ok(meta::SubstAs::str(()))
+        Ok(meta::SubstAs::str)
     }
 
     fn ignore_impl(self) -> syn::Result<()> {
