@@ -392,12 +392,12 @@ whose template syntax resembles the expansion syntax from `macro_rules`.
 
 ```rust,ignore
     macro! {
-	    via_modules [
+        via_modules [
             {....} // used by `macro`
-		    NEXT_MACRO {....} // used by `NEXT_MACRO`
-	        ..
-			define_derive_deftly {....} DEFWHAT ....
-	    ]
+            NEXT_MACRO {....} // used by `NEXT_MACRO`
+            ..
+            define_derive_deftly {....} DEFWHAT ....
+        ]
         { EARLIER_PREFIX.. }
         { MAIN_PASSTHROUGH.. }
         ( $ EXTRA_PASSTHROUGH.... )
@@ -449,10 +449,10 @@ Expands to:
     macro_rules! derive_deftly_module_MODULE { {
         via_modules [
             { $($our_opts:tt)* }
-		    $next_macro:path
-	        { $($next_opts:tt)* }
-			$(rest:tt)*
-		]
+            $next_macro:path
+            { $($next_opts:tt)* }
+            $(rest:tt)*
+        ]
         { $($predefs:tt)* }
         { $($main:tt)* }
         ( $($extra:tt)* )
@@ -484,9 +484,9 @@ Expands to:
 ```rust,ignore
     derive_deftly_module_M2! {
         via_modules [
-		    {}
-			derive_deftly_module_M1 {}
-			derive_deftly_engine {} define
+            {}
+            derive_deftly_module_M1 {}
+            derive_deftly_engine {} define
         ]
         { }
         { DOCS MyMacro TOPTIONS..: TEMPLATE.. }
@@ -499,8 +499,8 @@ Hence:
 ```rust,ignore
     derive_deftly_module_M1! {
         via_modules [
-		    {}
-			derive_deftly_engine {} define
+            {}
+            derive_deftly_engine {} define
         ]
         { M2_DEFINES }
         { DOCS MyMacro TOPTIONS..: TEMPLATE.. }
@@ -513,8 +513,8 @@ Hence:
 ```rust,ignore
     derive_deftly_engine! {
         via_modules [
-		    {} define
-	    ]
+            {} define
+        ]
         { M1_DEFINES M2_DEFINES }
         { DOCS MyMacro TOPTIONS..: TEMPLATE.. }
         ( )
@@ -549,10 +549,10 @@ Expands to:
 ```rust,ignore
     derive_deftly_module_P2! {
         via_modules [
-		    {}
-			derive_deftly_module_P1 {}
-			derive_deftly_engine {} defmod
-		]
+            {}
+            derive_deftly_module_P1 {}
+            derive_deftly_engine {} defmod
+        ]
         { M_DEFINES }
         { MODULE_DOCS [export] MODULE: }
         ( )
@@ -564,9 +564,9 @@ Hence:
 ```rust,ignore
     derive_deftly_module_P1! {
         via_modules [
-		    {}
-			derive_deftly_engine {} defmod
-		]
+            {}
+            derive_deftly_engine {} defmod
+        ]
         { P2_DEFINES M_DEFINES }
         { MODULE_DOCS [export] MODULE: }
         ( )
@@ -578,7 +578,7 @@ Hence:
 ```rust,ignore
     derive_deftly_engine {
         via_modules [
-		    {} defmod
+            {} defmod
         ]
         { P1_DEFINES P2_DEFINES M_DEFINES }
         { MODULE_DOCS [export] MODULE: }
