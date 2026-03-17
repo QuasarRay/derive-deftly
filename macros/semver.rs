@@ -80,6 +80,9 @@ Search for section titles containing "template export semver"."#,
         ))
     };
 
+    const CURRENT_MINOR: u32 = 7;
+    const NEXT_MINOR: u32 = CURRENT_MINOR + 1;
+
     match (version.major, version.minor, version.patch) {
         (0, 0..=11, _) => return too_old(),
         // We tolerate "too new" within the same minor version,
@@ -88,8 +91,8 @@ Search for section titles containing "template export semver"."#,
         (0, 12, 0) => return too_old(),
         (0, 12, 1..) => {}
         (0, 13.., _) => {}
-        (1, 0..=7, _) => {}
-        (1, 8.., _) => return too_new(),
+        (1, 0..=CURRENT_MINOR, _) => {}
+        (1, NEXT_MINOR.., _) => return too_new(),
         (2.., _, _) => return too_new(),
     }
 
