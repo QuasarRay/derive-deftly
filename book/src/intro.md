@@ -20,7 +20,7 @@ to help you get a feel for the system.
 <!-- This section is aimed primarily at a different audience to the book:
      it's the redirects for readers who want less discursive
      and more formal material.
-	 So it is deliberately in a different prose style. -->
+     So it is deliberately in a different prose style. -->
 
 There is also comprehensive and rigorous reference material:
 

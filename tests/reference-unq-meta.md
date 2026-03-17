@@ -414,8 +414,8 @@ in various forms.
 
    * **`$tgens`**:
      The generic arguments, with bounds
-	 (and the types of const generics)
-	 but without defaults.
+     (and the types of const generics)
+     but without defaults.
      Suitable for use when starting an `impl`.
 
    * **`$tgnames`**:
@@ -465,7 +465,7 @@ Accesses macro parameters passed via `#[deftly(...)]` attributes.
    * **`NAME = VALUE`**: Rust code (nonempty),
      terminated by the next comma, or closing `)`.
      Angle brackets `< >` and equals `=` are only allowed in `VALUE`
-	 inside `( )` or `{ }`, to avoid ambiguity.
+     inside `( )` or `{ }`, to avoid ambiguity.
      (**beta**)
    * **`NAME = "VALUE"`**: a string literal, which is re-parsed as Rust code
      (unless otherwise stated, below).
@@ -1840,7 +1840,7 @@ where T: 'l, T: TryInto<u8>
 {
     #[deftly(value = enum_variant)]
     UnitVariant,
-	#[deftly(items = { type T = i32; const K: T = 7; })]
+    #[deftly(items = { type T = i32; const K: T = 7; })]
     TupleVariant(std::iter::Once::<T>),
     NamedVariant { 
         field: &'l &'a T,

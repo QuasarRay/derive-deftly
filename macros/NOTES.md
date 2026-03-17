@@ -130,21 +130,21 @@ and that wouldn't be a breaking change?
 In the `${Xmeta as ...}` table:
 
   * **`attrs(A1, A2, ....)`**, **`attrs(! A1, A2, ....)`**:
-	Expands to a subset of the `#[attrname ]`s:
-	Only any attributes matching `A1` and `A2`,
-	or all attributes except those,
-	respectively.
+    Expands to a subset of the `#[attrname ]`s:
+    Only any attributes matching `A1` and `A2`,
+    or all attributes except those,
+    respectively.
 
-	It is not an error if there are no matching attributes.
-	It is also not an error if the driver specified attributes
-	that are filtered out.
+    It is not an error if there are no matching attributes.
+    It is also not an error if the driver specified attributes
+    that are filtered out.
 
-	However, if there are any attributes supplied by the driver,
-	but not used, it is an error.
+    However, if there are any attributes supplied by the driver,
+    but not used, it is an error.
 
     The filtering is as for `${Xattrs }`,
-	but does not filter out `#[deftly]` or `#[derive_deftly]`
-	by default.
+    but does not filter out `#[deftly]` or `#[derive_deftly]`
+    by default.
 
 This is as proposed in
 <https://gitlab.torproject.org/Diziet/rust-derive-deftly/-/issues/139>.
@@ -155,7 +155,7 @@ In the `${Xmeta as ...}` table:
 
   * **`attrs(A1(A2))`**:
 
-	Each `attrname ...` generates `#[A1(A2(attrname ...))]`.
+    Each `attrname ...` generates `#[A1(A2(attrname ...))]`.
 
 Advantages: the template can rename the attributes.
 The template can stuff things into deeper levels of the tree.
@@ -302,11 +302,11 @@ Syntax and semantics TBD.  Some notes:
    For things that need to split off fields        struct Foo as above {
    and talk only about subsets of the generics         field: Box<T>,
       generic parameter uses (for fields)
-      		$fgens					T,
-		$fgens_omitted				'l, C
+            $fgens                  T,
+        $fgens_omitted              'l, C
       For explicit iteration, within ${for tgens ...} or $( ... )
-		$tgname					'l   	T   	C
-		$tgbounds ???
+        $tgname                 'l      T       C
+        $tgbounds ???
 
    Something for being able to handle structs/unions/enums
    equally in template, whatever that means.  We need to expand
@@ -337,9 +337,9 @@ won't get in the way.
    invokes the from-struct derivation machinery; enables:
     1. use of `#[derive_deftly(ReuseableMacro)]` on this very struct
     2. later use of `derive_deftly_adhoc!` of the same struct
-	   (if `#[derive_defly_adhoc]` specified)
+       (if `#[derive_defly_adhoc]` specified)
     3. `#[deftly(...)]` attributes on bits of the data structure
-	   (checked via chaining technique).
+       (checked via chaining technique).
 
  * **`define_derive_deftly!{ [export] MACNAME: TEMPLATE }`**:
    define a reusable template, which may be invoked as

@@ -238,7 +238,7 @@ No breaking changes since 0.14.x.
      no longer tolerating `define_derive_deftly! { Template = ... }`.
    - Require `export` to export templates (and drivers),
      no longer tolerating `pub`.
-	 Eg `define_derive_deftly! { export Template: ... }`.
+     Eg `define_derive_deftly! { export Template: ... }`.
    - Remove `pub_template_semver_check!` macro,
      in favour of `template_export_semver_check!`.
 
@@ -505,7 +505,7 @@ internal keyword `$_da_intern_crate` to `$_dd_intern_crate`.
    rather than `#[derive_adhoc(pub)]`.
 
 ```text
-Old name (0.8.x and earlier)	New name (0.9.x and later)
+Old name (0.8.x and earlier)    New name (0.9.x and later)
 
 define_derive_adhoc!            define_derive_deftly!
 
