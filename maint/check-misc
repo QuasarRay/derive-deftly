@@ -1,0 +1,33 @@
+#!/bin/bash
+set -euo pipefail
+
+exec >&2
+
+check-hard-tabs () {
+    set +e
+    git --no-pager grep -P '\t' ':*.md'
+    rc=$?
+    set -e
+    case $rc in
+	0) echo 'hard tabs found in markdown files'; return 1 ;;
+	1) ok=true ;;
+	*) return 1 ;;
+    esac
+}
+
+failed=()
+for check in hard-tabs
+do
+    check="check-$check"
+    echo "-- $check --"
+    (set -e; $check) || failed+=("$check")
+done
+
+echo "-- summary --"
+
+if [ "${failed[*]}" = "" ]; then
+    echo 'all ok.'
+else
+    echo "failed: ${failed[*]}"
+    exit 1
+fi

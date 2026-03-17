@@ -106,6 +106,15 @@ maint-check-todos:
     - apt-get -y install libtoml-perl git
     - maint/check-blocking-todos
 
+# Check for FIXMEs.  This is in "comprehensive" so you can sabotage
+# the CI, but still get it all to run - useful for iterating through CI.
+maint-check-misc:
+  stage: test
+  dependencies: []
+  script:
+    - apt-get -y install git
+    - maint/check-misc
+
 cargo-clippy:
   stage: test
   image: "rust:1.93.0"
