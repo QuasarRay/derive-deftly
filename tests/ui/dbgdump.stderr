@@ -4,7 +4,7 @@ error: must be within a field, so within a field repeat group
 13 |     ${dbg { $fname }}
    |              ^^^^^
 ...
-37 | #[derive(Deftly)]
+38 | #[derive(Deftly)]
    |          ------ in this derive macro expansion
    |
    = note: this error originates in the macro `derive_deftly_template_BasicDbgs` which comes from the expansion of the derive macro `Deftly` (in Nightly builds, run with -Z macro-backtrace for more info)
@@ -15,7 +15,7 @@ error: must be within a field, so within a field repeat group
 14 |     ${dbg "error" { $fname }}
    |                      ^^^^^
 ...
-37 | #[derive(Deftly)]
+38 | #[derive(Deftly)]
    |          ------ in this derive macro expansion
    |
    = note: this error originates in the macro `derive_deftly_template_BasicDbgs` which comes from the expansion of the derive macro `Deftly` (in Nightly builds, run with -Z macro-backtrace for more info)
@@ -26,7 +26,7 @@ error: must be within a field, so within a field repeat group
 15 |     ${if dbg(is_empty($fname)) {}}
    |                        ^^^^^
 ...
-37 | #[derive(Deftly)]
+38 | #[derive(Deftly)]
    |          ------ in this derive macro expansion
    |
    = note: this error originates in the macro `derive_deftly_template_BasicDbgs` which comes from the expansion of the derive macro `Deftly` (in Nightly builds, run with -Z macro-backtrace for more info)
@@ -37,7 +37,7 @@ error: must be within a field, so within a field repeat group
 16 |     ${if dbg("error", is_empty($fname)) {}}
    |                                 ^^^^^
 ...
-37 | #[derive(Deftly)]
+38 | #[derive(Deftly)]
    |          ------ in this derive macro expansion
    |
    = note: this error originates in the macro `derive_deftly_template_BasicDbgs` which comes from the expansion of the derive macro `Deftly` (in Nightly builds, run with -Z macro-backtrace for more info)
@@ -48,7 +48,7 @@ error: expansion only valid in enums
 23 |         $( ${dbg { $vname }} )
    |                     ^^^^^
 ...
-42 | #[derive(Deftly)]
+43 | #[derive(Deftly)]
    |          ------ in this derive macro expansion
    |
    = note: this error originates in the macro `derive_deftly_template_Contexts` which comes from the expansion of the derive macro `Deftly` (in Nightly builds, run with -Z macro-backtrace for more info)
@@ -59,18 +59,18 @@ error: expansion only valid in enums
 23 |         $( ${dbg { $vname }} )
    |                     ^^^^^
 ...
-45 | #[derive(Deftly)]
+46 | #[derive(Deftly)]
    |          ------ in this derive macro expansion
    |
    = note: this error originates in the macro `derive_deftly_template_Contexts` which comes from the expansion of the derive macro `Deftly` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: must be within a field, so within a field repeat group
-  --> ui/dbgdump.rs:34:34
+  --> ui/dbgdump.rs:35:34
    |
-34 |     $<${dbg "paste error" { "x" $fname "y" }}>
+35 |     $<${dbg "paste error" { "x" $fname "y" }}>
    |                                  ^^^^^
 ...
-57 | #[derive(Deftly)]
+58 | #[derive(Deftly)]
    |          ------ in this derive macro expansion
    |
    = note: this error originates in the macro `derive_deftly_template_Pastes` which comes from the expansion of the derive macro `Deftly` (in Nightly builds, run with -Z macro-backtrace for more info)

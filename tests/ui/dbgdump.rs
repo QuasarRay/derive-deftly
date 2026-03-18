@@ -23,6 +23,7 @@ define_derive_deftly! {
         $( ${dbg { $vname }} )
         $( ${dbg "noted vtype" { $vtype }} )
         $( ${dbg "noted fname" { $fname }} )
+
     }
 }
 
