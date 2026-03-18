@@ -86,7 +86,7 @@ impl SubstVType {
     ) -> syn::Result<()> {
         let expand_spec_or_sd =
             |out: &mut _,
-             spec: &Option<Argument<TokenAccumulator>>,
+             spec: &Option<Argument>,
              sd: SubstDetails<TokenAccumulator>| {
                 if let Some(spec) = spec {
                     spec.expand(ctx.as_general(), out);

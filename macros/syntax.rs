@@ -1104,7 +1104,7 @@ impl<O: SubstParseContext> DbgDumpRequest<O> {
 #[derive(Default, Debug)]
 struct ExplicitErrorNamedArgs {
     message: Option<Argument<concat::Accumulator>>,
-    span: Option<Argument<TokenAccumulator>>,
+    span: Option<Argument>,
 }
 impl_parse_one_subkeyword! {
     ExplicitErrorNamedArgs:
