@@ -17,12 +17,13 @@ define_derive_deftly! {
 }
 
 define_derive_deftly! {
-    Contexts:
+    Contexts beta_deftly:
 
     ${ignore
         $( ${dbg { $vname }} )
         $( ${dbg "noted vtype" { $vtype }} )
         $( ${dbg "noted fname" { $fname }} )
+        $( ${dbg { ${concat "concat fname " $fname}}} )
     }
 }
 

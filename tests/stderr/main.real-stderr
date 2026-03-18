@@ -29,6 +29,9 @@ Tuple
 ---------- derive-deftly dbg dump "noted fname" for Tuple.0 from Contexts expansion (start) ----------
 0
 ---------- derive-deftly dbg dump "noted fname" for Tuple.0 from Contexts expansion (end) ----------
+---------- derive-deftly dbg dump for Tuple.0 from Contexts expansion (start) ----------
+"concat fname 0"
+---------- derive-deftly dbg dump for Tuple.0 from Contexts expansion (end) ----------
 ---------- derive-deftly dbg dump for Struct from Contexts expansion (start) ----------
 /* ERROR: expansion only valid in enums */
 ---------- derive-deftly dbg dump for Struct from Contexts expansion (end) ----------
@@ -38,6 +41,9 @@ Struct
 ---------- derive-deftly dbg dump "noted fname" for Struct.f from Contexts expansion (start) ----------
 f
 ---------- derive-deftly dbg dump "noted fname" for Struct.f from Contexts expansion (end) ----------
+---------- derive-deftly dbg dump for Struct.f from Contexts expansion (start) ----------
+"concat fname f"
+---------- derive-deftly dbg dump for Struct.f from Contexts expansion (end) ----------
 ---------- derive-deftly dbg dump for Enum::Tuple from Contexts expansion (start) ----------
 Tuple
 ---------- derive-deftly dbg dump for Enum::Tuple from Contexts expansion (end) ----------
@@ -56,6 +62,12 @@ Enum :: Struct
 ---------- derive-deftly dbg dump "noted fname" for Enum::Struct.f from Contexts expansion (start) ----------
 f
 ---------- derive-deftly dbg dump "noted fname" for Enum::Struct.f from Contexts expansion (end) ----------
+---------- derive-deftly dbg dump for Enum::Tuple.0 from Contexts expansion (start) ----------
+"concat fname 0"
+---------- derive-deftly dbg dump for Enum::Tuple.0 from Contexts expansion (end) ----------
+---------- derive-deftly dbg dump for Enum::Struct.f from Contexts expansion (start) ----------
+"concat fname f"
+---------- derive-deftly dbg dump for Enum::Struct.f from Contexts expansion (end) ----------
 ---------- derive-deftly dbg dump "paste" for WithGenerics from Pastes expansion (start) ----------
 "pasting_" ""+"WithGenerics"+":: < T >" "_pasted"
 ---------- derive-deftly dbg dump "paste" for WithGenerics from Pastes expansion (end) ----------
