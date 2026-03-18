@@ -15,27 +15,40 @@ pub struct Accumulator {
     errors: ErrorAccumulator,
 }
 
+impl Template<Accumulator> {
+    pub fn expand_to_lit<'c>(
+        &self,
+        kw_span: Span,
+        gctx: GeneralContext<'c>,
+    ) -> syn::Result<syn::LitStr> {
+        let mut accum = concat::Accumulator::new_with_span(kw_span);
+        self.expand(gctx, &mut accum);
+        accum.finish_literal()
+    }
+
+    pub fn expand_onto<'c, O: ExpansionOutput>(
+        &self,
+        kw_span: Span,
+        gctx: GeneralContext<'c>,
+        np: &O::NotInPaste,
+        out: &mut O,
+    ) {
+        // We *would* support ${paste ${concat ...}} but it would be weird.
+        let _: O::NotInPaste = *np;
+
+        match self.expand_to_lit(kw_span, gctx) {
+            Ok(y) => out.append_syn_litstr(&y),
+            Err(e) => out.record_error(e),
+        }
+    }
+}
+
 impl Accumulator {
-    pub fn finish_literal(self) -> syn::Result<syn::LitStr> {
+    fn finish_literal(self) -> syn::Result<syn::LitStr> {
         let out_span = self.out_span.unwrap_or(self.def_span);
         let text = self.errors.finish_with(self.text)?;
         let lit = syn::LitStr::new(&text, out_span);
         Ok(lit)
-    }
-
-    pub fn finish_onto<O>(self, np: &O::NotInPaste, out: &mut O)
-    where
-        O: ExpansionOutput,
-    {
-        // We *would* support ${paste ${concat ...}} but it would be weird.
-        let _: O::NotInPaste = *np;
-
-        (|| {
-            let lit = self.finish_literal()?;
-            out.append_syn_litstr(&lit);
-            Ok(())
-        })()
-        .unwrap_or_else(|err| out.record_error(err))
     }
 
     fn append_display(&mut self, span: Span, plain: impl Display + Spanned) {
@@ -261,13 +274,16 @@ impl ExpansionOutput for Accumulator {
         msg: &mut String,
         content: &Template<Accumulator>,
     ) -> fmt::Result {
-        let mut child = Accumulator::new_with_span(kw_span);
-        content.expand(ctx, &mut child);
-        match child.errors.examine() {
-            Some(e) => write!(msg, "/* ERROR: {} */", e)?,
-            None => write!(msg, "{}", child.text)?,
+        match content.expand_to_lit(kw_span, ctx) {
+            Ok(y) => {
+                write!(msg, "{:?}", y.value())?;
+                self.append_syn_litstr(&y);
+            }
+            Err(e) => {
+                write!(msg, "/* ERROR: {} */", e)?;
+                self.record_error(e);
+            }
         }
-        child.finish_onto(&(), self);
         Ok(())
     }
 
