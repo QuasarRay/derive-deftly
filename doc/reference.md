@@ -1179,11 +1179,12 @@ and expand it later when they are.)
 
 `${NAME}` may only be used
 inside pasting and case changing
-if `BODY` was precisely an invocation of `${paste }` or `$<...>`.
+if `BODY` was precisely an invocation of `${paste }`/`$<...>`.
 
 `${NAME}` may only be used
 inside `${concat ...}`
-if `BODY` was precisely an invocation of `${concat }`, `${paste }` or `$<...>`.
+if `BODY` was precisely an invocation of `${concat }`
+or `${paste }`/`$<...>`.
 
 You can define an expansion and a condition with the same name;
 they won't interfere.
