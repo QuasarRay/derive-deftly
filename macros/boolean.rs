@@ -24,6 +24,7 @@ impl SubstParseContext for BooleanContext {
     type NotInBool = Void;
     type ConcatOnly = Void;
     type BoolOnly = ();
+    type AllowTemplate = ();
     const IS_BOOL: bool = true;
     type DbgContent = Subst<BooleanContext>;
 
@@ -180,6 +181,7 @@ impl Subst<BooleanContext> {
             | SD::paste_spanned(_, _, not_in_bool, ..)
             | SD::ChangeCase(.., paste::ChangeCaseOkIn { not_in_bool, .. })
             | SD::concat(_, not_in_bool, ..)
+            | SD::StringTemplate(_, not_in_bool, ..)
             | SD::when(_, not_in_bool)
             | SD::define(_, not_in_bool)
             | SD::defcond(_, not_in_bool)

@@ -50,13 +50,15 @@ pub use super::utils::{
 
 pub(super) use super::{
     accum, adviseable, beta, check, concat, dbg_allkw, define, engine,
-    framework, general_context, meta, modules,
+    framework, general_context, meta, modules, string_template,
 };
 
 #[allow(unused_imports)] // used in tests
 pub use super::utils::{Concatenated, Discard};
 
 pub use meta::CheckUsed as mCU;
+
+pub use string_template::LexicalContext as _;
 
 // this is used by the dprintln! macro, which can't just use crate
 // but which doesn't use the import if it's not enabled

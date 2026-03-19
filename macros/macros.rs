@@ -30,6 +30,7 @@ pub(crate) mod modules;
 pub(crate) mod options;
 pub(crate) mod paste;
 pub(crate) mod repeat;
+pub(crate) mod string_template;
 pub(crate) mod syntax;
 
 #[cfg_attr(not(feature = "beta"), path = "beta_disabled.rs")]

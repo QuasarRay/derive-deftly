@@ -38,6 +38,7 @@ dependencies = [
  "sha3",
  "strum 0.28.0",
  "syn",
+ "unicode-ident",
  "void",
 ]
 
@@ -127,6 +128,7 @@ dependencies = [
  "sha3",
  "strum 0.28.0",
  "syn",
+ "unicode-ident",
  "void",
 ]
 
@@ -160,6 +162,7 @@ dependencies = [
  "syn",
  "toml",
  "trybuild",
+ "unicode-ident",
  "void",
 ]
 

@@ -21,6 +21,7 @@
       * [`$findex` `$vindex` -- field/variant numerical index](#findex-vindex--fieldvariant-numerical-index)
       * [`${paste ...}`, `$<...>`, `${paste_spanned}` -- identifier pasting](#paste---paste_spanned--identifier-pasting)
       * [`${concat ...}` - string literal concatenation (**beta**)](#concat----string-literal-concatenation-beta)
+      * [`$"..."` - string templating (**beta**)](#---string-templating-beta)
       * [`${CASE_CHANGE ...}` -- case changing](#case_change---case-changing)
       * [`${when CONDITION}` -- filtering out repetitions by a predicate](#when-condition--filtering-out-repetitions-by-a-predicate)
       * [`${if COND1 { ... } else if COND2 { ... } else { ... }}` -- conditional](#if-cond1----else-if-cond2----else-----conditional)
@@ -886,6 +887,58 @@ This feature is available only in [**beta**].
  * `${concat ${snake_case $vname}}`: `"named_variant"`
  * `${concat $<r#raw_ident>}`: `"raw_ident"`
 
+<div id="string-template">
+
+### `$"..."` - string templating (**beta**)
+
+</div>
+
+Expands to a new string literal, processing
+`$`-expansions within the input string.
+
+<!-- TODO document and implement $/// -->
+
+This is a convenience syntax for `${concat }`.
+The leading `$` is followed by a (possbily raw) string literal.
+The input string literal may contain:
+
+ * Literal text.
+ * Expansions in the forms
+   `$keyword`, `${keyword ...}`, and `$<...>`.
+   The inner `...` are always lexed as Rust tokens,
+   and handled the same way as inside `${concat }`.
+ * Doubled dollars `$$` to specify a single dollar `$`.
+
+However, `"`, `'` and ``\`` are completely forbidden within any `$` expansion
+even within brackets, and there is no quoting facility.
+Control structures like `$( )`, `${for }` and `${if }` are also forbidden
+(i.e. re-entering the `$"..."` lexical/parsing context
+from within an expansion in the `$"..."` is not supported).
+
+Instead:
+put the `$"..."` within a `${concat }`,
+end the `$"..."` before the forbidden part,
+and restart it afterwards;
+or
+put the forbidden template elements
+into a user-defined expansion whose body is precisely `${concat }`,
+and reference that from within the `$"..."`.
+
+Available only in [**beta**].
+
+#### Examples
+
+ * `$"type is $ttype."`: `"type is Unit::<C>."`
+ * `$"got $<Alt $ttype> from pasting."`: `"got AltUnit::<C> from pasting."`
+ * `$"meta is ${tmeta(simple) as str}."`: `"meta is String."`
+
+#### Examples, working with forbidden content
+
+ * `$"for $tname, ${if tmeta(simple) { y }}?"`: error, ``control structures are not allowed in string templates``
+ * `$r#"for $tname, ${concat ${if tmeta(simple) { "y" }}}?"#`: error, ``nested strings, characters/lifetimes, and backslashes are not allowed``
+ * `${concat $"for $tname, " ${if tmeta(simple) { "y" }} $"."}`: `"for Unit, y."`
+ * `${define Y ${concat ${if tmeta(simple) { "y" }}}} $"for $tname, $Y."`: `"for Unit, y."`
+
 ### `${CASE_CHANGE ...}` -- case changing
 
 Expands the content, and changes its case
@@ -1182,8 +1235,8 @@ inside pasting and case changing
 if `BODY` was precisely an invocation of `${paste }`/`$<...>`.
 
 `${NAME}` may only be used
-inside `${concat ...}`
-if `BODY` was precisely an invocation of `${concat }`
+inside `${concat ...}`/`${"..."}`
+if `BODY` was precisely an invocation of `${concat }`/`${"..."}`
 or `${paste }`/`$<...>`.
 
 You can define an expansion and a condition with the same name;

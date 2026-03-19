@@ -16,6 +16,8 @@ pub use self::TemplateElement as TE;
 pub struct Template<O: SubstParseContext> {
     /// `TD::Subst` is known not to contain `SD::when`
     pub elements: Vec<TemplateElement<O>>,
+
+    pub allow_recursive_parse: O::AllowTemplate,
 }
 
 #[derive(Debug)]
@@ -40,6 +42,8 @@ pub struct Argument<O: SubstParseContext = TokenAccumulator>(pub Template<O>);
 #[derive(Debug)]
 pub struct TemplateWithWhens<O: SubstParseContext> {
     pub elements: Vec<TemplateElement<O>>,
+
+    pub allow_recursive_parse: O::AllowTemplate,
 }
 
 #[derive(Debug)]
@@ -155,6 +159,12 @@ pub enum SubstDetails<O: SubstParseContext> {
     ),
     concat(
         Template<concat::Accumulator>,
+        O::NotInBool,
+        O::NotInPaste,
+        beta::Enabled,
+    ),
+    StringTemplate(
+        Template<concat::Accumulator<string_template::LexicalContextToken>>,
         O::NotInBool,
         O::NotInPaste,
         beta::Enabled,
@@ -343,9 +353,12 @@ impl Parse for Definition<DefinitionBody> {
         /// Token to make sure we undo the pop in the match
         struct PushedBack;
 
-        // Is it precisely an invocation of $paste/$< > or $concat ?
+        // Is it precisely an invocation of $paste/$< > or $concat/$".." ?
         let body = match (|| {
-            let Template { elements } = &mut body.0;
+            let Template {
+                elements,
+                allow_recursive_parse: (),
+            } = &mut body.0;
             if elements.len() != 1 {
                 return Err(PushedBack);
             }
@@ -369,6 +382,10 @@ impl Parse for Definition<DefinitionBody> {
                         kw_span,
                         sd: new_sd,
                     })],
+                    // This is fine because this is the body which
+                    //  0. is always parsed/lexed as TokenStream
+                    //  1. we have already parsed above, anyway
+                    allow_recursive_parse: IO::AllowTemplate::new_unchecked(),
                 }))
             }
 
@@ -383,6 +400,20 @@ impl Parse for Definition<DefinitionBody> {
                         kw_span,
                         DefinitionBody::Concat,
                         SD::concat(items, not_in_bool, not_in_paste, beta),
+                    )
+                }
+                SD::StringTemplate(items, not_in_bool, not_in_paste, beta) => {
+                    // `items` has a different type to `items` above.
+                    // hence the 2nd arm.
+                    mk_special_body(
+                        kw_span,
+                        DefinitionBody::Concat,
+                        SD::StringTemplate(
+                            items,
+                            not_in_bool,
+                            not_in_paste,
+                            beta,
+                        ),
                     )
                 }
                 other => {
@@ -463,6 +494,8 @@ impl<O: SubstParseContext> TemplateWithWhens<O> {
         mut special: &mut S,
     ) -> syn::Result<Self> {
         // eprintln!("@@@@@@@@@@ PARSE {}", &input);
+        let allow_recursive_parse =
+            O::AllowTemplate::new_for_syntax(input.span())?;
         let mut good = vec![];
         let mut errors = ErrorAccumulator::default();
         while !input.is_empty() {
@@ -480,7 +513,10 @@ impl<O: SubstParseContext> TemplateWithWhens<O> {
                 Ok(special)
             });
         }
-        errors.finish_with(TemplateWithWhens { elements: good })
+        errors.finish_with(TemplateWithWhens {
+            elements: good,
+            allow_recursive_parse,
+        })
     }
 }
 
@@ -495,9 +531,17 @@ impl<O: SubstParseContext> Parse for Argument<O> {
             || la.peek(Token![$])
             || la.peek(syn::Lit)
         {
+            let span = input.span();
             let element = input.parse()?;
             TemplateWithWhens {
                 elements: vec![element],
+                // Consider this kind of thing
+                //   $" ${expansion arg=ident } "
+                //   $" ${expansion arg=$expansion } "
+                //   $" ${expansion arg=42 } "
+                //   $" ${expansion arg=42.32i } "  <- trouble
+                // Forbid them all.
+                allow_recursive_parse: O::AllowTemplate::new_for_syntax(span)?,
             }
             .try_into()
         } else {
@@ -791,7 +835,7 @@ impl<O: SubstParseContext> Subst<O> {
     ///
     /// You must have called [`deescape_orig_dollar`],
     /// and handled the `$$` case.
-    fn parse_after_dollar(
+    pub fn parse_after_dollar(
         la: Lookahead1,
         input: ParseStream,
         _deescaped: OrigDollarHandled,
@@ -830,6 +874,8 @@ impl<O: SubstParseContext> Subst<O> {
                 kw_span: angle.span(),
                 sd: SD::paste(template, O::not_in_bool(&angle)?),
             })
+        } else if la.peek(syn::LitStr) {
+            string_template::parse_as_subst(input.parse()?)
         } else {
             return Err(la.error());
         }
@@ -1128,6 +1174,7 @@ impl ExplicitError {
             }
             let message = Argument(Template {
                 elements: vec![TE::LitStr(message)],
+                allow_recursive_parse: (),
             });
             Ok(ExplicitError {
                 message,
@@ -1323,7 +1370,10 @@ impl<O: SubstParseContext> RepeatedTemplate<O> {
     ) -> Result<RepeatedTemplate<O>, syn::Error> {
         use TemplateWithWhens as TWW;
 
-        let TWW { elements } = TWW::parse_special::<O::SpecialParseContext>(
+        let TWW {
+            elements,
+            allow_recursive_parse,
+        } = TWW::parse_special::<O::SpecialParseContext>(
             input,
             &mut Default::default(),
         )?;
@@ -1347,7 +1397,10 @@ impl<O: SubstParseContext> RepeatedTemplate<O> {
         } {}
 
         let elements = Vec::from(elements);
-        let template = TemplateWithWhens { elements };
+        let template = TemplateWithWhens {
+            elements,
+            allow_recursive_parse,
+        };
         let template = Template::try_from(template)?;
 
         let over = match over {
@@ -1378,7 +1431,10 @@ where
     type Error = syn::Error;
 
     fn try_from(unchecked: TemplateWithWhens<O>) -> syn::Result<Template<O>> {
-        let TemplateWithWhens { elements } = unchecked;
+        let TemplateWithWhens {
+            elements,
+            allow_recursive_parse,
+        } = unchecked;
         for e in &elements {
             if let Left((kw_span, _)) = te_extract_when!(e) {
                 return Err(kw_span.error(
@@ -1386,7 +1442,10 @@ where
                 ));
             }
         }
-        Ok(Template { elements })
+        Ok(Template {
+            elements,
+            allow_recursive_parse,
+        })
     }
 }
 

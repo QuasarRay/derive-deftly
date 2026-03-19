@@ -152,6 +152,11 @@ pub trait SubstParseContext: Sized {
     /// Uninhabited unless this lexical context is within a condition.
     type BoolOnly: Debug + Copy + Sized;
 
+    /// Uninhabited unless we are allowed to parse a (nested) template
+    ///
+    /// Used (only) to prevent recursive entry to the parser within `$"..."`.
+    type AllowTemplate: Debug + Copy + Sized + string_template::LexicalContext;
+
     /// Whether this is a boolean context
     //
     // Useful for ad-hoc handling of the way that boolean
@@ -570,6 +575,7 @@ impl SubstParseContext for TokenAccumulator {
     type NotInConcat = ();
     type NotInBool = ();
     type DbgContent = Template<Self>;
+    type AllowTemplate = ();
     fn not_in_paste(_: &impl Spanned) -> syn::Result<()> {
         Ok(())
     }

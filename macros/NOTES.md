@@ -70,22 +70,23 @@ nor compared for equality.
  * `${stringify "requoted"}`: `"\"requoted\""`
  * `${stringify ${concat $fvis}}`: `"\"pub(crate)\""`
 
-### String templating `$"..."`
+### String templating `$"..."` future possibilities
 
-This is a convenient syntax for specifying a string template.
-It is equivalent to a use of `${concat }`.
-(Counts for `${define }` too.)
+The lexical/syntactic restrictions inside `$" ${ ... } "`
+are quite severe.
 
-The leading `$` is followed by a (possbily raw) string literal.
+There are two separate problems:
 
-The string literal contents is lexed as follows:
+ * Lexing Rust that might contain string literals including
+   raw literals, strings with prefixes, lifetimes, characters,
+   etc., is really hard.
 
- * Literal text
- * Expansions in the forms
-   `$keyword`, `${keyword ...}`, `$<...>`,
-   but `"`, `'` and ``\`` are completely forbidden within the `...`.
-   If you need this, use a `${define ...}`.
- * Doubled dollars `$$`
+   Existing lexer libraries don't let you lex incrementally,
+   but we need that because we need to return to literal
+   text mode after the expansion.
+
+ * The anomalous lexical behaviour inside (say) `$" ${dbg { ... }} "`.
+   See `LexicalContext` in `string_template.rs`.
 
 Possibly in the future we might support
 `${"template with $1 positional arguments" $< blarky $fname >}`

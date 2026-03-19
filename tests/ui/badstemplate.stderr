@@ -1,0 +1,95 @@
+error: unexpected end of string, espected }; in string template, error in fragment "${", near this location "unclosed ${"<-HERE
+  --> ui/badstemplate.rs:13:10
+   |
+13 |         $"unclosed ${",
+   |          ^^^^^^^^^^^^^
+
+error: unexpected end of string, espected ); in string template, error in fragment "$(", near this location "unclosed $("<-HERE
+  --> ui/badstemplate.rs:14:10
+   |
+14 |         $"unclosed $(",
+   |          ^^^^^^^^^^^^^
+
+error: unexpected end of string, espected ]; in string template, error in fragment "$[", near this location "unclosed $["<-HERE
+  --> ui/badstemplate.rs:15:10
+   |
+15 |         $"unclosed $[",
+   |          ^^^^^^^^^^^^^
+
+error: unexpected end of string, espected >; in string template, error in fragment "$<", near this location "unclosed $<"<-HERE
+  --> ui/badstemplate.rs:16:10
+   |
+16 |         $"unclosed $<",
+   |          ^^^^^^^^^^^^^
+
+error: mismatched closing delimiter, expected }; in string template, error in fragment "${ )", near this location "mismatched ${ )"<-HERE
+  --> ui/badstemplate.rs:17:10
+   |
+17 |         $"mismatched ${ )",
+   |          ^^^^^^^^^^^^^^^^^
+
+error: mismatched closing delimiter, expected ); in string template, error in fragment "$( ]", near this location "mismatched $( ]"<-HERE
+  --> ui/badstemplate.rs:18:10
+   |
+18 |         $"mismatched $( ]",
+   |          ^^^^^^^^^^^^^^^^^
+
+error: mismatched closing delimiter, expected ]; in string template, error in fragment "$[ }", near this location "mismatched $[ }"<-HERE
+  --> ui/badstemplate.rs:19:10
+   |
+19 |         $"mismatched $[ }",
+   |          ^^^^^^^^^^^^^^^^^
+
+error: mismatched closing delimiter, expected }; in string template, error in fragment "$( ${ ]", near this location "nest mismatched $( ${ ]"<-HERE
+  --> ui/badstemplate.rs:20:10
+   |
+20 |         $"nest mismatched $( ${ ] )",
+   |          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: mismatched closing delimiter, expected ); in string template, error in fragment "$( $( }", near this location "nest mismatched $( $( }"<-HERE
+  --> ui/badstemplate.rs:21:10
+   |
+21 |         $"nest mismatched $( $( } )",
+   |          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: mismatched closing delimiter, expected ]; in string template, error in fragment "$( $[ )", near this location "nest mismatched $( $[ )"<-HERE
+  --> ui/badstemplate.rs:22:10
+   |
+22 |         $"nest mismatched $( $[ ) )",
+   |          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: invalid/unsupported syntax after `$` in string template; in string template, error in fragment "$#", near this location "forbid $#"<-HERE
+  --> ui/badstemplate.rs:23:10
+   |
+23 |         $r#"forbid $# wrong-expansion"#,
+   |          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: nested strings, characters/lifetimes, and backslashes are not allowed in $"..."; in string template, error in fragment "${concat \"", near this location "forbid ${concat \""<-HERE
+  --> ui/badstemplate.rs:24:10
+   |
+24 |         $r#"forbid ${concat ">"} quotes"#,
+   |          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: nested strings, characters/lifetimes, and backslashes are not allowed in $"..."; in string template, error in fragment "${define X { \\", near this location "forbid ${define X { \\"<-HERE
+  --> ui/badstemplate.rs:25:10
+   |
+25 |         $r#"forbid ${define X { \ }} backslash"#,
+   |          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: nested strings, characters/lifetimes, and backslashes are not allowed in $"..."; in string template, error in fragment "${define X { '", near this location "forbid ${define X { '"<-HERE
+  --> ui/badstemplate.rs:26:10
+   |
+26 |         $r#"forbid ${define X { ' }} apostrophe"#,
+   |          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: cannot parse string into token stream; in string template, error in fragment "${define X { let 🦀 = 1; }}", near this location "un-lexable ${define X { let 🦀 = 1; }}"<-HERE
+  --> ui/badstemplate.rs:27:10
+   |
+27 |         $r#"un-lexable ${define X { let 🦀 = 1; }}."#,
+   |          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: unknown derive-deftly keyword; in string template, error in fragment "${invalid_expansion}", near this location "un-parseable ${invalid_expansion}"<-HERE
+  --> ui/badstemplate.rs:28:10
+   |
+28 |         $r#"un-parseable ${invalid_expansion}."#,
+   |          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
