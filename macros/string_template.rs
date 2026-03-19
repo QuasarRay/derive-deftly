@@ -75,24 +75,6 @@ type Accum = concat::Accumulator<LexicalContextToken>;
 
 impl LexicalContext for LexicalContextToken {
     fn new_for_syntax(span: Span) -> syn::Result<Self> {
-        // Prove that only the elements we expect are allowed
-        None::<TemplateElement<Accum>>.map(|te| match te {
-            TE::LitStr(_) => {
-                // this one is allowed, but we manually construct
-                // the token during the string template lexing;
-                // normal parsing can't get one via the traits
-            }
-            TE::Subst { .. } | TE::Repeat { .. } => {
-                // Substitutions and repeats are OK
-                // so long as the contents are,
-                // (which is proved statically by the types)
-            }
-            TE::Ident(_, nc) => void::unreachable(nc),
-            TE::Literal(_, allow_tokens) | TE::Group { allow_tokens, .. } => {
-                void::unreachable(allow_tokens.1)
-            }
-        });
-
         Err(span.error(
  "control structures are not allowed in string templates (within an expansion in a string template, reentering the string template lexing/parsing context is not possible)"
         ))
