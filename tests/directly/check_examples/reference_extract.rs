@@ -302,7 +302,7 @@ fn parse_bullet(
         r#"(?m)^ \* ⊲(⋈)⊳(?: for ([^:]+))?: (.*)$"#,
         |re| mc!(bullet, re),
     )
-            .ok_or_else(|| format!("syntax not as expected"))?;
+    .ok_or_else(|| format!("syntax not as expected"))?;
 
     let for_used_buf = Default::default();
 
