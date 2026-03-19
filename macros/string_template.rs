@@ -58,6 +58,14 @@ pub trait LexicalContext: Debug + Copy {
     fn new_unchecked() -> Self;
 }
 
+#[derive(Clone, Copy, Debug)]
+#[non_exhaustive]
+pub struct LexicalContextToken {}
+
+pub type Accumulator = concat::Accumulator<LexicalContextToken>;
+
+//---------- normal case for normal concat ----------
+
 impl LexicalContext for () {
     fn new_for_syntax(_: Span) -> syn::Result<Self> {
         Ok(())
@@ -67,11 +75,7 @@ impl LexicalContext for () {
     }
 }
 
-#[derive(Clone, Copy, Debug)]
-#[non_exhaustive]
-pub struct LexicalContextToken {}
-
-type Accum = concat::Accumulator<LexicalContextToken>;
+//---------- lexing the input string ----------
 
 impl LexicalContext for LexicalContextToken {
     fn new_for_syntax(span: Span) -> syn::Result<Self> {
@@ -84,18 +88,9 @@ impl LexicalContext for LexicalContextToken {
     }
 }
 
-fn is_delim_get_end(c: char) -> Option<u8> {
-    Some(match c {
-        '{' => b'}',
-        '(' => b')',
-        '[' => b']',
-        _ => return None,
-    })
-}
-
 fn parse_tokens_bracketed(
     hd: &mut HadDollar,
-    out: &mut Vec<TemplateElement<Accum>>,
+    out: &mut Vec<TemplateElement<Accumulator>>,
     mut bracket_stack: Vec<u8>,
 ) -> syn::Result<()> {
     while let Some(end) = bracket_stack.last() {
@@ -132,7 +127,7 @@ fn parse_tokens_bracketed(
 
 fn parse_tokens_since_dollar(
     hd: &mut HadDollar,
-    out: &mut Vec<TemplateElement<Accum>>,
+    out: &mut Vec<TemplateElement<Accumulator>>,
 ) -> syn::Result<()> {
     let l = hd.chunk_after_dollar();
 
@@ -141,7 +136,7 @@ fn parse_tokens_since_dollar(
         let subst = Parser::parse2(
             |input: ParseStream<'_>| {
                 let la = input.lookahead1();
-                Subst::<Accum>::parse_after_dollar(
+                Subst::<Accumulator>::parse_after_dollar(
                     la,
                     input,
                     // bypass deescape_orig_dollar; we don't support
@@ -159,7 +154,7 @@ fn parse_tokens_since_dollar(
     .map_err(|e| hd.map_syn_err(e))
 }
 
-fn parse_lit_str(input: &syn::LitStr) -> syn::Result<Template<Accum>> {
+fn parse_lit_str(input: &syn::LitStr) -> syn::Result<Template<Accumulator>> {
     let mut out = vec![];
 
     let whole = input.value();
@@ -216,6 +211,7 @@ fn parse_lit_str(input: &syn::LitStr) -> syn::Result<Template<Accum>> {
     .try_into()
 }
 
+/// Main parsing entrypoint for string templates
 pub fn parse_as_subst<O: SubstParseContext>(
     input: syn::LitStr,
 ) -> syn::Result<Subst<O>> {

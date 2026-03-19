@@ -164,7 +164,7 @@ pub enum SubstDetails<O: SubstParseContext> {
         beta::Enabled,
     ),
     StringTemplate(
-        Template<concat::Accumulator<string_template::LexicalContextToken>>,
+        Template<string_template::Accumulator>,
         O::NotInBool,
         O::NotInPaste,
         beta::Enabled,
