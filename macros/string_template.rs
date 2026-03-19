@@ -116,10 +116,7 @@ fn parse_tokens_bracketed(
     out: &mut Vec<TemplateElement<Accum>>,
     mut bracket_stack: Vec<u8>,
 ) -> syn::Result<()> {
-    loop {
-        let Some(end) = bracket_stack.last() else {
-            break;
-        };
+    while let Some(end) = bracket_stack.last() {
         let end = *end as char;
 
         let c = hd.lc.next_char().ok_or_else(|| {
