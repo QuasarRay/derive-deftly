@@ -268,6 +268,28 @@ struct SectionState<'i> {
     bq_input: Option<(DocLoc, &'i String)>,
 }
 
+/// Handle ``` `...` ``` and also ``` ``...`` ```
+///
+/// `re_pat` should contain `⊲(⋈)⊳` or similar,
+/// which will end up matching the `` ` ``-quoted part.
+fn match_backquoted_maybemulti<T>(
+    re_pat: &str,
+    f: impl Fn(&str) -> Option<T>,
+) -> Option<T> {
+    [
+        ("`", "[^`]+", "`"), //
+        ("``", "(?:[^`]+|`[^`])*", "``"),
+    ]
+    .iter()
+    .find_map(|(l, m, r)| {
+        let re = re_pat //
+            .replace("⊲", l)
+            .replace("⋈", m)
+            .replace("⊳", r);
+        f(&re)
+    })
+}
+
 fn parse_bullet(
     loc: DocLoc,
     bullet: &str,
@@ -363,12 +385,10 @@ fn parse_bullet(
                 break;
             }
             let (p, rest) =
-                [
-                    "(?m)^`([^`]+)`(?:, (.*)|)$",
-                    "(?m)^``((?:[^`]+|`[^`])*)``(?:, (.*)|)$",
-                ]
-                .iter()
-                .find_map(|re| mc!(outputs, re))
+                match_backquoted_maybemulti(
+                    "(?m)^⊲(⋈)⊳(?:, (.*)|)$",
+                    |re| mc!(outputs, re),
+                )
                 .ok_or_else(|| {
                     format!(
                         r#"bad (tail of) bullet point examples "{}""#,
