@@ -603,6 +603,9 @@ where
             SD::concat(content, _not_in_bool, not_in_paste, _) => {
                 content.expand_onto(kw_span, gctx, not_in_paste, out);
             }
+            SD::StringTemplate(content, _not_in_bool, not_in_paste, _) => {
+                content.expand_onto(kw_span, gctx, not_in_paste, out);
+            }
 
             SD::define(..) | SD::defcond(..) => out.write_error(
                 &kw_span,

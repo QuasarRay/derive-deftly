@@ -896,7 +896,7 @@ This feature is available only in [**beta**].
 Expands to a new string literal, processing
 `$`-expansions within the input string.
 
-XXXX NOT YET IMPLEMENTED
+<!-- TODO document and implement $/// -->
 
 This is a convenience syntax for `${concat }`.
 The leading `$` is followed by a (possbily raw) string literal.
@@ -1225,6 +1225,8 @@ if `BODY` was precisely an invocation of `${paste }`/`$<...>`.
 inside `${concat ...}`/`${"..."}`
 if `BODY` was precisely an invocation of `${concat }`/`${"..."}`
 or `${paste }`/`$<...>`.
+
+XXXX `${define X $"..."} ${concat $X}` NOT IMPLEMENTED
 
 You can define an expansion and a condition with the same name;
 they won't interfere.

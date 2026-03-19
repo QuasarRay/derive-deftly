@@ -163,6 +163,12 @@ pub enum SubstDetails<O: SubstParseContext> {
         O::NotInPaste,
         beta::Enabled,
     ),
+    StringTemplate(
+        Template<concat::Accumulator<string_template::LexicalContextToken>>,
+        O::NotInBool,
+        O::NotInPaste,
+        beta::Enabled,
+    ),
 
     // special
     when(Box<Condition>, O::NotInBool),
@@ -347,7 +353,8 @@ impl Parse for Definition<DefinitionBody> {
         /// Token to make sure we undo the pop in the match
         struct PushedBack;
 
-        // Is it precisely an invocation of $paste/$< > or $concat ?
+        // Is it precisely an invocation of $paste/$< > or $concat/$".." ?
+        // XXXX ^ implement and test!
         let body = match (|| {
             let Template {
                 elements,
@@ -854,6 +861,8 @@ impl<O: SubstParseContext> Subst<O> {
                 kw_span: angle.span(),
                 sd: SD::paste(template, O::not_in_bool(&angle)?),
             })
+        } else if la.peek(syn::LitStr) {
+            string_template::parse_as_subst(input.parse()?)
         } else {
             return Err(la.error());
         }
