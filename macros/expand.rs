@@ -86,7 +86,7 @@ impl SubstVType {
     ) -> syn::Result<()> {
         let expand_spec_or_sd =
             |out: &mut _,
-             spec: &Option<Argument<TokenAccumulator>>,
+             spec: &Option<Argument>,
              sd: SubstDetails<TokenAccumulator>| {
                 if let Some(spec) = spec {
                     spec.expand(ctx.as_general(), out);
@@ -601,9 +601,7 @@ where
                 items.assemble(out, Some(*case))?;
             }
             SD::concat(content, _not_in_bool, not_in_paste, _) => {
-                let mut accum = concat::Accumulator::new_with_span(kw_span);
-                content.expand(gctx, &mut accum);
-                accum.finish_onto(not_in_paste, out);
+                content.expand_onto(kw_span, gctx, not_in_paste, out);
             }
 
             SD::define(..) | SD::defcond(..) => out.write_error(
@@ -690,9 +688,7 @@ impl ExplicitError {
         gctx: GeneralContext<'c>,
         kw_span: Span,
     ) -> Result<T, syn::Error> {
-        let mut message = concat::Accumulator::new_with_span(kw_span);
-        self.message.expand(gctx, &mut message);
-        let message = message.finish_literal()?;
+        let message = self.message.expand_to_lit(kw_span, gctx)?;
 
         let explicit_loc = self
             .span
@@ -754,10 +750,7 @@ impl DefinitionName {
                 paste::expand(ctx, def.body_span, content, out)?;
             }
             DefinitionBody::Concat(content) => {
-                let mut inner =
-                    concat::Accumulator::new_with_span(def.body_span);
-                content.expand(ctx, &mut inner);
-                inner.finish_onto(&not_in_paste()?, out);
+                content.expand_onto(def.body_span, ctx, &not_in_paste()?, out);
             }
             DefinitionBody::Normal(content) => {
                 let ok = (not_in_paste()?, not_in_concat()?);

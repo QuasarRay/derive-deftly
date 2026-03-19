@@ -343,7 +343,7 @@ impl Parse for Definition<DefinitionBody> {
         /// Token to make sure we undo the pop in the match
         struct PushedBack;
 
-        // Is it precisely an invocation of ${paste } or $< > ?
+        // Is it precisely an invocation of $paste/$< > or $concat ?
         let body = match (|| {
             let Template { elements } = &mut body.0;
             if elements.len() != 1 {
@@ -1104,7 +1104,7 @@ impl<O: SubstParseContext> DbgDumpRequest<O> {
 #[derive(Default, Debug)]
 struct ExplicitErrorNamedArgs {
     message: Option<Argument<concat::Accumulator>>,
-    span: Option<Argument<TokenAccumulator>>,
+    span: Option<Argument>,
 }
 impl_parse_one_subkeyword! {
     ExplicitErrorNamedArgs:

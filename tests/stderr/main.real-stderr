@@ -83,7 +83,7 @@ fn tdefkwed_adhoc2() {}
 ---------- derive-deftly dbg dump "adhoc" for DataType expansion (end) ----------
 derive-deftly dbg condition "adhoc" for DataType evaluated to true
 ---------- derive-deftly dbg dump for DataType expansion (start) ----------
-successful string
+"successful string"
 ---------- derive-deftly dbg dump for DataType expansion (end) ----------
 ---------- derive-deftly expansion, for DataType (start) ----------
 const _ : & str = "successful string";

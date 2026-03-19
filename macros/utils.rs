@@ -413,6 +413,7 @@ impl ErrorAccumulator {
     }
 
     /// If there were any errors, examine them (as a combined `syn::Error`)
+    #[allow(dead_code)] // may be used in the future
     pub fn examine(&self) -> Option<&syn::Error> {
         self.bad.as_ref()
     }
