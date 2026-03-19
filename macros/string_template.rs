@@ -191,7 +191,9 @@ fn parse_lit_str(input: &syn::LitStr) -> syn::Result<Template<Accum>> {
         let (lit, hd) = lc.find_dollar();
         out.push(mk_lit(lit));
 
-        let Some(mut hd) = hd else {
+        let mut hd = if let Some(hd) = hd {
+            hd
+        } else {
             break;
         };
 
