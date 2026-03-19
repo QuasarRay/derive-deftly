@@ -345,7 +345,9 @@ impl Parse for Definition<DefinitionBody> {
 
         // Is it precisely an invocation of $paste/$< > or $concat ?
         let body = match (|| {
-            let Template { elements } = &mut body.0;
+            let Template {
+                elements,
+            } = &mut body.0;
             if elements.len() != 1 {
                 return Err(PushedBack);
             }
@@ -480,7 +482,9 @@ impl<O: SubstParseContext> TemplateWithWhens<O> {
                 Ok(special)
             });
         }
-        errors.finish_with(TemplateWithWhens { elements: good })
+        errors.finish_with(TemplateWithWhens {
+            elements: good,
+        })
     }
 }
 
@@ -1323,7 +1327,9 @@ impl<O: SubstParseContext> RepeatedTemplate<O> {
     ) -> Result<RepeatedTemplate<O>, syn::Error> {
         use TemplateWithWhens as TWW;
 
-        let TWW { elements } = TWW::parse_special::<O::SpecialParseContext>(
+        let TWW {
+            elements,
+        } = TWW::parse_special::<O::SpecialParseContext>(
             input,
             &mut Default::default(),
         )?;
@@ -1347,7 +1353,9 @@ impl<O: SubstParseContext> RepeatedTemplate<O> {
         } {}
 
         let elements = Vec::from(elements);
-        let template = TemplateWithWhens { elements };
+        let template = TemplateWithWhens {
+            elements,
+        };
         let template = Template::try_from(template)?;
 
         let over = match over {
@@ -1378,7 +1386,9 @@ where
     type Error = syn::Error;
 
     fn try_from(unchecked: TemplateWithWhens<O>) -> syn::Result<Template<O>> {
-        let TemplateWithWhens { elements } = unchecked;
+        let TemplateWithWhens {
+            elements,
+        } = unchecked;
         for e in &elements {
             if let Left((kw_span, _)) = te_extract_when!(e) {
                 return Err(kw_span.error(
@@ -1386,7 +1396,9 @@ where
                 ));
             }
         }
-        Ok(Template { elements })
+        Ok(Template {
+            elements,
+        })
     }
 }
 

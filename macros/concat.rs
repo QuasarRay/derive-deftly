@@ -316,7 +316,9 @@ impl ExpansionOutput for Accumulator {
     }
 }
 
-impl Expand<Accumulator> for TemplateElement<Accumulator> {
+impl Expand<Accumulator>
+    for TemplateElement<Accumulator>
+{
     fn expand<'c>(
         &self,
         ctx: GeneralContext<'c>,
