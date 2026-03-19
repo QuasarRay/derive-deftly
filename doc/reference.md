@@ -1239,8 +1239,6 @@ inside `${concat ...}`/`${"..."}`
 if `BODY` was precisely an invocation of `${concat }`/`${"..."}`
 or `${paste }`/`$<...>`.
 
-XXXX `${define X $"..."} ${concat $X}` NOT IMPLEMENTED
-
 You can define an expansion and a condition with the same name;
 they won't interfere.
 

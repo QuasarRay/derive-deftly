@@ -403,6 +403,20 @@ impl Parse for Definition<DefinitionBody> {
                         SD::concat(items, not_in_bool, not_in_paste, beta),
                     )
                 }
+                SD::StringTemplate(items, not_in_bool, not_in_paste, beta) => {
+                    // `items` has a different type to `items` above.
+                    // hence the 2nd arm.
+                    mk_special_body(
+                        kw_span,
+                        DefinitionBody::Concat,
+                        SD::StringTemplate(
+                            items,
+                            not_in_bool,
+                            not_in_paste,
+                            beta,
+                        ),
+                    )
+                }
                 other => {
                     let reconstruct = Subst { kw_span, sd: other };
                     elements.push(TE::Subst(reconstruct));
