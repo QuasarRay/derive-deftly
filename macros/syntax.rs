@@ -354,7 +354,6 @@ impl Parse for Definition<DefinitionBody> {
         struct PushedBack;
 
         // Is it precisely an invocation of $paste/$< > or $concat/$".." ?
-        // XXXX ^ implement and test!
         let body = match (|| {
             let Template {
                 elements,
