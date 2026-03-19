@@ -58,6 +58,14 @@ pub trait LexicalContext: Debug + Copy {
     fn new_unchecked() -> Self;
 }
 
+#[derive(Clone, Copy, Debug)]
+#[non_exhaustive]
+pub struct LexicalContextToken {}
+
+pub type Accumulator = concat::Accumulator<LexicalContextToken>;
+
+//---------- normal case for normal concat ----------
+
 impl LexicalContext for () {
     fn new_for_syntax(_: Span) -> syn::Result<Self> {
         Ok(())
@@ -67,11 +75,7 @@ impl LexicalContext for () {
     }
 }
 
-#[derive(Clone, Copy, Debug)]
-#[non_exhaustive]
-pub struct LexicalContextToken {}
-
-pub type Accumulator = concat::Accumulator<LexicalContextToken>;
+//---------- lexing the input string ----------
 
 impl LexicalContext for LexicalContextToken {
     fn new_for_syntax(span: Span) -> syn::Result<Self> {
@@ -82,15 +86,6 @@ impl LexicalContext for LexicalContextToken {
     fn new_unchecked() -> Self {
         LexicalContextToken {}
     }
-}
-
-fn is_delim_get_end(c: char) -> Option<u8> {
-    Some(match c {
-        '{' => b'}',
-        '(' => b')',
-        '[' => b']',
-        _ => return None,
-    })
 }
 
 fn parse_tokens_bracketed(
@@ -216,6 +211,7 @@ fn parse_lit_str(input: &syn::LitStr) -> syn::Result<Template<Accumulator>> {
     .try_into()
 }
 
+/// Main parsing entrypoint for string templates
 pub fn parse_as_subst<O: SubstParseContext>(
     input: syn::LitStr,
 ) -> syn::Result<Subst<O>> {

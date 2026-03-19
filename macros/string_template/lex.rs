@@ -1,3 +1,5 @@
+//! Low-level lexer helper for string templating
+
 use super::*;
 
 #[derive(Debug)]
@@ -11,6 +13,15 @@ pub struct LexingContext<'s> {
 pub struct HadDollar<'l, 's> {
     pub lc: &'l mut LexingContext<'s>,
     dollar_i: usize,
+}
+
+pub fn is_delim_get_end(c: char) -> Option<u8> {
+    Some(match c {
+        '{' => b'}',
+        '(' => b')',
+        '[' => b']',
+        _ => return None,
+    })
 }
 
 impl<'s> LexingContext<'s> {
