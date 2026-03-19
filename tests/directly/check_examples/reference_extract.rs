@@ -298,8 +298,10 @@ fn parse_bullet(
     examples_out: &mut Vec<Box<dyn Example>>,
 ) -> Result<(), String> {
     let bullet = re!(r"\n   +").replace_all(bullet, " ");
-    let (input, here_for, outputs) =
-        mc!(bullet, r#"(?m)^ \* `([^`]+)`(?: for ([^:]+))?: (.*)$"#)
+    let (input, here_for, outputs) = match_backquoted_maybemulti(
+        r#"(?m)^ \* ⊲(⋈)⊳(?: for ([^:]+))?: (.*)$"#,
+        |re| mc!(bullet, re),
+    )
             .ok_or_else(|| format!("syntax not as expected"))?;
 
     let for_used_buf = Default::default();
