@@ -182,6 +182,7 @@ impl Subst<BooleanContext> {
             | SD::ChangeCase(.., paste::ChangeCaseOkIn { not_in_bool, .. })
             | SD::concat(_, not_in_bool, ..)
             | SD::StringTemplate(_, not_in_bool, ..)
+            | SD::DocTemplate(_, not_in_bool, ..)
             | SD::when(_, not_in_bool)
             | SD::define(_, not_in_bool)
             | SD::defcond(_, not_in_bool)

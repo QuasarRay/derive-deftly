@@ -181,6 +181,7 @@ impl<O: SubstParseContext> AnalyseRepeat for Subst<O> {
             SD::ChangeCase(body, ..) => recurse!(body),
             SD::concat(body, ..) => recurse!(body),
             SD::StringTemplate(body, ..) => recurse!(body),
+            SD::DocTemplate(body, ..) => recurse!(body.value),
             SD::when(..) => None, // out-of-place when, ignore it
             SD::define(..) => None,
             SD::defcond(..) => None,
