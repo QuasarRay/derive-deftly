@@ -1,6 +1,7 @@
 //! Implementation of string concatenation `${concat }`
 
 use super::framework::*;
+use string_template::LexicalContext;
 
 /// Accumulator for string concatenation `${concat }`
 ///
@@ -8,14 +9,15 @@ use super::framework::*;
 /// i.e., it corresponds to the lexical context for a `${concat }`,
 /// and collects the string to be output.
 #[derive(Debug)]
-pub struct Accumulator {
+pub struct Accumulator<L: LexicalContext = ()> {
     def_span: Span,
     out_span: Option<Span>,
     text: String,
     errors: ErrorAccumulator,
+    lexical_context: PhantomData<L>,
 }
 
-impl Template<Accumulator> {
+impl<L: LexicalContext> Template<Accumulator<L>> {
     pub fn expand_to_lit<'c>(
         &self,
         kw_span: Span,
@@ -43,7 +45,7 @@ impl Template<Accumulator> {
     }
 }
 
-impl Accumulator {
+impl<L: LexicalContext> Accumulator<L> {
     fn finish_literal(self) -> syn::Result<syn::LitStr> {
         let out_span = self.out_span.unwrap_or(self.def_span);
         let text = self.errors.finish_with(self.text)?;
@@ -187,7 +189,7 @@ fn recurse_display_type_like(
     Ok(())
 }
 
-impl SubstParseContext for Accumulator {
+impl<L: LexicalContext> SubstParseContext for Accumulator<L> {
     type NotInPaste = ();
     type NotInConcat = Void;
     type NotInBool = ();
@@ -195,6 +197,7 @@ impl SubstParseContext for Accumulator {
     type ConcatOnly = ();
     type DbgContent = Template<Self>;
     type SpecialParseContext = ();
+    type AllowTemplate = L;
 
     fn not_in_paste(_: &impl Spanned) -> syn::Result<()> {
         Ok(())
@@ -210,7 +213,7 @@ impl SubstParseContext for Accumulator {
     }
 }
 
-impl ExpansionOutput for Accumulator {
+impl<L: LexicalContext> ExpansionOutput for Accumulator<L> {
     fn append_identfrag_toks<I: IdentFrag>(
         &mut self,
         ident: &I,
@@ -272,7 +275,7 @@ impl ExpansionOutput for Accumulator {
         kw_span: Span,
         ctx: GeneralContext<'c>,
         msg: &mut String,
-        content: &Template<Accumulator>,
+        content: &Template<Accumulator<L>>,
     ) -> fmt::Result {
         match content.expand_to_lit(kw_span, ctx) {
             Ok(y) => {
@@ -293,6 +296,7 @@ impl ExpansionOutput for Accumulator {
             out_span: None,
             text: String::new(),
             errors: ErrorAccumulator::default(),
+            lexical_context: PhantomData,
         }
     }
     fn ignore_impl(self) -> syn::Result<()> {
@@ -316,13 +320,13 @@ impl ExpansionOutput for Accumulator {
     }
 }
 
-impl Expand<Accumulator>
-    for TemplateElement<Accumulator>
+impl<L: LexicalContext> Expand<Accumulator<L>>
+    for TemplateElement<Accumulator<L>>
 {
     fn expand<'c>(
         &self,
         ctx: GeneralContext<'c>,
-        out: &mut Accumulator,
+        out: &mut Accumulator<L>,
     ) -> syn::Result<()> {
         match self {
             TE::Ident(_ident, not_in_concat) => {

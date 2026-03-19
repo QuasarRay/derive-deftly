@@ -24,6 +24,7 @@ impl SubstParseContext for BooleanContext {
     type NotInBool = Void;
     type ConcatOnly = Void;
     type BoolOnly = ();
+    type AllowTemplate = ();
     const IS_BOOL: bool = true;
     type DbgContent = Subst<BooleanContext>;
 

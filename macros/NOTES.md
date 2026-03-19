@@ -87,7 +87,6 @@ There are two separate problems:
 
  * The anomalous lexical behaviour inside (say) `$" ${dbg { ... }} "`.
    See `LexicalContext` in `string_template.rs`.
-   XXXX ^ doesn't exist yet
 
 Possibly in the future we might support
 `${"template with $1 positional arguments" $< blarky $fname >}`
