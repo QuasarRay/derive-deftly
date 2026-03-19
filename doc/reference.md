@@ -926,6 +926,19 @@ and reference that from within the `$"..."`.
 
 Available only in [**beta**].
 
+#### Examples
+
+ * `$"type is $ttype."`: `"type is Unit::<C>."`
+ * `$"got $<Alt $ttype> from pasting."`: `"got AltUnit::<C> from pasting."`
+ * `$"meta is ${tmeta(simple) as str}."`: `"meta is String."`
+
+#### Examples, working with forbidden content
+
+ * `$"for $tname, ${if tmeta(simple) { y }}?"`: error, ``control structures are not allowed in string templates``
+ * `$r#"for $tname, ${concat ${if tmeta(simple) { "y" }}}?"#`: error, ``nested strings, characters/lifetimes, and backslashes are not allowed``
+ * `${concat $"for $tname, " ${if tmeta(simple) { "y" }} $"."}`: `"for Unit, y."`
+ * `${define Y ${concat ${if tmeta(simple) { "y" }}}} $"for $tname, $Y."`: `"for Unit, y."`
+
 ### `${CASE_CHANGE ...}` -- case changing
 
 Expands the content, and changes its case
