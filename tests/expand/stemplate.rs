@@ -12,6 +12,7 @@ derive_deftly_adhoc! {
     ${define C ${concat "c1 c2"}}
     ${define T $"t1 t2"}
 
+    $/// Doc generated from `$ttype`.
     const _: &[&str] = &[
         $"direct",
         $"C $C.",

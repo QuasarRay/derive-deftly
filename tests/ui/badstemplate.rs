@@ -27,6 +27,13 @@ derive_deftly_adhoc! {
         $r#"un-lexable ${define X { let 🦀 = 1; }}."#,
         $r#"un-parseable ${invalid_expansion}."#,
     ];
+
+    $/// ${concat " forbidden "}
+    $#[doc = 42]
+    $#[::doc = 42]
+    $#(parens)
+    $#weird
+    $//! inner attributes also forbidden
 }
 
 fn main() {}

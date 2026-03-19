@@ -2,6 +2,7 @@
 use derive_deftly::{derive_deftly_adhoc, Deftly};
 #[derive_deftly_adhoc]
 struct Struct;
+/// Doc generated from `Struct`.
 const _: &[&str] = &[
     "direct",
     "C c1 c2.",
