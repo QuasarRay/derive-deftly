@@ -791,7 +791,7 @@ impl<O: SubstParseContext> Subst<O> {
     ///
     /// You must have called [`deescape_orig_dollar`],
     /// and handled the `$$` case.
-    fn parse_after_dollar(
+    pub fn parse_after_dollar(
         la: Lookahead1,
         input: ParseStream,
         _deescaped: OrigDollarHandled,
