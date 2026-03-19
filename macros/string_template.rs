@@ -71,7 +71,7 @@ impl LexicalContext for () {
 #[non_exhaustive]
 pub struct LexicalContextToken {}
 
-type Accum = concat::Accumulator<LexicalContextToken>;
+pub type Accumulator = concat::Accumulator<LexicalContextToken>;
 
 impl LexicalContext for LexicalContextToken {
     fn new_for_syntax(span: Span) -> syn::Result<Self> {
@@ -95,7 +95,7 @@ fn is_delim_get_end(c: char) -> Option<u8> {
 
 fn parse_tokens_bracketed(
     hd: &mut HadDollar,
-    out: &mut Vec<TemplateElement<Accum>>,
+    out: &mut Vec<TemplateElement<Accumulator>>,
     mut bracket_stack: Vec<u8>,
 ) -> syn::Result<()> {
     while let Some(end) = bracket_stack.last() {
@@ -132,7 +132,7 @@ fn parse_tokens_bracketed(
 
 fn parse_tokens_since_dollar(
     hd: &mut HadDollar,
-    out: &mut Vec<TemplateElement<Accum>>,
+    out: &mut Vec<TemplateElement<Accumulator>>,
 ) -> syn::Result<()> {
     let l = hd.chunk_after_dollar();
 
@@ -141,7 +141,7 @@ fn parse_tokens_since_dollar(
         let subst = Parser::parse2(
             |input: ParseStream<'_>| {
                 let la = input.lookahead1();
-                Subst::<Accum>::parse_after_dollar(
+                Subst::<Accumulator>::parse_after_dollar(
                     la,
                     input,
                     // bypass deescape_orig_dollar; we don't support
@@ -159,7 +159,7 @@ fn parse_tokens_since_dollar(
     .map_err(|e| hd.map_syn_err(e))
 }
 
-fn parse_lit_str(input: &syn::LitStr) -> syn::Result<Template<Accum>> {
+fn parse_lit_str(input: &syn::LitStr) -> syn::Result<Template<Accumulator>> {
     let mut out = vec![];
 
     let whole = input.value();
