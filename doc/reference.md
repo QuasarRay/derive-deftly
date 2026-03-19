@@ -933,6 +933,7 @@ Available only in [**beta**].
  * `$"type is $ttype."`: `"type is Unit::<C>."`
  * `$"got $<Alt $ttype> from pasting."`: `"got AltUnit::<C> from pasting."`
  * `$"meta is ${tmeta(simple) as str}."`: `"meta is String."`
+ * ``$/// doc for `$ttype`.``: ``#[doc = " doc for `Unit::<C>`."]``
 
 #### Examples, working with forbidden content
 
