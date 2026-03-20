@@ -901,7 +901,7 @@ which derive-deftly expands to a `#[doc = "..."]` attribute,
 processing `$`-expansions within the input doc string.
 
 This is a convenience syntax for `${concat }`.
-The leading `$` is followed by a (possbily raw) string literal.
+The leading `$` (or `doc =`) is followed by a (possbily raw) string literal.
 The input string literal may contain:
 
  * Literal text.
@@ -924,7 +924,7 @@ and restart it afterwards;
 or
 put the forbidden template elements
 into a user-defined expansion whose body is precisely `${concat }`,
-and reference that from within the `$"..."`.
+and reference that from within the `$"..."` or `$///`.
 
 Available only in [**beta**].
 
