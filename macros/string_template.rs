@@ -224,3 +224,90 @@ pub fn parse_as_subst<O: SubstParseContext>(
     );
     Ok(Subst { kw_span, sd })
 }
+
+//---------- #[doc ] string templates ----------
+
+/// `$#[doc = "..."]`
+#[derive(Debug)]
+pub struct DocTemplate {
+    pub hash: Token![#],
+    bracket: token::Bracket,
+    doc: syn::Ident,
+    equals: Token![=],
+    pub value: Box<Subst<TokenAccumulator>>,
+    #[allow(unused)]
+    beta: beta::Enabled,
+}
+
+impl Parse for DocTemplate {
+    fn parse(outer: ParseStream<'_>) -> syn::Result<Self> {
+        let hash: Token![#] = outer.parse()?;
+        let beta = beta::Enabled::new_for_syntax(hash.span())?;
+
+        match (|| {
+            let content;
+            let bracket = bracketed!(content in outer);
+            let doc: syn::Ident = content.parse()?;
+            if doc != "doc" {
+                return Err(doc.error("expected #[doc ] attribute"));
+            }
+            let equals = content.parse()?;
+            let value = content.parse()?;
+            if !content.is_empty() {
+                // fail now rather than letting syn do its thing,
+                // so that we print our adjusted message
+                return Err(content.error("expected end of #[ ] content"));
+            }
+            let value = parse_as_subst(value);
+            syn::Result::Ok(value.map(move |value| DocTemplate {
+                hash,
+                bracket,
+                doc,
+                equals,
+                value: Box::new(value),
+                beta,
+            }))
+        })() {
+            Ok(Err(e)) => Err(e),
+            Ok(Ok(y)) => Ok(y),
+            Err(mut e) => {
+                e.combine(hash.error(
+ r#"only `$#[doc = "..."]` is supported, not `$# anything else`, nor `$//!`"#
+                ));
+                Err(e)
+            }
+        }
+    }
+}
+
+impl Expand<TokenAccumulator> for DocTemplate {
+    fn expand<'c>(
+        &self,
+        ctx: GeneralContext<'c>,
+        out: &mut TokenAccumulator,
+    ) -> syn::Result<()> {
+        let DocTemplate {
+            hash,
+            bracket,
+            doc,
+            equals,
+            value,
+            beta: _,
+        } = self;
+
+        let value = {
+            let mut ta = TokenAccumulator::new();
+            value.expand(ctx, &mut ta)?;
+            ta.tokens()?
+        };
+
+        out.with_tokens(|ts| {
+            hash.to_tokens(ts);
+            bracket.surround(ts, |ts| {
+                quote!(#doc #equals #value).to_tokens(ts);
+            });
+        });
+
+        Ok(())
+    }
+}

@@ -93,3 +93,69 @@ error: unknown derive-deftly keyword; in string template, error in fragment "${i
    |
 28 |         $r#"un-parseable ${invalid_expansion}."#,
    |          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: nested strings, characters/lifetimes, and backslashes are not allowed in $"..."; in string template, error in fragment "${concat \"", near this location " ${concat \""<-HERE
+  --> ui/badstemplate.rs:31:6
+   |
+31 |     $/// ${concat " forbidden "}
+   |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: expected string literal
+  --> ui/badstemplate.rs:32:14
+   |
+32 |     $#[doc = 42]
+   |              ^^
+
+error: only `$#[doc = "..."]` is supported, not `$# anything else`, nor `$//!`
+  --> ui/badstemplate.rs:32:6
+   |
+32 |     $#[doc = 42]
+   |      ^
+
+error: expected identifier
+  --> ui/badstemplate.rs:33:8
+   |
+33 |     $#[::doc = 42]
+   |        ^
+
+error: only `$#[doc = "..."]` is supported, not `$# anything else`, nor `$//!`
+  --> ui/badstemplate.rs:33:6
+   |
+33 |     $#[::doc = 42]
+   |      ^
+
+error: expected square brackets
+  --> ui/badstemplate.rs:34:7
+   |
+34 |     $#(parens)
+   |       ^
+
+error: only `$#[doc = "..."]` is supported, not `$# anything else`, nor `$//!`
+  --> ui/badstemplate.rs:34:6
+   |
+34 |     $#(parens)
+   |      ^
+
+error: expected square brackets
+  --> ui/badstemplate.rs:35:7
+   |
+35 |     $#weird
+   |       ^^^^^
+
+error: only `$#[doc = "..."]` is supported, not `$# anything else`, nor `$//!`
+  --> ui/badstemplate.rs:35:6
+   |
+35 |     $#weird
+   |      ^
+
+error: expected square brackets
+  --> ui/badstemplate.rs:36:6
+   |
+36 |     $//! inner attributes also forbidden
+   |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: only `$#[doc = "..."]` is supported, not `$# anything else`, nor `$//!`
+  --> ui/badstemplate.rs:36:6
+   |
+36 |     $//! inner attributes also forbidden
+   |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

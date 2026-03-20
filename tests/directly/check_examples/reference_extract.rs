@@ -268,6 +268,28 @@ struct SectionState<'i> {
     bq_input: Option<(DocLoc, &'i String)>,
 }
 
+/// Handle ``` `...` ``` and also ``` ``...`` ```
+///
+/// `re_pat` should contain `⊲(⋈)⊳` or similar,
+/// which will end up matching the `` ` ``-quoted part.
+fn match_backquoted_maybemulti<T>(
+    re_pat: &str,
+    f: impl Fn(&str) -> Option<T>,
+) -> Option<T> {
+    [
+        ("`", "[^`]+", "`"), //
+        ("``", "(?:[^`]+|`[^`])*", "``"),
+    ]
+    .iter()
+    .find_map(|(l, m, r)| {
+        let re = re_pat //
+            .replace("⊲", l)
+            .replace("⋈", m)
+            .replace("⊳", r);
+        f(&re)
+    })
+}
+
 fn parse_bullet(
     loc: DocLoc,
     bullet: &str,
@@ -276,9 +298,11 @@ fn parse_bullet(
     examples_out: &mut Vec<Box<dyn Example>>,
 ) -> Result<(), String> {
     let bullet = re!(r"\n   +").replace_all(bullet, " ");
-    let (input, here_for, outputs) =
-        mc!(bullet, r#"(?m)^ \* `([^`]+)`(?: for ([^:]+))?: (.*)$"#)
-            .ok_or_else(|| format!("syntax not as expected"))?;
+    let (input, here_for, outputs) = match_backquoted_maybemulti(
+        r#"(?m)^ \* ⊲(⋈)⊳(?: for ([^:]+))?: (.*)$"#,
+        |re| mc!(bullet, re),
+    )
+    .ok_or_else(|| format!("syntax not as expected"))?;
 
     let for_used_buf = Default::default();
 
@@ -363,12 +387,10 @@ fn parse_bullet(
                 break;
             }
             let (p, rest) =
-                [
-                    "(?m)^`([^`]+)`(?:, (.*)|)$",
-                    "(?m)^``((?:[^`]+|`[^`])*)``(?:, (.*)|)$",
-                ]
-                .iter()
-                .find_map(|re| mc!(outputs, re))
+                match_backquoted_maybemulti(
+                    "(?m)^⊲(⋈)⊳(?:, (.*)|)$",
+                    |re| mc!(outputs, re),
+                )
                 .ok_or_else(|| {
                     format!(
                         r#"bad (tail of) bullet point examples "{}""#,

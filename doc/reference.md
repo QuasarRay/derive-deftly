@@ -21,7 +21,7 @@
       * [`$findex` `$vindex` -- field/variant numerical index](#findex-vindex--fieldvariant-numerical-index)
       * [`${paste ...}`, `$<...>`, `${paste_spanned}` -- identifier pasting](#paste---paste_spanned--identifier-pasting)
       * [`${concat ...}` - string literal concatenation (**beta**)](#concat----string-literal-concatenation-beta)
-      * [`$"..."` - string templating (**beta**)](#---string-templating-beta)
+      * [`$"..."`, `$///...` - string and documentation templating (**beta**)](#----string-and-documentation-templating-beta)
       * [`${CASE_CHANGE ...}` -- case changing](#case_change---case-changing)
       * [`${when CONDITION}` -- filtering out repetitions by a predicate](#when-condition--filtering-out-repetitions-by-a-predicate)
       * [`${if COND1 { ... } else if COND2 { ... } else { ... }}` -- conditional](#if-cond1----else-if-cond2----else-----conditional)
@@ -889,14 +889,16 @@ This feature is available only in [**beta**].
 
 <div id="string-template">
 
-### `$"..."` - string templating (**beta**)
+### `$"..."`, `$///...` - string and documentation templating (**beta**)
 
 </div>
 
-Expands to a new string literal, processing
+`$"..."` expands to a new string literal, processing
 `$`-expansions within the input string.
 
-<!-- TODO document and implement $/// -->
+`$///...` is treated by Rust as `$#[doc = "..."]`
+which derive-deftly expands to a `#[doc = "..."]` attribute,
+processing `$`-expansions within the input doc string.
 
 This is a convenience syntax for `${concat }`.
 The leading `$` is followed by a (possbily raw) string literal.
@@ -931,6 +933,7 @@ Available only in [**beta**].
  * `$"type is $ttype."`: `"type is Unit::<C>."`
  * `$"got $<Alt $ttype> from pasting."`: `"got AltUnit::<C> from pasting."`
  * `$"meta is ${tmeta(simple) as str}."`: `"meta is String."`
+ * ``$/// doc for `$ttype`.``: ``#[doc = " doc for `Unit::<C>`."]``
 
 #### Examples, working with forbidden content
 

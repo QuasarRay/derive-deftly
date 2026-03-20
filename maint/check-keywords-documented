@@ -425,9 +425,10 @@ __DATA__
 # with its own combined SubstDetails variant
 ve	changecase
 
-# `$"..."` has its own variant and its own section in the reference
-# but our parsing script can't grok it
+# `$"..."` and `$#[doc ]` has two variants, and its own section
+# in the reference, but our parsing script can't grok it.
 ve	stringtemplate
+ve	doctemplate
 
 # These are combined SD variants
 dDEB	fvis fdefvis tvis

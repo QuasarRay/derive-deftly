@@ -1,4 +1,4 @@
-error: expected one of: `$`, parentheses, curly braces, identifier, `<`, string literal
+error: expected one of: `$`, parentheses, curly braces, identifier, `<`, string literal, `#`
   --> ui/badreserved.rs:11:6
    |
 11 |     $[ future ]
@@ -28,7 +28,7 @@ error: inner attributes are reserved syntax, anywhere in derive-deftly templates
 29 |         //! template doc comment?
    |         ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-error: expected one of: `$`, parentheses, curly braces, identifier, `<`, string literal
+error: beta derive-deftly feature used, without `beta_deftly` template option
   --> ui/badreserved.rs:36:6
    |
 36 |     $/// template doc comment?
@@ -40,7 +40,7 @@ error: expected ident
 44 |     ${define 0 { mod x {} }}
    |              ^
 
-error: expected one of: `$`, parentheses, curly braces, identifier, `<`, string literal
+error: expected one of: `$`, parentheses, curly braces, identifier, `<`, string literal, `#`
   --> ui/badreserved.rs:45:6
    |
 45 |     $0

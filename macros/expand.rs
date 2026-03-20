@@ -606,6 +606,11 @@ where
             SD::StringTemplate(content, _not_in_bool, not_in_paste, _) => {
                 content.expand_onto(kw_span, gctx, not_in_paste, out);
             }
+            SD::DocTemplate(content, _nb, allow_tokens) => {
+                out.append_tokens_with(allow_tokens, |out| {
+                    content.expand(gctx, out)
+                })?;
+            }
 
             SD::define(..) | SD::defcond(..) => out.write_error(
                 &kw_span,

@@ -169,6 +169,7 @@ pub enum SubstDetails<O: SubstParseContext> {
         O::NotInPaste,
         beta::Enabled,
     ),
+    DocTemplate(string_template::DocTemplate, O::NotInBool, AllowTokens<O>),
 
     // special
     when(Box<Condition>, O::NotInBool),
@@ -876,6 +877,17 @@ impl<O: SubstParseContext> Subst<O> {
             })
         } else if la.peek(syn::LitStr) {
             string_template::parse_as_subst(input.parse()?)
+        } else if la.peek(Token![#]) {
+            let doc_template: string_template::DocTemplate = input.parse()?;
+            let kw_span = doc_template.hash.span();
+            Ok(Subst {
+                kw_span,
+                sd: SD::DocTemplate(
+                    doc_template,
+                    O::not_in_bool(&kw_span)?,
+                    O::allow_tokens(&kw_span)?,
+                ),
+            })
         } else {
             return Err(la.error());
         }

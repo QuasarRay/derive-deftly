@@ -2182,6 +2182,7 @@ impl<O: SubstParseContext> FindRecogMetas for SubstDetails<O> {
             ChangeCase(v, _, _) => v.find_recog_metas(acc),
             concat(v, ..) => v.find_recog_metas(acc),
             StringTemplate(v, ..) => v.find_recog_metas(acc),
+            DocTemplate(v, ..) => v.value.find_recog_metas(acc),
 
             when(v, _) => v.find_recog_metas(acc),
             define(v, _) => v.find_recog_metas(acc),
