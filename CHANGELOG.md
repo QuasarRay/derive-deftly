@@ -57,6 +57,12 @@ or via the [account request form].
 
 ## Changelog
 
+### 1.9.0
+
+#### Added
+
+ * BETA: String templates `$"..."` and docstring templates `$///`.
+
 ### 1.8.0
 
 #### Added
