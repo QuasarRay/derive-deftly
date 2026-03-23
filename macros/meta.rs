@@ -131,7 +131,7 @@ pub enum SubstAs<O: SubstParseContext> {
     str,
     token_stream(AllowTokens<O>),
     ty,
-    attrs(AllowTokens<O>),
+    attrs(AllowTokens<O>, beta::Enabled),
 }
 
 //---------- meta attrs in a driver ----------
@@ -462,6 +462,7 @@ impl<O: SubstParseContext> SubstAsSpecified<O> {
     fn parse(input: ParseStream, nb: O::NotInBool) -> syn::Result<Self> {
         let kw: IdentAny = input.parse()?;
         let kw_span = kw.span();
+        let beta = || beta::Enabled::new_for_syntax(kw_span);
         let from_sma = |as_: SubstAs<_>| {
             let multiplicity = as_.multiplicity();
             Ok(SubstAsSpecified {
@@ -493,7 +494,7 @@ impl<O: SubstParseContext> SubstAsSpecified<O> {
         keyword! { str }
         keyword! { token_stream(allow_tokens()?) }
         keyword! { ty }
-        keyword! { attrs(allow_tokens()?) }
+        keyword! { attrs(allow_tokens()?, beta()?) }
 
         Err(kw.error("unknown derive-deftly 'as' syntax type keyword"))
     }
@@ -1423,7 +1424,7 @@ impl<'l> FoundNode<'l> {
                 metavalue_as(AVH::Normal, input)?,
                 Grouping::Invisible,
             ),
-            SA::attrs(at) => {
+            SA::attrs(at, _) => {
                 let attrs: UserAttrs = metavalue_as(AVH::Normal, input)?;
                 out.append_tokens(at, attrs)?;
             }
