@@ -30,6 +30,7 @@
       * [`$crate` -- root of template crate](#crate--root-of-template-crate)
       * [`$tdefkwd` -- keyword introducing the new data structure](#tdefkwd--keyword-introducing-the-new-data-structure)
       * [`$tdefvariants`, `$vdefbody`, `$fdefine` -- tools for defining types](#tdefvariants-vdefbody-fdefine--tools-for-defining-types)
+      * [`$loop_index` -- repetition information](#loop_index--repetition-information)
       * [`${ignore ..}` -- Expand but then discard](#ignore---expand-but-then-discard)
       * [`${dbg ..}`, `$dbg_all_keywords` -- Debugging output](#dbg--dbg_all_keywords--debugging-output)
       * [`${define ...}`, `${defcond ...}` -- user-defined expansions and conditions](#define--defcond---user-defined-expansions-and-conditions)
@@ -40,6 +41,7 @@
       * [`is_struct`, `is_enum`, `is_union`](#is_struct-is_enum-is_union)
       * [`v_is_unit`, `v_is_tuple`, `v_is_named`](#v_is_unit-v_is_tuple-v_is_named)
       * [`tgens`](#tgens)
+      * [`loop_initial`, `loop_final` -- repetition information ([**beta**])](#loop_initial-loop_final--repetition-information-beta)
       * [`is_empty(..)`, `approx_equal(ARG1, ARG2)` -- equality comparison (token comparison)](#is_empty-approx_equalarg1-arg2--equality-comparison-token-comparison)
       * [`false`, `true`, `not(CONDITION)`, `any(COND1,COND2,...)`, `all(COND1,COND2,...)` -- boolean logic](#false-true-notcondition-anycond1cond2-allcond1cond2--boolean-logic)
       * [`dbg(...)` -- Debug dump of condition value](#dbg--debug-dump-of-condition-value)
@@ -189,6 +191,38 @@ in turn.
 
 structs and unions do not have variants, but
 derive-deftly treats them as having a single (unnamed) variant.
+
+<div id="t:repetition-info">
+
+#### Using information about repetitions ([**beta**])
+
+</div>
+
+[`loop_initial`](#c:loop_initial),
+[`loop_final`](#c:loop_final),
+and
+[`$loop_index`](#x:loop_index)
+provide information about which repetition this is.
+
+All of these count only iterations that are
+selected by relevant [`${when }`](#x:when) clauses.
+(Consequently, they are not allowed inside `${when }`.)
+
+When a repetition over fields implicitly repeats over variants too,
+that is a single repetition over all fields, for the purposes of `loop_...`.
+
+These always refer to the innermost repetition.
+(Dynamic scoping means that it is not possible
+to refer to information about outer repetitions,
+even by use of `${define }`.)
+
+The actual variant or field position, disregarding `${when }`,
+can be obtained via
+[`$vindex`](#x:vindex),
+and
+[`$findex`](#x:findex),
+
+These features are available only in [**beta**].
 
 #### Examples
 
@@ -778,6 +812,9 @@ The numerical index of the field or variant, starting at 0.
 
 Can be used as a number, or a tuple field name.
 
+Counts all fields/variants, including ones filtered out by `${when }`,
+unlike [`$loop_index`](#x:loop_index).
+
 #### Examples
 
  * `$findex`: `0`, `1`, ..
@@ -1118,6 +1155,28 @@ pub enum EnumCopy<'a, 'l: 'a, T: Display = usize, const C: usize = 1,> {
 # "##;
 ```
 
+<div id="x:loop_index">
+
+### `$loop_index` -- repetition information
+
+</div>
+
+ * **`$loop_index`** is the index of this repetition, starting at zero.
+
+`loop_index` counts only repetitions
+selected by relevant [`${when }`](#x:when) clauses,
+unlike [`$vindex`](#x:vindex) and [`$findex`](#x:findex).
+See above for
+[full information about the semantics](#t:repetition-info).
+
+Can be used as a number, or a tuple field name.
+
+Available only in [**beta**].
+
+#### Examples
+
+ * `$( ${when not(fmeta(same_attrs))} $loop_index = $fname; )` for `Enum`: `0 = 0; 1 = field_o;`
+
 <div id="x:ignore">
 
 ### `${ignore ..}` -- Expand but then discard
@@ -1457,6 +1516,31 @@ Whether the top-level type has generics.
 #### Examples
 
  * `tgens`: true for `Unit`, `Tuple`, `Struct`, `Enum`
+
+<div id="c:loop_initial">
+<div id="c:loop_final">
+
+### `loop_initial`, `loop_final` -- repetition information ([**beta**])
+
+</div>
+</div>
+
+ * `loop_initial` is true iff this is the first iteration of this repetition.
+ * `loop_final` is true iff this is the final iteration of this repetition.
+
+These count only repetitions
+selected by relevant [`${when }`](#x:when) clauses.
+See above for
+[full information about the semantics](#t:repetition-info).
+
+Available only in [**beta**].
+
+#### Examples
+
+ * `$( $fname ${if not(loop_final) {, }} )` for `Struct`: `field, field_b`
+ * `${concat $( ${when not(v_is_unit)} $vname ${if not(loop_final) {", "}} )}`: `"TupleVariant, NamedVariant"`
+ * `$( ${when fmeta(same_attrs)} ${if loop_initial {let }} $fpatname ${if loop_final {;} else {,}} )` for `Unit`: ` `
+ * `$( ${when fmeta(same_attrs)} ${if loop_initial {let }} $fpatname ${if loop_final {;} else {,}} )` for `Enum`: `let f_field, f_field_b, f_field_e;`
 
 <div id="c:approx_equal">
 <div id="c:is_empty">

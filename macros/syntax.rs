@@ -192,6 +192,14 @@ pub enum SubstDetails<O: SubstParseContext> {
     is_empty(O::BoolOnly, Template<TokenAccumulator>),
     approx_equal(O::BoolOnly, [Argument; 2]),
 
+    // loop information
+    loop_index(O::NotInBool, beta::Enabled),
+    // We don't have `loop_count` in the obvious way because it would be weird:
+    // its value doesn't depend on the iteration, but if it uses ambient loop
+    // information it's only available within a loop!
+    loop_initial(O::BoolOnly, beta::Enabled),
+    loop_final(O::BoolOnly, beta::Enabled),
+
     // Explicit iteration
     For(RepeatedTemplate<O>, O::NotInBool),
     // Conditional substitution.
@@ -978,6 +986,10 @@ impl<O: SubstParseContext> Parse for Subst<O> {
         keyword! { v_is_unit(bool_only()?) }
         keyword! { v_is_tuple(bool_only()?) }
         keyword! { v_is_named(bool_only()?) }
+
+        keyword! { loop_index(not_in_bool()?, beta()?) }
+        keyword! { loop_initial(bool_only()?, beta()?) }
+        keyword! { loop_final(bool_only()?, beta()?) }
 
         keyword! { tgens(allow_tokens()?) }
         keyword! { tdefgens(allow_tokens()?, not_in_bool()?) }

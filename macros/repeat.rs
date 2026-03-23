@@ -169,6 +169,9 @@ impl<O: SubstParseContext> AnalyseRepeat for Subst<O> {
             SD::v_is_unit(..) => Some(RO::Variants),
             SD::v_is_tuple(..) => Some(RO::Variants),
             SD::v_is_named(..) => Some(RO::Variants),
+            SD::loop_index(..) => None,
+            SD::loop_initial(..) => None,
+            SD::loop_final(..) => None,
             SD::tdefvariants(..) => None,
             SD::fdefine(..) => Some(RO::Fields),
             SD::vdefbody(..) => Some(RO::Variants),
@@ -515,6 +518,21 @@ impl<'c> GeneralContext<'c> {
         let mut self_ = self.clone_buf();
         *self_.as_mut() = defs;
         Ok(Some((def, self_)))
+    }
+
+    pub fn within_loop_body(
+        &'c self,
+        span: Span,
+    ) -> syn::Result<&'c WithinLoopBody> {
+        match self.full_ctx(span)?.within_loop {
+            WithinLoop::None => Err(span.error(
+                "loop information requested, but not within a loop",
+            )),
+            WithinLoop::When => Err(span.error(
+                "loop information is not available within ${when } because ${when } controls the repetitions",
+            )),
+            WithinLoop::Body(info) => Ok(info),
+        }
     }
 }
 
