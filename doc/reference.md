@@ -30,7 +30,7 @@
       * [`$crate` -- root of template crate](#crate--root-of-template-crate)
       * [`$tdefkwd` -- keyword introducing the new data structure](#tdefkwd--keyword-introducing-the-new-data-structure)
       * [`$tdefvariants`, `$vdefbody`, `$fdefine` -- tools for defining types](#tdefvariants-vdefbody-fdefine--tools-for-defining-types)
-      * [`$loop_index`, `$for_loop_count` -- repetition information](#loop_index-for_loop_count--repetition-information)
+      * [`$loop_index`, `$for_loop_count` -- repetition information (**beta**)](#loop_index-for_loop_count--repetition-information-beta)
       * [`${ignore ..}` -- Expand but then discard](#ignore---expand-but-then-discard)
       * [`${dbg ..}`, `$dbg_all_keywords` -- Debugging output](#dbg--dbg_all_keywords--debugging-output)
       * [`${define ...}`, `${defcond ...}` -- user-defined expansions and conditions](#define--defcond---user-defined-expansions-and-conditions)
@@ -1165,7 +1165,7 @@ pub enum EnumCopy<'a, 'l: 'a, T: Display = usize, const C: usize = 1,> {
 <div id="x:for_loop_count">
 <div id="x:loop_index">
 
-### `$loop_index`, `$for_loop_count` -- repetition information
+### `$loop_index`, `$for_loop_count` -- repetition information (**beta**)
 
 </div>
 </div>
