@@ -1400,10 +1400,10 @@ impl<'l> FoundNode<'l> {
                 let ident: IdentAny = metavalue_as(AVH::Normal, input)?;
                 out.append_identfrag_toks(&*ident)?;
             }
-            SA::items(np, supported) => {
+            SA::items(at, supported) => {
                 let items = metavalue_as(AVH::NoBare, input)?;
                 supported.infer_type(&items);
-                out.append_tokens(np, items)?;
+                out.append_tokens(at, items)?;
             }
             SA::path => out.append_syn_type(
                 tspan,
@@ -1423,11 +1423,11 @@ impl<'l> FoundNode<'l> {
                 metavalue_as(AVH::Normal, input)?,
                 Grouping::Invisible,
             ),
-            SA::attrs(np) => {
+            SA::attrs(at) => {
                 let attrs: UserAttrs = metavalue_as(AVH::Normal, input)?;
-                out.append_tokens(np, attrs)?;
+                out.append_tokens(at, attrs)?;
             }
-            SA::token_stream(np) => {
+            SA::token_stream(at) => {
                 let tokens: TokenStream = metavalue_as(
                     AVH::NoBare,
                     MetaValueAsInput {
@@ -1435,7 +1435,7 @@ impl<'l> FoundNode<'l> {
                         ..input
                     },
                 )?;
-                out.append_tokens(np, tokens)?;
+                out.append_tokens(at, tokens)?;
             }
         }
         Ok(())
