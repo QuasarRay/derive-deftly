@@ -855,9 +855,18 @@ where
     ) {
         // for_with_within expects a fallible closure, but we want to do
         // infallible work in our infallible context, so we use `Void`
-        // as the error type and wrap each call in `Ok`.
+        // as the error type.
         ctx.for_with_within(|ctx, _: &W| {
-            Ok::<_, Void>(self.expand_inner(ctx, out))
+            match self.filter_inner(ctx) {
+                Ok(true) => {
+                    let mut ctx = ctx.clone();
+                    ctx.within_loop = WithinLoop::Body;
+                    self.template.expand(ctx.as_general(), out);
+                }
+                Ok(false) => {}
+                Err(e) => out.record_error(e),
+            }
+            Ok::<_, Void>(())
         })
         .void_unwrap()
     }
@@ -865,26 +874,17 @@ where
 
 impl<O: ExpansionOutput> RepeatedTemplate<O> {
     /// private, does the condition
-    fn expand_inner(&self, ctx: &Context, out: &mut O)
-    where
-        Template<O>: ExpandInfallible<O>,
-        O: ExpansionOutput,
-    {
+    fn filter_inner(&self, ctx: &Context) -> syn::Result<bool> {
         let mut ctx = ctx.clone();
         ctx.within_loop = WithinLoop::When;
 
         for when in &self.whens {
-            match when.eval_bool(ctx.as_general()) {
-                Ok(true) => continue,
-                Ok(false) => return,
-                Err(e) => {
-                    out.record_error(e);
-                    return;
-                }
+            match when.eval_bool(ctx.as_general())? {
+                true => continue,
+                false => return Ok(false),
             }
         }
 
-        ctx.within_loop = WithinLoop::Body;
-        self.template.expand(ctx.as_general(), out)
+        Ok(true)
     }
 }
