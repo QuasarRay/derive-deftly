@@ -150,6 +150,10 @@ fn dump_whole(mut w: &mut Out, ctx: &Context) -> R {
         bool! { c, not }
         bool! { c, all }
         bool! { c, any }
+        // Depends on surrounding `${when }`, not sensible to debug
+        expand! { c, $loop_index }
+        bool! { c, loop_initial }
+        bool! { c, loop_final }
         // Requires input arguments to do anything
         bool! { c, dbg }
         bool! { c, is_empty }
