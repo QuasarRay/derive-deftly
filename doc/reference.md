@@ -1187,6 +1187,7 @@ Available only in [**beta**].
 #### Examples
 
  * `$( ${when not(fmeta(same_attrs))} $loop_index = $fname; )` for `Enum`: `0 = 0; 1 = field_o;`
+ * `${for_loop_count fields not(fmeta(same_attrs))}` for `Enum`: `2`
 
 <div id="x:ignore">
 
