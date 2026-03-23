@@ -1173,6 +1173,10 @@ Can be used as a number, or a tuple field name.
 
 Available only in [**beta**].
 
+#### Examples
+
+ * `$( ${when not(fmeta(same_attrs))} $loop_index = $fname; )` for `Enum`: `0 = 0; 1 = field_o;`
+
 <div id="x:ignore">
 
 ### `${ignore ..}` -- Expand but then discard
@@ -1530,6 +1534,13 @@ See above for
 [full information about the semantics](#t:repetition-info).
 
 Available only in [**beta**].
+
+#### Examples
+
+ * `$( $fname ${if not(loop_final) {, }} )` for `Struct`: `field, field_b`
+ * `${concat $( ${when not(v_is_unit)} $vname ${if not(loop_final) {", "}} )}`: `"TupleVariant, NamedVariant"`
+ * `$( ${when fmeta(same_attrs)} ${if loop_initial {let }} $fpatname ${if loop_final {;} else {,}} )` for `Unit`: ` `
+ * `$( ${when fmeta(same_attrs)} ${if loop_initial {let }} $fpatname ${if loop_final {;} else {,}} )` for `Enum`: `let f_field, f_field_b, f_field_e;`
 
 <div id="c:approx_equal">
 <div id="c:is_empty">
