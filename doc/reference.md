@@ -30,7 +30,7 @@
       * [`$crate` -- root of template crate](#crate--root-of-template-crate)
       * [`$tdefkwd` -- keyword introducing the new data structure](#tdefkwd--keyword-introducing-the-new-data-structure)
       * [`$tdefvariants`, `$vdefbody`, `$fdefine` -- tools for defining types](#tdefvariants-vdefbody-fdefine--tools-for-defining-types)
-      * [`$loop_index` -- repetition information](#loop_index--repetition-information)
+      * [`$loop_index`, `$for_loop_count` -- repetition information (**beta**)](#loop_index-for_loop_count--repetition-information-beta)
       * [`${ignore ..}` -- Expand but then discard](#ignore---expand-but-then-discard)
       * [`${dbg ..}`, `$dbg_all_keywords` -- Debugging output](#dbg--dbg_all_keywords--debugging-output)
       * [`${define ...}`, `${defcond ...}` -- user-defined expansions and conditions](#define--defcond---user-defined-expansions-and-conditions)
@@ -38,11 +38,11 @@
    * [Conditions](#conditions)
       * [`fvis`, `tvis`, `fdefvis` -- test for public visibility](#fvis-tvis-fdefvis--test-for-public-visibility)
       * [`fmeta(NAME)`, `vmeta(NAME)`, `tmeta(NAME)` -- `#[deftly]` attributes](#fmetaname-vmetaname-tmetaname--deftly-attributes)
-      * [`v_is_first`, `f_is_first` -- is this the first variant/field? ([**beta**])](#v_is_first-f_is_first--is-this-the-first-variantfield-beta)
+      * [`v_is_first`, `f_is_first` -- is this the first variant/field? (**beta**)](#v_is_first-f_is_first--is-this-the-first-variantfield-beta)
       * [`is_struct`, `is_enum`, `is_union`](#is_struct-is_enum-is_union)
       * [`v_is_unit`, `v_is_tuple`, `v_is_named`](#v_is_unit-v_is_tuple-v_is_named)
       * [`tgens`](#tgens)
-      * [`loop_initial`, `loop_final` -- repetition information ([**beta**])](#loop_initial-loop_final--repetition-information-beta)
+      * [`loop_initial`, `loop_final` -- repetition information (**beta**)](#loop_initial-loop_final--repetition-information-beta)
       * [`is_empty(..)`, `approx_equal(ARG1, ARG2)` -- equality comparison (token comparison)](#is_empty-approx_equalarg1-arg2--equality-comparison-token-comparison)
       * [`false`, `true`, `not(CONDITION)`, `any(COND1,COND2,...)`, `all(COND1,COND2,...)` -- boolean logic](#false-true-notcondition-anycond1cond2-allcond1cond2--boolean-logic)
       * [`dbg(...)` -- Debug dump of condition value](#dbg--debug-dump-of-condition-value)
@@ -51,7 +51,7 @@
       * [`expect items`, `expect expr` -- syntax check the expansion](#expect-items-expect-expr--syntax-check-the-expansion)
       * [`for struct`, `for enum`, `for union` -- Insist on a particular driver kind](#for-struct-for-enum-for-union--insist-on-a-particular-driver-kind)
       * [`dbg` -- Print the expansion to stderr, for debugging](#dbg--print-the-expansion-to-stderr-for-debugging)
-      * [`meta_quoted strip`, `meta_quoted retain` -- control (de)quoting of attribute values ([**beta**])](#meta_quoted-strip-meta_quoted-retain--control-dequoting-of-attribute-values-beta)
+      * [`meta_quoted strip`, `meta_quoted retain` -- control (de)quoting of attribute values (**beta**)](#meta_quoted-strip-meta_quoted-retain--control-dequoting-of-attribute-values-beta)
       * [`beta_deftly` -- Enable unstable template features](#beta_deftly--enable-unstable-template-features)
       * [Expansion options example](#expansion-options-example)
    * [Precedence considerations](#precedence-considerations)
@@ -193,24 +193,31 @@ in turn.
 structs and unions do not have variants, but
 derive-deftly treats them as having a single (unnamed) variant.
 
+#### Examples
+
+<!--##examples-for `Enum`##-->
+<!--##examples-ignore##-->
+For [example enum `Enum`](#structs-used-in-examples):
+
+ * `$($vname,)`: `UnitVariant, TupleVariant, NamedVariant,`
+ * `$($fname)`: `0 field field_b field_e field_o`
+ * `${for fields { hello }}`: `hello hello hello hello`
+
 <div id="t:repetition-info">
 
-#### Using information about repetitions ([**beta**])
+#### Using information about repetitions (**beta**)
 
 </div>
 
-[`loop_initial`](#c:loop_initial),
-[`loop_final`](#c:loop_final),
+**[`loop_initial`](#c:loop_initial)**,
+**[`loop_final`](#c:loop_final)**,
 and
-[`$loop_index`](#x:loop_index)
+**[`$loop_index`](#x:loop_index)**
 provide information about which repetition this is.
 
 All of these count only iterations that are
 selected by relevant [`${when }`](#x:when) clauses.
 (Consequently, they are not allowed inside `${when }`.)
-
-When a repetition over fields implicitly repeats over variants too,
-that is a single repetition over all fields, for the purposes of `loop_...`.
 
 These always refer to the innermost repetition.
 (Dynamic scoping means that it is not possible
@@ -225,17 +232,14 @@ can be obtained via
 and
 [`$findex`](#x:findex),
 
+**[`for_loop_count`](#x:for_loop_count)**
+counts how many repetitions a `for` would contain.
+
+When a repetition over fields implicitly repeats over variants too,
+that is a single repetition over all fields,
+for the purposes of `loop_...` and `for_loop_count`.
+
 These features are available only in [**beta**].
-
-#### Examples
-
-<!--##examples-for `Enum`##-->
-<!--##examples-ignore##-->
-For [example enum `Enum`](#structs-used-in-examples):
-
- * `$($vname,)`: `UnitVariant, TupleVariant, NamedVariant,`
- * `$($fname)`: `0 field field_b field_e field_o`
- * `${for fields { hello }}`: `hello hello hello hello`
 
 ## Expansions
 
@@ -1158,27 +1162,32 @@ pub enum EnumCopy<'a, 'l: 'a, T: Display = usize, const C: usize = 1,> {
 # "##;
 ```
 
+<div id="x:for_loop_count">
 <div id="x:loop_index">
 
-### `$loop_index` -- repetition information
+### `$loop_index`, `$for_loop_count` -- repetition information (**beta**)
 
+</div>
 </div>
 
  * **`$loop_index`** is the index of this repetition, starting at zero.
+ * **`${for_loop_count fields COND}`** and
+   **`${for_loop_count variants COND}`**
+   count how many fields, or variants, would match condition `COND`.
 
 `loop_index` counts only repetitions
-selected by relevant [`${when }`](#x:when) clauses,
+selected by relevant [`${when }`](#x:when) clauses --
 unlike [`$vindex`](#x:vindex) and [`$findex`](#x:findex).
 See above for
-[full information about the semantics](#t:repetition-info).
+[full information](#t:repetition).
 
 Can be used as a number, or a tuple field name.
-
 Available only in [**beta**].
 
 #### Examples
 
  * `$( ${when not(fmeta(same_attrs))} $loop_index = $fname; )` for `Enum`: `0 = 0; 1 = field_o;`
+ * `${for_loop_count fields not(fmeta(same_attrs))}` for `Enum`: `2`
 
 <div id="x:ignore">
 
@@ -1464,7 +1473,7 @@ for information about namespacing and handling of unused attributes.
 <div id="c:f_is_first">
 <div id="c:v_is_first">
 
-### `v_is_first`, `f_is_first` -- is this the first variant/field? ([**beta**])
+### `v_is_first`, `f_is_first` -- is this the first variant/field? (**beta**)
 
 </div>
 </div>
@@ -1545,16 +1554,16 @@ Whether the top-level type has generics.
 <div id="c:loop_final">
 <div id="c:loop_initial">
 
-### `loop_initial`, `loop_final` -- repetition information ([**beta**])
+### `loop_initial`, `loop_final` -- repetition information (**beta**)
 
 </div>
 </div>
 
- * `loop_initial` is true iff this is the first iteration of this repetition.
- * `loop_final` is true iff this is the final iteration of this repetition.
+ * **`loop_initial`** is true for first iteration of this repetition.
+ * **`loop_final`** is true for the final iteration of this repetition.
 
 These count only repetitions
-selected by relevant [`${when }`](#x:when) clauses,
+selected by relevant [`${when }`](#x:when) clauses --
 unlike
 [`v_is_first`](#c:v_is_first)
 and
@@ -1857,7 +1866,7 @@ the [`$dbg_all_keywords` expansion](#dbg--dbg_all_keywords--debugging-output).
 
 <div id="eo:meta_quoted">
 
-### `meta_quoted strip`, `meta_quoted retain` -- control (de)quoting of attribute values ([**beta**])
+### `meta_quoted strip`, `meta_quoted retain` -- control (de)quoting of attribute values (**beta**)
 
 </div>
 
@@ -2054,7 +2063,7 @@ where T: 'l, T: TryInto<u8>
  * **$c…**: [`concat`](#x:concat), [`crate`](#x:crate)
  * **$d…**: [`dbg`](#x:dbg), [`dbg_all_keywords`](#x:dbg_all_keywords), [`defcond`](#x:defcond), [`define`](#x:define)
  * **$e…**: [`error`](#x:error)
- * **$f…**: [`fattrs`](#x:fattrs), [`fdefine`](#x:fdefine), [`fdefvis`](#x:fdefvis), [`findex`](#x:findex), [`fmeta`](#x:fmeta), [`fname`](#x:fname), [`for`](#x:for), [`fpatname`](#x:fpatname), [`ftype`](#x:ftype), [`fvis`](#x:fvis)
+ * **$f…**: [`fattrs`](#x:fattrs), [`fdefine`](#x:fdefine), [`fdefvis`](#x:fdefvis), [`findex`](#x:findex), [`fmeta`](#x:fmeta), [`fname`](#x:fname), [`for`](#x:for), [`for_loop_count`](#x:for_loop_count), [`fpatname`](#x:fpatname), [`ftype`](#x:ftype), [`fvis`](#x:fvis)
  * **$i…**: [`if`](#x:if), [`ignore`](#x:ignore)
  * **$k…**: [`kebab_case`](#x:kebab_case)
  * **$l…**: [`loop_index`](#x:loop_index), [`lower_camel_case`](#x:lower_camel_case)

@@ -2193,6 +2193,8 @@ impl<O: SubstParseContext> FindRecogMetas for SubstDetails<O> {
             is_empty(_, v) => v.find_recog_metas(acc),
             approx_equal(_, v) => v.find_recog_metas(acc),
 
+            for_loop_count(flc, ..) => flc.find_recog_metas(acc),
+
             For(v, _) => v.find_recog_metas(acc),
             If(v, _) | select1(v, _) => v.find_recog_metas(acc),
             ignore(v, _) => v.find_recog_metas(acc),
@@ -2258,6 +2260,13 @@ impl FindRecogMetas for SubstVPat {
         let Self { vtype, fprefix } = self;
         vtype.find_recog_metas(acc);
         fprefix.find_recog_metas(acc);
+    }
+}
+
+impl FindRecogMetas for ForLoopCount {
+    fn find_recog_metas(&self, acc: &mut Recognised) {
+        let Self { over: _, cond } = self;
+        cond.find_recog_metas(acc);
     }
 }
 

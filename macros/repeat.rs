@@ -206,8 +206,8 @@ impl<O: SubstParseContext> AnalyseRepeat for Subst<O> {
                 }
                 None
             }
-            // Has a RepeatOver, but does not imply anything about its context.
-            SD::For(..) => None,
+            // Have a RepeatOver, but don't imply anything about its context.
+            SD::For(..) | SD::for_loop_count(..) => None,
             SD::False(..) | SD::True(..) => None, // condition: ignore.
             SD::error(ee, _) => {
                 ee.message.analyse_repeat(visitor)?;
@@ -443,6 +443,162 @@ impl<'c> Context<'c> {
             why.span().error("expansion only valid in enums")
         })?;
         Ok(r)
+    }
+}
+
+//---------- RepeatedTemplate ----------
+
+impl<O> ExpandInfallible<O> for RepeatedTemplate<O>
+where
+    Template<O>: ExpandInfallible<O>,
+    O: ExpansionOutput,
+{
+    fn expand<'c>(&self, ctx: GeneralContext<'c>, out: &mut O) {
+        let ctx = match ctx.full_ctx(self.span) {
+            Ok(y) => y,
+            Err(e) => {
+                out.record_error(e.into());
+                return;
+            }
+        };
+
+        match self.over {
+            RO::Variants => self.expand_repeated::<WithinVariant>(ctx, out),
+            RO::Fields => self.expand_repeated::<WithinField>(ctx, out),
+        };
+    }
+}
+
+impl<O> RepeatedTemplate<O>
+where
+    Template<O>: ExpandInfallible<O>,
+    O: ExpansionOutput,
+{
+    fn expand_repeated<'w, 'c: 'w, W: WithinRepeatLevel<'w>>(
+        &self,
+        ctx: &'c Context<'c>,
+        out: &mut O,
+    ) {
+        // Determine the loop iterations, for use by loop progress conditions.
+        // This depends on our conditions being stable (ie, always
+        // yielding the same values or errors).  We check that, below.
+        let mut filters = Vec::<Result<bool, ()>>::new();
+        ctx.for_with_within(|ctx, _: &W| {
+            let f = self.filter_inner(ctx);
+            filters.push(f.map_err(|e| out.record_error(e)));
+            // for_with_within expects a fallible closure, but we want to do
+            // infallible work in our infallible context, so we use `Void`
+            // as the error type.
+            Ok::<_, Void>(())
+        });
+
+        let is_yes = |f: Result<bool, ()>| f == Ok(true);
+        let yes_count: u32 = filters
+            .iter()
+            .filter(|f| is_yes(**f))
+            .count()
+            .try_into()
+            .expect("repetition iterated more than 2^32 times");
+
+        // We use `u32` for the `${when }`-filtered iterations ("yes"";
+        // those are exposed via `loop_index` which must
+        // be able to produce a tuple label, which is u32.
+        //
+        // Using `usize` for counts including *all* iterations is easy
+        // and also means we3 can't accidentally confuse the two counters.
+        let mut raw_i: usize = 0;
+        let mut yes_i: u32 = 0;
+        ctx.for_with_within(|ctx, _: &W| {
+            let f_with_err = self.filter_inner(ctx);
+            // errors are recorded above, don't record them again;
+            // but if condition was unstable, include error in the panic
+            let f = f_with_err.as_ref().map_err(|_| ()).map(|y| *y);
+            assert_eq!(f, filters[raw_i], "2nd={:?}", f_with_err);
+            if is_yes(f) {
+                let mut ctx = ctx.clone();
+                let info = WithinLoopBody { yes_i, yes_count };
+                ctx.within_loop = WithinLoop::Body(&info);
+                self.template.expand(ctx.as_general(), out);
+                yes_i += 1;
+            }
+            raw_i += 1;
+            Ok::<_, Void>(())
+        })
+        .void_unwrap()
+    }
+}
+
+impl<O: ExpansionOutput> RepeatedTemplate<O> {
+    /// private, does the condition
+    fn filter_inner(&self, ctx: &Context) -> syn::Result<bool> {
+        let mut ctx = ctx.clone();
+        ctx.within_loop = WithinLoop::When;
+
+        for when in &self.whens {
+            match when.eval_bool(ctx.as_general())? {
+                true => continue,
+                false => return Ok(false),
+            }
+        }
+
+        Ok(true)
+    }
+}
+
+//---------- ForLoopCount ----------
+
+#[derive(Debug)]
+pub struct ForLoopCount {
+    pub over: RepeatOver,
+    pub cond: Box<Condition>,
+}
+
+impl Parse for ForLoopCount {
+    fn parse(input: ParseStream) -> syn::Result<Self> {
+        let over = input.parse()?;
+        let cond = input.parse()?;
+        Ok(ForLoopCount { cond, over })
+    }
+}
+
+impl ForLoopCount {
+    pub fn count(&self, ctx: &Context) -> syn::Result<u32> {
+        match self.over {
+            RO::Variants => self.count_inner::<WithinVariant>(ctx),
+            RO::Fields => self.count_inner::<WithinField>(ctx),
+        }
+        .map(|c| c.try_into().expect("for_loop_count >= 2^32"))
+    }
+}
+
+impl ForLoopCount {
+    fn count_inner<'w, 'c: 'w, W: WithinRepeatLevel<'w>>(
+        &self,
+        ctx: &'c Context<'c>,
+    ) -> syn::Result<usize> {
+        let mut yes_count = 0;
+        ctx.for_with_within(|ctx, _: &W| {
+            if self.cond.eval_bool(ctx.as_general())? {
+                yes_count += 1;
+            }
+            Ok::<_, syn::Error>(())
+        })?;
+        Ok(yes_count)
+    }
+}
+
+//---------- RepeatOver ----------
+
+impl Parse for RepeatOver {
+    fn parse(input: ParseStream) -> syn::Result<Self> {
+        let over: Ident = input.parse()?;
+        Ok(if over == "fields" {
+            RepeatOver::Fields
+        } else if over == "variants" {
+            RepeatOver::Variants
+        } else {
+            return Err(over.error("expected 'fields' or 'variants'"));
+        })
     }
 }
 
