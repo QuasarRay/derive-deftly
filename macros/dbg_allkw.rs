@@ -143,6 +143,7 @@ fn dump_whole(mut w: &mut Out, ctx: &Context) -> R {
         expand! { c, $when }
         expand! { c, $if }
         expand! { c, $select1 }
+        expand! { c, $for_loop_count }
         expand! { c, $define }
         expand! { c, $defcond }
         expand! { c, $ignore }
