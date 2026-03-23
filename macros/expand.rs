@@ -853,19 +853,49 @@ where
         ctx: &'c Context<'c>,
         out: &mut O,
     ) {
-        // for_with_within expects a fallible closure, but we want to do
-        // infallible work in our infallible context, so we use `Void`
-        // as the error type.
+        // Determine the loop iterations, for use by loop progress conditions.
+        // This depends on our conditions being stable (ie, always
+        // yielding the same values or errors).  We check that, below.
+        let mut filters = Vec::<Result<bool, ()>>::new();
         ctx.for_with_within(|ctx, _: &W| {
-            match self.filter_inner(ctx) {
-                Ok(true) => {
-                    let mut ctx = ctx.clone();
-                    ctx.within_loop = WithinLoop::Body;
-                    self.template.expand(ctx.as_general(), out);
-                }
-                Ok(false) => {}
-                Err(e) => out.record_error(e),
+            let f = self.filter_inner(ctx);
+            filters.push(f.map_err(|e| out.record_error(e)));
+            // for_with_within expects a fallible closure, but we want to do
+            // infallible work in our infallible context, so we use `Void`
+            // as the error type.
+            Ok::<_, Void>(())
+        });
+
+        let is_yes = |f: Result<bool, ()>| f == Ok(true);
+        #[allow(unused)] // XXXX
+        let yes_count: u32 = filters
+            .iter()
+            .filter(|f| is_yes(**f))
+            .count()
+            .try_into()
+            .expect("repetition iterated more than 2^32 times");
+
+        // We use `u32` for the `${when }`-filtered iterations ("yes"";
+        // those are exposed via `loop_index` which must
+        // be able to produce a tuple label, which is u32.
+        //
+        // Using `usize` for counts including *all* iterations is easy
+        // and also means we3 can't accidentally confuse the two counters.
+        let mut raw_i: usize = 0;
+        let mut yes_i: u32 = 0;
+        ctx.for_with_within(|ctx, _: &W| {
+            let f_with_err = self.filter_inner(ctx);
+            // errors are recorded above, don't record them again;
+            // but if condition was unstable, include error in the panic
+            let f = f_with_err.as_ref().map_err(|_| ()).map(|y| *y);
+            assert_eq!(f, filters[raw_i], "2nd={:?}", f_with_err);
+            if is_yes(f) {
+                let mut ctx = ctx.clone();
+                ctx.within_loop = WithinLoop::Body;
+                self.template.expand(ctx.as_general(), out);
+                yes_i += 1;
             }
+            raw_i += 1;
             Ok::<_, Void>(())
         })
         .void_unwrap()
