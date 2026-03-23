@@ -976,6 +976,7 @@ impl<O: SubstParseContext> Parse for Subst<O> {
         keyword! { fpatname(not_in_bool()?) }
         keyword! { vindex(not_in_bool()?) }
         keyword! { findex(not_in_bool()?) }
+        // when stabilisiing [fv]_is_first, enable dump in dbg_allkw.rs
         keyword! { v_is_first(bool_only()?, beta()?) }
         keyword! { f_is_first(bool_only()?, beta()?) }
         keyword! { tdefkwd(not_in_bool()?) }
