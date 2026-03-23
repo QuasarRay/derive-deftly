@@ -30,7 +30,7 @@
       * [`$crate` -- root of template crate](#crate--root-of-template-crate)
       * [`$tdefkwd` -- keyword introducing the new data structure](#tdefkwd--keyword-introducing-the-new-data-structure)
       * [`$tdefvariants`, `$vdefbody`, `$fdefine` -- tools for defining types](#tdefvariants-vdefbody-fdefine--tools-for-defining-types)
-      * [`$loop_index` -- repetition information](#loop_index--repetition-information)
+      * [`$loop_index`, `$for_loop_count` -- repetition information](#loop_index-for_loop_count--repetition-information)
       * [`${ignore ..}` -- Expand but then discard](#ignore---expand-but-then-discard)
       * [`${dbg ..}`, `$dbg_all_keywords` -- Debugging output](#dbg--dbg_all_keywords--debugging-output)
       * [`${define ...}`, `${defcond ...}` -- user-defined expansions and conditions](#define--defcond---user-defined-expansions-and-conditions)
@@ -204,6 +204,8 @@ derive-deftly treats them as having a single (unnamed) variant.
 and
 [`$loop_index`](#x:loop_index)
 provide information about which repetition this is.
+[`for_loop_count`](#x:for_loop_count)
+counts how many repetitions a `for` would contain.
 
 All of these count only iterations that are
 selected by relevant [`${when }`](#x:when) clauses.
@@ -1158,19 +1160,25 @@ pub enum EnumCopy<'a, 'l: 'a, T: Display = usize, const C: usize = 1,> {
 # "##;
 ```
 
+<div id="x:for_loop_count">
 <div id="x:loop_index">
 
-### `$loop_index` -- repetition information
+### `$loop_index`, `$for_loop_count` -- repetition information
 
+</div>
 </div>
 
  * **`$loop_index`** is the index of this repetition, starting at zero.
+ * **`${for_loop_count fields COND}`** and
+   **`${for_loop_count variants COND}`**
+   count how many fields, or variants, would match condition `COND`.
 
 `loop_index` counts only repetitions
 selected by relevant [`${when }`](#x:when) clauses,
 unlike [`$vindex`](#x:vindex) and [`$findex`](#x:findex).
+
 See above for
-[full information about the semantics](#t:repetition-info).
+[full information](#t:repetition).
 
 Can be used as a number, or a tuple field name.
 
@@ -2054,7 +2062,7 @@ where T: 'l, T: TryInto<u8>
  * **$c…**: [`concat`](#x:concat), [`crate`](#x:crate)
  * **$d…**: [`dbg`](#x:dbg), [`dbg_all_keywords`](#x:dbg_all_keywords), [`defcond`](#x:defcond), [`define`](#x:define)
  * **$e…**: [`error`](#x:error)
- * **$f…**: [`fattrs`](#x:fattrs), [`fdefine`](#x:fdefine), [`fdefvis`](#x:fdefvis), [`findex`](#x:findex), [`fmeta`](#x:fmeta), [`fname`](#x:fname), [`for`](#x:for), [`fpatname`](#x:fpatname), [`ftype`](#x:ftype), [`fvis`](#x:fvis)
+ * **$f…**: [`fattrs`](#x:fattrs), [`fdefine`](#x:fdefine), [`fdefvis`](#x:fdefvis), [`findex`](#x:findex), [`fmeta`](#x:fmeta), [`fname`](#x:fname), [`for`](#x:for), [`for_loop_count`](#x:for_loop_count), [`fpatname`](#x:fpatname), [`ftype`](#x:ftype), [`fvis`](#x:fvis)
  * **$i…**: [`if`](#x:if), [`ignore`](#x:ignore)
  * **$k…**: [`kebab_case`](#x:kebab_case)
  * **$l…**: [`loop_index`](#x:loop_index), [`lower_camel_case`](#x:lower_camel_case)
