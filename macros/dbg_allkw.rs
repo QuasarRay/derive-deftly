@@ -20,7 +20,7 @@ pub fn dump(ctx: &Context) {
         let out = String::new();
         let subset_only = match ctx.within_loop {
             WithinLoop::None => None,
-            WithinLoop::When | WithinLoop::Body => {
+            WithinLoop::When | WithinLoop::Body { .. } => {
                 Some(ctx.variant.expect("within loop, but not variant!"))
             }
         };

@@ -867,7 +867,6 @@ where
         });
 
         let is_yes = |f: Result<bool, ()>| f == Ok(true);
-        #[allow(unused)] // XXXX
         let yes_count: u32 = filters
             .iter()
             .filter(|f| is_yes(**f))
@@ -891,7 +890,8 @@ where
             assert_eq!(f, filters[raw_i], "2nd={:?}", f_with_err);
             if is_yes(f) {
                 let mut ctx = ctx.clone();
-                ctx.within_loop = WithinLoop::Body;
+                let info = WithinLoopBody { yes_i, yes_count };
+                ctx.within_loop = WithinLoop::Body(&info);
                 self.template.expand(ctx.as_general(), out);
                 yes_i += 1;
             }

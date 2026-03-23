@@ -35,7 +35,7 @@ pub struct Context<'c> {
     pub meta_quoted: Option<meta::QuotedMode>,
     pub variant: Option<&'c WithinVariant<'c>>,
     pub field: Option<&'c WithinField<'c>>,
-    pub within_loop: WithinLoop,
+    pub within_loop: WithinLoop<'c>,
     pub pvariants: &'c [PreprocessedVariant<'c>],
     pub defs: DefinitionsContext<'c>,
 }
@@ -88,12 +88,20 @@ pub struct WithinField<'c> {
 /// to provide `$loop_index`, etc.
 /// Right now it's only used for `dbg_all_keywords`.
 #[derive(Debug, Clone, Copy)]
-pub enum WithinLoop {
+pub enum WithinLoop<'c> {
     None,
     /// Evaluating `${when }` clauses
     When,
     /// Evaluating the body
-    Body,
+    #[allow(unused)] // XXXX
+    Body(&'c WithinLoopBody),
+}
+
+#[derive(Debug, Clone, Copy)]
+#[allow(unused)] // XXXX
+pub struct WithinLoopBody {
+    pub yes_i: u32,
+    pub yes_count: u32,
 }
 
 #[derive(Debug, Clone, Copy, Default)]
