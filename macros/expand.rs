@@ -836,18 +836,29 @@ where
             }
         };
 
+        match self.over {
+            RO::Variants => self.expand_repeated::<WithinVariant>(ctx, out),
+            RO::Fields => self.expand_repeated::<WithinField>(ctx, out),
+        };
+    }
+}
+
+impl<O> RepeatedTemplate<O>
+where
+    Template<O>: ExpandInfallible<O>,
+    O: ExpansionOutput,
+{
+    fn expand_repeated<'w, 'c: 'w, W: WithinRepeatLevel<'w>>(
+        &self,
+        ctx: &'c Context<'c>,
+        out: &mut O,
+    ) {
         // for_with_within expects a fallible closure, but we want to do
         // infallible work in our infallible context, so we use `Void`
         // as the error type and wrap each call in `Ok`.
-        #[allow(clippy::unit_arg)] // clippy wants us to worsify the style
-        match self.over {
-            RO::Variants => ctx.for_with_within(|ctx, _: &WithinVariant| {
-                Ok::<_, Void>(self.expand_inner(ctx, out))
-            }),
-            RO::Fields => ctx.for_with_within(|ctx, _: &WithinField| {
-                Ok::<_, Void>(self.expand_inner(ctx, out))
-            }),
-        }
+        ctx.for_with_within(|ctx, _: &W| {
+            Ok::<_, Void>(self.expand_inner(ctx, out))
+        })
         .void_unwrap()
     }
 }
