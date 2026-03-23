@@ -650,6 +650,8 @@ where
             SD::is_struct(bo)
             | SD::is_enum(bo)
             | SD::is_union(bo)
+            | SD::v_is_first(bo, ..)
+            | SD::f_is_first(bo, ..)
             | SD::v_is_unit(bo)
             | SD::v_is_tuple(bo)
             | SD::v_is_named(bo)

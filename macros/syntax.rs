@@ -119,6 +119,8 @@ pub enum SubstDetails<O: SubstParseContext> {
     tdefkwd(O::NotInBool),
     vindex(O::NotInBool),
     findex(O::NotInBool),
+    v_is_first(O::BoolOnly, beta::Enabled),
+    f_is_first(O::BoolOnly, beta::Enabled),
 
     // attributes
     Xmeta(meta::SubstMeta<O>),
@@ -974,6 +976,8 @@ impl<O: SubstParseContext> Parse for Subst<O> {
         keyword! { fpatname(not_in_bool()?) }
         keyword! { vindex(not_in_bool()?) }
         keyword! { findex(not_in_bool()?) }
+        keyword! { v_is_first(bool_only()?, beta()?) }
+        keyword! { f_is_first(bool_only()?, beta()?) }
         keyword! { tdefkwd(not_in_bool()?) }
 
         keyword! { "tvis": Vis(SubstVis::T, allow_tokens()?) }

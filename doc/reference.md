@@ -38,6 +38,7 @@
    * [Conditions](#conditions)
       * [`fvis`, `tvis`, `fdefvis` -- test for public visibility](#fvis-tvis-fdefvis--test-for-public-visibility)
       * [`fmeta(NAME)`, `vmeta(NAME)`, `tmeta(NAME)` -- `#[deftly]` attributes](#fmetaname-vmetaname-tmetaname--deftly-attributes)
+      * [`v_is_first`, `f_is_first` -- is this the first variant/field? ([**beta**])](#v_is_first-f_is_first--is-this-the-first-variantfield-beta)
       * [`is_struct`, `is_enum`, `is_union`](#is_struct-is_enum-is_union)
       * [`v_is_unit`, `v_is_tuple`, `v_is_named`](#v_is_unit-v_is_tuple-v_is_named)
       * [`tgens`](#tgens)
@@ -218,6 +219,8 @@ even by use of `${define }`.)
 
 The actual variant or field position, disregarding `${when }`,
 can be obtained via
+[`v_is_first`](#c:v_is_first),
+[`f_is_first`](#c:f_is_first),
 [`$vindex`](#x:vindex),
 and
 [`$findex`](#x:findex),
@@ -1458,6 +1461,28 @@ for information about namespacing and handling of unused attributes.
  * `vmeta(value)`: true for `Unit`, and `Enum::UnitVariant`
  * `fmeta(nested)`: true for `field` in `Struct`
 
+<div id="c:f_is_first">
+<div id="c:v_is_first">
+
+### `v_is_first`, `f_is_first` -- is this the first variant/field? ([**beta**])
+
+</div>
+</div>
+
+ * `v_is_frist` is true for the first variant.
+ * `f_is_frist` is true for the first field.
+
+Unlike [`loop_initial`](#c:loop_initial),
+these are not influenced by, and can be used within,
+[`${when }`](#x:when).
+
+Available only in [**beta**].
+
+#### Examples
+
+ * `$( ${when f_is_first} $fname )`: `0`, `field`
+ * `$( ${when v_is_first} $vtype )`: `Unit::<C>`, `Tuple::<'a, 'l, T, C>`, `Struct::<'a, 'l, T, C>`, `Enum::UnitVariant::<'a, 'l, T, C>`
+
 <div id="c:is_enum">
 <div id="c:is_struct">
 <div id="c:is_union">
@@ -1529,7 +1554,11 @@ Whether the top-level type has generics.
  * `loop_final` is true iff this is the final iteration of this repetition.
 
 These count only repetitions
-selected by relevant [`${when }`](#x:when) clauses.
+selected by relevant [`${when }`](#x:when) clauses,
+unlike
+[`v_is_first`](#c:v_is_first)
+and
+[`f_is_first`](#c:f_is_first).
 See above for
 [full information about the semantics](#t:repetition-info).
 
@@ -2042,10 +2071,10 @@ where T: 'l, T: TryInto<u8>
 
  * **a…**: [`all`](#c:all), [`any`](#c:any), [`approx_equal`](#c:approx_equal)
  * **d…**: [`dbg`](#c:dbg)
- * **f…**: [`false`](#c:false), [`fdefvis`](#c:fdefvis), [`fmeta`](#c:fmeta), [`fvis`](#c:fvis)
+ * **f…**: [`f_is_first`](#c:f_is_first), [`false`](#c:false), [`fdefvis`](#c:fdefvis), [`fmeta`](#c:fmeta), [`fvis`](#c:fvis)
  * **i…**: [`is_empty`](#c:is_empty), [`is_enum`](#c:is_enum), [`is_struct`](#c:is_struct), [`is_union`](#c:is_union)
  * **l…**: [`loop_final`](#c:loop_final), [`loop_initial`](#c:loop_initial)
  * **n…**: [`not`](#c:not)
  * **t…**: [`tgens`](#c:tgens), [`tmeta`](#c:tmeta), [`true`](#c:true), [`tvis`](#c:tvis)
- * **v…**: [`v_is_named`](#c:v_is_named), [`v_is_tuple`](#c:v_is_tuple), [`v_is_unit`](#c:v_is_unit), [`vmeta`](#c:vmeta)
+ * **v…**: [`v_is_first`](#c:v_is_first), [`v_is_named`](#c:v_is_named), [`v_is_tuple`](#c:v_is_tuple), [`v_is_unit`](#c:v_is_unit), [`vmeta`](#c:vmeta)
 

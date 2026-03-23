@@ -80,6 +80,8 @@ impl Subst<BooleanContext> {
             SD::is_enum(..) => ctx?.is_enum(),
             SD::is_struct(..) => matches!(ctx?.top.data, syn::Data::Struct(_)),
             SD::is_union(..) => matches!(ctx?.top.data, syn::Data::Union(_)),
+            SD::v_is_first(..) => ctx?.variant(&kw_span)?.index == 0,
+            SD::f_is_first(..) => ctx?.field(&kw_span)?.index == 0,
             SD::v_is_unit(..) => matches!(v_fields()?, SF::Unit),
             SD::v_is_tuple(..) => matches!(v_fields()?, SF::Unnamed(..)),
             SD::v_is_named(..) => matches!(v_fields()?, SF::Named(..)),
