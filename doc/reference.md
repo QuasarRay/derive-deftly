@@ -573,6 +573,10 @@ Accesses macro parameters passed via `#[deftly(...)]` attributes.
       (Within pasting, prefer `as str`, the default;
       `as ident` rejects initial digits, and the empty string.)
 
+    * **`vis`**:
+      `VALUE` is parsed as a visibility,
+      possibly qualified (eg. `pub(in super)`..
+
     * **`attrs`**:
       `VALUE` is treated as a series of meta attributes,
       in one of the two following forms:
