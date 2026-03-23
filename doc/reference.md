@@ -1189,6 +1189,28 @@ Available only in [**beta**].
  * `$( ${when not(fmeta(same_attrs))} $loop_index = $fname; )` for `Enum`: `0 = 0; 1 = field_o;`
  * `${for_loop_count fields not(fmeta(same_attrs))}` for `Enum`: `2`
 
+<div id="x:v_explicit_discriminant">
+
+### `${v_explicit_discriminant ..}` -- Explicitly specified enum discriminant (**beta**)
+
+</div>
+
+**`$v_explicit_discriminant`**
+expands to the enum discriminant explicitly explicit with
+the Rust `Variant = DISCRIMINANT` syntax.
+
+**Minority feature**: avoid using this feature unless you have to.
+If not every variant has an explicit discriminant,
+it can't reliably give you the actual discriminant value.
+Usually it is better to use `Enum::Variant as _`, or perhaps
+`strum::EnumDiscriminants`.
+
+If no discriminant was explicitly specified, it is an error.
+
+The expression is enclosed in `( )` to avoid precedence problems.
+
+Available only in [**beta**].
+
 <div id="x:ignore">
 
 ### `${ignore ..}` -- Expand but then discard
@@ -1582,6 +1604,15 @@ Available only in [**beta**].
 
 <div id="c:approx_equal">
 <div id="c:is_empty">
+
+### `v_explicit_discriminant` -- enum discriminant explicitly specified? (**beta**)
+
+Does this variant have an explicitly specified discriminant, in
+the Rust `Variant = DISCRIMINANT` syntax?
+
+False for structs and unions.
+
+Available only in [**beta**].
 
 ### `is_empty(..)`, `approx_equal(ARG1, ARG2)` -- equality comparison (token comparison)
 
