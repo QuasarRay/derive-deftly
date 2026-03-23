@@ -38,11 +38,11 @@
    * [Conditions](#conditions)
       * [`fvis`, `tvis`, `fdefvis` -- test for public visibility](#fvis-tvis-fdefvis--test-for-public-visibility)
       * [`fmeta(NAME)`, `vmeta(NAME)`, `tmeta(NAME)` -- `#[deftly]` attributes](#fmetaname-vmetaname-tmetaname--deftly-attributes)
-      * [`v_is_first`, `f_is_first` -- is this the first variant/field? ([**beta**])](#v_is_first-f_is_first--is-this-the-first-variantfield-beta)
+      * [`v_is_first`, `f_is_first` -- is this the first variant/field? (**beta**)](#v_is_first-f_is_first--is-this-the-first-variantfield-beta)
       * [`is_struct`, `is_enum`, `is_union`](#is_struct-is_enum-is_union)
       * [`v_is_unit`, `v_is_tuple`, `v_is_named`](#v_is_unit-v_is_tuple-v_is_named)
       * [`tgens`](#tgens)
-      * [`loop_initial`, `loop_final` -- repetition information ([**beta**])](#loop_initial-loop_final--repetition-information-beta)
+      * [`loop_initial`, `loop_final` -- repetition information (**beta**)](#loop_initial-loop_final--repetition-information-beta)
       * [`is_empty(..)`, `approx_equal(ARG1, ARG2)` -- equality comparison (token comparison)](#is_empty-approx_equalarg1-arg2--equality-comparison-token-comparison)
       * [`false`, `true`, `not(CONDITION)`, `any(COND1,COND2,...)`, `all(COND1,COND2,...)` -- boolean logic](#false-true-notcondition-anycond1cond2-allcond1cond2--boolean-logic)
       * [`dbg(...)` -- Debug dump of condition value](#dbg--debug-dump-of-condition-value)
@@ -51,7 +51,7 @@
       * [`expect items`, `expect expr` -- syntax check the expansion](#expect-items-expect-expr--syntax-check-the-expansion)
       * [`for struct`, `for enum`, `for union` -- Insist on a particular driver kind](#for-struct-for-enum-for-union--insist-on-a-particular-driver-kind)
       * [`dbg` -- Print the expansion to stderr, for debugging](#dbg--print-the-expansion-to-stderr-for-debugging)
-      * [`meta_quoted strip`, `meta_quoted retain` -- control (de)quoting of attribute values ([**beta**])](#meta_quoted-strip-meta_quoted-retain--control-dequoting-of-attribute-values-beta)
+      * [`meta_quoted strip`, `meta_quoted retain` -- control (de)quoting of attribute values (**beta**)](#meta_quoted-strip-meta_quoted-retain--control-dequoting-of-attribute-values-beta)
       * [`beta_deftly` -- Enable unstable template features](#beta_deftly--enable-unstable-template-features)
       * [Expansion options example](#expansion-options-example)
    * [Precedence considerations](#precedence-considerations)
@@ -205,7 +205,7 @@ For [example enum `Enum`](#structs-used-in-examples):
 
 <div id="t:repetition-info">
 
-#### Using information about repetitions ([**beta**])
+#### Using information about repetitions (**beta**)
 
 </div>
 
@@ -1473,7 +1473,7 @@ for information about namespacing and handling of unused attributes.
 <div id="c:f_is_first">
 <div id="c:v_is_first">
 
-### `v_is_first`, `f_is_first` -- is this the first variant/field? ([**beta**])
+### `v_is_first`, `f_is_first` -- is this the first variant/field? (**beta**)
 
 </div>
 </div>
@@ -1554,7 +1554,7 @@ Whether the top-level type has generics.
 <div id="c:loop_final">
 <div id="c:loop_initial">
 
-### `loop_initial`, `loop_final` -- repetition information ([**beta**])
+### `loop_initial`, `loop_final` -- repetition information (**beta**)
 
 </div>
 </div>
@@ -1866,7 +1866,7 @@ the [`$dbg_all_keywords` expansion](#dbg--dbg_all_keywords--debugging-output).
 
 <div id="eo:meta_quoted">
 
-### `meta_quoted strip`, `meta_quoted retain` -- control (de)quoting of attribute values ([**beta**])
+### `meta_quoted strip`, `meta_quoted retain` -- control (de)quoting of attribute values (**beta**)
 
 </div>
 
