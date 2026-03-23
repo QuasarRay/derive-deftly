@@ -1443,19 +1443,6 @@ impl<O: SubstParseContext> RepeatedTemplate<O> {
     }
 }
 
-impl Parse for RepeatOver {
-    fn parse(input: ParseStream) -> syn::Result<Self> {
-        let over: Ident = input.parse()?;
-        Ok(if over == "fields" {
-            RepeatOver::Fields
-        } else if over == "variants" {
-            RepeatOver::Variants
-        } else {
-            return Err(over.error("expected 'fields' or 'variants'"));
-        })
-    }
-}
-
 impl<O> TryFrom<TemplateWithWhens<O>> for Template<O>
 where
     O: SubstParseContext,
