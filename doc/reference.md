@@ -1517,8 +1517,8 @@ Whether the top-level type has generics.
 
  * `tgens`: true for `Unit`, `Tuple`, `Struct`, `Enum`
 
-<div id="c:loop_initial">
 <div id="c:loop_final">
+<div id="c:loop_initial">
 
 ### `loop_initial`, `loop_final` -- repetition information ([**beta**])
 
@@ -2028,7 +2028,7 @@ where T: 'l, T: TryInto<u8>
  * **$f…**: [`fattrs`](#x:fattrs), [`fdefine`](#x:fdefine), [`fdefvis`](#x:fdefvis), [`findex`](#x:findex), [`fmeta`](#x:fmeta), [`fname`](#x:fname), [`for`](#x:for), [`fpatname`](#x:fpatname), [`ftype`](#x:ftype), [`fvis`](#x:fvis)
  * **$i…**: [`if`](#x:if), [`ignore`](#x:ignore)
  * **$k…**: [`kebab_case`](#x:kebab_case)
- * **$l…**: [`lower_camel_case`](#x:lower_camel_case)
+ * **$l…**: [`loop_index`](#x:loop_index), [`lower_camel_case`](#x:lower_camel_case)
  * **$p…**: [`pascal_case`](#x:pascal_case), [`paste`](#x:paste), [`paste_spanned`](#x:paste_spanned)
  * **$s…**: [`select1`](#x:select1), [`shouty_kebab_case`](#x:shouty_kebab_case), [`shouty_snake_case`](#x:shouty_snake_case), [`snake_case`](#x:snake_case)
  * **$t…**: [`tattrs`](#x:tattrs), [`tdefgens`](#x:tdefgens), [`tdefkwd`](#x:tdefkwd), [`tdeftype`](#x:tdeftype), [`tdefvariants`](#x:tdefvariants), [`tgens`](#x:tgens), [`tgnames`](#x:tgnames), [`title_case`](#x:title_case), [`tmeta`](#x:tmeta), [`tname`](#x:tname), [`train_case`](#x:train_case), [`ttype`](#x:ttype), [`tvis`](#x:tvis), [`twheres`](#x:twheres)
@@ -2044,6 +2044,7 @@ where T: 'l, T: TryInto<u8>
  * **d…**: [`dbg`](#c:dbg)
  * **f…**: [`false`](#c:false), [`fdefvis`](#c:fdefvis), [`fmeta`](#c:fmeta), [`fvis`](#c:fvis)
  * **i…**: [`is_empty`](#c:is_empty), [`is_enum`](#c:is_enum), [`is_struct`](#c:is_struct), [`is_union`](#c:is_union)
+ * **l…**: [`loop_final`](#c:loop_final), [`loop_initial`](#c:loop_initial)
  * **n…**: [`not`](#c:not)
  * **t…**: [`tgens`](#c:tgens), [`tmeta`](#c:tmeta), [`true`](#c:true), [`tvis`](#c:tvis)
  * **v…**: [`v_is_named`](#c:v_is_named), [`v_is_tuple`](#c:v_is_tuple), [`v_is_unit`](#c:v_is_unit), [`vmeta`](#c:vmeta)
