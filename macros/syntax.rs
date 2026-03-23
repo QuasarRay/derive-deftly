@@ -1377,16 +1377,7 @@ impl<O: SubstParseContext> RepeatedTemplate<O> {
     }
 
     fn parse_for(input: ParseStream) -> syn::Result<RepeatedTemplate<O>> {
-        let over: Ident = input.parse()?;
-        let over = if over == "fields" {
-            RepeatOver::Fields
-        } else if over == "variants" {
-            RepeatOver::Variants
-        } else {
-            return Err(
-                over.error("$for must be followed by 'fields' or 'variants'")
-            );
-        };
+        let over = input.parse()?;
         let template;
         let brace = braced!(template in input);
         RepeatedTemplate::parse(&template, brace.span, Some(over))
@@ -1450,6 +1441,19 @@ impl<O: SubstParseContext> RepeatedTemplate<O> {
             }),
             Err(errs) => Err(errs),
         }
+    }
+}
+
+impl Parse for RepeatOver {
+    fn parse(input: ParseStream) -> syn::Result<Self> {
+        let over: Ident = input.parse()?;
+        Ok(if over == "fields" {
+            RepeatOver::Fields
+        } else if over == "variants" {
+            RepeatOver::Variants
+        } else {
+            return Err(over.error("expected 'fields' or 'variants'"));
+        })
     }
 }
 
