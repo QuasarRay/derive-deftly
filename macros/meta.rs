@@ -131,7 +131,7 @@ pub enum SubstAs<O: SubstParseContext> {
     str,
     token_stream(AllowTokens<O>),
     ty,
-    attrs(AllowTokens<O>),
+    attrs(AllowTokens<O>, beta::Enabled),
 }
 
 //---------- meta attrs in a driver ----------
@@ -462,6 +462,7 @@ impl<O: SubstParseContext> SubstAsSpecified<O> {
     fn parse(input: ParseStream, nb: O::NotInBool) -> syn::Result<Self> {
         let kw: IdentAny = input.parse()?;
         let kw_span = kw.span();
+        let beta = || beta::Enabled::new_for_syntax(kw_span);
         let from_sma = |as_: SubstAs<_>| {
             let multiplicity = as_.multiplicity();
             Ok(SubstAsSpecified {
@@ -493,7 +494,7 @@ impl<O: SubstParseContext> SubstAsSpecified<O> {
         keyword! { str }
         keyword! { token_stream(allow_tokens()?) }
         keyword! { ty }
-        keyword! { attrs(allow_tokens()?) }
+        keyword! { attrs(allow_tokens()?, beta()?) }
 
         Err(kw.error("unknown derive-deftly 'as' syntax type keyword"))
     }
@@ -1400,10 +1401,10 @@ impl<'l> FoundNode<'l> {
                 let ident: IdentAny = metavalue_as(AVH::Normal, input)?;
                 out.append_identfrag_toks(&*ident)?;
             }
-            SA::items(np, supported) => {
+            SA::items(at, supported) => {
                 let items = metavalue_as(AVH::NoBare, input)?;
                 supported.infer_type(&items);
-                out.append_tokens(np, items)?;
+                out.append_tokens(at, items)?;
             }
             SA::path => out.append_syn_type(
                 tspan,
@@ -1423,11 +1424,11 @@ impl<'l> FoundNode<'l> {
                 metavalue_as(AVH::Normal, input)?,
                 Grouping::Invisible,
             ),
-            SA::attrs(np) => {
+            SA::attrs(at, _) => {
                 let attrs: UserAttrs = metavalue_as(AVH::Normal, input)?;
-                out.append_tokens(np, attrs)?;
+                out.append_tokens(at, attrs)?;
             }
-            SA::token_stream(np) => {
+            SA::token_stream(at) => {
                 let tokens: TokenStream = metavalue_as(
                     AVH::NoBare,
                     MetaValueAsInput {
@@ -1435,7 +1436,7 @@ impl<'l> FoundNode<'l> {
                         ..input
                     },
                 )?;
-                out.append_tokens(np, tokens)?;
+                out.append_tokens(at, tokens)?;
             }
         }
         Ok(())
