@@ -206,8 +206,8 @@ impl<O: SubstParseContext> AnalyseRepeat for Subst<O> {
                 }
                 None
             }
-            // Has a RepeatOver, but does not imply anything about its context.
-            SD::For(..) => None,
+            // Have a RepeatOver, but don't imply anything about its context.
+            SD::For(..) | SD::for_loop_count(..) => None,
             SD::False(..) | SD::True(..) => None, // condition: ignore.
             SD::error(ee, _) => {
                 ee.message.analyse_repeat(visitor)?;
@@ -542,6 +542,48 @@ impl<O: ExpansionOutput> RepeatedTemplate<O> {
         }
 
         Ok(true)
+    }
+}
+
+//---------- ForLoopCount ----------
+
+#[derive(Debug)]
+pub struct ForLoopCount {
+    pub over: RepeatOver,
+    pub cond: Box<Condition>,
+}
+
+impl Parse for ForLoopCount {
+    fn parse(input: ParseStream) -> syn::Result<Self> {
+        let over = input.parse()?;
+        let cond = input.parse()?;
+        Ok(ForLoopCount { cond, over })
+    }
+}
+
+impl ForLoopCount {
+    pub fn count(&self, ctx: &Context) -> syn::Result<u32> {
+        match self.over {
+            RO::Variants => self.count_inner::<WithinVariant>(ctx),
+            RO::Fields => self.count_inner::<WithinField>(ctx),
+        }
+        .map(|c| c.try_into().expect("for_loop_count >= 2^32"))
+    }
+}
+
+impl ForLoopCount {
+    fn count_inner<'w, 'c: 'w, W: WithinRepeatLevel<'w>>(
+        &self,
+        ctx: &'c Context<'c>,
+    ) -> syn::Result<usize> {
+        let mut yes_count = 0;
+        ctx.for_with_within(|ctx, _: &W| {
+            if self.cond.eval_bool(ctx.as_general())? {
+                yes_count += 1;
+            }
+            Ok::<_, syn::Error>(())
+        })?;
+        Ok(yes_count)
     }
 }
 

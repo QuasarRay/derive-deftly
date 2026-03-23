@@ -539,6 +539,7 @@ where
             SD::loop_index(..) => {
                 do_index(out, gctx.within_loop_body(kw_span)?.yes_i)?
             }
+            SD::for_loop_count(flc, ..) => do_index(out, flc.count(ctx?)?)?,
 
             SD::tdefvariants(content, np, ..) => {
                 let delim = if ctx?.is_enum() {
