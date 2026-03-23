@@ -93,12 +93,10 @@ pub enum WithinLoop<'c> {
     /// Evaluating `${when }` clauses
     When,
     /// Evaluating the body
-    #[allow(unused)] // XXXX
     Body(&'c WithinLoopBody),
 }
 
 #[derive(Debug, Clone, Copy)]
-#[allow(unused)] // XXXX
 pub struct WithinLoopBody {
     pub yes_i: u32,
     pub yes_count: u32,
