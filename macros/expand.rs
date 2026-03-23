@@ -536,6 +536,10 @@ where
                 v.expand(ctx?, out, kw_span, SD::ttype(Default::default()))
             })?,
 
+            SD::loop_index(..) => {
+                do_index(out, gctx.within_loop_body(kw_span)?.yes_i)?
+            }
+
             SD::tdefvariants(content, np, ..) => {
                 let delim = if ctx?.is_enum() {
                     Some(Delimiter::Brace)
@@ -649,6 +653,8 @@ where
             | SD::v_is_unit(bo)
             | SD::v_is_tuple(bo)
             | SD::v_is_named(bo)
+            | SD::loop_initial(bo, ..)
+            | SD::loop_final(bo, ..)
             | SD::is_empty(bo, _)
             | SD::approx_equal(bo, _)
             | SD::False(bo)

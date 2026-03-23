@@ -67,6 +67,8 @@ impl Subst<BooleanContext> {
         let v_fields = || ctx?.variant(&kw_span).map(|v| &v.fields);
         use syn::Fields as SF;
 
+        let within_loop_body = || gctx.within_loop_body(kw_span);
+
         let expand = |x: &Template<_>| {
             let mut out = TokenAccumulator::new();
             x.expand(gctx, &mut out);
@@ -103,6 +105,9 @@ impl Subst<BooleanContext> {
                 };
                 is_found(label.search_eval_bool(sm.pmetas(ctx?, kw_span)?))
             }
+
+            SD::loop_initial(..) => within_loop_body()?.is_initial(),
+            SD::loop_final(..) => within_loop_body()?.is_final(),
 
             SD::is_empty(_, content) => expand(content)?.is_empty(),
             SD::approx_equal(_, [a, b]) => {
@@ -184,6 +189,7 @@ impl Subst<BooleanContext> {
             | SD::StringTemplate(_, not_in_bool, ..)
             | SD::DocTemplate(_, not_in_bool, ..)
             | SD::when(_, not_in_bool)
+            | SD::loop_index(not_in_bool, ..)
             | SD::define(_, not_in_bool)
             | SD::defcond(_, not_in_bool)
             | SD::For(_, not_in_bool)
@@ -196,6 +202,15 @@ impl Subst<BooleanContext> {
             | SD::Crate(_, not_in_bool) => void::unreachable(*not_in_bool),
         };
         Ok(r)
+    }
+}
+
+impl WithinLoopBody {
+    pub fn is_initial(&self) -> bool {
+        self.yes_i == 0
+    }
+    pub fn is_final(&self) -> bool {
+        self.yes_i + 1 == self.yes_count
     }
 }
 
