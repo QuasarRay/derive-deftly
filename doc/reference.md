@@ -193,26 +193,31 @@ in turn.
 structs and unions do not have variants, but
 derive-deftly treats them as having a single (unnamed) variant.
 
+#### Examples
+
+<!--##examples-for `Enum`##-->
+<!--##examples-ignore##-->
+For [example enum `Enum`](#structs-used-in-examples):
+
+ * `$($vname,)`: `UnitVariant, TupleVariant, NamedVariant,`
+ * `$($fname)`: `0 field field_b field_e field_o`
+ * `${for fields { hello }}`: `hello hello hello hello`
+
 <div id="t:repetition-info">
 
 #### Using information about repetitions ([**beta**])
 
 </div>
 
-[`loop_initial`](#c:loop_initial),
-[`loop_final`](#c:loop_final),
+**[`loop_initial`](#c:loop_initial)**,
+**[`loop_final`](#c:loop_final)**,
 and
-[`$loop_index`](#x:loop_index)
+**[`$loop_index`](#x:loop_index)**
 provide information about which repetition this is.
-[`for_loop_count`](#x:for_loop_count)
-counts how many repetitions a `for` would contain.
 
 All of these count only iterations that are
 selected by relevant [`${when }`](#x:when) clauses.
 (Consequently, they are not allowed inside `${when }`.)
-
-When a repetition over fields implicitly repeats over variants too,
-that is a single repetition over all fields, for the purposes of `loop_...`.
 
 These always refer to the innermost repetition.
 (Dynamic scoping means that it is not possible
@@ -227,17 +232,14 @@ can be obtained via
 and
 [`$findex`](#x:findex),
 
+**[`for_loop_count`](#x:for_loop_count)**
+counts how many repetitions a `for` would contain.
+
+When a repetition over fields implicitly repeats over variants too,
+that is a single repetition over all fields,
+for the purposes of `loop_...` and `for_loop_count`.
+
 These features are available only in [**beta**].
-
-#### Examples
-
-<!--##examples-for `Enum`##-->
-<!--##examples-ignore##-->
-For [example enum `Enum`](#structs-used-in-examples):
-
- * `$($vname,)`: `UnitVariant, TupleVariant, NamedVariant,`
- * `$($fname)`: `0 field field_b field_e field_o`
- * `${for fields { hello }}`: `hello hello hello hello`
 
 ## Expansions
 
@@ -1174,14 +1176,12 @@ pub enum EnumCopy<'a, 'l: 'a, T: Display = usize, const C: usize = 1,> {
    count how many fields, or variants, would match condition `COND`.
 
 `loop_index` counts only repetitions
-selected by relevant [`${when }`](#x:when) clauses,
+selected by relevant [`${when }`](#x:when) clauses --
 unlike [`$vindex`](#x:vindex) and [`$findex`](#x:findex).
-
 See above for
 [full information](#t:repetition).
 
 Can be used as a number, or a tuple field name.
-
 Available only in [**beta**].
 
 #### Examples
@@ -1559,11 +1559,11 @@ Whether the top-level type has generics.
 </div>
 </div>
 
- * `loop_initial` is true iff this is the first iteration of this repetition.
- * `loop_final` is true iff this is the final iteration of this repetition.
+ * **`loop_initial`** is true for first iteration of this repetition.
+ * **`loop_final`** is true for the final iteration of this repetition.
 
 These count only repetitions
-selected by relevant [`${when }`](#x:when) clauses,
+selected by relevant [`${when }`](#x:when) clauses --
 unlike
 [`v_is_first`](#c:v_is_first)
 and
