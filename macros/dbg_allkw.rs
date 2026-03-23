@@ -192,6 +192,10 @@ fn dump_variant(mut w: &mut Out, ctx: &Context, wv: &WithinVariant) -> R {
     expand! { c, $vpat }
     expand! { c, ${vdefbody VNAME FIELDS..} }
 
+    if false {
+        // beta
+        bool! { c, v_is_first }
+    }
     bool! { c, v_is_unit }
     bool! { c, v_is_tuple }
     bool! { c, v_is_named }
@@ -227,6 +231,10 @@ fn dump_field(mut w: &mut Out, ctx: &Context, wf: Option<&WithinField>) -> R {
 
     bool! { c, fvis }
     bool! { c, fdefvis }
+    if false {
+        bool! { c, f_is_first }
+        // beta
+    }
 
     expand! { c, $fattrs }
 
