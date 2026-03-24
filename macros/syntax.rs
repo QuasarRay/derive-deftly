@@ -1353,18 +1353,25 @@ impl Parse for RawAttrEntry {
     }
 }
 
+enum WhenExtracted<TE, S, W> {
+    When(S, W),
+    Other(TE),
+}
+
 /// Matches `$te` looking for `SD::when`
 ///
-/// If so, returns `Left(kw_span, Box<Condition>)`.
-/// Otherwise returns Right($e).
+/// If so, returns `WhenExtracted::WHen`.
+/// Otherwise returns `Other($e)`.
 ///
-/// `$te: TemplateElement` or `$te: &TemplateElement`
+/// `TE` is `$te: TemplateElement` or `$te: &TemplateElement`.
+/// `S` is `Span` or `&Span`.
+/// `W` is `Box<Condition>` or `&Box<Condition>`.
 macro_rules! te_extract_when { { $te:expr } => {
     match $te {
         TE::Subst(Subst { kw_span, sd: SD::when(bc, _) }) => {
-            Left((kw_span, bc))
+            WhenExtracted::When(kw_span, bc)
         }
-        other => Right(other),
+        other => WhenExtracted::Other(other),
     }
 } }
 
@@ -1404,11 +1411,11 @@ impl<O: SubstParseContext> RepeatedTemplate<O> {
 
         while let Some(()) = {
             match elements.pop_front().map(|e| te_extract_when!(e)) {
-                Some(Left((_kw_span, bc))) => {
+                Some(WhenExtracted::When(_kw_span, bc)) => {
                     whens.push(bc);
                     Some(())
                 }
-                Some(Right(other)) => {
+                Some(WhenExtracted::Other(other)) => {
                     elements.push_front(other);
                     None
                 }
@@ -1458,10 +1465,11 @@ where
             allow_recursive_parse,
         } = unchecked;
         for e in &elements {
-            if let Left((kw_span, _)) = te_extract_when!(e) {
-                return Err(kw_span.error(
+            match te_extract_when!(e) {
+                WhenExtracted::When(kw_span, _) => return Err(kw_span.error(
  "${when } must be at the top-level of a repetition, before other content"
-                ));
+                )),
+                WhenExtracted::Other(..) => {}
             }
         }
         Ok(Template {
