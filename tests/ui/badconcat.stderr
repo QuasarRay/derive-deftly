@@ -56,3 +56,35 @@ error: derive-deftly keyword is only allowed within ${concat }
    |
 60 |     ${define BARE_KEBAB { ${kebab_case $tname} }}
    |                             ^^^^^^^^^^
+
+error: DataType is not used for span (in this data structure)
+  --> ui/badconcat.rs:4:1
+   |
+ 4 | / #[derive_deftly_adhoc]
+ 5 | | #[deftly(something = "Box<char>")]
+ 6 | | struct DataType {
+   | |_________________^
+...
+63 | / derive_deftly_adhoc! {
+64 | |     DataType beta_deftly:
+65 | |
+66 | |     ${error message=${concat $tname " is not used for span"}}
+67 | | }
+   | |_- in this macro invocation
+   |
+   = note: this error originates in the macro `derive_deftly_driver_DataType` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: DataType is not used for span (template error message)
+  --> ui/badconcat.rs:6:8
+   |
+ 6 |   struct DataType {
+   |          ^^^^^^^^
+...
+63 | / derive_deftly_adhoc! {
+64 | |     DataType beta_deftly:
+65 | |
+66 | |     ${error message=${concat $tname " is not used for span"}}
+67 | | }
+   | |_- in this macro invocation
+   |
+   = note: this error originates in the macro `derive_deftly_driver_DataType` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)

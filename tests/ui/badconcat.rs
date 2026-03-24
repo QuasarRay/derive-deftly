@@ -60,4 +60,10 @@ derive_deftly_adhoc! {
     ${define BARE_KEBAB { ${kebab_case $tname} }}
 }
 
+derive_deftly_adhoc! {
+    DataType beta_deftly:
+
+    ${error message=${concat $tname " is not used for span"}}
+}
+
 fn main() {}
