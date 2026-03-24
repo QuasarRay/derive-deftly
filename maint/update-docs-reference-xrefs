@@ -160,7 +160,7 @@ if ($install) {
 	print STDERR <<END or die $!;
 
 Reference manual cross-reference divs mismatch.
-Check output, and rerun maint/update-reference-xrefs.
+Check output, and rerun maint/update-docs-reference-xrefs.
 END
 	exit 1;
     } else {

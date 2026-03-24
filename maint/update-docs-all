@@ -1,0 +1,6 @@
+#!/bin/sh
+set -ex
+
+maint/update-docs-tocs "$@"
+maint/update-docs-reference-xrefs "$@"
+maint/update-docs-navbars "$@"
