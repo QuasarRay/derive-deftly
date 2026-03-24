@@ -123,7 +123,8 @@ impl EngineFinalInput {
                 if let mCU::Check(m) = &self.accum.metas {
                     ctx.check_metas_used(&mut errors, &m.recog);
                 }
-                errors.finish()
+                errors.finish()?;
+                Ok(())
             },
         );
 
