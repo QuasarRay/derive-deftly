@@ -38,7 +38,7 @@
 // This next part is is also unwarranted chumminess with rustdoc.
 // Some time between Rust 1.85 and 1.86, rustdoc changed from using
 // <ul> and a pair of <div> with <class>, to this <dd>, which is better.
-// This does mean this doesn't render precisely right on Stable right now.
+// This does mean this doesn't render precisely right on older compilers.
 //
 //! <dl class="item-table">
 //! <dt><a href="https://diziet.pages.torproject.net/rust-derive-deftly/latest/guide/">Guide</a></dt>
