@@ -505,12 +505,6 @@ error: expected one of `!` or `::`, found `item`
   | not item;
   |     ^^^^ expected one of `!` or `::`
 
-error: meta attribute provided, but not recognised by template
-   --> ui/badmeta.rs:195:10
-    |
-195 | #[deftly(ignored)]
-    |          ^^^^^^^
-
 warning: unused macro definition: `derive_deftly_template_WrongRequestSyntax`
    --> ui/badmeta.rs:136:5
     |
