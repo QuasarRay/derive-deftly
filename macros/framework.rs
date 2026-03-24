@@ -122,6 +122,8 @@ pub enum SpecialInstructions {
     EndOfTemplate,
 }
 
+//==================== SubstParseContext ====================
+
 /// Surrounding lexical context during parsing
 ///
 /// This is the kind of lexical context a piece of a template appears in.
@@ -298,6 +300,8 @@ impl<O: SubstParseContext> SubstParseContextExt for O {
         Ok((O::not_in_paste(&span)?, (O::not_in_concat(&span)?)))
     }
 }
+
+//==================== ExpansionOutput ====================
 
 /// Expansion output accumulator, for a template lexical context
 ///
@@ -508,6 +512,8 @@ pub trait Expand<O> {
 pub trait ExpandInfallible<O> {
     fn expand<'c>(&self, ctx: GeneralContext<'c>, out: &mut O);
 }
+
+//==================== TokenAccumulator ===================
 
 /// Accumulates tokens, or errors
 ///
