@@ -642,9 +642,9 @@ where
                 content.expand(gctx, &mut ignore);
                 let () = ignore.ignore_impl()?;
             }
-            SD::when(..) => out.write_error(
+            SD::when(..) | SD::loop_exactly_1(..) => out.write_error(
                 &kw_span,
-                "internal error - misplaced ${when } detected too late!",
+ "internal error - misplaced ${when } or ${loop_exactly_1} detected too late!",
             ),
             SD::If(conds, ..) => conds.expand(gctx, out)?,
             SD::select1(conds, ..) => conds.expand_select1(gctx, out)?,

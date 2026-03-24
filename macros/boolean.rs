@@ -198,6 +198,7 @@ impl Subst<BooleanContext> {
             | SD::DocTemplate(_, not_in_bool, ..)
             | SD::when(_, not_in_bool)
             | SD::loop_index(not_in_bool, ..)
+            | SD::loop_exactly_1(_, not_in_bool, ..)
             | SD::for_loop_count(_, not_in_bool, ..)
             | SD::define(_, not_in_bool)
             | SD::defcond(_, not_in_bool)

@@ -2133,6 +2133,9 @@ impl<O: SubstParseContext> FindRecogMetas for RepeatedTemplate<O> {
     fn find_recog_metas(&self, acc: &mut Recognised) {
         self.template.find_recog_metas(acc);
         self.whens.find_recog_metas(acc);
+        if let Some((_, exactly_1)) = &self.exactly_1 {
+            exactly_1.find_recog_metas(acc);
+        }
     }
 }
 
@@ -2195,6 +2198,7 @@ impl<O: SubstParseContext> FindRecogMetas for SubstDetails<O> {
             DocTemplate(v, ..) => v.value.find_recog_metas(acc),
 
             when(v, _) => v.find_recog_metas(acc), // probably redundant
+            loop_exactly_1(v, ..) => v.find_recog_metas(acc),
             define(v, _) => v.find_recog_metas(acc),
             defcond(v, _) => v.find_recog_metas(acc),
 

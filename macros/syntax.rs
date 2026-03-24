@@ -71,6 +71,7 @@ pub struct RepeatedTemplate<O: SubstParseContext> {
     pub template: Template<O>,
     #[allow(clippy::vec_box)]
     pub whens: Vec<Box<Subst<BooleanContext>>>,
+    pub exactly_1: Option<(Span, ExplicitError)>,
     pub over: RepeatOver,
 }
 
@@ -200,6 +201,7 @@ pub enum SubstDetails<O: SubstParseContext> {
     loop_initial(O::BoolOnly, beta::Enabled),
     loop_final(O::BoolOnly, beta::Enabled),
     for_loop_count(ForLoopCount, O::NotInBool, beta::Enabled),
+    loop_exactly_1(ExplicitError, O::NotInBool, beta::Enabled),
 
     // Explicit iteration
     For(RepeatedTemplate<O>, O::NotInBool),
@@ -1087,6 +1089,11 @@ impl<O: SubstParseContext> Parse for Subst<O> {
             ExplicitError::parse(input, kw.span())?,
             not_in_bool()?,
         ) }
+        keyword! { loop_exactly_1(
+            ExplicitError::parse(input, kw.span())?,
+            not_in_bool()?,
+            beta()?,
+        ) }
         keyword! { require_beta(beta()?, not_in_bool()?) }
         keyword! { dbg(input.parse()?) }
         keyword! { dbg_all_keywords(not_in_bool()?) }
@@ -1353,8 +1360,9 @@ impl Parse for RawAttrEntry {
     }
 }
 
-enum WhenExtracted<TE, S, W> {
+enum WhenExtracted<TE, S, W, LE1> {
     When(S, W),
+    Exactly1(S, LE1),
     Other(TE),
 }
 
@@ -1370,6 +1378,9 @@ macro_rules! te_extract_when { { $te:expr } => {
     match $te {
         TE::Subst(Subst { kw_span, sd: SD::when(bc, _) }) => {
             WhenExtracted::When(kw_span, bc)
+        }
+        TE::Subst(Subst { kw_span, sd: SD::loop_exactly_1(ee, ..) }) => {
+            WhenExtracted::Exactly1(kw_span, ee)
         }
         other => WhenExtracted::Other(other),
     }
@@ -1408,11 +1419,26 @@ impl<O: SubstParseContext> RepeatedTemplate<O> {
         // split `when` off
         let mut elements = VecDeque::from(elements);
         let mut whens = vec![];
+        let mut exactly_1 = None;
 
         while let Some(()) = {
             match elements.pop_front().map(|e| te_extract_when!(e)) {
-                Some(WhenExtracted::When(_kw_span, bc)) => {
+                Some(WhenExtracted::When(kw_span, bc)) => {
+                    if exactly_1.is_some() {
+                        return Err(kw_span.error(
+                            "${when }s must come before ${loop_exactly_1 }",
+                        ));
+                    }
                     whens.push(bc);
+                    Some(())
+                }
+                Some(WhenExtracted::Exactly1(kw_span, ee)) => {
+                    if exactly_1.is_some() {
+                        return Err(kw_span.error(
+                            "${loop_exactly_1 } may appear only once",
+                        ));
+                    }
+                    exactly_1 = Some((kw_span, ee));
                     Some(())
                 }
                 Some(WhenExtracted::Other(other)) => {
@@ -1437,6 +1463,9 @@ impl<O: SubstParseContext> RepeatedTemplate<O> {
                 // TODO analyse whens too, but that's a breaking change
                 // rust-derive-deftly#127
                 template.analyse_repeat(&mut visitor)?;
+                // We deliberately don't scan $loop_exactly_1 for
+                // repetition keywords.  That would be confusing and wrong,
+                // because it's "expanded" in the parent context!
                 visitor.finish(span)
             }
         };
@@ -1447,6 +1476,7 @@ impl<O: SubstParseContext> RepeatedTemplate<O> {
                 over,
                 template,
                 whens,
+                exactly_1,
             }),
             Err(errs) => Err(errs),
         }
@@ -1468,6 +1498,9 @@ where
             match te_extract_when!(e) {
                 WhenExtracted::When(kw_span, _) => return Err(kw_span.error(
  "${when } must be at the top-level of a repetition, before other content"
+                )),
+                WhenExtracted::Exactly1(span, _) => return Err(span.error(
+ "${loop_exactly_1 } must be at the top-level of a repetition"
                 )),
                 WhenExtracted::Other(..) => {}
             }

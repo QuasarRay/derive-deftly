@@ -189,6 +189,7 @@ impl<O: SubstParseContext> AnalyseRepeat for Subst<O> {
             SD::StringTemplate(body, ..) => recurse!(body),
             SD::DocTemplate(body, ..) => recurse!(body.value),
             SD::when(..) => None, // out-of-place when, ignore it
+            SD::loop_exactly_1(..) => None, // out-of-place, ignore it
             SD::define(..) => None,
             SD::defcond(..) => None,
             SD::UserDefined(..) => None,
@@ -508,6 +509,42 @@ where
             .count()
             .try_into()
             .expect("repetition iterated more than 2^32 times");
+
+        if let Some((e1_span, e1_error)) = &self.exactly_1 {
+            if yes_count == 0 {
+                e1_error.throw(ctx.as_general(), *e1_span, [ctx.error_loc()])
+            } else if yes_count == 1 {
+                Ok(())
+            } else {
+                // We want to produce two locs, first and second.
+                // But (a) we have ctx.for_with_within., not an iterator
+                // and (b) we must make Strings and faff with lifetimes
+                let mut i = 0;
+                let mut locs = [None, None]; // poor bod's ArrayVec
+                let _: Result<(), ()> = ctx.for_with_within(|ctx, _: &W| {
+                    // just trust that the condition is stable;
+                    // we're reporting an error in any case.
+                    let f = self.filter_inner(ctx).map_err(|_| ());
+                    if is_yes(f) {
+                        let (span, ctx_s) = ctx.error_loc();
+                        let loc = locs.get_mut(i).ok_or(())?;
+                        let fs = ["first", "second"][i];
+                        *loc = Some((span, format!("{}: {}", fs, ctx_s)));
+                        i += 1;
+                    }
+                    Ok::<_, ()>(())
+                });
+                e1_error.throw(
+                    ctx.as_general(),
+                    *e1_span,
+                    locs.iter().map(|b| {
+                        let b = b.as_ref().expect("all added");
+                        (b.0, &*b.1)
+                    }),
+                )
+            }
+            .unwrap_or_else(|e| out.record_error(e));
+        }
 
         // We use `u32` for the `${when }`-filtered iterations ("yes"";
         // those are exposed via `loop_index` which must
