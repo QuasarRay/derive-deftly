@@ -177,4 +177,13 @@ define_derive_deftly! {
 #[deftly(unit)]
 struct UnusedUnit;
 
+define_derive_deftly! {
+    UnusedDueToError beta_deftly:
+    ${error "force failure"}
+}
+#[derive(Deftly)]
+#[derive_deftly(UnusedDueToError)]
+#[deftly(unused)] // shouldn't be reported, since template has error
+struct UnusedDueToError;
+
 fn main() {}
