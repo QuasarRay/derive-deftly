@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# usage: maint/update-tocs [--check]
+# usage: maint/update-docs-tocs [--check]
 #
 # Updates the embedded Table of Contents in the following files:
 process_files () {
@@ -70,6 +70,6 @@ process_file () {
 process_files
 
 if $problems; then
-    echo 'Documentation TOC mismatch - rerun maint/update-tocs'
+    echo 'Documentation TOC mismatch - rerun maint/update-docs-tocs'
     exit 1
 fi

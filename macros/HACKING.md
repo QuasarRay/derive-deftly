@@ -10,8 +10,8 @@ and, especially, testing them can be complex.
       * [`tests/pub-export/bizarre-facade/*` etc., updated by `maint/update-bizarre`](#testspub-exportbizarre-facade-etc-updated-by-maintupdate-bizarre)
       * [`Cargo.lock`, updated by `nailing-cargo update`.](#cargolock-updated-by-nailing-cargo-update)
       * [`Cargo.lock.minimal`, updated by `update-minimal-versions`.](#cargolockminimal-updated-by-update-minimal-versions)
-      * [Tables of contents in various `*.md`, updated by `maint/update-tocs`.](#tables-of-contents-in-various-md-updated-by-maintupdate-tocs)
-      * [Cross-references in `reference.md`, updated by `maint/update-reference-xrefs`](#cross-references-in-referencemd-updated-by-maintupdate-reference-xrefs)
+      * [Tables of contents in various `*.md`, updated by `maint/update-docs-tocs`.](#tables-of-contents-in-various-md-updated-by-maintupdate-docs-tocs)
+      * [Cross-references in `reference.md`, updated by `maint/update-docs-reference-xrefs`](#cross-references-in-referencemd-updated-by-maintupdate-docs-reference-xrefs)
    * [Testing - see `tests/tests.rs`](#testing---see-teststestsrs)
    * [Reporting errors during template parsing and expansion](#reporting-errors-during-template-parsing-and-expansion)
    * [Adding an expansion keyword](#adding-an-expansion-keyword)
@@ -97,13 +97,13 @@ used for CI testing of our MSRV, etc.
 `update-minimal-versions` runs `cargo +nightly update ...`,
 so you have to have a Rust Nightly installed.
 
-### Tables of contents in various `*.md`, updated by `maint/update-tocs`.
+### Tables of contents in various `*.md`, updated by `maint/update-docs-tocs`.
 
 These are inserted at the `<!--##toc##-->` marker.
 
 Checked by CI, but it's only a warning if it's not up to date.
 
-### Cross-references in `reference.md`, updated by `maint/update-reference-xrefs`
+### Cross-references in `reference.md`, updated by `maint/update-docs-reference-xrefs`
 
 There are `x:...` and `c:...` `<div>`s,
 surrounding each heading describing expansions and conditions.
