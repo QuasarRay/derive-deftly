@@ -536,6 +536,13 @@ where
                 v.expand(ctx?, out, kw_span, SD::ttype(Default::default()))
             })?,
 
+            SD::v_explicit_discriminant(at, ..) => {
+                let expr = ctx?.v_explicit_discriminant(kw_span)?.map_err(
+                    |n: NoVariantExlicitDiscriminant| kw_span.error(n),
+                )?;
+                out.append_tokens(at, Grouping::surround_parens(expr))?;
+            }
+
             SD::loop_index(..) => {
                 do_index(out, gctx.within_loop_body(kw_span)?.yes_i)?
             }

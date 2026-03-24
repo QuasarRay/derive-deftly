@@ -87,6 +87,12 @@ impl Subst<BooleanContext> {
             SD::v_is_named(..) => matches!(v_fields()?, SF::Named(..)),
             SD::tgens(_) => !ctx?.top.generics.params.is_empty(),
 
+            SD::v_explicit_discriminant(..) => {
+                Result::<_, NoVariantExlicitDiscriminant>::is_ok(
+                    &ctx?.v_explicit_discriminant(kw_span)?,
+                )
+            }
+
             SD::Xmeta(sm) => {
                 let meta::SubstMeta {
                     desig: meta::Desig { label, scope: _ },
