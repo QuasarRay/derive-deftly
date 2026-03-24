@@ -201,6 +201,8 @@ pub enum SubstDetails<O: SubstParseContext> {
     loop_initial(O::BoolOnly, beta::Enabled),
     loop_final(O::BoolOnly, beta::Enabled),
     for_loop_count(ForLoopCount, O::NotInBool, beta::Enabled),
+    // When stabilising this, consider whether to impose
+    // an ordering restriction wrt `${when }`.
     loop_exactly_1(ExplicitError, O::NotInBool, beta::Enabled),
 
     // Explicit iteration
@@ -1423,12 +1425,7 @@ impl<O: SubstParseContext> RepeatedTemplate<O> {
 
         while let Some(()) = {
             match elements.pop_front().map(|e| te_extract_when!(e)) {
-                Some(WhenExtracted::When(kw_span, bc)) => {
-                    if exactly_1.is_some() {
-                        return Err(kw_span.error(
-                            "${when }s must come before ${loop_exactly_1 }",
-                        ));
-                    }
+                Some(WhenExtracted::When(_kw_span, bc)) => {
                     whens.push(bc);
                     Some(())
                 }

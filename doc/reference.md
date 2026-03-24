@@ -1196,11 +1196,13 @@ Can be used as a number, or a tuple field name.
  * **`${loop_exactly_1 ..}`** throws a compile error
    unless this loop has exactly one repetition.
 
-   `${loop_exactly_1 }` must appear after any `${when }`
-   and before other content.
-   It is checked if (and only if) the surrounding loop is expanded;
+   `${loop_exactly_1 }` is checked if (and only if)
+   the surrounding loop is expanded;
    so it is a supplement to the loop itself,
    not content that is expanded for each iteration.
+
+   `${loop_exactly_1 }` must appear with `${when }`, before other content.
+   The relative ordering of `${loop_exactly_1 }` and `${when }` has no effect.
 
    The syntax is exactly as for [`${error }`](#x:error).
 
