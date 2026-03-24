@@ -131,6 +131,7 @@ pub enum SubstAs<O: SubstParseContext> {
     str,
     token_stream(AllowTokens<O>),
     ty,
+    vis(AllowTokens<O>, beta::Enabled),
     attrs(AllowTokens<O>, beta::Enabled),
 }
 
@@ -494,6 +495,7 @@ impl<O: SubstParseContext> SubstAsSpecified<O> {
         keyword! { str }
         keyword! { token_stream(allow_tokens()?) }
         keyword! { ty }
+        keyword! { vis(allow_tokens()?, beta()?) }
         keyword! { attrs(allow_tokens()?, beta()?) }
 
         Err(kw.error("unknown derive-deftly 'as' syntax type keyword"))
@@ -1424,6 +1426,10 @@ impl<'l> FoundNode<'l> {
                 metavalue_as(AVH::Normal, input)?,
                 Grouping::Invisible,
             ),
+            SA::vis(at, ..) => {
+                let vis: syn::Visibility = metavalue_as(AVH::Normal, input)?;
+                out.append_tokens(at, vis)?;
+            }
             SA::attrs(at, _) => {
                 let attrs: UserAttrs = metavalue_as(AVH::Normal, input)?;
                 out.append_tokens(at, attrs)?;
