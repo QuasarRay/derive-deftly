@@ -1,4 +1,5 @@
 #![allow(clippy::style, clippy::complexity)]
+#![deny(clippy::disallowed_methods)]
 #![doc=include_str!("README.md")]
 //
 // This is the actual proc-macro crate.
@@ -113,7 +114,7 @@ where
     ) -> Result<proc_macro2::TokenStream, syn::Error>,
 {
     let input = proc_macro2::TokenStream::from(input);
-    let output = func(input).unwrap_or_else(|e| e.into_compile_error());
+    let output = func(input).error_into_compile_error_unrecorded();
     proc_macro::TokenStream::from(output)
 }
 

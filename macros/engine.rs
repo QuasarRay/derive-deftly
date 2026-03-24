@@ -337,12 +337,15 @@ impl<'c> Context<'c> {
             index: 0,
         });
 
+        let any_error_occurred = Cell::new(Ok(()));
+
         let ctx = Context {
             top: &driver,
             template_crate,
             template_name,
             pmetas: &tmetas,
             meta_quoted,
+            any_error_occurred: &any_error_occurred,
             field: None,
             variant: variant.as_ref(),
             pvariants: &pvariants,
@@ -445,9 +448,10 @@ impl EngineExpandInput {
         );
 
         let (expanded, metas_used) = match outcome {
-            Ok((expanded, metas_used)) => (Ok(expanded), Ok(metas_used)),
+            Ok((expanded, metas_used)) => (Ok(expanded), metas_used),
             Err(e) => (Err(e), Err(())),
         };
+        // Now meta_used is Err also if any error occurred.
 
         let chain_call;
 
@@ -469,7 +473,7 @@ impl EngineExpandInput {
                     accum.extend(quote!( _meta_recog [#meta_recog] ));
                 }
                 Err(()) => {
-                    accum.extend(quote!( _error [] ));
+                    accum.extend(quote!( _meta_used * _error [] ));
                 }
             }
 
@@ -485,7 +489,7 @@ impl EngineExpandInput {
             chain_call = TokenStream::new();
         };
 
-        let mut out = expanded.unwrap_or_else(|e| e.into_compile_error());
+        let mut out = expanded.error_into_compile_error_unrecorded();
         dprint_block!(&out, "derive_deftly_engine! expansion output");
         dprint_block!(&chain_call, "derive_deftly_engine! chain call");
         out.extend(chain_call);

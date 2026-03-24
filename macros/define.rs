@@ -228,7 +228,8 @@ pub fn define_template(
         )
         .map_err(|e| {
             // Make sure the error is emitted
-            e.into_compile_error().to_tokens(&mut output);
+            e.error_into_compile_error_unrecorded()
+                .to_tokens(&mut output);
             // But from now on, let's just use an empty template
             template = TokenStream::new();
             // parsed_template becomes Err(())

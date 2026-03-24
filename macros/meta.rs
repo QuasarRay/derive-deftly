@@ -1773,7 +1773,9 @@ impl PreprocessedTree {
 
 impl<'c> Context<'c> {
     /// Returns `[::Variant .field () ...]`
-    pub fn encode_metas_used(&self) -> proc_macro2::Group {
+    pub fn encode_metas_used(&self) -> Result<proc_macro2::Group, ()> {
+        let _: () = self.any_error_occurred.get()?;
+
         let parenthesize =
             |ts| proc_macro2::Group::new(Delimiter::Parenthesis, ts);
         let an_empty = parenthesize(TokenStream::new());
@@ -1851,7 +1853,7 @@ impl<'c> Context<'c> {
         })
         .void_unwrap();
 
-        proc_macro2::Group::new(Delimiter::Bracket, ts)
+        Ok(proc_macro2::Group::new(Delimiter::Bracket, ts))
     }
 }
 

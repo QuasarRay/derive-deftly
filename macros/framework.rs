@@ -32,6 +32,7 @@ pub struct Context<'c> {
     pub template_crate: &'c syn::Path,
     pub template_name: Option<&'c syn::Path>,
     pub pmetas: &'c meta::PreprocessedMetas,
+    pub any_error_occurred: &'c Cell<Result<(), ()>>,
     pub meta_quoted: Option<meta::QuotedMode>,
     pub variant: Option<&'c WithinVariant<'c>>,
     pub field: Option<&'c WithinField<'c>>,
@@ -703,5 +704,53 @@ impl ExpansionOutput for TokenAccumulator {
             Err(e) => self.record_error(e),
         }
         Ok(())
+    }
+}
+
+//==================== recording errors in the Context ====================
+
+impl<'c> Context<'c> {
+    /// Convert a [`syn::Error`] to `compile_error!` invocation
+    ///
+    /// Also notes that an error occurred, in the context.
+    /// This is used for suppressing unused meta errors if expansion failed,
+    /// even if the expansion error was turned into a
+    /// `compile_error!` `TokenStream` deep in the expansion code,
+    /// so that it's not ordinarily visible to the top-level plumbing
+    /// code which needs to generate `_meta_used` etc. in the ACCUM.
+    pub fn error_into_compile_error(&'c self, e: syn::Error) -> TokenStream {
+        self.any_error_occurred.set(Err(()));
+        e.error_into_compile_error_unrecorded()
+    }
+}
+
+pub trait SynErrorExt {
+    /// Convert a `syn:Error` to `compile_error!` without noting anywhere
+    ///
+    /// Implemented for `syn:Error` and also, for convenience,
+    /// on `syn::Result<TokenStream>`.
+    ///
+    /// # Correctness
+    ///
+    /// No error from template expansion should be passed to this function,
+    /// unless we have made arrangements so that any ACCUM passed
+    /// on to future expansions will have appropriate
+    /// `_error` and `_meta_used *`.
+    ///
+    /// Typically this means this is appropriate to call only in top-level
+    /// plumbing code that is already handling errors explicitly.
+    fn error_into_compile_error_unrecorded(self) -> TokenStream;
+}
+
+impl SynErrorExt for syn::Error {
+    #[allow(clippy::disallowed_methods)] // this is the wrapper
+    fn error_into_compile_error_unrecorded(self) -> TokenStream {
+        self.into_compile_error()
+    }
+}
+
+impl SynErrorExt for syn::Result<TokenStream> {
+    fn error_into_compile_error_unrecorded(self) -> TokenStream {
+        self.unwrap_or_else(|e| e.error_into_compile_error_unrecorded())
     }
 }

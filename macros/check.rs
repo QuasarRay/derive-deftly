@@ -112,16 +112,16 @@ impl Checking<'_> {
         };
 
         let broken = mem::take(self.output);
-        let err = err.into_compile_error();
+        let err = self.ctx.error_into_compile_error(err);
 
         let expansion = expand_via_file(self.ctx, self.target.value, broken)
             .map_err(|e| {
-                Span::call_site()
+                let e = Span::call_site()
                     .error(format!(
  "derive-deftly was unable to write out the expansion to a file for fuller syntax error reporting: {}",
                     e
-                ))
-                    .into_compile_error()
+                ));
+                self.ctx.error_into_compile_error(e)
             })
             .unwrap_or_else(|e| e);
 

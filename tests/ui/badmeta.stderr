@@ -469,6 +469,42 @@ error: meta attribute provided as unit (flag), but is used only with default val
 177 | #[deftly(unit)]
     |          ^^^^
 
+error: force failure (in this data structure)
+   --> ui/badmeta.rs:185:1
+    |
+185 | / #[derive_deftly(UnusedDueToError)]
+186 | | #[deftly(unused)] // shouldn't be reported, since template has error
+187 | | struct UnusedDueToError;
+    | |________________________^
+
+error: force failure (template error message)
+   --> ui/badmeta.rs:182:13
+    |
+182 |     ${error "force failure"}
+    |             ^^^^^^^^^^^^^^^
+183 | }
+184 | #[derive(Deftly)]
+    |          ------ in this derive macro expansion
+    |
+    = note: this error originates in the macro `derive_deftly_template_UnusedDueToError` which comes from the expansion of the derive macro `Deftly` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: expected `!`
+   --> ui/badmeta.rs:191:9
+    |
+191 |     not item;
+    |         ^^^^
+192 | }
+193 | #[derive(Deftly)]
+    |          ------ in this derive macro expansion
+    |
+    = note: this error originates in the macro `derive_deftly_template_UnusedDueToSyntax` which comes from the expansion of the derive macro `Deftly` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: expected one of `!` or `::`, found `item`
+ --> $OUT_DIR[derive-deftly-macros]/derive-deftly~expansions~/dd-350f8b3069c82db53d5233ea.rs
+  |
+  | not item;
+  |     ^^^^ expected one of `!` or `::`
+
 warning: unused macro definition: `derive_deftly_template_WrongRequestSyntax`
    --> ui/badmeta.rs:136:5
     |

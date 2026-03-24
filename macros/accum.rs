@@ -79,7 +79,7 @@ impl Parse for Accumulated {
                 } else {
                     Ignore
                 }
-            } else if kind == "error" {
+            } else if kind == "_error" {
                 metas = mCU::Unchecked;
                 Ignore
             } else if kind.to_string().starts_with('_') {
@@ -100,7 +100,7 @@ impl Parse for Accumulated {
 
 impl EngineFinalInput {
     pub fn process(self) -> syn::Result<TokenStream> {
-        let r = Context::call(
+        Context::call(
             &self.driver,
             &dummy_path(), // template_crate, not used by our f
             None,          // template_name
@@ -123,17 +123,10 @@ impl EngineFinalInput {
                 if let mCU::Check(m) = &self.accum.metas {
                     ctx.check_metas_used(&mut errors, &m.recog);
                 }
-                errors.finish()
+                errors.finish()?;
+
+                Ok(TokenStream::new())
             },
-        );
-
-        let mut out = TokenStream::new();
-
-        match r {
-            Ok(()) => {}
-            Err(e) => e.into_compile_error().to_tokens(&mut out),
-        }
-
-        Ok(out)
+        )
     }
 }

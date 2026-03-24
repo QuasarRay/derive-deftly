@@ -83,7 +83,7 @@ fn roundtrip_scenario(
                 ptree.update_used(allow);
             }
         },
-        |ctx| ctx.encode_metas_used().stream(),
+        |ctx| ctx.encode_metas_used().expect("ok").stream(),
     );
 
     process_nodes_top(

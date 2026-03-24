@@ -211,6 +211,10 @@ In the above example, it outputs:
 `ACCUM` accumulates information from successive expansions,
 and is actually parsed only in the next step.
 
+`ACCUM` entries are all `KEYWORD TT`.
+Unknown KEYWORDs starting with `_` are ignored.
+`_error [....]` will be present if that expansion gave an error.
+
 #### Used meta attribute syntax
 
 `_meta_used` introduces the meta attributes from the driver,
