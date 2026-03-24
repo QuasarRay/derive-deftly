@@ -57,7 +57,7 @@ or via the [account request form].
 
 ## Changelog
 
-### 1.10.0
+### 1.10.0 - 2026-03-24
 
 #### Breaking changes to beta features
 
@@ -82,20 +82,20 @@ or via the [account request form].
  * docs: Improve documentation of `${error }`, especially wrt spans.
  * docs: Fixed some heading formatting anomalies in the Reference.
 
-### 1.9.0
+### 1.9.0 - 2026-03-20
 
 #### Added
 
  * BETA: String templates `$"..."` and docstring templates `$///`.
 
-### 1.8.0
+### 1.8.0 - 2026-03-17
 
 #### Added
 
  * BETA: Unquoted values in `#[deftly]`, when enabled by template.
  * BETA: `$Xmeta as attrs`
 
-### 1.7.0
+### 1.7.0 - 2026-03-11
 
 #### Added
 
@@ -108,7 +108,7 @@ or via the [account request form].
  * Fixed some compiler warnings etc. seen with recent Nightly Rust.
  * Relaxed upper dependency bounds for `strum` and `toml`.
 
-### 1.6.0
+### 1.6.0 - 2025-12-03
 
 #### Breaking changes to beta features
 
@@ -128,13 +128,13 @@ or via the [account request form].
  * BETA, modules: Correctly adjust the hygiene span of imported definitions.
  * BETA, modules: Correctly adjust the hygiene span of groups and punctuation.
 
-### 1.5.1
+### 1.5.1 - 2025-11-17
 
 #### Improved
 
  * Better error message when `expect` fails and expansion contains `$crate`.
 
-### 1.5.0
+### 1.5.0 - 2025-11-07
 
 #### Breaking changes to beta features
 
@@ -153,7 +153,7 @@ or via the [account request form].
 
  * Minor docs improvements.
 
-### 1.4.0
+### 1.4.0 - 2025-11-05
 
 #### Added
 
@@ -163,7 +163,7 @@ or via the [account request form].
 
  * Minor docs improvements.
 
-### 1.3.0
+### 1.3.0 - 2025-09-01
 
 #### Added
 
@@ -173,7 +173,7 @@ or via the [account request form].
 
  * Minor docs fixes.
 
-### 1.2.0
+### 1.2.0 - 2025-07-09
 
 #### Added
 
@@ -188,19 +188,19 @@ or via the [account request form].
 
  * Tightened lower dependency bound for `heck` from `0.4` to `0.4.1`.
 
-### 1.1.0
+### 1.1.0 - 2025-06-19
 
 #### Added
 
  * BETA: `$findex` and `$vindex`.
 
-### 1.0.1
+### 1.0.1 - 2025-03-03
 
 #### Improved
 
  * Trivial fixes to copyright notice in LICENCE.
 
-### 1.0.0
+### 1.0.0 - 2025-02-11
 
 No breaking changes since 0.14.x.
 
@@ -211,26 +211,26 @@ No breaking changes since 0.14.x.
  * CI: Routine updates for pinned test dependencies.
  * Improvements to internal HACKING.md.
 
-### 0.14.6
+### 0.14.6 - 2025-02-10
 
 #### Improved
 
  * docs: Fixed some version numbers in version-specific xref links.
 
-### 0.14.5
+### 0.14.5 - 2025-02-10
 
 #### Improved
 
  * Improvements to documentation cross-references and linking.
  * Relaxed upper dependency bounds for `strum`.
 
-### 0.14.4
+### 0.14.4 - 2025-02-10
 
 #### Fixed
 
  * Removed ill-nested divs from README.md.
 
-### 0.14.3
+### 0.14.3 - 2025-02-10
 
 #### Added
 
@@ -245,14 +245,14 @@ No breaking changes since 0.14.x.
  * Relaxed upper dependency bounds for `educe`, `itertools`.
  * Internal and testing improvements.
 
-### 0.14.2
+### 0.14.2 - 2024-07-17
 
 #### Improved
 
  * Improvements to the Guide.
  * New "Reporting issues" docs, currently in CHANGELOG.md.
 
-### 0.14.1
+### 0.14.1 - 2024-07-12
 
 #### Fixed
 
@@ -267,7 +267,7 @@ No breaking changes since 0.14.x.
  * Various new `<div>` anchors in the Reference and this changelog.
  * Many internal and testing improvements.
 
-### 0.14.0
+### 0.14.0 - 2024-06-28
 
 #### Breaking
 
@@ -295,7 +295,7 @@ No breaking changes since 0.14.x.
    Crates that export templates, and haven't bumped their own semver
    since before derive-deftly 0.12.1, should probably bump semver now.
 
-### 0.13.1
+### 0.13.1 - 2024-06-25
 
 #### Fixed
 
@@ -307,7 +307,7 @@ No breaking changes since 0.14.x.
 
  * Declare `rust-version` in `derive-deftly-macros`'s `Cargo.toml`, too.
 
-### 0.13.0
+### 0.13.0 - 2024-06-23
 
 #### Breaking
 
@@ -335,7 +335,7 @@ No breaking changes since 0.14.x.
  * Improvements and fixes to reference documentation.
  * Many improvements to internals and tests.
 
-### 0.12.1
+### 0.12.1 - 2024-06-14
 
 #### Deprecated
 
@@ -344,7 +344,7 @@ No breaking changes since 0.14.x.
    in favour of `template_export_semver_check!`.
    `pub` etc. are still supported for now, but will be removed soon.
 
-### 0.12.0
+### 0.12.0 - 2024-06-13
 
 #### Breaking
 
@@ -368,7 +368,7 @@ No breaking changes since 0.14.x.
    (Links from out-of-tree may need updating.)
  * Many improvements to the Guide.
 
-### 0.11.0
+### 0.11.0 - 2024-05-17
 
 #### Breaking
 
@@ -415,7 +415,7 @@ The scheme for collating information about meta attributes,
 across multiple template invocations, has been completely changed.
 So the calling convention for the template macro is quite incompatible.
 
-### 0.10.5
+### 0.10.5 - 2024-04-24
 
 #### Breaking (minor)
 
@@ -429,7 +429,7 @@ So the calling convention for the template macro is quite incompatible.
  * Docs clarifications and fixes.
  * Testing fixes and robustness improvements.
 
-### 0.10.4
+### 0.10.4 - 2024-04-15
 
 #### Added
 
@@ -444,7 +444,7 @@ So the calling convention for the template macro is quite incompatible.
  * Documentation updates.
  * Slightly improved an error message.
 
-### 0.10.3
+### 0.10.3 - 2024-04-08
 
 #### Fixed
 
@@ -466,7 +466,7 @@ So the calling convention for the template macro is quite incompatible.
 
  * Improvements to reference docs.
 
-### 0.10.2
+### 0.10.2 - 2024-04-03
 
 #### Fixed
 
@@ -478,7 +478,7 @@ So the calling convention for the template macro is quite incompatible.
  * Use the 2021 edition.  Some minimum dependency requirements
    tightened, but: no MSRV impact.
 
-### 0.10.1
+### 0.10.1 - 2024-03-29
 
 #### Added
 
@@ -489,7 +489,7 @@ So the calling convention for the template macro is quite incompatible.
  * Prettier output from `${dbg_all_keywords}`.
  * Better error messages for unecognised `#[deftly(...)]` attributes.
 
-### 0.10.0
+### 0.10.0 - 2024-03-27
 
 #### Breaking
 
@@ -519,20 +519,20 @@ to the API of a crate which exports templates:
 Exported templates are not compatible due to renaming of the
 internal keyword `$_da_intern_crate` to `$_dd_intern_crate`.
 
-### 0.9.2
+### 0.9.2 - 2024-03-02
 
 #### Improved
 
  * docs: Fixed the README.md cross-reference and stability information.
 
-### 0.9.1
+### 0.9.1 - 2024-03-02
 
 #### Improved
 
  * Documentation and error message fixes, tidying up after renames.
  * Other minor documentation improvements.
 
-### 0.9.0
+### 0.9.0 - 2024-03-02
 
 #### Breaking
 
@@ -563,7 +563,11 @@ derive_adhoc!                   derive_deftly_adhoc!
 Updating to `derive-deftly` from `derive-adhoc` is a breaking change
 to the API of a crate which exports templates.
 
-### 0.8.1
+### 0.8.2 .. 0.8.4 (stable branch)
+
+(Not recorded in this changelog)
+
+### 0.8.1 - 2024-01-02
 
 #### Fixed
 
@@ -575,7 +579,7 @@ to the API of a crate which exports templates.
  * Improvements to macro rustdoc documentation.
  * Minor internal improvements.
 
-### 0.8.0
+### 0.8.0 - 2023-12-21
 
 #### Nominally breaking (template export semver)
 
@@ -616,7 +620,7 @@ However, the likelihood of this breaking a working build seems low.
  * Improvements to tests, CI, `HACKING.md`, Cargo lockfile handling.
  * Lockfile (`Cargo.lock`) is now committed to git under that name.
 
-### 0.7.3
+### 0.7.3 - 2023-07-24
 
 #### Added
 
@@ -631,20 +635,20 @@ However, the likelihood of this breaking a working build seems low.
  * `$ttype`, `$tdeftype` and `$vtype` no longer include `::<>` or `<>`
    unless the original toplevel driver definition did.
 
-### 0.7.2
+### 0.7.2 - 2023-07-22
 
 #### Added
 
  * `${Xmeta(...)}` within pasting now defaults to `... as str`,
    so that doesn't need to be specified each time.
 
-### 0.7.1
+### 0.7.1 - 2023-07-20
 
 #### Fixed
 
  * Fix reference documentation examples for `$Xattr`.
 
-### 0.7.0
+### 0.7.0 - 2023-07-15
 
 #### Breaking
 
@@ -664,7 +668,7 @@ However, the likelihood of this breaking a working build seems low.
  * Fixed bugs relating to pasting of keywords and raw identifiers.
  * docs: Fixed minor bugs in the reference.
 
-### 0.6.1
+### 0.6.1 - 2023-07-07
 
 #### Fixed
 
@@ -675,7 +679,7 @@ However, the likelihood of this breaking a working build seems low.
  * Change dollar-escaping pseudo-keyword to `$orig_dollar`.
    (Internal change; should not have any user-visible effect.)
 
-### 0.6.0
+### 0.6.0 - 2023-07-06
 
 #### Breaking
 
@@ -705,7 +709,7 @@ However, the likelihood of this breaking a working build seems low.
  * docs: Reference: example snippets: now tested, and many added.
  * docs: Introduction: now has a Table of Contents.
 
-### 0.5.0
+### 0.5.0 - 2023-06-18
 
 #### Breaking
 
@@ -718,7 +722,7 @@ However, the likelihood of this breaking a working build seems low.
 
  * Documentation: tidying and a few more examples.
 
-### 0.4.0
+### 0.4.0 - 2023-06-05
 
 #### Breaking
 
@@ -743,7 +747,7 @@ However, the likelihood of this breaking a working build seems low.
  * internal: CI tests improved and extended
  * internal: cleanups, and internal docs improved.
 
-### 0.3.0
+### 0.3.0 - 2023-04-27
 
 #### Breaking
 
@@ -776,7 +780,7 @@ However, the likelihood of this breaking a working build seems low.
  * tests: Improved CI checks on documentation, TODOs, etc.
  * internal: new HACKING.md file for helping develop derive-adhoc.
 
-### 0.2.2
+### 0.2.2 - 2023-03-05
 
 #### Fixed (future compatibility)
 
@@ -790,7 +794,7 @@ However, the likelihood of this breaking a working build seems low.
    with mixed derive-adhoc versions.  #10.
  * Compatibility with derive-adhoc 0.2.0 tested in CI.
 
-### 0.2.1
+### 0.2.1 - 2023-03-02
 
 #### Fixed
 
@@ -801,7 +805,7 @@ However, the likelihood of this breaking a working build seems low.
 
  * docs: Much expanded tutorial (still a work in progress)
 
-### 0.2.0
+### 0.2.0 - 2023-02-21
 
 #### Breaking
 
@@ -845,13 +849,13 @@ However, the likelihood of this breaking a working build seems low.
  * Many other minor improvements
  * New tests/examples
 
-### 0.1.0
+### 0.1.0 - 2023-02-02
 
  * First publicly advertised release.
    Much important documentation and
    many important features still missing.
 
-### 0.0.1
+### 0.0.1 - 2022-07-01
 
  * Initial release to crates.io, not widely advertised.
 
