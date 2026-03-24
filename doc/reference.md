@@ -213,6 +213,7 @@ For [example enum `Enum`](#structs-used-in-examples):
 
 **[`loop_initial`](#c:loop_initial)**,
 **[`loop_final`](#c:loop_final)**,
+**[`$loop_exactly_1`](#x:loop_exactly_1)**
 and
 **[`$loop_index`](#x:loop_index)**
 provide information about which repetition this is.
@@ -1170,10 +1171,12 @@ pub enum EnumCopy<'a, 'l: 'a, T: Display = usize, const C: usize = 1,> {
 ```
 
 <div id="x:for_loop_count">
+<div id="x:loop_exactly_1">
 <div id="x:loop_index">
 
-### `$loop_index`, `$for_loop_count` -- repetition information (**beta**)
+### `$loop_index`, `$for_loop_count`, `${loop_exactly_1 ...}` -- repetition information (**beta**)
 
+</div>
 </div>
 </div>
 
@@ -1189,7 +1192,19 @@ See above for
 [full information](#t:repetition).
 
 Can be used as a number, or a tuple field name.
-Available only in [**beta**].
+
+ * **`${loop_exactly_1 ..}`** throws a compile error
+   unless this loop has exactly one repetition.
+
+   `${loop_exactly_1 }` must appear after any `${when }`
+   and before other content.
+   It is checked if (and only if) the surrounding loop is expanded;
+   so it is a supplement to the loop itself,
+   not content that is expanded for each iteration.
+
+   The syntax is exactly as for [`${error }`](#x:error).
+
+All these features are available only in [**beta**].
 
 #### Examples
 
