@@ -469,7 +469,7 @@ impl EngineExpandInput {
                     accum.extend(quote!( _meta_recog [#meta_recog] ));
                 }
                 Err(()) => {
-                    accum.extend(quote!( _error [] ));
+                    accum.extend(quote!( _meta_used * _error [] ));
                 }
             }
 
