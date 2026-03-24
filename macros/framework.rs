@@ -32,6 +32,7 @@ pub struct Context<'c> {
     pub template_crate: &'c syn::Path,
     pub template_name: Option<&'c syn::Path>,
     pub pmetas: &'c meta::PreprocessedMetas,
+    pub any_error_occurred: &'c Cell<Result<(), ()>>,
     pub meta_quoted: Option<meta::QuotedMode>,
     pub variant: Option<&'c WithinVariant<'c>>,
     pub field: Option<&'c WithinField<'c>>,
@@ -703,5 +704,23 @@ impl ExpansionOutput for TokenAccumulator {
             Err(e) => self.record_error(e),
         }
         Ok(())
+    }
+}
+
+//==================== recording errors in the Context ====================
+
+impl<'c> Context<'c> {
+    /// Convert a [`syn::Error`] to `compile_error!` invocation
+    ///
+    /// Also notes that an error occurred, in the context.
+    /// This is used for suppressing unused meta errors if expansion failed,
+    /// even if the expansion error was turned into a
+    /// `compile_error!` `TokenStream` deep in the expansion code,
+    /// so that it's not ordinarily visible to the top-level plumbing
+    /// code which needs to generate `_meta_used` etc. in the ACCUM.
+    #[allow(unused)] // XXXX
+    pub fn error_into_compile_error(&'c self, e: syn::Error) -> TokenStream {
+        self.any_error_occurred.set(Err(()));
+        e.into_compile_error()
     }
 }

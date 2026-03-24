@@ -337,12 +337,15 @@ impl<'c> Context<'c> {
             index: 0,
         });
 
+        let any_error_occurred = Cell::new(Ok(()));
+
         let ctx = Context {
             top: &driver,
             template_crate,
             template_name,
             pmetas: &tmetas,
             meta_quoted,
+            any_error_occurred: &any_error_occurred,
             field: None,
             variant: variant.as_ref(),
             pvariants: &pvariants,
@@ -445,9 +448,10 @@ impl EngineExpandInput {
         );
 
         let (expanded, metas_used) = match outcome {
-            Ok((expanded, metas_used)) => (Ok(expanded), Ok(metas_used)),
+            Ok((expanded, metas_used)) => (Ok(expanded), metas_used),
             Err(e) => (Err(e), Err(())),
         };
+        // Now meta_used is Err also if any error occurred.
 
         let chain_call;
 
