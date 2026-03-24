@@ -2061,7 +2061,7 @@ pub enum Enum<'a, 'l: 'a, T: Display = usize, const C: usize = 1>
 where T: 'l, T: TryInto<u8>
 {
     #[deftly(value = "enum_variant")]
-    UnitVariant,
+    UnitVariant = 2,
     #[deftly(items = "type T = i32; const K: T = 7;")]
     TupleVariant(std::iter::Once::<T>),
     NamedVariant { 
