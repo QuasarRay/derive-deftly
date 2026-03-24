@@ -1210,6 +1210,9 @@ All these features are available only in [**beta**].
 
  * `$( ${when not(fmeta(same_attrs))} $loop_index = $fname; )` for `Enum`: `0 = 0; 1 = field_o;`
  * `${for_loop_count fields not(fmeta(same_attrs))}` for `Enum`: `2`
+ * `$( ${loop_exactly_1 "too few"} $fname )` for `Unit`: error, ``too few (in this data structure)``
+ * `$( ${loop_exactly_1 "too many"} $fname )` for `Struct`: error, ``too many (first: in this field)``
+ * `$( ${loop_exactly_1 "just right"} $fname )` for `Tuple`: `0`
 
 <div id="x:v_explicit_discriminant">
 
