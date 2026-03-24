@@ -136,6 +136,7 @@ pub enum SubstDetails<O: SubstParseContext> {
 
     vpat(SubstVPat, AllowTokens<O>, O::NotInBool),
     vtype(SubstVType, AllowTokens<O>, O::NotInBool),
+    v_explicit_discriminant(AllowTokens<O>, beta::Enabled),
 
     tdefvariants(Template<TokenAccumulator>, AllowTokens<O>, O::NotInBool),
     fdefine(Option<Argument>, AllowTokens<O>, O::NotInBool),
@@ -974,10 +975,10 @@ impl<O: SubstParseContext> Parse for Subst<O> {
         keyword! { fpatname(not_in_bool()?) }
         keyword! { vindex(not_in_bool()?) }
         keyword! { findex(not_in_bool()?) }
-        // when stabilisiing [fv]_is_first, enable dump in dbg_allkw.rs
         keyword! { v_is_first(bool_only()?, beta()?) }
         keyword! { f_is_first(bool_only()?, beta()?) }
         keyword! { tdefkwd(not_in_bool()?) }
+        keyword! { v_explicit_discriminant(allow_tokens()?, beta()?) }
 
         keyword! { "tvis": Vis(SubstVis::T, allow_tokens()?) }
         keyword! { "fvis": Vis(SubstVis::F, allow_tokens()?) }

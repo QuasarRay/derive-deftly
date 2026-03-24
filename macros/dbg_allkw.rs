@@ -95,6 +95,63 @@ macro_rules! bool { { $w_ctx:expr, $($t:tt)* } => {
     dump_bool_one($w_ctx.0, $w_ctx.1, quote!{ $($t)* })?;
 } }
 
+macro_rules! beta_check_inner { { $pat:pat => $beta:ident } => {
+    let _: Option<beta::Enabled> = match None::<SD::<TokenAccumulator>> {
+        Some($pat) => Some($beta),
+        _ => None,
+    };
+} }
+
+/// Prepare to dump expansions but they are beta;
+/// fail to compile when they're stabilised.
+///
+/// ```ignore
+/// beta_omit {
+///     beta:
+///     bool! { c, kw ... } @ PATTERN;
+///     expand! { c, $kw ... } @ PATTERN;
+///     expand! { c, ${kw ...} } @ PATTERN;
+///     ...
+/// }
+/// ```
+///
+/// where `SD::kw PATTERN` must be a pattern that binds `beta`
+/// to `beta::Enabled`.  Eg `(_, _, beta)`.
+macro_rules! beta_omit { {
+    $beta:ident: bool! { $c:ident, $kw:ident $($args:tt)* }
+    @ $pat:tt;
+    $($rest:tt)*
+} => {
+    if false {
+        bool /* hide from check */ ! { $c, $kw $($args)* }
+        beta_check_inner! { SD::$kw $pat => $beta }
+    }
+    beta_omit! { $beta: $($rest)* }
+}; {
+    $beta:ident: expand! { $c:ident, $dollar:tt { $kw:ident $($args:tt)* } }
+    @ $pat:tt;
+    $($rest:tt)*
+} => {
+    if false {
+        expand /* hide from check */ ! { $c, $dollar { $kw $($args)* } }
+        beta_check_inner! { SD::$kw $pat => $beta }
+    }
+    beta_omit! { $beta: $($rest)* }
+}; {
+    $beta:ident: expand! { $c:ident, $dollar:tt $kw:ident $($args:tt)* }
+    @ $pat:tt;
+    $($rest:tt)*
+} => {
+    if false {
+        expand /* hide from check */ ! { $c, $dollar $kw $($args)* }
+        beta_check_inner! { SD::$kw $pat => $beta }
+    }
+    beta_omit! { $beta: $($rest)* }
+}; {
+    $beta:ident:
+} => {
+} }
+
 fn dump_whole(mut w: &mut Out, ctx: &Context) -> R {
     writeln!(w, "top-level:")?;
     let c = (&mut w, ctx);
@@ -192,14 +249,22 @@ fn dump_variant(mut w: &mut Out, ctx: &Context, wv: &WithinVariant) -> R {
     expand! { c, $vindex }
     expand! { c, $vpat }
     expand! { c, ${vdefbody VNAME FIELDS..} }
+    beta_omit! {
+        beta:
+        expand! { c, $v_explicit_discriminant } @ (_, beta);
+    }
 
-    if false {
-        // beta
-        bool! { c, v_is_first }
+    beta_omit! {
+        beta:
+        bool! { c, v_is_first } @ (_, beta);
     }
     bool! { c, v_is_unit }
     bool! { c, v_is_tuple }
     bool! { c, v_is_named }
+    beta_omit! {
+        beta:
+        bool! { c, v_explicit_discriminant } @ (_, beta);
+    }
 
     expand! { c, $vattrs }
 
@@ -232,9 +297,9 @@ fn dump_field(mut w: &mut Out, ctx: &Context, wf: Option<&WithinField>) -> R {
 
     bool! { c, fvis }
     bool! { c, fdefvis }
-    if false {
-        bool! { c, f_is_first }
-        // beta
+    beta_omit! {
+        beta:
+        bool! { c, f_is_first } @ (_, beta);
     }
 
     expand! { c, $fattrs }

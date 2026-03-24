@@ -2214,6 +2214,7 @@ impl<O: SubstParseContext> FindRecogMetas for SubstDetails<O> {
             | fname(_)
             | ftype(_)
             | fpatname(_)
+            | v_explicit_discriminant(_, _)
             | vindex(..)
             | findex(..)
             | v_is_first(..)

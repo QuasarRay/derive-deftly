@@ -164,6 +164,7 @@ impl<O: SubstParseContext> AnalyseRepeat for Subst<O> {
             SD::twheres(..) => None,
             SD::vpat(..) => Some(RO::Variants),
             SD::vtype(..) => Some(RO::Variants),
+            SD::v_explicit_discriminant(..) => Some(RO::Variants),
             SD::tdefkwd(..) => None,
             SD::is_struct(..) => None,
             SD::is_enum(..) => None,
@@ -645,6 +646,35 @@ impl ToTokens for Fname<'_> {
             Fname::Name(v) => v.to_tokens(out),
             Fname::Index(v) => v.to_tokens(out),
         }
+    }
+}
+
+//---------- v_explicit_discriminant ----------
+
+#[derive(strum::Display)]
+pub enum NoVariantExlicitDiscriminant {
+    #[strum(to_string = "not an enum, so no explicit discriminant")]
+    NotEnum,
+    #[strum(to_string = "enum variant does not have explicit discriminant")]
+    None,
+}
+
+impl<'c> Context<'c> {
+    pub fn v_explicit_discriminant(
+        &'c self,
+        span: Span,
+    ) -> syn::Result<Result<&'c syn::Expr, NoVariantExlicitDiscriminant>> {
+        let variant = self.variant(&span)?;
+        Ok((|| {
+            use NoVariantExlicitDiscriminant as N;
+            let (_eq, expr) = variant
+                .variant
+                .ok_or(N::NotEnum)?
+                .discriminant
+                .as_ref()
+                .ok_or(N::None)?;
+            Ok(expr)
+        })())
     }
 }
 

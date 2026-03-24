@@ -489,23 +489,25 @@ impl Grouping {
                 g.set_span(none_span);
                 g.to_token_stream()
             }
-            Grouping::Parens => {
-                // We must use call site span (the default for Group::new
-                // since if we surround a type with `( )` with the same
-                // span as its contents, Rust generates an "unnecessary parens"
-                // warning.  We add actual `( )` mostly in ${Xmeta as ty}.
-                // We also *replace* any `( )` which are in the outside
-                // of a type in `TokenAccumulator::append_syn_type`.
-                //
-                // When we do that we mangle the original span.  That may
-                // produces worse errors if there is an error, but it avoids
-                // needless warnings.  This ought to be very rare.
-                // (but it does happen in tests/expand/idpaste.rs, which
-                // deliberately has this weird construct.)
-                proc_macro2::Group::new(Delimiter::Parenthesis, ts)
-                    .to_token_stream()
-            }
+            Grouping::Parens => Grouping::surround_parens(ts),
         }
+    }
+
+    pub fn surround_parens(ts: impl ToTokens) -> TokenStream {
+        // We must use call site span (the default for Group::new
+        // since if we surround a type with `( )` with the same
+        // span as its contents, Rust generates an "unnecessary parens"
+        // warning.  We add actual `( )` mostly in ${Xmeta as ty}.
+        // We also *replace* any `( )` which are in the outside
+        // of a type in `TokenAccumulator::append_syn_type`.
+        //
+        // When we do that we mangle the original span.  That may
+        // produces worse errors if there is an error, but it avoids
+        // needless warnings.  This ought to be very rare.
+        // (but it does happen in tests/expand/idpaste.rs, which
+        // deliberately has this weird construct.)
+        proc_macro2::Group::new(Delimiter::Parenthesis, ts.to_token_stream())
+            .to_token_stream()
     }
 }
 
