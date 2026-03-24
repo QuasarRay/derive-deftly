@@ -79,7 +79,7 @@ impl Parse for Accumulated {
                 } else {
                     Ignore
                 }
-            } else if kind == "error" {
+            } else if kind == "_error" {
                 metas = mCU::Unchecked;
                 Ignore
             } else if kind.to_string().starts_with('_') {

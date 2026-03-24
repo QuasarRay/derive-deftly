@@ -488,12 +488,6 @@ error: force failure (template error message)
     |
     = note: this error originates in the macro `derive_deftly_template_UnusedDueToError` which comes from the expansion of the derive macro `Deftly` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error: meta attribute provided, but not recognised by template
-   --> ui/badmeta.rs:186:10
-    |
-186 | #[deftly(unused)] // shouldn't be reported, since template has error
-    |          ^^^^^^
-
 error: expected `!`
    --> ui/badmeta.rs:191:9
     |
