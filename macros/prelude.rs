@@ -58,6 +58,7 @@ pub use super::utils::{Concatenated, Discard};
 
 pub use meta::CheckUsed as mCU;
 
+pub use framework::SynErrorExt as _;
 pub use string_template::LexicalContext as _;
 
 // this is used by the dprintln! macro, which can't just use crate

@@ -13,6 +13,7 @@
 // docs.
 
 #![allow(clippy::style, clippy::complexity)]
+#![deny(clippy::disallowed_methods)]
 #![allow(rustdoc::invalid_html_tags)] // @derive-deftly invalid-html-tags
 #![doc=include_str!("../README.md")]
 //

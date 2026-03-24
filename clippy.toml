@@ -1,0 +1,4 @@
+disallowed-methods = [
+    { path = "syn::Error::into_compile_error", reason = "use GeneralContext::error_into_compile_error" },
+    { path = "syn::Error::to_compile_error", reason = "use GeneralContext::error_into_compile_error" },
+]
