@@ -732,7 +732,7 @@ impl ExplicitError {
 
         let message_loc = (message.span(), "template error message");
         let locs = chain!(
-            explicit_loc.as_ref().map(|(s, f)| (*s, &**f)), //
+            explicit_loc.as_ref().map(|(s, f)| (*s, &**f)),
             gctx_locs.into_iter().map(|l| l), // lifetime fu
             [message_loc],
         )
