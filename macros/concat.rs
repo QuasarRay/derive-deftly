@@ -11,7 +11,7 @@ use string_template::LexicalContext;
 #[derive(Debug)]
 pub struct Accumulator<L: LexicalContext = ()> {
     def_span: Span,
-    out_span: Option<Span>,
+    tspan: Option<Span>,
     text: String,
     errors: ErrorAccumulator,
     lexical_context: PhantomData<L>,
@@ -23,6 +23,14 @@ impl<L: LexicalContext> Template<Accumulator<L>> {
         kw_span: Span,
         gctx: GeneralContext<'c>,
     ) -> syn::Result<syn::LitStr> {
+        Ok(self.expand_to_lit_inner(kw_span, gctx)?.0)
+    }
+
+    fn expand_to_lit_inner<'c>(
+        &self,
+        kw_span: Span,
+        gctx: GeneralContext<'c>,
+    ) -> syn::Result<(syn::LitStr, Option<Span>)> {
         let mut accum = concat::Accumulator::new_with_span(kw_span);
         self.expand(gctx, &mut accum);
         accum.finish_literal()
@@ -38,23 +46,23 @@ impl<L: LexicalContext> Template<Accumulator<L>> {
         // We *would* support ${paste ${concat ...}} but it would be weird.
         let _: O::NotInPaste = *np;
 
-        match self.expand_to_lit(kw_span, gctx) {
-            Ok(y) => out.append_syn_litstr(&y),
+        match self.expand_to_lit_inner(kw_span, gctx) {
+            Ok((y, tspan)) => out.append_syn_litstr(&y, tspan),
             Err(e) => out.record_error(e),
         }
     }
 }
 
 impl<L: LexicalContext> Accumulator<L> {
-    fn finish_literal(self) -> syn::Result<syn::LitStr> {
-        let out_span = self.out_span.unwrap_or(self.def_span);
+    fn finish_literal(self) -> syn::Result<(syn::LitStr, Option<Span>)> {
+        let tspan = self.tspan;
+        let out_span = tspan.unwrap_or(self.def_span);
         let text = self.errors.finish_with(self.text)?;
         let lit = syn::LitStr::new(&text, out_span);
-        Ok(lit)
+        Ok((lit, tspan))
     }
 
-    fn append_display(&mut self, span: Span, plain: impl Display + Spanned) {
-        self.out_span.get_or_insert(span);
+    fn append_display(&mut self, plain: impl Display + Spanned) {
         write!(&mut self.text, "{}", plain).expect("Display onto String")
     }
 
@@ -218,7 +226,7 @@ impl<L: LexicalContext> ExpansionOutput for Accumulator<L> {
         &mut self,
         ident: &I,
     ) -> Result<(), I::BadIdent> {
-        self.append_display(ident.span(), ident.fragment());
+        self.append_display(ident.fragment());
         Ok(())
     }
     fn append_idpath<A, B, I>(
@@ -246,13 +254,16 @@ impl<L: LexicalContext> ExpansionOutput for Accumulator<L> {
         }
         Ok(())
     }
-    fn append_syn_litstr(&mut self, lit: &syn::LitStr) {
+    fn append_syn_litstr(&mut self, lit: &syn::LitStr, tspan: Option<Span>) {
         if lit.suffix() != "" {
             self.errors
                 .push(lit.error("string suffix forbidden in ${concat }"));
             return;
         }
-        self.append_display(lit.span(), lit.value());
+        if let Some(tspan) = tspan {
+            self.tspan.get_or_insert(tspan);
+        }
+        self.append_display(lit.value());
     }
     fn append_syn_type(
         &mut self,
@@ -277,10 +288,10 @@ impl<L: LexicalContext> ExpansionOutput for Accumulator<L> {
         msg: &mut String,
         content: &Template<Accumulator<L>>,
     ) -> fmt::Result {
-        match content.expand_to_lit(kw_span, ctx) {
-            Ok(y) => {
+        match content.expand_to_lit_inner(kw_span, ctx) {
+            Ok((y, tspan)) => {
                 write!(msg, "{:?}", y.value())?;
-                self.append_syn_litstr(&y);
+                self.append_syn_litstr(&y, tspan);
             }
             Err(e) => {
                 write!(msg, "/* ERROR: {} */", e)?;
@@ -293,7 +304,7 @@ impl<L: LexicalContext> ExpansionOutput for Accumulator<L> {
     fn new_with_span(kw_span: Span) -> Self {
         Accumulator {
             def_span: kw_span,
-            out_span: None,
+            tspan: None,
             text: String::new(),
             errors: ErrorAccumulator::default(),
             lexical_context: PhantomData,
@@ -334,7 +345,7 @@ impl<L: LexicalContext> Expand<Accumulator<L>>
                 // but it would be confusing.
                 void::unreachable(*not_in_concat);
             }
-            TE::LitStr(lit) => out.append_syn_litstr(&lit),
+            TE::LitStr(lit) => out.append_syn_litstr(&lit, Some(lit.span())),
             TE::Subst(e) => e.expand(ctx, out)?,
             TE::Repeat(e) => e.expand(ctx, out),
             TE::Literal(_, allow_tokens)

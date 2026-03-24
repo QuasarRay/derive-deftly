@@ -357,7 +357,13 @@ pub trait ExpansionOutput: SubstParseContext {
     /// This is its own method because `syn::LitStr` is not `Display`,
     /// and we don't want to unconditionally turn it into a string
     /// before retokenising it.
-    fn append_syn_litstr(&mut self, v: &syn::LitStr);
+    ///
+    /// `tspan` is the span of a literal in the template that
+    /// determined the string (or was included in it).
+    /// This is used by `$[concat }` to arrange that the span of its output
+    /// is always the template, not anything that was substituted into it.
+    /// This is particularly important for `${error }`.
+    fn append_syn_litstr(&mut self, v: &syn::LitStr, te_span: Option<Span>);
 
     /// Append a [`syn::Type`]
     ///
@@ -646,7 +652,7 @@ impl ExpansionOutput for TokenAccumulator {
         }
         Ok(())
     }
-    fn append_syn_litstr(&mut self, lit: &syn::LitStr) {
+    fn append_syn_litstr(&mut self, lit: &syn::LitStr, _: Option<Span>) {
         self.append(lit);
     }
     fn append_syn_type_inner(

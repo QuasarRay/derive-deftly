@@ -1419,7 +1419,7 @@ impl<'l> FoundNode<'l> {
                     tspan,
                     format_args!("expected string literal, for meta value",),
                 )?;
-                out.append_syn_litstr(s);
+                out.append_syn_litstr(s, None);
             }
             SA::ty => out.append_syn_type(
                 tspan,
