@@ -474,7 +474,7 @@ where
             SD::findex(..) => do_index(out, ctx?.field(&kw_span)?.index)?,
 
             SD::Xmeta(sm) => do_meta(sm, out, sm.pmetas(ctx?, kw_span)?)?,
-            SD::error(e, _) => e.throw(gctx, kw_span)?,
+            SD::error(e, _) => e.throw(gctx, kw_span, gctx.error_loc())?,
 
             SD::Vis(vis, at) => {
                 out.append_tokens(at, vis.syn_vis(ctx?, kw_span)?)?
@@ -642,9 +642,9 @@ where
                 content.expand(gctx, &mut ignore);
                 let () = ignore.ignore_impl()?;
             }
-            SD::when(..) => out.write_error(
+            SD::when(..) | SD::loop_exactly_1(..) => out.write_error(
                 &kw_span,
-                "internal error - misplaced ${when } detected too late!",
+ "internal error - misplaced ${when } or ${loop_exactly_1} detected too late!",
             ),
             SD::If(conds, ..) => conds.expand(gctx, out)?,
             SD::select1(conds, ..) => conds.expand_select1(gctx, out)?,
@@ -707,10 +707,11 @@ impl<O: ExpansionOutput> DbgDumpRequest<O> {
 }
 
 impl ExplicitError {
-    pub fn throw<'c, T>(
-        &self,
+    pub fn throw<'s, 'l, 'c, T>(
+        &'s self,
         gctx: GeneralContext<'c>,
         kw_span: Span,
+        gctx_locs: impl IntoIterator<Item = ErrorLoc<'l>> + 'l,
     ) -> Result<T, syn::Error> {
         let message = self.message.expand_to_lit(kw_span, gctx)?;
 
@@ -731,8 +732,8 @@ impl ExplicitError {
 
         let message_loc = (message.span(), "template error message");
         let locs = chain!(
-            explicit_loc.as_ref().map(|(s, f)| (*s, &**f)), //
-            gctx.error_loc(),
+            explicit_loc.as_ref().map(|(s, f)| (*s, &**f)),
+            gctx_locs.into_iter().map(|l| l), // lifetime fu
             [message_loc],
         )
         .collect_vec();

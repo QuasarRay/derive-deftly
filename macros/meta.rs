@@ -2133,6 +2133,9 @@ impl<O: SubstParseContext> FindRecogMetas for RepeatedTemplate<O> {
     fn find_recog_metas(&self, acc: &mut Recognised) {
         self.template.find_recog_metas(acc);
         self.whens.find_recog_metas(acc);
+        if let Some((_, exactly_1)) = &self.exactly_1 {
+            exactly_1.find_recog_metas(acc);
+        }
     }
 }
 
@@ -2190,10 +2193,12 @@ impl<O: SubstParseContext> FindRecogMetas for SubstDetails<O> {
             }
             ChangeCase(v, _, _) => v.find_recog_metas(acc),
             concat(v, ..) => v.find_recog_metas(acc),
+            error(v, ..) => v.find_recog_metas(acc),
             StringTemplate(v, ..) => v.find_recog_metas(acc),
             DocTemplate(v, ..) => v.value.find_recog_metas(acc),
 
-            when(v, _) => v.find_recog_metas(acc),
+            when(v, _) => v.find_recog_metas(acc), // probably redundant
+            loop_exactly_1(v, ..) => v.find_recog_metas(acc),
             define(v, _) => v.find_recog_metas(acc),
             defcond(v, _) => v.find_recog_metas(acc),
 
@@ -2242,7 +2247,6 @@ impl<O: SubstParseContext> FindRecogMetas for SubstDetails<O> {
             | loop_index(..)
             | loop_initial(..)
             | loop_final(..)
-            | error(..)
             | require_beta(..)
             | dbg_all_keywords(_)
             | Crate(_, _) => {}
@@ -2270,6 +2274,16 @@ impl FindRecogMetas for SubstVPat {
         let Self { vtype, fprefix } = self;
         vtype.find_recog_metas(acc);
         fprefix.find_recog_metas(acc);
+    }
+}
+
+impl FindRecogMetas for ExplicitError {
+    fn find_recog_metas(&self, acc: &mut Recognised) {
+        let ExplicitError { message, span } = self;
+        message.find_recog_metas(acc);
+        if let Some((span, _)) = span {
+            span.find_recog_metas(acc);
+        }
     }
 }
 

@@ -65,6 +65,121 @@ error: must be within a field, so within a field repeat group; but, is only with
    |
    = note: this error originates in the macro `derive_deftly_template_FieldInVariantsRepeatGroup` which comes from the expansion of the derive macro `Deftly` (in Nightly builds, run with -Z macro-backtrace for more info)
 
+error: too few (in this data structure)
+  --> ui/badcontext.rs:45:1
+   |
+45 | / #[derive_deftly_adhoc]
+46 | | enum NotExactly1<T> {
+   | |_____________________^
+...
+51 | / derive_deftly_adhoc! {
+52 | |     NotExactly1 beta_deftly:
+53 | |
+54 | |     $(
+...  |
+77 | | }
+   | |_- in this macro invocation
+   |
+   = note: this error originates in the macro `derive_deftly_driver_NotExactly1` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: too few (template error message)
+  --> ui/badcontext.rs:61:26
+   |
+61 |         ${loop_exactly_1 "too few"}
+   |                          ^^^^^^^^^
+
+error: too many (first: in this variant)
+  --> ui/badcontext.rs:47:5
+   |
+47 |       Unit,
+   |       ^^^^
+...
+51 | / derive_deftly_adhoc! {
+52 | |     NotExactly1 beta_deftly:
+53 | |
+54 | |     $(
+...  |
+77 | | }
+   | |_- in this macro invocation
+   |
+   = note: this error originates in the macro `derive_deftly_driver_NotExactly1` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: too many (second: in this variant)
+  --> ui/badcontext.rs:48:5
+   |
+48 |       Singleton(T),
+   |       ^^^^^^^^^^
+...
+51 | / derive_deftly_adhoc! {
+52 | |     NotExactly1 beta_deftly:
+53 | |
+54 | |     $(
+...  |
+77 | | }
+   | |_- in this macro invocation
+   |
+   = note: this error originates in the macro `derive_deftly_driver_NotExactly1` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: too many (template error message)
+  --> ui/badcontext.rs:65:26
+   |
+65 |         ${loop_exactly_1 "too many"}
+   |                          ^^^^^^^^^^
+
+error: too many, spanned (reported by template)
+  --> ui/badcontext.rs:46:18
+   |
+46 |   enum NotExactly1<T> {
+   |                    ^
+...
+51 | / derive_deftly_adhoc! {
+52 | |     NotExactly1 beta_deftly:
+53 | |
+54 | |     $(
+...  |
+77 | | }
+   | |_- in this macro invocation
+   |
+   = note: this error originates in the macro `derive_deftly_driver_NotExactly1` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: too many, spanned (first: in this variant)
+  --> ui/badcontext.rs:47:5
+   |
+47 |       Unit,
+   |       ^^^^
+...
+51 | / derive_deftly_adhoc! {
+52 | |     NotExactly1 beta_deftly:
+53 | |
+54 | |     $(
+...  |
+77 | | }
+   | |_- in this macro invocation
+   |
+   = note: this error originates in the macro `derive_deftly_driver_NotExactly1` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: too many, spanned (second: in this variant)
+  --> ui/badcontext.rs:48:5
+   |
+48 |       Singleton(T),
+   |       ^^^^^^^^^^
+...
+51 | / derive_deftly_adhoc! {
+52 | |     NotExactly1 beta_deftly:
+53 | |
+54 | |     $(
+...  |
+77 | | }
+   | |_- in this macro invocation
+   |
+   = note: this error originates in the macro `derive_deftly_driver_NotExactly1` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: too many, spanned (template error message)
+  --> ui/badcontext.rs:74:34
+   |
+74 |         ${loop_exactly_1 message="too many, spanned" span=$tgens}
+   |                                  ^^^^^^^^^^^^^^^^^^^
+
 error: cannot find macro `derive_deftly_template_FieldNames` in this scope
   --> ui/badcontext.rs:10:17
    |

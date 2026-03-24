@@ -30,7 +30,7 @@
       * [`$crate` -- root of template crate](#crate--root-of-template-crate)
       * [`$tdefkwd` -- keyword introducing the new data structure](#tdefkwd--keyword-introducing-the-new-data-structure)
       * [`$tdefvariants`, `$vdefbody`, `$fdefine` -- tools for defining types](#tdefvariants-vdefbody-fdefine--tools-for-defining-types)
-      * [`$loop_index`, `$for_loop_count` -- repetition information (**beta**)](#loop_index-for_loop_count--repetition-information-beta)
+      * [`$loop_index`, `$for_loop_count`, `${loop_exactly_1 ...}` -- repetition information (**beta**)](#loop_index-for_loop_count-loop_exactly_1---repetition-information-beta)
       * [`${v_explicit_discriminant ..}` -- Explicitly specified enum discriminant (**beta**)](#v_explicit_discriminant---explicitly-specified-enum-discriminant-beta)
       * [`${ignore ..}` -- Expand but then discard](#ignore---expand-but-then-discard)
       * [`${dbg ..}`, `$dbg_all_keywords` -- Debugging output](#dbg--dbg_all_keywords--debugging-output)
@@ -213,6 +213,7 @@ For [example enum `Enum`](#structs-used-in-examples):
 
 **[`loop_initial`](#c:loop_initial)**,
 **[`loop_final`](#c:loop_final)**,
+**[`$loop_exactly_1`](#x:loop_exactly_1)**
 and
 **[`$loop_index`](#x:loop_index)**
 provide information about which repetition this is.
@@ -1170,10 +1171,12 @@ pub enum EnumCopy<'a, 'l: 'a, T: Display = usize, const C: usize = 1,> {
 ```
 
 <div id="x:for_loop_count">
+<div id="x:loop_exactly_1">
 <div id="x:loop_index">
 
-### `$loop_index`, `$for_loop_count` -- repetition information (**beta**)
+### `$loop_index`, `$for_loop_count`, `${loop_exactly_1 ...}` -- repetition information (**beta**)
 
+</div>
 </div>
 </div>
 
@@ -1189,12 +1192,29 @@ See above for
 [full information](#t:repetition).
 
 Can be used as a number, or a tuple field name.
-Available only in [**beta**].
+
+ * **`${loop_exactly_1 ..}`** throws a compile error
+   unless this loop has exactly one repetition.
+
+   `${loop_exactly_1 }` is checked if (and only if)
+   the surrounding loop is expanded;
+   so it is a supplement to the loop itself,
+   not content that is expanded for each iteration.
+
+   `${loop_exactly_1 }` must appear with `${when }`, before other content.
+   The relative ordering of `${loop_exactly_1 }` and `${when }` has no effect.
+
+   The syntax is exactly as for [`${error }`](#x:error).
+
+All these features are available only in [**beta**].
 
 #### Examples
 
  * `$( ${when not(fmeta(same_attrs))} $loop_index = $fname; )` for `Enum`: `0 = 0; 1 = field_o;`
  * `${for_loop_count fields not(fmeta(same_attrs))}` for `Enum`: `2`
+ * `$( ${loop_exactly_1 "too few"} $fname )` for `Unit`: error, ``too few (in this data structure)``
+ * `$( ${loop_exactly_1 "too many"} $fname )` for `Struct`: error, ``too many (first: in this field)``
+ * `$( ${loop_exactly_1 "just right"} $fname )` for `Tuple`: `0`
 
 <div id="x:v_explicit_discriminant">
 
@@ -2123,7 +2143,7 @@ where T: 'l, T: TryInto<u8>
  * **$f…**: [`fattrs`](#x:fattrs), [`fdefine`](#x:fdefine), [`fdefvis`](#x:fdefvis), [`findex`](#x:findex), [`fmeta`](#x:fmeta), [`fname`](#x:fname), [`for`](#x:for), [`for_loop_count`](#x:for_loop_count), [`fpatname`](#x:fpatname), [`ftype`](#x:ftype), [`fvis`](#x:fvis)
  * **$i…**: [`if`](#x:if), [`ignore`](#x:ignore)
  * **$k…**: [`kebab_case`](#x:kebab_case)
- * **$l…**: [`loop_index`](#x:loop_index), [`lower_camel_case`](#x:lower_camel_case)
+ * **$l…**: [`loop_exactly_1`](#x:loop_exactly_1), [`loop_index`](#x:loop_index), [`lower_camel_case`](#x:lower_camel_case)
  * **$p…**: [`pascal_case`](#x:pascal_case), [`paste`](#x:paste), [`paste_spanned`](#x:paste_spanned)
  * **$s…**: [`select1`](#x:select1), [`shouty_kebab_case`](#x:shouty_kebab_case), [`shouty_snake_case`](#x:shouty_snake_case), [`snake_case`](#x:snake_case)
  * **$t…**: [`tattrs`](#x:tattrs), [`tdefgens`](#x:tdefgens), [`tdefkwd`](#x:tdefkwd), [`tdeftype`](#x:tdeftype), [`tdefvariants`](#x:tdefvariants), [`tgens`](#x:tgens), [`tgnames`](#x:tgnames), [`title_case`](#x:title_case), [`tmeta`](#x:tmeta), [`tname`](#x:tname), [`train_case`](#x:train_case), [`ttype`](#x:ttype), [`tvis`](#x:tvis), [`twheres`](#x:twheres)
