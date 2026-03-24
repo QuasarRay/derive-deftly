@@ -494,6 +494,29 @@ error: meta attribute provided, but not recognised by template
 186 | #[deftly(unused)] // shouldn't be reported, since template has error
     |          ^^^^^^
 
+error: expected `!`
+   --> ui/badmeta.rs:191:9
+    |
+191 |     not item;
+    |         ^^^^
+192 | }
+193 | #[derive(Deftly)]
+    |          ------ in this derive macro expansion
+    |
+    = note: this error originates in the macro `derive_deftly_template_UnusedDueToSyntax` which comes from the expansion of the derive macro `Deftly` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: expected one of `!` or `::`, found `item`
+ --> $OUT_DIR[derive-deftly-macros]/derive-deftly~expansions~/dd-350f8b3069c82db53d5233ea.rs
+  |
+  | not item;
+  |     ^^^^ expected one of `!` or `::`
+
+error: meta attribute provided, but not recognised by template
+   --> ui/badmeta.rs:195:10
+    |
+195 | #[deftly(ignored)]
+    |          ^^^^^^^
+
 warning: unused macro definition: `derive_deftly_template_WrongRequestSyntax`
    --> ui/badmeta.rs:136:5
     |

@@ -186,4 +186,13 @@ define_derive_deftly! {
 #[deftly(unused)] // shouldn't be reported, since template has error
 struct UnusedDueToError;
 
+define_derive_deftly! {
+    UnusedDueToSyntax beta_deftly, expect items:
+    not item;
+}
+#[derive(Deftly)]
+#[derive_deftly(UnusedDueToSyntax)]
+#[deftly(ignored)]
+struct UnusedDueToSyntax;
+
 fn main() {}
