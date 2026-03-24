@@ -62,7 +62,7 @@ impl<L: LexicalContext> Accumulator<L> {
         Ok((lit, tspan))
     }
 
-    fn append_display(&mut self, #[allow(unused)] /* XXXX */ span: Span, plain: impl Display + Spanned) {
+    fn append_display(&mut self, plain: impl Display + Spanned) {
         write!(&mut self.text, "{}", plain).expect("Display onto String")
     }
 
@@ -226,7 +226,7 @@ impl<L: LexicalContext> ExpansionOutput for Accumulator<L> {
         &mut self,
         ident: &I,
     ) -> Result<(), I::BadIdent> {
-        self.append_display(ident.span(), ident.fragment());
+        self.append_display(ident.fragment());
         Ok(())
     }
     fn append_idpath<A, B, I>(
@@ -263,7 +263,7 @@ impl<L: LexicalContext> ExpansionOutput for Accumulator<L> {
         if let Some(tspan) = tspan {
             self.tspan.get_or_insert(tspan);
         }
-        self.append_display(lit.span(), lit.value());
+        self.append_display(lit.value());
     }
     fn append_syn_type(
         &mut self,
