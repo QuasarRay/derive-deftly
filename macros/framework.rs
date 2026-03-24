@@ -724,6 +724,7 @@ impl<'c> Context<'c> {
     /// `compile_error!` `TokenStream` deep in the expansion code,
     /// so that it's not ordinarily visible to the top-level plumbing
     /// code which needs to generate `_meta_used` etc. in the ACCUM.
+    #[allow(dead_code)] // not used with some feature combinations
     pub fn error_into_compile_error(&'c self, e: syn::Error) -> TokenStream {
         self.any_error_occurred.set(Err(()));
         e.error_into_compile_error_unrecorded()
