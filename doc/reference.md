@@ -1415,12 +1415,13 @@ which, like any Rust macro, is permitted only in certain syntactic contexts).
 
 #### Spans (locations at which the error is reported)
 
-`SPAN` specifies the principal location of the error.
-
 derive-deftly will also always produce a copy of the error
 pointing at the specific driver, variant, and field,
 in the context of which this `${error }` was expanded,
 so use of `span=SPAN` is not normally necessary.
+
+If `SPAN` is specified, it indicates the principal location of the error,
+which will be reported first.
 
 To report an error which was caused by the interaction of multiple inputs,
 write `${error }` several times.
