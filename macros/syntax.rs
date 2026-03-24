@@ -1427,6 +1427,8 @@ impl<O: SubstParseContext> RepeatedTemplate<O> {
             Some(over) => Ok(over),
             None => {
                 let mut visitor = RepeatAnalysisVisitor::default();
+                // TODO analyse whens too, but that's a breaking change
+                // rust-derive-deftly#127
                 template.analyse_repeat(&mut visitor)?;
                 visitor.finish(span)
             }

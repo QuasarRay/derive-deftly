@@ -2193,7 +2193,7 @@ impl<O: SubstParseContext> FindRecogMetas for SubstDetails<O> {
             StringTemplate(v, ..) => v.find_recog_metas(acc),
             DocTemplate(v, ..) => v.value.find_recog_metas(acc),
 
-            when(v, _) => v.find_recog_metas(acc),
+            when(v, _) => v.find_recog_metas(acc), // probably redundant
             define(v, _) => v.find_recog_metas(acc),
             defcond(v, _) => v.find_recog_metas(acc),
 
