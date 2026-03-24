@@ -1613,10 +1613,11 @@ Available only in [**beta**].
  * `$( ${when fmeta(same_attrs)} ${if loop_initial {let }} $fpatname ${if loop_final {;} else {,}} )` for `Unit`: ` `
  * `$( ${when fmeta(same_attrs)} ${if loop_initial {let }} $fpatname ${if loop_final {;} else {,}} )` for `Enum`: `let f_field, f_field_b, f_field_e;`
 
-<div id="c:approx_equal">
-<div id="c:is_empty">
+<div id="c:v_explicit_discriminant">
 
 ### `v_explicit_discriminant` -- enum discriminant explicitly specified? (**beta**)
+
+</div>
 
 Does this variant have an explicitly specified discriminant, in
 the Rust `Variant = DISCRIMINANT` syntax?
@@ -1628,6 +1629,9 @@ Available only in [**beta**].
 #### Examples
 
  * `v_explicit_discriminant`: true for `UnitVariant`
+
+<div id="c:approx_equal">
+<div id="c:is_empty">
 
 ### `is_empty(..)`, `approx_equal(ARG1, ARG2)` -- equality comparison (token comparison)
 
