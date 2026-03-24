@@ -1424,7 +1424,7 @@ If `SPAN` is specified, it indicates the principal location of the error,
 which will be reported first.
 
 To report an error which was caused by the interaction of multiple inputs,
-write `${error }` several times.
+write `${error }` several times with appropriate `SPAN`s.
 Good practice is to use the same message for each location,
 and distinguish them by appending notes in the form `" (LOCATION)"`.
 
