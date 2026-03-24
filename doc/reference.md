@@ -1422,7 +1422,7 @@ pointing at the specific driver, variant, and field,
 in the context of which this `${error }` was expanded,
 so use of `span=SPAN` is not normally necessary.
 
-To report error which was caused by the interaction of multiple inputs,
+To report an error which was caused by the interaction of multiple inputs,
 write `${error }` several times.
 Good practice is to use the same message for each location,
 and distinguish them by appending notes in the form `" (LOCATION)"`.
