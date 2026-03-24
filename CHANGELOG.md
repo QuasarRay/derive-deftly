@@ -57,6 +57,31 @@ or via the [account request form].
 
 ## Changelog
 
+### 1.10.0
+
+#### Breaking changes to beta features
+
+ * BETA: `${Xmeta as attrs}` now requires `beta_deftly`, as was documented.
+ * BETA: `${concat }` expansion span now points at the template.
+
+#### Added
+
+ * BETA: `$loop_index`, `$for_loop_count`; `loop_initial`, `loop_final`
+ * BETA: `$loop_exactly_1` assertion.
+ * BETA: `v_is_first`, `f_is_first`
+ * BETA: `$v_explicit_discriminant`, `v_explicit_discriminant`
+ * BETA: `${Xmeta(...) as vis}`
+
+#### Fixed
+
+ * Do not report unused `#[deftly(...)]` meta attributes
+   if expansion failed for other reasons.
+
+#### Improved
+
+ * docs: Improve documentation of `${error }`, especially wrt spans.
+ * docs: Fixed some heading formatting anomalies in the Reference.
+
 ### 1.9.0
 
 #### Added
