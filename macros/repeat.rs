@@ -210,13 +210,7 @@ impl<O: SubstParseContext> AnalyseRepeat for Subst<O> {
             // Have a RepeatOver, but don't imply anything about its context.
             SD::For(..) | SD::for_loop_count(..) => None,
             SD::False(..) | SD::True(..) => None, // condition: ignore.
-            SD::error(ee, _) => {
-                ee.message.analyse_repeat(visitor)?;
-                if let Some((span, _)) = &ee.span {
-                    span.analyse_repeat(visitor)?;
-                }
-                None
-            }
+            SD::error(ee, _) => recurse!(ee),
             SD::require_beta(..) => None,
             SD::ignore(content, _) => recurse!(content),
             SD::dbg(ddr) => recurse!(ddr.content_parsed),
@@ -229,6 +223,20 @@ impl<O: SubstParseContext> AnalyseRepeat for Subst<O> {
                 span: self.kw_span,
             };
             visitor.set_over(over)?;
+        }
+        Ok(())
+    }
+}
+
+impl AnalyseRepeat for ExplicitError {
+    fn analyse_repeat(
+        &self,
+        visitor: &mut RepeatAnalysisVisitor,
+    ) -> syn::Result<()> {
+        let ExplicitError { message, span } = self;
+        message.analyse_repeat(visitor)?;
+        if let Some((span, _)) = span {
+            span.analyse_repeat(visitor)?;
         }
         Ok(())
     }
