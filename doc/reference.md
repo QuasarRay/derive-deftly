@@ -1211,6 +1211,12 @@ The expression is enclosed in `( )` to avoid precedence problems.
 
 Available only in [**beta**].
 
+#### Examples
+
+ * `$v_explicit_discriminant` for `UnitVariant`: `(2)`
+ * `$v_explicit_discriminant` for `TupleVariant`: error, ``enum variant does not have explicit discriminant``
+ * `$v_explicit_discriminant` for `Struct`: error, ``not an enum, so no explicit discriminant``
+
 <div id="x:ignore">
 
 ### `${ignore ..}` -- Expand but then discard
@@ -1613,6 +1619,10 @@ the Rust `Variant = DISCRIMINANT` syntax?
 False for structs and unions.
 
 Available only in [**beta**].
+
+#### Examples
+
+ * `v_explicit_discriminant`: true for `UnitVariant`
 
 ### `is_empty(..)`, `approx_equal(ARG1, ARG2)` -- equality comparison (token comparison)
 
