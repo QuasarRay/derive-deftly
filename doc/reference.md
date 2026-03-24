@@ -31,6 +31,7 @@
       * [`$tdefkwd` -- keyword introducing the new data structure](#tdefkwd--keyword-introducing-the-new-data-structure)
       * [`$tdefvariants`, `$vdefbody`, `$fdefine` -- tools for defining types](#tdefvariants-vdefbody-fdefine--tools-for-defining-types)
       * [`$loop_index`, `$for_loop_count` -- repetition information (**beta**)](#loop_index-for_loop_count--repetition-information-beta)
+      * [`${v_explicit_discriminant ..}` -- Explicitly specified enum discriminant (**beta**)](#v_explicit_discriminant---explicitly-specified-enum-discriminant-beta)
       * [`${ignore ..}` -- Expand but then discard](#ignore---expand-but-then-discard)
       * [`${dbg ..}`, `$dbg_all_keywords` -- Debugging output](#dbg--dbg_all_keywords--debugging-output)
       * [`${define ...}`, `${defcond ...}` -- user-defined expansions and conditions](#define--defcond---user-defined-expansions-and-conditions)
@@ -43,6 +44,7 @@
       * [`v_is_unit`, `v_is_tuple`, `v_is_named`](#v_is_unit-v_is_tuple-v_is_named)
       * [`tgens`](#tgens)
       * [`loop_initial`, `loop_final` -- repetition information (**beta**)](#loop_initial-loop_final--repetition-information-beta)
+      * [`v_explicit_discriminant` -- enum discriminant explicitly specified? (**beta**)](#v_explicit_discriminant--enum-discriminant-explicitly-specified-beta)
       * [`is_empty(..)`, `approx_equal(ARG1, ARG2)` -- equality comparison (token comparison)](#is_empty-approx_equalarg1-arg2--equality-comparison-token-comparison)
       * [`false`, `true`, `not(CONDITION)`, `any(COND1,COND2,...)`, `all(COND1,COND2,...)` -- boolean logic](#false-true-notcondition-anycond1cond2-allcond1cond2--boolean-logic)
       * [`dbg(...)` -- Debug dump of condition value](#dbg--debug-dump-of-condition-value)
@@ -2121,7 +2123,7 @@ where T: 'l, T: TryInto<u8>
  * **$s…**: [`select1`](#x:select1), [`shouty_kebab_case`](#x:shouty_kebab_case), [`shouty_snake_case`](#x:shouty_snake_case), [`snake_case`](#x:snake_case)
  * **$t…**: [`tattrs`](#x:tattrs), [`tdefgens`](#x:tdefgens), [`tdefkwd`](#x:tdefkwd), [`tdeftype`](#x:tdeftype), [`tdefvariants`](#x:tdefvariants), [`tgens`](#x:tgens), [`tgnames`](#x:tgnames), [`title_case`](#x:title_case), [`tmeta`](#x:tmeta), [`tname`](#x:tname), [`train_case`](#x:train_case), [`ttype`](#x:ttype), [`tvis`](#x:tvis), [`twheres`](#x:twheres)
  * **$u…**: [`upper_camel_case`](#x:upper_camel_case)
- * **$v…**: [`vattrs`](#x:vattrs), [`vdefbody`](#x:vdefbody), [`vindex`](#x:vindex), [`vmeta`](#x:vmeta), [`vname`](#x:vname), [`vpat`](#x:vpat), [`vtype`](#x:vtype)
+ * **$v…**: [`v_explicit_discriminant`](#x:v_explicit_discriminant), [`vattrs`](#x:vattrs), [`vdefbody`](#x:vdefbody), [`vindex`](#x:vindex), [`vmeta`](#x:vmeta), [`vname`](#x:vname), [`vpat`](#x:vpat), [`vtype`](#x:vtype)
  * **$w…**: [`when`](#x:when)
 
 ### Conditions index
@@ -2135,5 +2137,5 @@ where T: 'l, T: TryInto<u8>
  * **l…**: [`loop_final`](#c:loop_final), [`loop_initial`](#c:loop_initial)
  * **n…**: [`not`](#c:not)
  * **t…**: [`tgens`](#c:tgens), [`tmeta`](#c:tmeta), [`true`](#c:true), [`tvis`](#c:tvis)
- * **v…**: [`v_is_first`](#c:v_is_first), [`v_is_named`](#c:v_is_named), [`v_is_tuple`](#c:v_is_tuple), [`v_is_unit`](#c:v_is_unit), [`vmeta`](#c:vmeta)
+ * **v…**: [`v_explicit_discriminant`](#c:v_explicit_discriminant), [`v_is_first`](#c:v_is_first), [`v_is_named`](#c:v_is_named), [`v_is_tuple`](#c:v_is_tuple), [`v_is_unit`](#c:v_is_unit), [`vmeta`](#c:vmeta)
 
