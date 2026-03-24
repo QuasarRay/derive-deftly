@@ -844,7 +844,7 @@ impl ExpansionOutput for Items {
         });
         Ok(())
     }
-    fn append_syn_litstr(&mut self, lit: &syn::LitStr) {
+    fn append_syn_litstr(&mut self, lit: &syn::LitStr, _: Option<Span>) {
         self.append_plain(lit.span(), lit.value());
     }
     fn append_syn_type_inner(
@@ -981,7 +981,7 @@ impl Expand<Items> for TemplateElement<Items> {
     ) -> syn::Result<()> {
         match self {
             TE::Ident(ident, ..) => out.append_identfrag_toks(&ident)?,
-            TE::LitStr(lit) => out.append_syn_litstr(&lit),
+            TE::LitStr(lit) => out.append_syn_litstr(&lit, Some(lit.span())),
             TE::Subst(e) => e.expand(ctx, out)?,
             TE::Repeat(e) => e.expand(ctx, out),
             TE::Literal(_, allow_tokens)
