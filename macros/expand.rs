@@ -474,7 +474,7 @@ where
             SD::findex(..) => do_index(out, ctx?.field(&kw_span)?.index)?,
 
             SD::Xmeta(sm) => do_meta(sm, out, sm.pmetas(ctx?, kw_span)?)?,
-            SD::error(e, _) => e.throw(gctx, kw_span)?,
+            SD::error(e, _) => e.throw(gctx, kw_span, gctx.error_loc())?,
 
             SD::Vis(vis, at) => {
                 out.append_tokens(at, vis.syn_vis(ctx?, kw_span)?)?
@@ -707,10 +707,11 @@ impl<O: ExpansionOutput> DbgDumpRequest<O> {
 }
 
 impl ExplicitError {
-    pub fn throw<'c, T>(
-        &self,
+    pub fn throw<'s, 'l, 'c, T>(
+        &'s self,
         gctx: GeneralContext<'c>,
         kw_span: Span,
+        gctx_locs: impl IntoIterator<Item = ErrorLoc<'l>> + 'l,
     ) -> Result<T, syn::Error> {
         let message = self.message.expand_to_lit(kw_span, gctx)?;
 
@@ -732,7 +733,7 @@ impl ExplicitError {
         let message_loc = (message.span(), "template error message");
         let locs = chain!(
             explicit_loc.as_ref().map(|(s, f)| (*s, &**f)), //
-            gctx.error_loc(),
+            gctx_locs.into_iter().map(|l| l), // lifetime fu
             [message_loc],
         )
         .collect_vec();
