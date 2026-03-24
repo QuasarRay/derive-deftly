@@ -100,7 +100,7 @@ impl Parse for Accumulated {
 
 impl EngineFinalInput {
     pub fn process(self) -> syn::Result<TokenStream> {
-        let r = Context::call(
+        Context::call(
             &self.driver,
             &dummy_path(), // template_crate, not used by our f
             None,          // template_name
@@ -124,17 +124,9 @@ impl EngineFinalInput {
                     ctx.check_metas_used(&mut errors, &m.recog);
                 }
                 errors.finish()?;
-                Ok(())
+
+                Ok(TokenStream::new())
             },
-        );
-
-        let mut out = TokenStream::new();
-
-        match r {
-            Ok(()) => {}
-            Err(e) => e.into_compile_error().to_tokens(&mut out),
-        }
-
-        Ok(out)
+        )
     }
 }
