@@ -1420,6 +1420,10 @@ pointing at the specific driver, variant, and field,
 in the context of which this `${error }` was expanded,
 so use of `span=SPAN` is not normally necessary.
 
+It will also produce a copy of the error pointing at the error string,
+in the actual template, if it can.
+(When the template is imported from another crate, this isn't possible.)
+
 If `SPAN` is specified, it indicates the principal location of the error,
 which will be reported first.
 
