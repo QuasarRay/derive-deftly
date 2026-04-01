@@ -53,7 +53,7 @@
       * [`expect items`, `expect expr` -- syntax check the expansion](#expect-items-expect-expr--syntax-check-the-expansion)
       * [`for struct`, `for enum`, `for union` -- Insist on a particular driver kind](#for-struct-for-enum-for-union--insist-on-a-particular-driver-kind)
       * [`dbg` -- Print the expansion to stderr, for debugging](#dbg--print-the-expansion-to-stderr-for-debugging)
-      * [`meta_quoted strip`, `meta_quoted retain` -- control (de)quoting of attribute values (**beta**)](#meta_quoted-strip-meta_quoted-retain--control-dequoting-of-attribute-values-beta)
+      * [`meta_quoted` -- control (de)quoting of attribute values (**beta**)](#meta_quoted--control-dequoting-of-attribute-values-beta)
       * [`beta_deftly` -- Enable unstable template features](#beta_deftly--enable-unstable-template-features)
       * [Expansion options example](#expansion-options-example)
    * [Precedence considerations](#precedence-considerations)
@@ -633,7 +633,7 @@ Accesses macro parameters passed via `#[deftly(...)]` attributes.
 
    Specifies how to handle `NAME = "..."` in a `#[deftly]`:
 
-   * **Neither `quoted strip` nor `quoted retain`** specified:
+   * **No `quoted`** specified:
 
      Only `NAME = "VALUE"` is supported.
      The quotes are always stripped and the content re-parsed as Rust code.
@@ -1943,7 +1943,7 @@ the [`$dbg_all_keywords` expansion](#dbg--dbg_all_keywords--debugging-output).
 
 <div id="eo:meta_quoted">
 
-### `meta_quoted strip`, `meta_quoted retain` -- control (de)quoting of attribute values (**beta**)
+### `meta_quoted` -- control (de)quoting of attribute values (**beta**)
 
 </div>
 
