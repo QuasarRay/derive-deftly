@@ -736,6 +736,7 @@ These checks are disabled by `#[derive_deftly_adhoc]`.
  * `${vmeta(value) as ident}`: `unit_toplevel`, `enum_variant`
  * `${tmeta(some_vis) as vis}`: `pub(crate)`
  * `${fmeta(nested(inner)) as expr}` for `field` in `Struct`: `(42)`
+ * `${fmeta(nested(inner)) as expr, quoted rigorous}` for `field` in `Struct`: rejected, ``string literal attribute value is ambiguous``
  * `${fmeta(nested(inner)) as expr, quoted retain}` for `field` in `Struct`: `("42")`
  * `${vmeta(items) as items}` for `TupleVariant`: `type T = i32; const K: T = 7;`
  * `${vmeta(items) as token_stream}` for `TupleVariant`: `type T = i32; const K: T = 7;`
