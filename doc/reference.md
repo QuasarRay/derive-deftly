@@ -656,7 +656,7 @@ Accesses macro parameters passed via `#[deftly(...)]` attributes.
      With `SYNTYPE`s other than `as expr`
      the quotes are always stripped and the contents reparsed.
 
-     This is the recommended mode for new templates,
+     This may become the recommended mode for new templates,
      and should typically be set via the
      [`meta_quoted`](#eo:meta_quoted) template option.
 
