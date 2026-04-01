@@ -629,7 +629,7 @@ Accesses macro parameters passed via `#[deftly(...)]` attributes.
    *not* surrounded with additional `( )` (for `as expr`),
    nor any additional [`None`-delimited group](#t:none-delimiters).
 
- * **`${Xmeta(...) .. , quoted strip | quoted retain}`** ([**beta**]):
+ * **`${Xmeta(...) .. , quoted strip | quoted rigorous | quoted retain}`** ([**beta**]):
 
    Specifies how to handle `NAME = "..."` in a `#[deftly]`:
 
@@ -646,6 +646,19 @@ Accesses macro parameters passed via `#[deftly(...)]` attributes.
      and the content is reparsed as Rust code.
 
      This will become the default in future.
+
+   * **`quoted rigorous`**:
+
+     For `as expr`,
+     `NAME = "VALUE"` is forbidden,
+     because it's ambiguous.
+
+     With `SYNTYPE`s other than `as expr`
+     the quotes are always stripped and the contents reparsed.
+
+     This is the recommended mode for new templates,
+     and should typically be set via the
+     [`meta_quoted`](#eo:meta_quoted) template option.
 
    * **`quoted retain`**:
 
@@ -1951,6 +1964,7 @@ Changes the default for [`${Xmeta(...) as ...}`](#x:fmeta),
 in template, to:
 
   * **`quoted strip`** (allow unquoted values, strip any quotes), or
+  * **`quoted rigorous`** (only allow quoted values if unambiguous), or
   * **`quoted retain`** (allow unquoted values,
     `as expr` does not strip `"..."` and yields the provided literal).
 
