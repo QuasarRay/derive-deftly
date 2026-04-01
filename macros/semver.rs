@@ -80,7 +80,7 @@ Search for section titles containing "template export semver"."#,
         ))
     };
 
-    const CURRENT_MINOR: u32 = 10;
+    const CURRENT_MINOR: u32 = 11;
     const NEXT_MINOR: u32 = CURRENT_MINOR + 1;
 
     match (version.major, version.minor, version.patch) {
