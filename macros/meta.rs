@@ -1298,9 +1298,11 @@ where
             AVH::Expr => match quoted {
                 QMM::Strip => metavalue_lit_reparse(value)?,
                 QMM::Retain => value.to_token_stream(),
-                QMM::Rigorous => return err(format_args!(
-        r#"string literal attribute value is ambiguous; use `( )` or `{{ }}`"#
-                ))
+                QMM::Rigorous => {
+                    return err(format_args!(
+                        r#"string literal attribute value is ambiguous; use `( )` or `{{ }}`"#
+                    ))
+                }
             },
         },
         PV::Bare { value } => match as_value_handling {
