@@ -645,7 +645,7 @@ Accesses macro parameters passed via `#[deftly(...)]` attributes.
      If `NAME = "VALUE"` is specified, the quotes are stripped,
      and the content is reparsed as Rust code.
 
-     This will become the default in future.
+     This will probably become the default in future.
 
    * **`quoted rigorous`**:
 
@@ -1975,7 +1975,7 @@ If affects the whole template including `$Xmeta` expansions
 in any imported modules.
 
 Available only in [**beta**].
-In the future, `quoted strip` will become the default.
+In the future, `quoted strip` will probably become the default.
 
 <!--
 TODO When this feature is stabilised, it will affect only
