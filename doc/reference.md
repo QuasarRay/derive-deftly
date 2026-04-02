@@ -653,6 +653,10 @@ Accesses macro parameters passed via `#[deftly(...)]` attributes.
      `NAME = "VALUE"` is forbidden,
      because it's ambiguous.
 
+     This can be helpful for transition to unquoted attribute values,
+     if expression(s) of string type are (possibly) expected, since
+     existing attributes would be silently misinterpreted by `quoted strip`.
+
      With `SYNTYPE`s other than `as expr`
      the quotes are always stripped and the contents reparsed.
 
