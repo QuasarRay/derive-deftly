@@ -624,10 +624,12 @@ Accesses macro parameters passed via `#[deftly(...)]` attributes.
  * **`${Xmeta(...) .. , default DEFAULT}`** ([**beta**]):
    If there is no `VALUE` expands
    the [positional argument] `DEFAULT` instead.
+
    NB: in this case the expansions of `DEFAULT` is used as is:
    *not* affected by any `as ..` clause;
    *not* surrounded with additional `( )` (for `as expr`),
    nor any additional [`None`-delimited group](#t:none-delimiters).
+   See [Precedence considerations](#precedence-considerations).
 
  * **`${Xmeta(...) .. , quoted strip | quoted rigorous | quoted retain}`** ([**beta**]):
 
@@ -2027,6 +2029,7 @@ and dumping the expansion to stderr during compilation.
 
 When using
 `${Xmeta as token_stream}`,
+`${Xmeta ... default ...}`,
 and user-defined expansions (`${define ...}`)
 it can be necessary to add `{ }` or `( )`
 to avoid surprising expansions due to operator precedence.
