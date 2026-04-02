@@ -1122,6 +1122,7 @@ pub struct QuotedMode {
 pub enum QuotedModeMode {
     /// Future default
     Strip,
+    // TODO should we call this `strict`?  But that is very like `strip`!
     Rigorous,
     Retain,
 }
