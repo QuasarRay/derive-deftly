@@ -1320,6 +1320,10 @@ where
 
     let quoted = match (quoted, val) {
         (None, PV::Braced { .. }) | (None, PV::Bare { .. }) => {
+            QuotedMode::change_here_when_default_changes(
+                // get rid of this this whole arm - and the Option?
+                // and get rid of `change_here_when_default_changes` too
+            );
             return err(format_args!(
                 "expected string literal, for conversion to {}",
                 into_what,
