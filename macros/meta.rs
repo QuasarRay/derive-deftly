@@ -1129,6 +1129,44 @@ impl Parse for QuotedMode {
     }
 }
 
+impl QuotedMode {
+    /// Called everywhere we need to make a change
+    /// when the default `quoted` changes
+    ///
+    /// We have tried to make this fail to compile when that happens.
+    /// Resolve by deleting this function and following the instructions
+    /// at call cites.
+    ///
+    /// # Example
+    ///
+    /// ```ignore
+    /// QuotedMode::change_here_when_default_changes(
+    ///     // remove the spurious wombat
+    /// );
+    /// ```
+    pub fn change_here_when_default_changes() {
+        matches!(
+            None, //
+            Some(QuotedMode { beta: _, .. }),
+        );
+        matches!(
+            None,
+            Some(SubstMeta::<TokenAccumulator> { quoted: None, .. })
+        );
+        matches!(
+            None,
+            Some(DdOptions {
+                meta_quoted: None,
+                ..
+            })
+        );
+        matches!(
+            None.map(|eo| DdOptions::meta_quoted_default(eo)),
+            Some(Ok(Some::<QuotedMode>(_))),
+        );
+    }
+}
+
 //---------- template expansion ----------
 
 impl<O> SubstMeta<O>
