@@ -649,8 +649,11 @@ impl Parse for PreprocessedValue {
             PV::Braced { brace_token, value }
         } else {
             if input.is_empty() {
+                QuotedMode::change_here_when_default_changes(
+                    // remove the `= ""` from the suggestion
+                );
                 return Err(input.error(
-                    "un-bracked, un-quoted meta values may not be empty",
+ r#"un-bracked, un-quoted meta values may not be empty; write `= ""` or `= {}` instead"#,
                 ));
             }
             let mut value = TokenStream::new();
@@ -659,8 +662,11 @@ impl Parse for PreprocessedValue {
                 const FORBID: &[char] = &['<', '>', '='];
                 if let TT::Punct(p) = &tt {
                     if FORBID.contains(&p.as_char()) {
+                        QuotedMode::change_here_when_default_changes(
+                            // remove the `= "..."` from the suggestion
+                        );
                         return Err(tt.error(
- "un-braced, un-quoted meta values may not contain any of `<` `>` `=`"
+ r#"un-braced, un-quoted meta values may not contain any of `<` `>` `=`; write `= "..." or `= { ... }` instead"#
                         ));
                     }
                 }
@@ -1116,6 +1122,8 @@ pub struct QuotedMode {
 pub enum QuotedModeMode {
     /// Future default
     Strip,
+    // TODO should we call this `strict`?  But that is very like `strip`!
+    Rigorous,
     Retain,
 }
 
@@ -1125,6 +1133,44 @@ impl Parse for QuotedMode {
         let beta = beta::Enabled::new_for_syntax(mode.span)?;
         let mode = mode.value;
         Ok(QuotedMode { mode, beta })
+    }
+}
+
+impl QuotedMode {
+    /// Called everywhere we need to make a change
+    /// when the default `quoted` changes
+    ///
+    /// We have tried to make this fail to compile when that happens.
+    /// Resolve by deleting this function and following the instructions
+    /// at call cites.
+    ///
+    /// # Example
+    ///
+    /// ```ignore
+    /// QuotedMode::change_here_when_default_changes(
+    ///     // remove the spurious wombat
+    /// );
+    /// ```
+    pub fn change_here_when_default_changes() {
+        matches!(
+            None, //
+            Some(QuotedMode { beta: _, .. }),
+        );
+        matches!(
+            None,
+            Some(SubstMeta::<TokenAccumulator> { quoted: None, .. })
+        );
+        matches!(
+            None,
+            Some(DdOptions {
+                meta_quoted: None,
+                ..
+            })
+        );
+        matches!(
+            None.map(|eo| DdOptions::meta_quoted_default(eo)),
+            Some(Ok(Some::<QuotedMode>(_))),
+        );
     }
 }
 
@@ -1281,10 +1327,14 @@ where
 
     let quoted = match (quoted, val) {
         (None, PV::Braced { .. }) | (None, PV::Bare { .. }) => {
+            QuotedMode::change_here_when_default_changes(
+                // get rid of this this whole arm - and the Option?
+                // and get rid of `change_here_when_default_changes` too
+            );
             return err(format_args!(
                 "expected string literal, for conversion to {}",
                 into_what,
-            ))
+            ));
         }
         (None, PV::Quoted { .. }) => QMM::Strip, // future default
         (Some(q), _) => q,
@@ -1297,6 +1347,11 @@ where
             AVH::Expr => match quoted {
                 QMM::Strip => metavalue_lit_reparse(value)?,
                 QMM::Retain => value.to_token_stream(),
+                QMM::Rigorous => {
+                    return err(format_args!(
+                        r#"string literal attribute value is ambiguous; use `( )` or `{{ }}`"#
+                    ))
+                }
             },
         },
         PV::Bare { value } => match as_value_handling {

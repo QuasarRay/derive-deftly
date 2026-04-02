@@ -53,7 +53,7 @@
       * [`expect items`, `expect expr` -- syntax check the expansion](#expect-items-expect-expr--syntax-check-the-expansion)
       * [`for struct`, `for enum`, `for union` -- Insist on a particular driver kind](#for-struct-for-enum-for-union--insist-on-a-particular-driver-kind)
       * [`dbg` -- Print the expansion to stderr, for debugging](#dbg--print-the-expansion-to-stderr-for-debugging)
-      * [`meta_quoted strip`, `meta_quoted retain` -- control (de)quoting of attribute values (**beta**)](#meta_quoted-strip-meta_quoted-retain--control-dequoting-of-attribute-values-beta)
+      * [`meta_quoted` -- control (de)quoting of attribute values (**beta**)](#meta_quoted--control-dequoting-of-attribute-values-beta)
       * [`beta_deftly` -- Enable unstable template features](#beta_deftly--enable-unstable-template-features)
       * [Expansion options example](#expansion-options-example)
    * [Precedence considerations](#precedence-considerations)
@@ -629,11 +629,11 @@ Accesses macro parameters passed via `#[deftly(...)]` attributes.
    *not* surrounded with additional `( )` (for `as expr`),
    nor any additional [`None`-delimited group](#t:none-delimiters).
 
- * **`${Xmeta(...) .. , quoted strip | quoted retain}`** ([**beta**]):
+ * **`${Xmeta(...) .. , quoted strip | quoted rigorous | quoted retain}`** ([**beta**]):
 
    Specifies how to handle `NAME = "..."` in a `#[deftly]`:
 
-   * **Neither `quoted strip` nor `quoted retain`** specified:
+   * **No `quoted`** specified:
 
      Only `NAME = "VALUE"` is supported.
      The quotes are always stripped and the content re-parsed as Rust code.
@@ -645,7 +645,24 @@ Accesses macro parameters passed via `#[deftly(...)]` attributes.
      If `NAME = "VALUE"` is specified, the quotes are stripped,
      and the content is reparsed as Rust code.
 
-     This will become the default in future.
+     This will probably become the default in future.
+
+   * **`quoted rigorous`**:
+
+     For `as expr`,
+     `NAME = "VALUE"` is forbidden,
+     because it's ambiguous.
+
+     This can be helpful for transition to unquoted attribute values,
+     if expression(s) of string type are (possibly) expected, since
+     existing attributes would be silently misinterpreted by `quoted strip`.
+
+     With `SYNTYPE`s other than `as expr`
+     the quotes are always stripped and the contents reparsed.
+
+     This may become the recommended mode for new templates,
+     and should typically be set via the
+     [`meta_quoted`](#eo:meta_quoted) template option.
 
    * **`quoted retain`**:
 
@@ -723,6 +740,7 @@ These checks are disabled by `#[derive_deftly_adhoc]`.
  * `${vmeta(value) as ident}`: `unit_toplevel`, `enum_variant`
  * `${tmeta(some_vis) as vis}`: `pub(crate)`
  * `${fmeta(nested(inner)) as expr}` for `field` in `Struct`: `(42)`
+ * `${fmeta(nested(inner)) as expr, quoted rigorous}` for `field` in `Struct`: rejected, ``string literal attribute value is ambiguous``
  * `${fmeta(nested(inner)) as expr, quoted retain}` for `field` in `Struct`: `("42")`
  * `${vmeta(items) as items}` for `TupleVariant`: `type T = i32; const K: T = 7;`
  * `${vmeta(items) as token_stream}` for `TupleVariant`: `type T = i32; const K: T = 7;`
@@ -1943,7 +1961,7 @@ the [`$dbg_all_keywords` expansion](#dbg--dbg_all_keywords--debugging-output).
 
 <div id="eo:meta_quoted">
 
-### `meta_quoted strip`, `meta_quoted retain` -- control (de)quoting of attribute values (**beta**)
+### `meta_quoted` -- control (de)quoting of attribute values (**beta**)
 
 </div>
 
@@ -1951,6 +1969,7 @@ Changes the default for [`${Xmeta(...) as ...}`](#x:fmeta),
 in template, to:
 
   * **`quoted strip`** (allow unquoted values, strip any quotes), or
+  * **`quoted rigorous`** (only allow quoted values if unambiguous), or
   * **`quoted retain`** (allow unquoted values,
     `as expr` does not strip `"..."` and yields the provided literal).
 
@@ -1960,7 +1979,7 @@ If affects the whole template including `$Xmeta` expansions
 in any imported modules.
 
 Available only in [**beta**].
-In the future, `quoted strip` will become the default.
+In the future, `quoted strip` will probably become the default.
 
 <!--
 TODO When this feature is stabilised, it will affect only

@@ -265,13 +265,13 @@ error: expected string literal, for conversion to tokens (template)
 68 |     ${tmeta(value) as token_stream}
    |       ^^^^^^^^^^^
 
-error: un-braced, un-quoted meta values may not contain any of `<` `>` `=`
+error: un-braced, un-quoted meta values may not contain any of `<` `>` `=`; write `= "..." or `= { ... }` instead
   --> ui/badmeta.rs:73:23
    |
 73 | #[deftly(value = very < wrong)]
    |                       ^
 
-error: unexpected end of input, un-bracked, un-quoted meta values may not be empty
+error: unexpected end of input, un-bracked, un-quoted meta values may not be empty; write `= ""` or `= {}` instead
   --> ui/badmeta.rs:76:10
    |
 76 | #[derive(Deftly)]
@@ -279,7 +279,7 @@ error: unexpected end of input, un-bracked, un-quoted meta values may not be emp
    |
    = note: this error originates in the macro `::derive_deftly::derive_deftly_engine` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error: un-braced, un-quoted meta values may not contain any of `<` `>` `=`
+error: un-braced, un-quoted meta values may not contain any of `<` `>` `=`; write `= "..." or `= { ... }` instead
   --> ui/badmeta.rs:83:27
    |
 83 | #[deftly(value3 = setting = inner_value)]
