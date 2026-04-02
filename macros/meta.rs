@@ -649,8 +649,11 @@ impl Parse for PreprocessedValue {
             PV::Braced { brace_token, value }
         } else {
             if input.is_empty() {
+                QuotedMode::change_here_when_default_changes(
+                    // remove the `= ""` from the suggestion
+                );
                 return Err(input.error(
-                    "un-bracked, un-quoted meta values may not be empty",
+ r#"un-bracked, un-quoted meta values may not be empty; write `= ""` or `= {}` instead"#,
                 ));
             }
             let mut value = TokenStream::new();
@@ -659,8 +662,11 @@ impl Parse for PreprocessedValue {
                 const FORBID: &[char] = &['<', '>', '='];
                 if let TT::Punct(p) = &tt {
                     if FORBID.contains(&p.as_char()) {
+                        QuotedMode::change_here_when_default_changes(
+                            // remove the `= "..."` from the suggestion
+                        );
                         return Err(tt.error(
- "un-braced, un-quoted meta values may not contain any of `<` `>` `=`"
+ r#"un-braced, un-quoted meta values may not contain any of `<` `>` `=`; write `= "..." or `= { ... }` instead"#
                         ));
                     }
                 }
