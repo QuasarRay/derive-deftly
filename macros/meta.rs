@@ -1333,7 +1333,7 @@ where
             return err(format_args!(
                 "expected string literal, for conversion to {}",
                 into_what,
-            ))
+            ));
         }
         (None, PV::Quoted { .. }) => QMM::Strip, // future default
         (Some(q), _) => q,
