@@ -57,6 +57,17 @@ or via the [account request form].
 
 ## Changelog
 
+### 1.11.0 - 2026-04-02
+
+#### Added
+
+ * BETA: `${Xmeta ... quoted rigorous}`
+
+#### Improved
+
+ * BETA: `${Meta ... quoted}` docs and error messages slightly improved.
+ * This `CHANGELOG.md` now has contains the dates of the releases.
+
 ### 1.10.0 - 2026-03-24
 
 #### Breaking changes to beta features
