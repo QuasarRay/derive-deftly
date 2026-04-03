@@ -92,17 +92,6 @@ Possibly in the future we might support
 `${"template with $1 positional arguments" $< blarky $fname >}`
 or similar.
 
-### Doc attributes
-
-We could support `$///` and `$//!`.
-The compiler turns these into `#[doc(...)]` and `#![doc(...)]`.
-
-So we would have to recognise `$#[doc` and `$#![doc`.
-(This means we would find it hard (or maybe impossible)
-to use `$#` for anything other than attributes.)
-
-The literal would be processed as for `$"..."`.
-
 ### Byte strings
 
 We could support byte literals maybe.
