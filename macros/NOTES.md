@@ -59,6 +59,72 @@ See also
  * **`${tgens, EXTRA}`**: `${gens_defs_use ${gens_collate ...}}`
  * **`${tgnames, EXTRA}`**: `${gens_names ${gens_collate ...}}`
 
+### `$impl` shorthand
+
+ * **`$impl`**: `${impl<$tgens> $ttype where $twheres}`
+ * **`${impl TRAIT}`**: `${impl<$tgens> TRAIT for $ttype where $twheres}`
+
+So this does three things:
+
+ 1. implied `<$tgens>`
+ 2. implied `$ttype`
+ 3. implied `where $twheres`
+
+#### Example uses
+
+```text
+$impl {
+    pub fn inherent_method(..) ...;
+}
+
+${impl Display} {
+    fn fmt(...) -> fmt::Result { ... }
+}
+```
+
+Q. is this too magical?
+
+#### Alternative syntax, surrounding curlies
+
+```text
+${impl Display {
+}}
+```
+
+#### Possibilities for adjusting implied elements
+
+`${impl <OVERRIDE GENERICS...> [TRAIT] [for INSTEAD] [where OVERRIDE BOUNDS]}`
+
+Eg
+
+```text
+${impl for $<$ttype Builder>} { ... }
+// meaning
+impl<$tgens> $<$ttype Builder>} where $twheres { ... }
+```
+
+Or the rather silly
+
+```text
+${impl<$tgens, 'x, X> Trait<'x, X> where $twheres, X: 'x} { ... }
+// meaning
+impl<$tgens, 'x, X> Trait<'x, X> for $ttype where $twheres X: 'x { ... }
+```
+
+Or the even sillier
+
+```text
+${impl<${tgens, 'r}> Debug for $<$tname Reference><${tgens, 'r}>
+  where $twheres
+      ${tmeta(refererence(bounds(Debug))) as token_stream, default {}}} 
+{ ... }
+//meaning
+impl<${tgens, 'r}> Debug for $<$tname Reference><${tgens, 'r}>
+where $twheres
+      ${tmeta(refererence(bounds(Debug))) as token_stream, default {}}
+{ ... }
+```
+
 ## Stringification enhancements
 
 ### `${stringify ...}` - re-stringification
