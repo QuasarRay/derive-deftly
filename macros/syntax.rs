@@ -154,6 +154,24 @@ pub enum SubstDetails<O: SubstParseContext> {
         Argument,
         Argument<paste::Items>,
         O::NotInBool,
+        // TODO
+        //
+        // ${paste_spanned $fname { ::std::default::Default::default }}()
+        // doesn't work because that path isn't type-like and there's no
+        // mechanism for turning literal template text into type-like content.
+        //
+        // Workaround in the case I found was
+        // `<$ftype as ::std::default::Default>::default()`
+        //
+        // I didn't fully test whether respanning the whole path would have
+        // helped but an experiment with a local `fn default<T: ...>()`
+        // suggested not.  So maybe this doesn't work for that use case.
+        //
+        // Nevertheless not being able to respan things that aren't types
+        // seems wrong.
+        //
+        // Consider replacing this with `${respan }` that can work in
+        // other contexts and therefore on other content, too.
         beta::Enabled,
     ),
     ChangeCase(
