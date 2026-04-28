@@ -57,6 +57,14 @@ or via the [account request form].
 
 ## Changelog
 
+### 1.11.1 - 2026-04-28
+
+#### Improved
+
+ * Reference: Add an xref re `$Xmeta default` precedence considerations.
+ * Reference: fix a minor syntax mistake.
+ * Docs, metadata: Changes to hopefully improve our discoverability.
+
 ### 1.11.0 - 2026-04-02
 
 #### Added
