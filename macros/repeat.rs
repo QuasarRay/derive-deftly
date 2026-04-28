@@ -500,7 +500,8 @@ where
             // infallible work in our infallible context, so we use `Void`
             // as the error type.
             Ok::<_, Void>(())
-        });
+        })
+        .void_unwrap();
 
         let is_yes = |f: Result<bool, ()>| f == Ok(true);
         let yes_count: u32 = filters
