@@ -30,6 +30,12 @@ error: expected an expression
    |
    = note: this error originates in the macro `derive_deftly_driver_DataType` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
+error: failed to parse attribute value `.` as expr (here in template)
+  --> ui/badmeta.rs:22:21
+   |
+22 |     const L: () = ${tmeta(dot) as expr}
+   |                     ^^^^^^^^^
+
 error: constructed identifier "Bad." is invalid
   --> ui/badmeta.rs:33:14
    |
