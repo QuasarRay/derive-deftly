@@ -8,11 +8,27 @@ error: cannot parse string into token stream
 19 | |     DataType:
 20 | |
 21 | |     const K: () = ${tmeta(wrong) as expr}
-22 | |
+22 | |     const L: () = ${tmeta(dot) as expr}
 23 | | }
    | |_- in this macro invocation
    |
    = note: this error originates in the macro `::derive_deftly::derive_deftly_engine` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: expected an expression
+  --> ui/badmeta.rs:10:16
+   |
+10 |   #[deftly(dot = ".")]
+   |                  ^^^
+...
+18 | / derive_deftly_adhoc! {
+19 | |     DataType:
+20 | |
+21 | |     const K: () = ${tmeta(wrong) as expr}
+22 | |     const L: () = ${tmeta(dot) as expr}
+23 | | }
+   | |_- in this macro invocation
+   |
+   = note: this error originates in the macro `derive_deftly_driver_DataType` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: constructed identifier "Bad." is invalid
   --> ui/badmeta.rs:33:14
