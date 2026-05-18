@@ -57,6 +57,14 @@ or via the [account request form].
 
 ## Changelog
 
+### 1.11.2 - 2026-05-18
+
+#### Improved
+
+ * Relaxed upper dependency bounds for `sha3`.
+ * Somewhat better message for meta attribute value parse error.
+ * Fixed link to Tor's Code of Conduct.
+
 ### 1.11.1 - 2026-04-28
 
 #### Improved
