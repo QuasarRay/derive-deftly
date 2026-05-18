@@ -19,6 +19,7 @@ derive_deftly_adhoc! {
     DataType:
 
     const K: () = ${tmeta(wrong) as expr}
+    const L: () = ${tmeta(dot) as expr}
 }
 // Invoke derive_deftly_adhoc! a second time, because (empirically) the
 // attempt to parse "{" causes some kind of nonlocal exit:

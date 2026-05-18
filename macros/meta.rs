@@ -1364,8 +1364,13 @@ where
             }
         },
     };
-
-    let thing: T = syn::parse2(t)?;
+    let thing: T = syn::parse2(t.clone()).map_err(|mut e| {
+        e.combine(tspan.error(format_args!(
+            "failed to parse attribute value `{}` as {} (here in template)",
+            t, into_what,
+        )));
+        e
+    })?;
     Ok(thing)
 }
 
