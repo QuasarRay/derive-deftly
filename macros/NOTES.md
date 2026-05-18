@@ -34,6 +34,97 @@ See also
 
 # Future template features
 
+## generics manipulation, needed to collate const generics
+
+### primitives
+
+ * **`${gens_collate GENERICS GENERICS ...}`**
+   Splits each GENERICS into lifetimes, types, and constants,
+   collates each kind of generic,
+   and outputs the result.
+
+   Each GENERICS is a positional argument which must contain generics.
+   If there are constants, they must start `const`.
+   So not suitable with `$tgnames`.
+
+ * **`${gens_defs_use GENERICS...}`**, **`${gens_names GENERICS...}`
+   `$gens_defs_use` filters out defaults; `$gens_names` leaves only the names.
+   `$tgens` is the same as `${gens_defs_use $tdefgens}`.
+   `$tgnames` is the same as `${gens_names $tdefgens}` or
+   `${gens_names $tgens}`.
+
+### convenience aliases
+
+ * **`${tdefgens, EXTRA}`**: `${gens_collate $tdefgens EXTRA}`
+ * **`${tgens, EXTRA}`**: `${gens_defs_use ${gens_collate ...}}`
+ * **`${tgnames, EXTRA}`**: `${gens_names ${gens_collate ...}}`
+
+### `$impl` shorthand
+
+ * **`$impl`**: `${impl<$tgens> $ttype where $twheres}`
+ * **`${impl TRAIT}`**: `${impl<$tgens> TRAIT for $ttype where $twheres}`
+
+So this does three things:
+
+ 1. implied `<$tgens>`
+ 2. implied `$ttype`
+ 3. implied `where $twheres`
+
+#### Example uses
+
+```text
+$impl {
+    pub fn inherent_method(..) ...;
+}
+
+${impl Display} {
+    fn fmt(...) -> fmt::Result { ... }
+}
+```
+
+Q. is this too magical?
+
+#### Alternative syntax, surrounding curlies
+
+```text
+${impl Display {
+}}
+```
+
+#### Possibilities for adjusting implied elements
+
+`${impl <OVERRIDE GENERICS...> [TRAIT] [for INSTEAD] [where OVERRIDE BOUNDS]}`
+
+Eg
+
+```text
+${impl for $<$ttype Builder>} { ... }
+// meaning
+impl<$tgens> $<$ttype Builder>} where $twheres { ... }
+```
+
+Or the rather silly
+
+```text
+${impl<$tgens, 'x, X> Trait<'x, X> where $twheres, X: 'x} { ... }
+// meaning
+impl<$tgens, 'x, X> Trait<'x, X> for $ttype where $twheres X: 'x { ... }
+```
+
+Or the even sillier
+
+```text
+${impl<${tgens, 'r}> Debug for $<$tname Reference><${tgens, 'r}>
+  where $twheres
+      ${tmeta(refererence(bounds(Debug))) as token_stream, default {}}} 
+{ ... }
+//meaning
+impl<${tgens, 'r}> Debug for $<$tname Reference><${tgens, 'r}>
+where $twheres
+      ${tmeta(refererence(bounds(Debug))) as token_stream, default {}}
+{ ... }
+```
+
 ## Stringification enhancements
 
 ### `${stringify ...}` - re-stringification
@@ -91,17 +182,6 @@ There are two separate problems:
 Possibly in the future we might support
 `${"template with $1 positional arguments" $< blarky $fname >}`
 or similar.
-
-### Doc attributes
-
-We could support `$///` and `$//!`.
-The compiler turns these into `#[doc(...)]` and `#![doc(...)]`.
-
-So we would have to recognise `$#[doc` and `$#![doc`.
-(This means we would find it hard (or maybe impossible)
-to use `$#` for anything other than attributes.)
-
-The literal would be processed as for `$"..."`.
 
 ### Byte strings
 
