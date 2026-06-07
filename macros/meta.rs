@@ -2261,6 +2261,7 @@ impl<O: SubstParseContext> FindRecogMetas for SubstDetails<O> {
             loop_exactly_1(v, ..) => v.find_recog_metas(acc),
             define(v, _) => v.find_recog_metas(acc),
             defcond(v, _) => v.find_recog_metas(acc),
+            GensCollate(v) => v.details.find_recog_metas(acc),
 
             not(v, _) => v.find_recog_metas(acc),
             any(v, _) | all(v, _) => v.find_recog_metas(acc),
@@ -2387,5 +2388,13 @@ impl<O: SubstParseContext> FindRecogMetas for SubstIf<O> {
             then.find_recog_metas(acc);
         }
         otherwise.find_recog_metas(acc);
+    }
+}
+
+impl FindRecogMetas for generics::CollateDetails {
+    fn find_recog_metas(&self, acc: &mut Recognised) {
+        for ie in &self.inputs {
+            ie.find_recog_metas(acc);
+        }
     }
 }

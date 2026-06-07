@@ -184,6 +184,7 @@ impl Subst<BooleanContext> {
             | SD::fattrs(_, _, not_in_bool)
             | SD::tdefgens(_, not_in_bool)
             | SD::tgnames(_, not_in_bool)
+            | SD::GensCollate(generics::Collate { not_in_bool, .. })
             | SD::twheres(_, not_in_bool)
             | SD::vpat(_, _, not_in_bool)
             | SD::fpatname(not_in_bool)

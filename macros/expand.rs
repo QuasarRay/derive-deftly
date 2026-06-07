@@ -485,6 +485,7 @@ where
                 }
                 Ok(())
             })?,
+            SD::GensCollate(b) => b.expand(gctx, out, kw_span)?,
 
             SD::vpat(v, np, ..) => out.append_tokens_with(np, |out| {
                 // This comment prevents rustfmt making this unlike the others
