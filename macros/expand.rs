@@ -355,7 +355,7 @@ where
                 out.append_maybe_punct_composable(&pair.punct(), composable);
             }
         }
-        fn expand_tgens_nodefs(
+        fn do_tgens_nodefs(
             ctx: &Context,
             out: &mut TokenAccumulator,
         ) {
@@ -385,11 +385,6 @@ where
                 });
             }
         }
-        let do_tgens_nodefs = |out: &mut TokenAccumulator| {
-            Ok::<_, MissingContextError>(
-                expand_tgens_nodefs(ctx?,out)
-            )
-        };
         fn do_tgens(
             ctx: &Context,
             out: &mut TokenAccumulator,
@@ -520,7 +515,7 @@ where
             })?,
 
             SD::tgens(np, ..) => out.append_tokens_with(np, |out| {
-                do_tgens_nodefs(out)?;
+                do_tgens_nodefs(ctx?, out);
                 Ok(())
             })?,
             SD::tdefgens(np, ..) => out.append_tokens_with(np, |out| {
