@@ -4,30 +4,38 @@ use super::framework::*;
 
 use syn::GenericParam as GP;
 
+/// Filter mode emitting names only - `$tgnames`
+pub fn fm_name(
+    gp: &syn::GenericParam,
+    out: &mut TokenAccumulator,
+) {
+    match gp {
+            GP::Type(t) => out.append(&t.ident),
+            GP::Const(c) => out.append(&c.ident),
+            GP::Lifetime(l) => out.append(&l.lifetime),
+    }
+}
+
 pub fn expand_tgens_names(
     ctx: &Context,
     out: &mut TokenAccumulator,
     composable: WantPunctComposable,
 ) {
     for pair in ctx.top.generics.params.pairs() {
-        match pair.value() {
-            GP::Type(t) => out.append(&t.ident),
-            GP::Const(c) => out.append(&c.ident),
-            GP::Lifetime(l) => out.append(&l.lifetime),
-        }
+        fm_name(pair.value(), out);
         out.append_maybe_punct_composable(&pair.punct(), composable);
     }
 }
 
-pub fn expand_tgens_nodefs(
-    ctx: &Context,
+/// Filter mode omitting only the defaults - `$tgens`
+pub fn fm_nodefs(
+    gp: &syn::GenericParam,
     out: &mut TokenAccumulator,
 ) {
-    for pair in ctx.top.generics.params.pairs() {
         let out_attrs = |out: &mut TokenAccumulator, attrs: &[_]| {
             attrs.iter().for_each(|attr| out.append(attr));
         };
-        match pair.value() {
+        match gp {
             GP::Type(t) => {
                 out_attrs(out, &t.attrs);
                 out.append(&t.ident);
@@ -43,10 +51,26 @@ pub fn expand_tgens_nodefs(
             }
             GP::Lifetime(l) => out.append(&l),
         }
+}
+
+pub fn expand_tgens_nodefs(
+    ctx: &Context,
+    out: &mut TokenAccumulator,
+) {
+    for pair in ctx.top.generics.params.pairs() {
+        fm_nodefs(pair.value(), out);
         out.with_tokens(|out| {
             pair.punct().to_tokens_punct_composable(out);
         });
     }
+}
+
+/// Filter mode for including the whole generic - `$tdefgens`
+pub fn fm_complete(
+    gp: &syn::GenericParam,
+    out: &mut TokenAccumulator,
+) {
+    out.append(gp);
 }
 
 pub fn expand_tgens_complete(
@@ -55,7 +79,7 @@ pub fn expand_tgens_complete(
     composable: WantPunctComposable,
 ) {
     for pair in ctx.top.generics.params.pairs() {
-        out.append(pair.value());
+        fm_complete(pair.value(), out);
         out.append_maybe_punct_composable(&pair.punct(), composable);
     }
 }
