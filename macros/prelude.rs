@@ -46,6 +46,7 @@ pub use super::utils::{
     ErrorGenerator, ErrorLoc, Grouping, IdentAny, MacroExport, MakeError,
     ModuleName, ModulePath, TemplateName, TemplatePath,
     ToTokensPunctComposable, TokenOutputTrimmer,
+    WantPunctComposable,
 };
 
 pub(super) use super::{

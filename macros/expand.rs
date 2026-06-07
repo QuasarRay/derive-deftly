@@ -327,6 +327,8 @@ where
         out: &mut O,
         kw_span: Span,
     ) -> syn::Result<()> {
+        use WantPunctComposable as WPC;
+
         // eprintln!("@@@@@@@@@@@@@@@@@@@@ EXPAND {:?}", self);
 
         let ctx = gctx.full_ctx(kw_span);
@@ -346,7 +348,8 @@ where
         //   defining a new type      $tdeftype  Type<G: bounds>
         // Handles $ttype and $tdeftype, and, indirectly, $vtype
         let do_ttype = |out: &mut O, colons: Option<()>, do_some_gens| {
-            let _: &dyn Fn(_, &mut _, bool) = do_some_gens; // specify type
+            // specify type to help inference:
+            let _: &dyn Fn(_, &mut _, WPC) = do_some_gens;
             let ctx = ctx?;
             let gens = &ctx.top.generics;
             let colons = gens
@@ -359,7 +362,7 @@ where
                 |out| {
                     out.append(colons);
                     out.append(gens.lt_token);
-                    do_some_gens(ctx, out, false);
+                    do_some_gens(ctx, out, WPC::AvoidIntroducingTrailingComma);
                     out.append(gens.gt_token);
                 },
                 Grouping::Ungrouped,
@@ -462,11 +465,11 @@ where
                 Ok(())
             })?,
             SD::tdefgens(np, ..) => out.append_tokens_with(np, |out| {
-                do_tgens(ctx?, out, true);
+                do_tgens(ctx?, out, WPC::Composable);
                 Ok(())
             })?,
             SD::tgnames(np, ..) => out.append_tokens_with(np, |out| {
-                do_tgnames(ctx?, out, true);
+                do_tgnames(ctx?, out, WPC::Composable);
                 Ok(())
             })?,
             SD::twheres(np, ..) => out.append_tokens_with(np, |out| {

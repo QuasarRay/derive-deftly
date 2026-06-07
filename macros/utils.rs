@@ -312,6 +312,22 @@ pub fn spans_join(spans: impl IntoIterator<Item = Span>) -> Option<Span> {
 
 //---------- ToTokensPunctComposable ----------
 
+/// Whether to punctuate composably?
+///
+/// Most methods for handling generics take `WantComposable`,
+/// which lets us control the trailing comma.  This is desirable
+/// because we should include it for expansions like `$tgens` that the
+/// user can append things to, but ideally *not* for expansions like
+/// `$ttype` that the user can't.
+///
+/// Not `Option<IsComposable>` because we don't want
+/// unmarked `None` to mean "do the unusual thing".
+#[derive(Debug, Clone, Copy)]
+pub enum WantPunctComposable {
+    Composable,
+    AvoidIntroducingTrailingComma,
+}
+
 /// Convert to a token stream in a way that composes nicely
 pub trait ToTokensPunctComposable {
     fn to_tokens_punct_composable(&self, out: &mut TokenStream);

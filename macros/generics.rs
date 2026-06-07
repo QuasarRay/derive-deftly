@@ -1,17 +1,11 @@
 //! Handling of generics - `$tgens` etc.
-//!
-//! Methods for handling generics.  Most take `composable: Boole`,
-//! which lets us control the trailing comma.  This is desirable
-//! because we should include it for expansions like `$tgens` that the
-//! user can append things to, but ideally *not* for expansions like
-//! `$ttype` that the user can't.
 
 use super::framework::*;
 
 pub fn expand_tgnames(
     ctx: &Context,
     out: &mut TokenAccumulator,
-    composable: bool,
+    composable: WantPunctComposable,
 ) {
     for pair in ctx.top.generics.params.pairs() {
         use syn::GenericParam as GP;
@@ -58,7 +52,7 @@ pub fn expand_tgens_nodefs(
 pub fn expand_tgens(
     ctx: &Context,
     out: &mut TokenAccumulator,
-    composable: bool,
+    composable: WantPunctComposable,
 ) {
         out.append_maybe_punct_composable(
             &ctx.top.generics.params,
