@@ -54,8 +54,8 @@ pub fn expand_tgens(
     out: &mut TokenAccumulator,
     composable: WantPunctComposable,
 ) {
-        out.append_maybe_punct_composable(
-            &ctx.top.generics.params,
-            composable,
-        );
+    for pair in ctx.top.generics.params.pairs() {
+        out.append(pair.value());
+        out.append_maybe_punct_composable(&pair.punct(), composable);
+    }
 }
