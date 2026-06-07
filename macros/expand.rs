@@ -461,7 +461,7 @@ where
             })?,
 
             SD::tgens(np, ..) => out.append_tokens_with(np, |out| {
-                do_tgens_nodefs(ctx?, out);
+                do_tgens_nodefs(ctx?, out, WPC::Composable);
                 Ok(())
             })?,
             SD::tdefgens(np, ..) => out.append_tokens_with(np, |out| {

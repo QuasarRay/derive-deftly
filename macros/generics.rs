@@ -56,12 +56,11 @@ pub fn fm_nodefs(
 pub fn expand_tgens_nodefs(
     ctx: &Context,
     out: &mut TokenAccumulator,
+    composable: WantPunctComposable,
 ) {
     for pair in ctx.top.generics.params.pairs() {
         fm_nodefs(pair.value(), out);
-        out.with_tokens(|out| {
-            pair.punct().to_tokens_punct_composable(out);
-        });
+        out.append_maybe_punct_composable(&pair.punct(), composable);
     }
 }
 
