@@ -339,7 +339,7 @@ where
 
         let do_tgnames = generics::expand_tgnames;
         let do_tgens_nodefs = generics::expand_tgens_nodefs;
-        let do_tgens = generics::expand_tgens;
+        let do_tgens_complete = generics::expand_tgens_complete;
 
         // There are three contexts where the top-level type
         // name might occur with generics, and two syntaxes:
@@ -401,7 +401,7 @@ where
         match self {
             SD::tname(_) => out.append_identfrag_toks(&ctx?.top.ident)?,
             SD::ttype(_) => do_ttype(out, Some(()), &do_tgnames)?,
-            SD::tdeftype(_) => do_ttype(out, None, &do_tgens)?,
+            SD::tdeftype(_) => do_ttype(out, None, &do_tgens_complete)?,
             SD::vname(_) => {
                 out.append_identfrag_toks(&ctx?.syn_variant(&kw_span)?.ident)?
             }
@@ -465,7 +465,7 @@ where
                 Ok(())
             })?,
             SD::tdefgens(np, ..) => out.append_tokens_with(np, |out| {
-                do_tgens(ctx?, out, WPC::Composable);
+                do_tgens_complete(ctx?, out, WPC::Composable);
                 Ok(())
             })?,
             SD::tgnames(np, ..) => out.append_tokens_with(np, |out| {

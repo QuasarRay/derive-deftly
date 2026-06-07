@@ -49,7 +49,7 @@ pub fn expand_tgens_nodefs(
     }
 }
 
-pub fn expand_tgens(
+pub fn expand_tgens_complete(
     ctx: &Context,
     out: &mut TokenAccumulator,
     composable: WantPunctComposable,
