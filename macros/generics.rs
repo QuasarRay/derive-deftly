@@ -4,7 +4,7 @@ use super::framework::*;
 
 use syn::GenericParam as GP;
 
-pub fn expand_tgnames(
+pub fn expand_tgens_names(
     ctx: &Context,
     out: &mut TokenAccumulator,
     composable: WantPunctComposable,

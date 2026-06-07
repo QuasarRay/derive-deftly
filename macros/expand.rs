@@ -337,7 +337,7 @@ where
             sm.expand(ctx?, kw_span, out, meta)
         };
 
-        let do_tgnames = generics::expand_tgnames;
+        let do_tgens_names = generics::expand_tgens_names;
         let do_tgens_nodefs = generics::expand_tgens_nodefs;
         let do_tgens_complete = generics::expand_tgens_complete;
 
@@ -400,7 +400,7 @@ where
 
         match self {
             SD::tname(_) => out.append_identfrag_toks(&ctx?.top.ident)?,
-            SD::ttype(_) => do_ttype(out, Some(()), &do_tgnames)?,
+            SD::ttype(_) => do_ttype(out, Some(()), &do_tgens_names)?,
             SD::tdeftype(_) => do_ttype(out, None, &do_tgens_complete)?,
             SD::vname(_) => {
                 out.append_identfrag_toks(&ctx?.syn_variant(&kw_span)?.ident)?
@@ -469,7 +469,7 @@ where
                 Ok(())
             })?,
             SD::tgnames(np, ..) => out.append_tokens_with(np, |out| {
-                do_tgnames(ctx?, out, WPC::Composable);
+                do_tgens_names(ctx?, out, WPC::Composable);
                 Ok(())
             })?,
             SD::twheres(np, ..) => out.append_tokens_with(np, |out| {
