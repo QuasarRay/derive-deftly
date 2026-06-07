@@ -335,66 +335,9 @@ where
             sm.expand(ctx?, kw_span, out, meta)
         };
 
-        // Methods for handling generics.  Most take `composable: bool`,
-        // which lets us control the trailing comma.  This is desirable
-        // because we should include it for expansions like $tgens that the
-        // user can append things to, but ideally *not* for expansions like
-        // $ttype that the user can't.
-        fn do_tgnames(
-            ctx: &Context,
-            out: &mut TokenAccumulator,
-            composable: bool,
-        ) {
-            for pair in ctx.top.generics.params.pairs() {
-                use syn::GenericParam as GP;
-                match pair.value() {
-                    GP::Type(t) => out.append(&t.ident),
-                    GP::Const(c) => out.append(&c.ident),
-                    GP::Lifetime(l) => out.append(&l.lifetime),
-                }
-                out.append_maybe_punct_composable(&pair.punct(), composable);
-            }
-        }
-        fn do_tgens_nodefs(
-            ctx: &Context,
-            out: &mut TokenAccumulator,
-        ) {
-            for pair in ctx.top.generics.params.pairs() {
-                use syn::GenericParam as GP;
-                let out_attrs = |out: &mut TokenAccumulator, attrs: &[_]| {
-                    attrs.iter().for_each(|attr| out.append(attr));
-                };
-                match pair.value() {
-                    GP::Type(t) => {
-                        out_attrs(out, &t.attrs);
-                        out.append(&t.ident);
-                        out.append(&t.colon_token);
-                        out.append(&t.bounds);
-                    }
-                    GP::Const(c) => {
-                        out_attrs(out, &c.attrs);
-                        out.append(&c.const_token);
-                        out.append(&c.ident);
-                        out.append(&c.colon_token);
-                        out.append(&c.ty);
-                    }
-                    GP::Lifetime(l) => out.append(&l),
-                }
-                out.with_tokens(|out| {
-                    pair.punct().to_tokens_punct_composable(out);
-                });
-            }
-        }
-        fn do_tgens(
-            ctx: &Context,
-            out: &mut TokenAccumulator,
-            composable: bool,
-        ) {
-                out.append_maybe_punct_composable(
-                    &ctx.top.generics.params,
-                    composable,
-                );
-        }
+        let do_tgnames = generics::expand_tgnames;
+        let do_tgens_nodefs = generics::expand_tgens_nodefs;
+        let do_tgens = generics::expand_tgens;
 
         // There are three contexts where the top-level type
         // name might occur with generics, and two syntaxes:

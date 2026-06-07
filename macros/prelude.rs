@@ -51,6 +51,7 @@ pub use super::utils::{
 pub(super) use super::{
     accum, adviseable, beta, check, concat, dbg_allkw, define, engine,
     framework, general_context, meta, modules, string_template,
+    generics,
 };
 
 #[allow(unused_imports)] // used in tests
