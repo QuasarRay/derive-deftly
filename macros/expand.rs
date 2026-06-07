@@ -340,8 +340,8 @@ where
         // because we should include it for expansions like $tgens that the
         // user can append things to, but ideally *not* for expansions like
         // $ttype that the user can't.
-        let do_tgnames = |out: &mut TokenAccumulator,
-                          ctx: &Context,
+        let do_tgnames = |ctx: &Context,
+                          out: &mut TokenAccumulator,
                           composable| {
             for pair in ctx.top.generics.params.pairs() {
                 use syn::GenericParam as GP;
@@ -382,7 +382,7 @@ where
             Ok::<_, MissingContextError>(())
         };
         let do_tgens =
-            |out: &mut TokenAccumulator, ctx: &Context, composable: bool| {
+            |ctx: &Context, out: &mut TokenAccumulator, composable: bool| {
                 out.append_maybe_punct_composable(
                     &ctx.top.generics.params,
                     composable,
@@ -396,7 +396,7 @@ where
         //   defining a new type      $tdeftype  Type<G: bounds>
         // Handles $ttype and $tdeftype, and, indirectly, $vtype
         let do_ttype = |out: &mut O, colons: Option<()>, do_some_gens| {
-            let _: &dyn Fn(&mut _, _, bool) = do_some_gens; // specify type
+            let _: &dyn Fn(_, &mut _, bool) = do_some_gens; // specify type
             let ctx = ctx?;
             let gens = &ctx.top.generics;
             let colons = gens
@@ -409,7 +409,7 @@ where
                 |out| {
                     out.append(colons);
                     out.append(gens.lt_token);
-                    do_some_gens(out, ctx, false);
+                    do_some_gens(ctx, out, false);
                     out.append(gens.gt_token);
                 },
                 Grouping::Ungrouped,
@@ -512,11 +512,11 @@ where
                 Ok(())
             })?,
             SD::tdefgens(np, ..) => out.append_tokens_with(np, |out| {
-                do_tgens(out, ctx?, true);
+                do_tgens(ctx?, out, true);
                 Ok(())
             })?,
             SD::tgnames(np, ..) => out.append_tokens_with(np, |out| {
-                do_tgnames(out, ctx?, true);
+                do_tgnames(ctx?, out, true);
                 Ok(())
             })?,
             SD::twheres(np, ..) => out.append_tokens_with(np, |out| {
