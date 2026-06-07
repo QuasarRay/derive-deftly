@@ -327,6 +327,8 @@ where
         out: &mut O,
         kw_span: Span,
     ) -> syn::Result<()> {
+        use WantPunctComposable as WPC;
+
         // eprintln!("@@@@@@@@@@@@@@@@@@@@ EXPAND {:?}", self);
 
         let ctx = gctx.full_ctx(kw_span);
@@ -335,59 +337,17 @@ where
             sm.expand(ctx?, kw_span, out, meta)
         };
 
-        // Methods for handling generics.  Most take `composable: bool`,
-        // which lets us control the trailing comma.  This is desirable
-        // because we should include it for expansions like $tgens that the
-        // user can append things to, but ideally *not* for expansions like
-        // $ttype that the user can't.
-        let do_tgnames = |out: &mut TokenAccumulator,
-                          ctx: &Context,
-                          composable| {
-            for pair in ctx.top.generics.params.pairs() {
-                use syn::GenericParam as GP;
-                match pair.value() {
-                    GP::Type(t) => out.append(&t.ident),
-                    GP::Const(c) => out.append(&c.ident),
-                    GP::Lifetime(l) => out.append(&l.lifetime),
-                }
-                out.append_maybe_punct_composable(&pair.punct(), composable);
-            }
-        };
-        let do_tgens_nodefs = |out: &mut TokenAccumulator| {
-            for pair in ctx?.top.generics.params.pairs() {
-                use syn::GenericParam as GP;
-                let out_attrs = |out: &mut TokenAccumulator, attrs: &[_]| {
-                    attrs.iter().for_each(|attr| out.append(attr));
-                };
-                match pair.value() {
-                    GP::Type(t) => {
-                        out_attrs(out, &t.attrs);
-                        out.append(&t.ident);
-                        out.append(&t.colon_token);
-                        out.append(&t.bounds);
-                    }
-                    GP::Const(c) => {
-                        out_attrs(out, &c.attrs);
-                        out.append(&c.const_token);
-                        out.append(&c.ident);
-                        out.append(&c.colon_token);
-                        out.append(&c.ty);
-                    }
-                    GP::Lifetime(l) => out.append(&l),
-                }
-                out.with_tokens(|out| {
-                    pair.punct().to_tokens_punct_composable(out);
-                });
-            }
-            Ok::<_, MissingContextError>(())
-        };
-        let do_tgens =
-            |out: &mut TokenAccumulator, ctx: &Context, composable: bool| {
-                out.append_maybe_punct_composable(
-                    &ctx.top.generics.params,
-                    composable,
+        let do_tgens = |np, out: &mut O, filter_mode: generics::FilterMode| {
+            out.append_tokens_with(np, |out| {
+                generics::expand_tgens(
+                    ctx?,
+                    out,
+                    WPC::Composable,
+                    filter_mode,
                 );
-            };
+                Ok(())
+            })
+        };
 
         // There are three contexts where the top-level type
         // name might occur with generics, and two syntaxes:
@@ -395,8 +355,9 @@ where
         //   impl'ing for the type    $ttype     Type::<G>
         //   defining a new type      $tdeftype  Type<G: bounds>
         // Handles $ttype and $tdeftype, and, indirectly, $vtype
-        let do_ttype = |out: &mut O, colons: Option<()>, do_some_gens| {
-            let _: &dyn Fn(&mut _, _, bool) = do_some_gens; // specify type
+        let do_ttype = |out: &mut O, colons: Option<()>, filter_mode| {
+            // specify type to help inference:
+            let _: generics::FilterMode = filter_mode;
             let ctx = ctx?;
             let gens = &ctx.top.generics;
             let colons = gens
@@ -409,7 +370,12 @@ where
                 |out| {
                     out.append(colons);
                     out.append(gens.lt_token);
-                    do_some_gens(out, ctx, false);
+                    generics::expand_tgens(
+                        ctx,
+                        out,
+                        WPC::AvoidIntroducingTrailingComma,
+                        filter_mode,
+                    );
                     out.append(gens.gt_token);
                 },
                 Grouping::Ungrouped,
@@ -447,8 +413,8 @@ where
 
         match self {
             SD::tname(_) => out.append_identfrag_toks(&ctx?.top.ident)?,
-            SD::ttype(_) => do_ttype(out, Some(()), &do_tgnames)?,
-            SD::tdeftype(_) => do_ttype(out, None, &do_tgens)?,
+            SD::ttype(_) => do_ttype(out, Some(()), generics::fm_name)?,
+            SD::tdeftype(_) => do_ttype(out, None, generics::fm_complete)?,
             SD::vname(_) => {
                 out.append_identfrag_toks(&ctx?.syn_variant(&kw_span)?.ident)?
             }
@@ -507,18 +473,9 @@ where
                 ra.expand(ctx?, out, &ctx?.field(&kw_span)?.field.attrs)
             })?,
 
-            SD::tgens(np, ..) => out.append_tokens_with(np, |out| {
-                do_tgens_nodefs(out)?;
-                Ok(())
-            })?,
-            SD::tdefgens(np, ..) => out.append_tokens_with(np, |out| {
-                do_tgens(out, ctx?, true);
-                Ok(())
-            })?,
-            SD::tgnames(np, ..) => out.append_tokens_with(np, |out| {
-                do_tgnames(out, ctx?, true);
-                Ok(())
-            })?,
+            SD::tgens(np, ..) => do_tgens(np, out, generics::fm_nodefs)?,
+            SD::tdefgens(np, ..) => do_tgens(np, out, generics::fm_complete)?,
+            SD::tgnames(np, ..) => do_tgens(np, out, generics::fm_name)?,
             SD::twheres(np, ..) => out.append_tokens_with(np, |out| {
                 if let Some(clause) = &ctx?.top.generics.where_clause {
                     out.with_tokens(|out| {

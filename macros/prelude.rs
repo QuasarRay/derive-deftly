@@ -45,12 +45,12 @@ pub use super::utils::{
     typepath_add_missing_argument_colons, DocAttributes, ErrorAccumulator,
     ErrorGenerator, ErrorLoc, Grouping, IdentAny, MacroExport, MakeError,
     ModuleName, ModulePath, TemplateName, TemplatePath,
-    ToTokensPunctComposable, TokenOutputTrimmer,
+    ToTokensPunctComposable, TokenOutputTrimmer, WantPunctComposable,
 };
 
 pub(super) use super::{
     accum, adviseable, beta, check, concat, dbg_allkw, define, engine,
-    framework, general_context, meta, modules, string_template,
+    framework, general_context, generics, meta, modules, string_template,
 };
 
 #[allow(unused_imports)] // used in tests

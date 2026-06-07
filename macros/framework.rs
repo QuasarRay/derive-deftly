@@ -577,14 +577,13 @@ impl TokenAccumulator {
     pub fn append_maybe_punct_composable(
         &mut self,
         val: &(impl ToTokens + ToTokensPunctComposable),
-        composable: bool,
+        composable: WantPunctComposable,
     ) {
-        self.with_tokens(|out| {
-            if composable {
-                val.to_tokens_punct_composable(out);
-            } else {
-                val.to_tokens(out);
-            }
+        use WantPunctComposable as WPC;
+
+        self.with_tokens(|out| match composable {
+            WPC::Composable => val.to_tokens_punct_composable(out),
+            WPC::AvoidIntroducingTrailingComma => val.to_tokens(out),
         });
     }
 }

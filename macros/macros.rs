@@ -26,6 +26,7 @@ pub(crate) mod boolean;
 pub(crate) mod concat;
 pub(crate) mod dbg_allkw;
 pub(crate) mod expand;
+pub(crate) mod generics;
 pub(crate) mod meta;
 pub(crate) mod modules;
 pub(crate) mod options;
