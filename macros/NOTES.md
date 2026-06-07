@@ -47,7 +47,7 @@ See also
    If there are constants, they must start `const`.
    So not suitable with `$tgnames`.
 
- * **`${gens_defs_use GENERICS...}`**, **`${gens_names GENERICS...}`
+ * **`${gens_defs_use GENERICS...}`**, **`${gens_names GENERICS...}`**
    `$gens_defs_use` filters out defaults; `$gens_names` leaves only the names.
    `$tgens` is the same as `${gens_defs_use $tdefgens}`.
    `$tgnames` is the same as `${gens_names $tdefgens}` or
