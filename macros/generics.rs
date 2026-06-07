@@ -52,6 +52,16 @@ pub fn fm_complete(
     out.append(gp);
 }
 
+fn expand_1(
+    pair: syn::punctuated::Pair<&GP, &token::Comma>,
+    out: &mut TokenAccumulator,
+    composable: WantPunctComposable,
+    filter_mode: impl Fn(&syn::GenericParam, &mut TokenAccumulator),
+) {
+        filter_mode(pair.value(), out);
+        out.append_maybe_punct_composable(&pair.punct(), composable);
+}
+
 pub fn expand_tgens(
     ctx: &Context,
     out: &mut TokenAccumulator,
@@ -59,7 +69,6 @@ pub fn expand_tgens(
     filter_mode: FilterMode,
 ) {
     for pair in ctx.top.generics.params.pairs() {
-        filter_mode(pair.value(), out);
-        out.append_maybe_punct_composable(&pair.punct(), composable);
+        expand_1(pair, out, composable, filter_mode);
     }
 }
