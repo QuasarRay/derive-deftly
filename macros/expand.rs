@@ -340,9 +340,11 @@ where
         // because we should include it for expansions like $tgens that the
         // user can append things to, but ideally *not* for expansions like
         // $ttype that the user can't.
-        let do_tgnames = |ctx: &Context,
-                          out: &mut TokenAccumulator,
-                          composable| {
+        fn do_tgnames(
+            ctx: &Context,
+            out: &mut TokenAccumulator,
+            composable: bool,
+        ) {
             for pair in ctx.top.generics.params.pairs() {
                 use syn::GenericParam as GP;
                 match pair.value() {
@@ -352,9 +354,12 @@ where
                 }
                 out.append_maybe_punct_composable(&pair.punct(), composable);
             }
-        };
-        let do_tgens_nodefs = |out: &mut TokenAccumulator| {
-            for pair in ctx?.top.generics.params.pairs() {
+        }
+        fn expand_tgens_nodefs(
+            ctx: &Context,
+            out: &mut TokenAccumulator,
+        ) {
+            for pair in ctx.top.generics.params.pairs() {
                 use syn::GenericParam as GP;
                 let out_attrs = |out: &mut TokenAccumulator, attrs: &[_]| {
                     attrs.iter().for_each(|attr| out.append(attr));
@@ -379,15 +384,22 @@ where
                     pair.punct().to_tokens_punct_composable(out);
                 });
             }
-            Ok::<_, MissingContextError>(())
+        }
+        let do_tgens_nodefs = |out: &mut TokenAccumulator| {
+            Ok::<_, MissingContextError>(
+                expand_tgens_nodefs(ctx?,out)
+            )
         };
-        let do_tgens =
-            |ctx: &Context, out: &mut TokenAccumulator, composable: bool| {
+        fn do_tgens(
+            ctx: &Context,
+            out: &mut TokenAccumulator,
+            composable: bool,
+        ) {
                 out.append_maybe_punct_composable(
                     &ctx.top.generics.params,
                     composable,
                 );
-            };
+        }
 
         // There are three contexts where the top-level type
         // name might occur with generics, and two syntaxes:
