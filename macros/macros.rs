@@ -238,7 +238,8 @@ pub fn derive_deftly_adhoc(
 /// must be in scope at the point where you try to use it
 /// (with `#[derive(Deftly)] #[derive_deftly(MyMacro)]`).
 /// If the template definition is in another module,
-/// you may need to annotate that module with `#[macro_use]`.
+/// you may need to annotate that module with `#[macro_use]`,
+/// or add `use` statements(s).
 /// See the
 /// [documentation for `#[derive(Deftly)]`](derive.Deftly.html#scoping-and-ordering-within-the-same-crate).
 ///
