@@ -2,13 +2,14 @@
 
 use super::framework::*;
 
+use syn::GenericParam as GP;
+
 pub fn expand_tgnames(
     ctx: &Context,
     out: &mut TokenAccumulator,
     composable: WantPunctComposable,
 ) {
     for pair in ctx.top.generics.params.pairs() {
-        use syn::GenericParam as GP;
         match pair.value() {
             GP::Type(t) => out.append(&t.ident),
             GP::Const(c) => out.append(&c.ident),
@@ -23,7 +24,6 @@ pub fn expand_tgens_nodefs(
     out: &mut TokenAccumulator,
 ) {
     for pair in ctx.top.generics.params.pairs() {
-        use syn::GenericParam as GP;
         let out_attrs = |out: &mut TokenAccumulator, attrs: &[_]| {
             attrs.iter().for_each(|attr| out.append(attr));
         };
