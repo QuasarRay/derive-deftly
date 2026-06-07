@@ -413,7 +413,7 @@ where
 
         match self {
             SD::tname(_) => out.append_identfrag_toks(&ctx?.top.ident)?,
-            SD::ttype(_) => do_ttype(out, Some(()), generics::fm_name)?,
+            SD::ttype(_) => do_ttype(out, Some(()), generics::fm_names)?,
             SD::tdeftype(_) => do_ttype(out, None, generics::fm_complete)?,
             SD::vname(_) => {
                 out.append_identfrag_toks(&ctx?.syn_variant(&kw_span)?.ident)?
@@ -475,7 +475,7 @@ where
 
             SD::tgens(np, ..) => do_tgens(np, out, generics::fm_nodefs)?,
             SD::tdefgens(np, ..) => do_tgens(np, out, generics::fm_complete)?,
-            SD::tgnames(np, ..) => do_tgens(np, out, generics::fm_name)?,
+            SD::tgnames(np, ..) => do_tgens(np, out, generics::fm_names)?,
             SD::twheres(np, ..) => out.append_tokens_with(np, |out| {
                 if let Some(clause) = &ctx?.top.generics.where_clause {
                     out.with_tokens(|out| {

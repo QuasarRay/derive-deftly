@@ -7,7 +7,7 @@ use syn::GenericParam as GP;
 pub type FilterMode = fn(&syn::GenericParam, &mut TokenAccumulator);
 
 /// Filter mode emitting names only - `$tgnames`
-pub fn fm_name(gp: &syn::GenericParam, out: &mut TokenAccumulator) {
+pub fn fm_names(gp: &syn::GenericParam, out: &mut TokenAccumulator) {
     match gp {
         GP::Type(t) => out.append(&t.ident),
         GP::Const(c) => out.append(&c.ident),
