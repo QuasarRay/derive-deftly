@@ -337,9 +337,17 @@ where
             sm.expand(ctx?, kw_span, out, meta)
         };
 
-        let do_tgens_names = generics::expand_tgens_names;
-        let do_tgens_nodefs = generics::expand_tgens_nodefs;
-        let do_tgens_complete = generics::expand_tgens_complete;
+        let do_tgens = |np, out: &mut O, filter_mode: generics::FilterMode| {
+            out.append_tokens_with(np, |out| {
+                generics::expand_tgens(
+                    ctx?,
+                    out,
+                    WPC::Composable,
+                    filter_mode,
+                );
+                Ok(())
+            })
+        };
 
         // There are three contexts where the top-level type
         // name might occur with generics, and two syntaxes:
@@ -347,9 +355,9 @@ where
         //   impl'ing for the type    $ttype     Type::<G>
         //   defining a new type      $tdeftype  Type<G: bounds>
         // Handles $ttype and $tdeftype, and, indirectly, $vtype
-        let do_ttype = |out: &mut O, colons: Option<()>, do_some_gens| {
+        let do_ttype = |out: &mut O, colons: Option<()>, filter_mode| {
             // specify type to help inference:
-            let _: &dyn Fn(_, &mut _, WPC) = do_some_gens;
+            let _: generics::FilterMode = filter_mode;
             let ctx = ctx?;
             let gens = &ctx.top.generics;
             let colons = gens
@@ -362,7 +370,12 @@ where
                 |out| {
                     out.append(colons);
                     out.append(gens.lt_token);
-                    do_some_gens(ctx, out, WPC::AvoidIntroducingTrailingComma);
+                    generics::expand_tgens(
+                        ctx,
+                        out,
+                        WPC::AvoidIntroducingTrailingComma,
+                        filter_mode,
+                    );
                     out.append(gens.gt_token);
                 },
                 Grouping::Ungrouped,
@@ -400,8 +413,8 @@ where
 
         match self {
             SD::tname(_) => out.append_identfrag_toks(&ctx?.top.ident)?,
-            SD::ttype(_) => do_ttype(out, Some(()), &do_tgens_names)?,
-            SD::tdeftype(_) => do_ttype(out, None, &do_tgens_complete)?,
+            SD::ttype(_) => do_ttype(out, Some(()), generics::fm_name)?,
+            SD::tdeftype(_) => do_ttype(out, None, generics::fm_complete)?,
             SD::vname(_) => {
                 out.append_identfrag_toks(&ctx?.syn_variant(&kw_span)?.ident)?
             }
@@ -460,18 +473,9 @@ where
                 ra.expand(ctx?, out, &ctx?.field(&kw_span)?.field.attrs)
             })?,
 
-            SD::tgens(np, ..) => out.append_tokens_with(np, |out| {
-                do_tgens_nodefs(ctx?, out, WPC::Composable);
-                Ok(())
-            })?,
-            SD::tdefgens(np, ..) => out.append_tokens_with(np, |out| {
-                do_tgens_complete(ctx?, out, WPC::Composable);
-                Ok(())
-            })?,
-            SD::tgnames(np, ..) => out.append_tokens_with(np, |out| {
-                do_tgens_names(ctx?, out, WPC::Composable);
-                Ok(())
-            })?,
+            SD::tgens(np, ..) => do_tgens(np, out, generics::fm_nodefs)?,
+            SD::tdefgens(np, ..) => do_tgens(np, out, generics::fm_complete)?,
+            SD::tgnames(np, ..) => do_tgens(np, out, generics::fm_name)?,
             SD::twheres(np, ..) => out.append_tokens_with(np, |out| {
                 if let Some(clause) = &ctx?.top.generics.where_clause {
                     out.with_tokens(|out| {

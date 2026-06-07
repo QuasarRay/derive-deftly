@@ -4,6 +4,8 @@ use super::framework::*;
 
 use syn::GenericParam as GP;
 
+pub type FilterMode = fn(&syn::GenericParam, &mut TokenAccumulator);
+
 /// Filter mode emitting names only - `$tgnames`
 pub fn fm_name(
     gp: &syn::GenericParam,
@@ -13,17 +15,6 @@ pub fn fm_name(
             GP::Type(t) => out.append(&t.ident),
             GP::Const(c) => out.append(&c.ident),
             GP::Lifetime(l) => out.append(&l.lifetime),
-    }
-}
-
-pub fn expand_tgens_names(
-    ctx: &Context,
-    out: &mut TokenAccumulator,
-    composable: WantPunctComposable,
-) {
-    for pair in ctx.top.generics.params.pairs() {
-        fm_name(pair.value(), out);
-        out.append_maybe_punct_composable(&pair.punct(), composable);
     }
 }
 
@@ -53,17 +44,6 @@ pub fn fm_nodefs(
         }
 }
 
-pub fn expand_tgens_nodefs(
-    ctx: &Context,
-    out: &mut TokenAccumulator,
-    composable: WantPunctComposable,
-) {
-    for pair in ctx.top.generics.params.pairs() {
-        fm_nodefs(pair.value(), out);
-        out.append_maybe_punct_composable(&pair.punct(), composable);
-    }
-}
-
 /// Filter mode for including the whole generic - `$tdefgens`
 pub fn fm_complete(
     gp: &syn::GenericParam,
@@ -72,13 +52,14 @@ pub fn fm_complete(
     out.append(gp);
 }
 
-pub fn expand_tgens_complete(
+pub fn expand_tgens(
     ctx: &Context,
     out: &mut TokenAccumulator,
     composable: WantPunctComposable,
+    filter_mode: FilterMode,
 ) {
     for pair in ctx.top.generics.params.pairs() {
-        fm_complete(pair.value(), out);
+        filter_mode(pair.value(), out);
         out.append_maybe_punct_composable(&pair.punct(), composable);
     }
 }
