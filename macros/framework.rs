@@ -254,6 +254,14 @@ pub trait SubstParseContext: Sized {
  "missing parameters to expansion keyword (NB: argument must be within {{ }})",
         )))
     }
+
+    /// Convenience method to return `AllowTokens`
+    ///
+    /// (Don't reimplement.)
+    fn allow_tokens(span: &impl Spanned) -> syn::Result<AllowTokens<Self>> {
+        let span = span.span();
+        Ok((Self::not_in_paste(&span)?, (Self::not_in_concat(&span)?)))
+    }
 }
 
 pub trait SpecialParseContext {
@@ -290,17 +298,6 @@ pub type AllowTokens<O: SubstParseContext> = (
     <O as SubstParseContext>::NotInPaste,
     <O as SubstParseContext>::NotInConcat,
 );
-
-/// Extensions/helpers for `SubstParseContext`
-pub trait SubstParseContextExt: SubstParseContext {
-    fn allow_tokens(span: &impl Spanned) -> syn::Result<AllowTokens<Self>>;
-}
-impl<O: SubstParseContext> SubstParseContextExt for O {
-    fn allow_tokens(span: &impl Spanned) -> syn::Result<AllowTokens<Self>> {
-        let span = span.span();
-        Ok((O::not_in_paste(&span)?, (O::not_in_concat(&span)?)))
-    }
-}
 
 //==================== ExpansionOutput ====================
 
