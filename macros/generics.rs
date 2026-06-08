@@ -2,6 +2,8 @@
 
 use super::framework::*;
 
+//---------- filtering modes ----------
+
 use syn::GenericParam as GP;
 use FilterMode as FM;
 
@@ -72,6 +74,8 @@ pub fn expand_tgens(
         expand_1(pair, out, composable, filter_mode);
     }
 }
+
+//---------- $gens_collate etc. ----------
 
 #[derive(Debug)]
 pub struct CollateDetails {
