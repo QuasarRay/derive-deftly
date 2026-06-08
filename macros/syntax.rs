@@ -134,6 +134,7 @@ pub enum SubstDetails<O: SubstParseContext> {
     tdefgens(AllowTokens<O>, O::NotInBool),
     tgnames(AllowTokens<O>, O::NotInBool),
     twheres(AllowTokens<O>, O::NotInBool),
+    GensCollate(generics::Collate<O>),
 
     vpat(SubstVPat, AllowTokens<O>, O::NotInBool),
     vtype(SubstVType, AllowTokens<O>, O::NotInBool),
@@ -1022,6 +1023,12 @@ impl<O: SubstParseContext> Parse for Subst<O> {
         keyword! { tdefgens(allow_tokens()?, not_in_bool()?) }
         keyword! { tgnames(allow_tokens()?, not_in_bool()?) }
         keyword! { twheres(allow_tokens()?, not_in_bool()?) }
+
+        use generics::FilterMode as GFM;
+        let gens_collate = |fm| generics::Collate::parse(input, fm, kw.span());
+        keyword! { "gens_collate": GensCollate(gens_collate(GFM::Complete)?) }
+        keyword! { "gens_nodefs": GensCollate(gens_collate(GFM::NoDefs)?) }
+        keyword! { "gens_names": GensCollate(gens_collate(GFM::Names)?) }
 
         use meta::Scope as MS;
         keyword! { "tmeta": Xmeta(parse_meta(input, MS::T)?) }

@@ -327,6 +327,7 @@ where
         out: &mut O,
         kw_span: Span,
     ) -> syn::Result<()> {
+        use generics::FilterMode as GFM;
         use WantPunctComposable as WPC;
 
         // eprintln!("@@@@@@@@@@@@@@@@@@@@ EXPAND {:?}", self);
@@ -413,8 +414,8 @@ where
 
         match self {
             SD::tname(_) => out.append_identfrag_toks(&ctx?.top.ident)?,
-            SD::ttype(_) => do_ttype(out, Some(()), generics::fm_name)?,
-            SD::tdeftype(_) => do_ttype(out, None, generics::fm_complete)?,
+            SD::ttype(_) => do_ttype(out, Some(()), GFM::Names)?,
+            SD::tdeftype(_) => do_ttype(out, None, GFM::Complete)?,
             SD::vname(_) => {
                 out.append_identfrag_toks(&ctx?.syn_variant(&kw_span)?.ident)?
             }
@@ -473,9 +474,9 @@ where
                 ra.expand(ctx?, out, &ctx?.field(&kw_span)?.field.attrs)
             })?,
 
-            SD::tgens(np, ..) => do_tgens(np, out, generics::fm_nodefs)?,
-            SD::tdefgens(np, ..) => do_tgens(np, out, generics::fm_complete)?,
-            SD::tgnames(np, ..) => do_tgens(np, out, generics::fm_name)?,
+            SD::tgens(np, ..) => do_tgens(np, out, GFM::NoDefs)?,
+            SD::tdefgens(np, ..) => do_tgens(np, out, GFM::Complete)?,
+            SD::tgnames(np, ..) => do_tgens(np, out, GFM::Names)?,
             SD::twheres(np, ..) => out.append_tokens_with(np, |out| {
                 if let Some(clause) = &ctx?.top.generics.where_clause {
                     out.with_tokens(|out| {
@@ -484,6 +485,7 @@ where
                 }
                 Ok(())
             })?,
+            SD::GensCollate(b) => b.expand(gctx, out, kw_span)?,
 
             SD::vpat(v, np, ..) => out.append_tokens_with(np, |out| {
                 // This comment prevents rustfmt making this unlike the others

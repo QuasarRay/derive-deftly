@@ -36,23 +36,6 @@ See also
 
 ## generics manipulation, needed to collate const generics
 
-### primitives
-
- * **`${gens_collate GENERICS GENERICS ...}`**
-   Splits each GENERICS into lifetimes, types, and constants,
-   collates each kind of generic,
-   and outputs the result.
-
-   Each GENERICS is a positional argument which must contain generics.
-   If there are constants, they must start `const`.
-   So not suitable with `$tgnames`.
-
- * **`${gens_nodefs GENERICS...}`**, **`${gens_names GENERICS...}`**
-   `$gens_nodefs` filters out defaults; `$gens_names` leaves only the names.
-   `t$tgens` is the same as `${gens_defs_use $tdefgens}`.
-   `$tgnames` is the same as `${gens_names $tdefgens}` or
-   `${gens_names $tgens}`.
-
 ### convenience aliases
 
  * **`${tdefgens, EXTRA}`**: `${gens_collate $tdefgens EXTRA}`

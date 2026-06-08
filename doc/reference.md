@@ -16,6 +16,7 @@
       * [`$vpat`, `$fpatname` -- pattern matching and value deconstruction](#vpat-fpatname--pattern-matching-and-value-deconstruction)
       * [`$ftype`, `$vtype`, `$ttype`, `$tdeftype` -- types](#ftype-vtype-ttype-tdeftype--types)
       * [`$tgens`, `$tgnames`, `$twheres`, `$tdefgens` -- generics](#tgens-tgnames-twheres-tdefgens--generics)
+      * [`${gens_collate ..}`, `${gens_nodefs ...}`, `${gens_names ..}` -- collate and redact arbitrary generics (**beta**)](#gens_collate--gens_nodefs--gens_names---collate-and-redact-arbitrary-generics-beta)
       * [`${tmeta(...)}` `${vmeta(...)}` `${fmeta(...)}` -- `#[deftly]` attributes](#tmeta-vmeta-fmeta--deftly-attributes)
       * [`${fattrs ...}` `${vattrs ...}` `${tattrs ...}` -- other attributes](#fattrs--vattrs--tattrs---other-attributes)
       * [`$findex` `$vindex` -- field/variant numerical index](#findex-vindex--fieldvariant-numerical-index)
@@ -487,6 +488,67 @@ so for full support of generic types the template must expand both.
  * `$tgnames`: `'a, 'l, T, C,`
  * `$twheres`: `T: 'l, T: TryInto<u8>,`
  * `$tdefgens`: `'a, 'l: 'a, T: Display = usize, const C: usize = 1,`
+
+<div id="x:gens_collate">
+<div id="x:gens_names">
+<div id="x:gens_nodefs">
+
+### `${gens_collate ..}`, `${gens_nodefs ...}`, `${gens_names ..}` -- collate and redact arbitrary generics (**beta**)
+
+</div>
+</div>
+</div>
+
+ * **`${gens_FILTER [GENERICS [GENERICS ..]]}`**
+
+Each of these expansion keywords:
+ - expands each of their input positional arguments, into tokens;
+ - parses each of those as a (possibly empty) series of generic parameters;
+ - possibly redacts each of those parameters,
+   selecting only part of each one;
+ - collates all of the parameters into the proper order:
+   lifetimes, types, then constants;
+
+Collation is needed to add generic parameters to existing generic lists,
+since simply appending or prepending doesn't always work.
+Redaction is needed for proper use of generics in every syntactic context.
+
+The input must use `const` for const generics, or they might be misorderd.
+So `$ttdefens`, not `$tgens`, should be used as input to collations.
+
+ * **`${gens_collate ..]]}`**: Just collates:
+   each generic parameter is reproduced in its entirety.
+   Like `$tdefgens`.
+   Suitable for defining a new derived type.
+
+ * **`${gens_nodefs ..]]}`**:
+   Filters out defaults.
+   Like `$tgens`.
+   Suitable for binding parameters, e.g. when starting an `impl`.
+
+ * **`${gens_names ..]]}`**:
+   Only the names.
+   Like `$tgnames`.
+   Suitable for referring to already-bound parameters.
+
+The expansion always ends in a comma, if it's not empty.
+
+Available only in [**beta**].
+
+#### Examples
+
+ * `${gens_collate {'a: 'b, A: B = (), const C: i32 = 0}}`: `'a: 'b, A: B = (), const C: i32 = 0,`
+ * `${gens_nodefs {'a: 'b, A: B = (), const C: i32 = 0}}`: `'a: 'b, A: B, const C: i32,`
+ * `${gens_names {'a: 'b, A: B = (), const C: i32 = 0}}`: `'a, A, C,`
+ * `${gens_collate {'a, A, const C: i32} {'b, B, const D: i32}}`: `'a, 'b, A, B, const C: i32, const D: i32,`
+ * `${gens_collate $tdefgens {}}` for `SimpleUnit`: `/*empty*/`
+
+##### More complex examples, involving example `Struct`
+
+ * `${gens_nodefs $tdefgens CorrectlyInserted}`: `'a, 'l: 'a, T: Display, CorrectlyInserted, const C: usize,`
+ * `${gens_collate {'pre: 'bound, Pre: Bound = (), const PRE: i32 = 2} $tdefgens {'post: 'bound, Post: Bound = (), const POST: i32 = 3}}`: `'pre: 'bound, 'a, 'l: 'a, 'post: 'bound, Pre: Bound = (), T: Display = usize, Post: Bound = (), const PRE: i32 = 2, const C: usize = 1, const POST: i32 = 3,`
+ * `${gens_nodefs {'pre: 'bound, Pre: Bound = (), const PRE: i32 = 2} $tdefgens {'post: 'bound, Post: Bound = (), const POST: i32 = 3}}`: `'pre: 'bound, 'a, 'l: 'a, 'post: 'bound, Pre: Bound, T: Display, Post: Bound, const PRE: i32, const C: usize, const POST: i32,`
+ * `${gens_names {'pre: 'bound, Pre: Bound = (), const PRE: i32 = 2} $tdefgens {'post: 'bound, Post: Bound = (), const POST: i32 = 3}}`: `'pre, 'a, 'l, 'post, Pre, T, Post, PRE, C, POST,`
 
 <div id="x:fmeta">
 <div id="x:tmeta">
@@ -2163,6 +2225,7 @@ where T: 'l, T: TryInto<u8>
  * **$d…**: [`dbg`](#x:dbg), [`dbg_all_keywords`](#x:dbg_all_keywords), [`defcond`](#x:defcond), [`define`](#x:define)
  * **$e…**: [`error`](#x:error)
  * **$f…**: [`fattrs`](#x:fattrs), [`fdefine`](#x:fdefine), [`fdefvis`](#x:fdefvis), [`findex`](#x:findex), [`fmeta`](#x:fmeta), [`fname`](#x:fname), [`for`](#x:for), [`for_loop_count`](#x:for_loop_count), [`fpatname`](#x:fpatname), [`ftype`](#x:ftype), [`fvis`](#x:fvis)
+ * **$g…**: [`gens_collate`](#x:gens_collate), [`gens_names`](#x:gens_names), [`gens_nodefs`](#x:gens_nodefs)
  * **$i…**: [`if`](#x:if), [`ignore`](#x:ignore)
  * **$k…**: [`kebab_case`](#x:kebab_case)
  * **$l…**: [`loop_exactly_1`](#x:loop_exactly_1), [`loop_index`](#x:loop_index), [`lower_camel_case`](#x:lower_camel_case)

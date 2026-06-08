@@ -436,6 +436,9 @@ dDEB	fvis fdefvis tvis
 v	vis
 dDEB	fmeta vmeta tmeta
 v	xmeta
+# Combined SD variants, NotInBool is nested, not dumped
+E	gens_collate gens_nodefs gens_names
+ve	genscollate
 
 # Doc has both ${for fields ...} and ${for variants ...}, so E is repeated
 veEE	for
