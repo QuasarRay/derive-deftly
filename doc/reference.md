@@ -16,6 +16,7 @@
       * [`$vpat`, `$fpatname` -- pattern matching and value deconstruction](#vpat-fpatname--pattern-matching-and-value-deconstruction)
       * [`$ftype`, `$vtype`, `$ttype`, `$tdeftype` -- types](#ftype-vtype-ttype-tdeftype--types)
       * [`$tgens`, `$tgnames`, `$twheres`, `$tdefgens` -- generics](#tgens-tgnames-twheres-tdefgens--generics)
+      * [`${gens_collate ..}`, `${gens_nodefs ...}`, `${gens_names ..}` -- collate and redact arbitrary generics (**beta**)](#gens_collate--gens_nodefs--gens_names---collate-and-redact-arbitrary-generics-beta)
       * [`${tmeta(...)}` `${vmeta(...)}` `${fmeta(...)}` -- `#[deftly]` attributes](#tmeta-vmeta-fmeta--deftly-attributes)
       * [`${fattrs ...}` `${vattrs ...}` `${tattrs ...}` -- other attributes](#fattrs--vattrs--tattrs---other-attributes)
       * [`$findex` `$vindex` -- field/variant numerical index](#findex-vindex--fieldvariant-numerical-index)
@@ -489,8 +490,8 @@ so for full support of generic types the template must expand both.
  * `$tdefgens`: `'a, 'l: 'a, T: Display = usize, const C: usize = 1,`
 
 <div id="x:gens_collate">
-<div id="x:gens_nodefs">
 <div id="x:gens_names">
+<div id="x:gens_nodefs">
 
 ### `${gens_collate ..}`, `${gens_nodefs ...}`, `${gens_names ..}` -- collate and redact arbitrary generics (**beta**)
 
@@ -2224,6 +2225,7 @@ where T: 'l, T: TryInto<u8>
  * **$d…**: [`dbg`](#x:dbg), [`dbg_all_keywords`](#x:dbg_all_keywords), [`defcond`](#x:defcond), [`define`](#x:define)
  * **$e…**: [`error`](#x:error)
  * **$f…**: [`fattrs`](#x:fattrs), [`fdefine`](#x:fdefine), [`fdefvis`](#x:fdefvis), [`findex`](#x:findex), [`fmeta`](#x:fmeta), [`fname`](#x:fname), [`for`](#x:for), [`for_loop_count`](#x:for_loop_count), [`fpatname`](#x:fpatname), [`ftype`](#x:ftype), [`fvis`](#x:fvis)
+ * **$g…**: [`gens_collate`](#x:gens_collate), [`gens_names`](#x:gens_names), [`gens_nodefs`](#x:gens_nodefs)
  * **$i…**: [`if`](#x:if), [`ignore`](#x:ignore)
  * **$k…**: [`kebab_case`](#x:kebab_case)
  * **$l…**: [`loop_exactly_1`](#x:loop_exactly_1), [`loop_index`](#x:loop_index), [`lower_camel_case`](#x:lower_camel_case)
