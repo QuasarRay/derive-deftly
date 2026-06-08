@@ -273,8 +273,6 @@ pub trait SpecialParseContext {
     /// It should consume any special syntax as appropriate,
     ///
     /// The default implementation is a no-op.
-    /// The only non-default implementation is in `paste.rs`, for `$<...>` -
-    /// see [`paste::AngleBrackets`].
     fn before_element_hook(
         &mut self,
         _input: ParseStream,
