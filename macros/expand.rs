@@ -366,9 +366,7 @@ where
             // specify type to help inference:
             let _: generics::FilterMode = filter_mode;
             let gens = &ctx.top.generics;
-            let colons = gens
-                .lt_token
-                .and_then(|_| colons);
+            let colons = gens.lt_token.and_then(|_| colons);
             out.append_idpath(
                 kw_span,
                 |_| {},
