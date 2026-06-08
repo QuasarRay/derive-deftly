@@ -36,7 +36,6 @@ pub use TokenTree as TT;
 
 pub use super::approx_equal::{tokens_cmpeq, Equality};
 pub use super::define::escape_dollars;
-pub use super::framework::TokenAccumulator;
 pub use super::paste::TokenPastesAsIdent;
 
 pub use super::utils::{
