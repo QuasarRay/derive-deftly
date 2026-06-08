@@ -1657,7 +1657,7 @@ Available only in [**beta**].
 
  * `$( $fname ${if not(loop_final) {, }} )` for `Struct`: `field, field_b`
  * `${concat $( ${when not(v_is_unit)} $vname ${if not(loop_final) {", "}} )}`: `"TupleVariant, NamedVariant"`
- * `$( ${when fmeta(same_attrs)} ${if loop_initial {let }} $fpatname ${if loop_final {;} else {,}} )` for `Unit`: ` `
+ * `$( ${when fmeta(same_attrs)} ${if loop_initial {let }} $fpatname ${if loop_final {;} else {,}} )` for `Unit`: `/*empty*/`
  * `$( ${when fmeta(same_attrs)} ${if loop_initial {let }} $fpatname ${if loop_final {;} else {,}} )` for `Enum`: `let f_field, f_field_b, f_field_e;`
 
 <div id="c:v_explicit_discriminant">
