@@ -898,7 +898,7 @@ impl<O: SubstParseContext> Subst<O> {
             Ok(exp)
         } else if la.peek(Token![<]) {
             let angle: Token![<] = input.parse()?;
-            let state = paste::AngleBrackets::default();
+            let state = AngleBrackets::default();
             let mut special = Some(state);
             let template = Template::parse_special(input, &mut special)?;
             let state = special.unwrap();

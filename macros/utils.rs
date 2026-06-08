@@ -654,6 +654,45 @@ impl<'t, 'o> TokenOutputTrimmer<'t, 'o> {
     }
 }
 
+//---------- parsing things inside <...> ----------
+
+impl SpecialParseContext for Option<AngleBrackets> {
+    fn before_element_hook(
+        &mut self,
+        input: ParseStream,
+    ) -> syn::Result<Option<SpecialInstructions>> {
+        if input.peek(Token![>]) {
+            if let Some(state) = self {
+                let _: Token![>] = input.parse()?;
+                state.found_close = true;
+                return Ok(Some(SpecialInstructions::EndOfTemplate));
+            } else {
+                return Err(
+                    input.error("stray > within curly-bracketed ${paste }")
+                );
+            }
+        }
+        return Ok(None);
+    }
+}
+
+/// Parsing state for `$<...>`
+#[derive(Default)]
+pub struct AngleBrackets {
+    found_close: bool,
+}
+
+impl AngleBrackets {
+    pub fn finish(self, start_span: Span) -> syn::Result<()> {
+        if !self.found_close {
+            return Err(
+                start_span.error("unmatched paste $< start - missing >")
+            );
+        }
+        Ok(())
+    }
+}
+
 //---------- TemplateName ----------
 
 pub type TemplateName = SyntheticMacroName<SyntheticMacroTemplate>;
