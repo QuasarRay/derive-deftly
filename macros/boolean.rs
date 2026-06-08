@@ -186,6 +186,7 @@ impl Subst<BooleanContext> {
             | SD::twheres(_, not_in_bool)
             | SD::vpat(_, _, not_in_bool)
             | SD::fpatname(not_in_bool)
+            | SD::Impl(_, _, not_in_bool, _)
             | SD::tdefvariants(_, _, not_in_bool)
             | SD::fdefine(_, _, not_in_bool)
             | SD::vdefbody(_, _, _, not_in_bool)

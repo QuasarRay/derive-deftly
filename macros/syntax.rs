@@ -140,6 +140,7 @@ pub enum SubstDetails<O: SubstParseContext> {
     vtype(SubstVType, AllowTokens<O>, O::NotInBool),
     v_explicit_discriminant(AllowTokens<O>, beta::Enabled),
 
+    Impl(ImplShorthand, AllowTokens<O>, O::NotInBool, beta::Enabled),
     tdefvariants(Template<TokenAccumulator>, AllowTokens<O>, O::NotInBool),
     fdefine(Option<Argument>, AllowTokens<O>, O::NotInBool),
     vdefbody(
@@ -1048,6 +1049,12 @@ impl<O: SubstParseContext> Parse for Subst<O> {
             allow_tokens()?, not_in_bool()?,
         ) }
 
+        keyword! { "impl": Impl(
+            input.parse()?,
+            allow_tokens()?,
+            not_in_bool()?,
+            beta()?,
+        ) }
         keyword! { tdefvariants(
             parse_def_body(
                 input,

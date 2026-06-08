@@ -453,6 +453,7 @@ where
             SD::tdefgens(np, ..) => do_tgens(np, out, GFM::Complete)?,
             SD::tgnames(np, ..) => do_tgens(np, out, GFM::Names)?,
             SD::twheres(np, ..) => out.append_tokens_with(np, |out| {
+                // note similar code in generics for `$impl`
                 if let Some(clause) = &ctx?.top.generics.where_clause {
                     out.with_tokens(|out| {
                         clause.predicates.to_tokens_punct_composable(out);
@@ -482,6 +483,10 @@ where
             }
             SD::for_loop_count(flc, ..) => do_index(out, flc.count(ctx?)?)?,
 
+            SD::Impl(content, at, ..) => out.append_tokens_with(at, |out| {
+                content.expand(ctx?, out, kw_span);
+                Ok(())
+            })?,
             SD::tdefvariants(content, np, ..) => {
                 let delim = if ctx?.is_enum() {
                     Some(Delimiter::Brace)

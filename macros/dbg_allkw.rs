@@ -165,6 +165,11 @@ fn dump_whole(mut w: &mut Out, ctx: &Context) -> R {
     expand! { c, $tdeftype }
     expand! { c, $tdefgens }
     expand! { c, $tdefkwd }
+    if false {
+        beta_check_inner! { SD::Impl(.., beta) => beta }
+        expand! { c, $impl }
+        expand! { c, ${impl TRAIT} }
+    }
     expand! { c, ${tdefvariants VARIANTS..} }
 
     bool! { c, is_struct }

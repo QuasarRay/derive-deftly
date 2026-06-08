@@ -431,6 +431,9 @@ ve	changecase
 ve	stringtemplate
 ve	doctemplate
 
+# Dumped twice
+veddE	impl
+
 # These are combined SD variants
 dDEB	fvis fdefvis tvis
 v	vis

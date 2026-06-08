@@ -687,7 +687,7 @@ impl SpecialParseContext for AngleBrackets {
     }
 }
 
-/// Parsing state for `$<...>`
+/// Parsing state for `$<...>`, `${impl < ... > ...}`
 #[derive(Default)]
 pub struct AngleBrackets {
     /// Not including the outer `<`
