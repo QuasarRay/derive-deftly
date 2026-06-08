@@ -349,45 +349,8 @@ where
                 Ok(())
             })
         };
-
-        // There are three contexts where the top-level type
-        // name might occur with generics, and two syntaxes:
-        //   referring to the type    $ttype     Type::<G>
-        //   impl'ing for the type    $ttype     Type::<G>
-        //   defining a new type      $tdeftype  Type<G: bounds>
-        // Handles $ttype and $tdeftype, and, indirectly, $vtype
-        fn expand_ttype<'c, O: ExpansionOutput>(
-            ctx: &Context<'c>,
-            out: &mut O,
-            kw_span: Span,
-            colons: Option<Token![::]>,
-            filter_mode: generics::FilterMode,
-        ) {
-            // specify type to help inference:
-            let _: generics::FilterMode = filter_mode;
-            let gens = &ctx.top.generics;
-            let colons = gens.lt_token.and_then(|_| colons);
-            out.append_idpath(
-                kw_span,
-                |_| {},
-                &ctx.top.ident,
-                |out| {
-                    out.append(colons);
-                    out.append(gens.lt_token);
-                    generics::expand_tgens(
-                        ctx,
-                        out,
-                        WPC::AvoidIntroducingTrailingComma,
-                        filter_mode,
-                    );
-                    out.append(gens.gt_token);
-                },
-                Grouping::Ungrouped,
-            )
-            .unwrap_or_else(|e| e.unreachable());
-        }
         let do_ttype = |out, colons: Option<_>, filter_mode| {
-            expand_ttype(
+            generics::expand_ttype(
                 ctx?,
                 out,
                 kw_span,
