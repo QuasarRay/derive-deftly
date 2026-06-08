@@ -80,7 +80,7 @@ pub fn expand_tgens(
 #[derive(Debug)]
 pub struct CollateDetails {
     filter_mode: FilterMode,
-    pub inputs: Vec<Template<TokenAccumulator>>,
+    pub inputs: Template<TokenAccumulator>,
 }
 
 /// `SubstDetails` payload for `gens_collate` etc.
@@ -102,11 +102,7 @@ impl<O: SubstParseContext> Collate<O> {
         let allow_tokens = O::allow_tokens(&kw_span)?;
         let not_in_bool = O::not_in_bool(&kw_span)?;
 
-        let mut inputs = vec![];
-        while !input.is_empty() {
-            let Argument(ie) = input.parse()?;
-            inputs.push(ie);
-        }
+        let inputs = input.parse()?;
 
         let beta = beta::Enabled::new_for_syntax(kw_span)?;
 
@@ -144,36 +140,50 @@ impl CollateDetails {
         out: &mut TokenAccumulator,
         kw_span: Span,
     ) {
-        let mut elements = vec![];
+        let mut elements: Vec<(GP, Option<token::Comma>)> = vec![];
 
-        for ie in &self.inputs {
-            let mut ts = TokenAccumulator::new();
-            ie.expand(gctx, &mut ts);
-            let ts = match ts.tokens() {
-                Ok(y) => y,
-                Err(e) => {
-                    out.record_error(e);
-                    continue;
-                }
-            };
-            let gps = Punctuated::parse_terminated.parse2(ts.clone());
-            let gps = match gps {
-                Ok(y) => y,
-                Err(e) => {
-                    out.record_error(e);
-                    out.record_error(kw_span.error(format_args!(
+        let mut ts = TokenAccumulator::new();
+        self.inputs.expand(gctx, &mut ts);
+        let ts = match ts.tokens() {
+            Ok(y) => y,
+            Err(e) => {
+                out.record_error(e);
+                return;
+            }
+        };
+
+        struct ParamOrEmpty(Option<syn::GenericParam>);
+        impl Parse for ParamOrEmpty {
+            fn parse(input: ParseStream) -> syn::Result<Self> {
+                Ok(ParamOrEmpty(if input.peek(Token![,]) {
+                    None
+                } else {
+                    Some(input.parse()?)
+                }))
+            }
+        }
+
+        let gps = Punctuated::parse_terminated.parse2(ts.clone());
+        let gps = match gps {
+            Ok(y) => y,
+            Err(e) => {
+                out.record_error(e);
+                out.record_error(kw_span.error(format_args!(
  "failed to parse expanded argument `{}` as generic parameters (for this generics manipulation)",
                         ts,
                     )));
-                    // That's enough of this, let's not make more errors.
-                    return;
-                }
-            };
+                // That's enough of this, let's not make more errors.
+                return;
+            }
+        };
 
-            elements.extend(gps.into_pairs());
-        }
+        elements.extend(gps.into_pairs().filter_map(|pair| {
+            let (ParamOrEmpty(value), punct) = pair.into_tuple();
+            let value = value?;
+            Some((value, punct))
+        }));
 
-        elements.sort_by_key(|pair| match pair.value() {
+        elements.sort_by_key(|(value, _)| match value {
             // syn doesn't promise the order is correct, so we have to
             // open-code it like this, which is rather unsatisfactory
             GP::Lifetime { .. } => 0,
@@ -181,16 +191,11 @@ impl CollateDetails {
             GP::Const { .. } => 2,
         });
 
-        for pair in &elements {
+        for (value, punct) in &elements {
             use syn::punctuated::Pair;
 
-            let pair = match pair {
-                Pair::Punctuated(t, p) => Pair::Punctuated(t, p),
-                Pair::End(t) => Pair::End(t),
-            };
-
             expand_1(
-                pair,
+                Pair::new(value, punct.as_ref()),
                 out,
                 WantPunctComposable::Composable,
                 self.filter_mode,
