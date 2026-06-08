@@ -2261,7 +2261,7 @@ impl<O: SubstParseContext> FindRecogMetas for SubstDetails<O> {
             loop_exactly_1(v, ..) => v.find_recog_metas(acc),
             define(v, _) => v.find_recog_metas(acc),
             defcond(v, _) => v.find_recog_metas(acc),
-            GensCollate(v) => v.details.inputs.find_recog_metas(acc),
+            GensCollate(v) => v.inputs.inputs.find_recog_metas(acc),
 
             not(v, _) => v.find_recog_metas(acc),
             any(v, _) | all(v, _) => v.find_recog_metas(acc),
