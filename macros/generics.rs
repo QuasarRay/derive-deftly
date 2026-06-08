@@ -202,3 +202,9 @@ impl CollateInputs {
         }
     }
 }
+
+impl meta::FindRecogMetas for CollateInputs {
+    fn find_recog_metas(&self, acc: &mut meta::Recognised) {
+        self.inputs.find_recog_metas(acc);
+    }
+}
