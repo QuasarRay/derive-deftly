@@ -514,9 +514,6 @@ Collation is needed to add generic parameters to existing generic lists,
 since simply appending or prepending doesn't always work.
 Redaction is needed for proper use of generics in every syntactic context.
 
-The input must use `const` for const generics, or they might be misorderd.
-So `$ttdefgens`, not `$tgens`, should be used as input to collations.
-
  * **`${gens_collate ..}`**: Just collates:
    each generic parameter is reproduced in its entirety.
    Like `$tdefgens`.
@@ -542,7 +539,7 @@ Available only in [**beta**].
  * `${gens_nodefs 'a: 'b, A: B = (), const C: i32 = 0}`: `'a: 'b, A: B, const C: i32,`
  * `${gens_names 'a: 'b, A: B = (), const C: i32 = 0}`: `'a, A, C,`
  * `${gens_collate 'a, A, const C: i32, 'b, B, const D: i32}`: `'a, 'b, A, B, const C: i32, const D: i32,`
- * `${gens_collate $tdefgens}` for `SimpleUnit`: `/*empty*/`
+ * `${gens_collate $tgens}` for `SimpleUnit`: `/*empty*/`
 
 ##### More complex examples, involving example `Struct`
 
