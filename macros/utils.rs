@@ -836,7 +836,8 @@ pub fn engine_macro_name() -> Result<TokenStream, syn::Error> {
 /// ```ignore
 /// keyword_general!{
 ///     KW_VAR FROM_ENUM ENUM;
-///     KEYWORD [ {BINDINGS} ] [ CONSTRUCTOR-ARGS ] }
+///     KEYWORD [ {BINDINGS} ] [ CONSTRUCTOR-ARGS ]
+/// }
 /// ```
 /// Expands to:
 /// ```ignore
