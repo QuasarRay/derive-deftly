@@ -78,15 +78,15 @@ pub fn expand_tgens(
 //---------- $gens_collate etc. ----------
 
 #[derive(Debug)]
-pub struct CollateDetails {
-    filter_mode: FilterMode,
+pub struct CollateInputs {
     pub inputs: Template<TokenAccumulator>,
 }
 
 /// `SubstDetails` payload for `gens_collate` etc.
 #[derive(Debug)]
 pub struct Collate<O: SubstParseContext> {
-    pub details: CollateDetails,
+    pub inputs: CollateInputs,
+    pub filter_mode: FilterMode,
     pub not_in_bool: O::NotInBool,
     allow_tokens: AllowTokens<O>,
     #[allow(dead_code)]
@@ -106,12 +106,10 @@ impl<O: SubstParseContext> Collate<O> {
 
         let beta = beta::Enabled::new_for_syntax(kw_span)?;
 
-        let details = CollateDetails {
-            filter_mode,
-            inputs,
-        };
+        let inputs = CollateInputs { inputs };
         Ok(Collate {
-            details,
+            inputs,
+            filter_mode,
             not_in_bool,
             allow_tokens,
             beta,
@@ -127,16 +125,17 @@ impl<O: ExpansionOutput> Collate<O> {
         kw_span: Span,
     ) -> syn::Result<()> {
         out.append_tokens_with(&self.allow_tokens, |out| {
-            self.details.expand(gctx, out, kw_span);
+            self.inputs.expand(gctx, self.filter_mode, out, kw_span);
             Ok(())
         })
     }
 }
 
-impl CollateDetails {
+impl CollateInputs {
     fn expand<'c>(
         &self,
         gctx: GeneralContext<'c>,
+        filter_mode: FilterMode,
         out: &mut TokenAccumulator,
         kw_span: Span,
     ) {
@@ -198,7 +197,7 @@ impl CollateDetails {
                 Pair::new(value, punct.as_ref()),
                 out,
                 WantPunctComposable::Composable,
-                self.filter_mode,
+                filter_mode,
             );
         }
     }
