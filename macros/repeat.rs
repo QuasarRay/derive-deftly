@@ -140,6 +140,14 @@ impl<O: SubstParseContext> AnalyseRepeat for Subst<O> {
             $v.analyse_repeat(visitor)?;
             None
         } } }
+        // In theory maybe this could be done impl for IntoIterator, but in
+        // practice that is very fiddly due to all the &'s, and coherence.
+        macro_rules! recurse_iter { { $it:expr } => { {
+            for elem in $it {
+                elem.analyse_repeat(visitor)?;
+            }
+            None
+        } } }
 
         let over = match &self.sd {
             SD::tname(..) => None,
@@ -196,20 +204,10 @@ impl<O: SubstParseContext> AnalyseRepeat for Subst<O> {
             SD::defcond(..) => None,
             SD::UserDefined(..) => None,
             SD::is_empty(_, content) => recurse!(content),
-            SD::approx_equal(_, ab) => {
-                for x in ab {
-                    x.analyse_repeat(visitor)?;
-                }
-                None
-            }
+            SD::approx_equal(_, ab) => recurse_iter!(ab),
             SD::not(cond, _) => recurse!(cond),
             SD::If(conds, ..) | SD::select1(conds, ..) => recurse!(conds),
-            SD::any(conds, _) | SD::all(conds, _) => {
-                for c in conds.iter() {
-                    c.analyse_repeat(visitor)?;
-                }
-                None
-            }
+            SD::any(conds, _) | SD::all(conds, _) => recurse_iter!(conds),
             // Have a RepeatOver, but don't imply anything about its context.
             SD::For(..) | SD::for_loop_count(..) => None,
             SD::False(..) | SD::True(..) => None, // condition: ignore.
