@@ -356,14 +356,19 @@ where
         //   impl'ing for the type    $ttype     Type::<G>
         //   defining a new type      $tdeftype  Type<G: bounds>
         // Handles $ttype and $tdeftype, and, indirectly, $vtype
-        let do_ttype = |out: &mut O, colons: Option<()>, filter_mode| {
+        fn expand_ttype<'c, O: ExpansionOutput>(
+            ctx: &Context<'c>,
+            out: &mut O,
+            kw_span: Span,
+            colons: Option<Token![::]>,
+            filter_mode: generics::FilterMode,
+        ) {
             // specify type to help inference:
             let _: generics::FilterMode = filter_mode;
-            let ctx = ctx?;
             let gens = &ctx.top.generics;
             let colons = gens
                 .lt_token
-                .and_then(|_| colons.map(|()| Token![::](kw_span)));
+                .and_then(|_| colons);
             out.append_idpath(
                 kw_span,
                 |_| {},
@@ -382,6 +387,15 @@ where
                 Grouping::Ungrouped,
             )
             .unwrap_or_else(|e| e.unreachable());
+        }
+        let do_ttype = |out, colons: Option<_>, filter_mode| {
+            expand_ttype(
+                ctx?,
+                out,
+                kw_span,
+                colons.map(|()| Token![::](kw_span)),
+                filter_mode,
+            );
             Ok::<_, MissingContextError>(())
         };
 
