@@ -514,7 +514,7 @@ since simply appending or prepending doesn't always work.
 Redaction is needed for proper use of generics in every syntactic context.
 
 The input must use `const` for const generics, or they might be misorderd.
-So `$ttdefens`, not `$tgens`, should be used as input to collations.
+So `$ttdefgens`, not `$tgens`, should be used as input to collations.
 
  * **`${gens_collate ..]]}`**: Just collates:
    each generic parameter is reproduced in its entirety.
