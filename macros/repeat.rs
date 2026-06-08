@@ -175,7 +175,7 @@ impl<O: SubstParseContext> AnalyseRepeat for Subst<O> {
             SD::tgens(..) => None,
             SD::tdefgens(..) => None,
             SD::tgnames(..) => None,
-            SD::GensCollate(b) => recurse!(&b.inputs.inputs),
+            SD::GensCollate(b) => recurse!(&b.inputs),
             SD::twheres(..) => None,
             SD::vpat(..) => Some(RO::Variants),
             SD::vtype(..) => Some(RO::Variants),
