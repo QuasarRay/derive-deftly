@@ -1,6 +1,6 @@
 //! Utilities for proc macro implementation
 
-use super::prelude::*;
+use super::framework::*;
 use proc_macro_crate::{crate_name, FoundCrate};
 
 //---------- macros for defining impls ----------

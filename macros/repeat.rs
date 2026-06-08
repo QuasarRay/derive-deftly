@@ -131,6 +131,14 @@ impl<O: SubstParseContext> AnalyseRepeat for TemplateElement<O> {
     }
 }
 
+// In theory maybe this could be done impl for IntoIterator, but in
+// practice that is very fiddly due to all the &'s, and coherence.
+macro_rules! analyse_repeat_iter { { $visitor:expr, $it:expr } => { {
+    for elem in $it {
+        elem.analyse_repeat($visitor)?;
+    }
+} } }
+
 impl<O: SubstParseContext> AnalyseRepeat for Subst<O> {
     fn analyse_repeat(
         &self,
@@ -140,12 +148,8 @@ impl<O: SubstParseContext> AnalyseRepeat for Subst<O> {
             $v.analyse_repeat(visitor)?;
             None
         } } }
-        // In theory maybe this could be done impl for IntoIterator, but in
-        // practice that is very fiddly due to all the &'s, and coherence.
         macro_rules! recurse_iter { { $it:expr } => { {
-            for elem in $it {
-                elem.analyse_repeat(visitor)?;
-            }
+            analyse_repeat_iter!(visitor, $it);
             None
         } } }
 
@@ -171,7 +175,7 @@ impl<O: SubstParseContext> AnalyseRepeat for Subst<O> {
             SD::tgens(..) => None,
             SD::tdefgens(..) => None,
             SD::tgnames(..) => None,
-            SD::GensCollate(b) => recurse!(&b.inputs.inputs),
+            SD::GensCollate(b) => recurse!(&b.inputs),
             SD::twheres(..) => None,
             SD::vpat(..) => Some(RO::Variants),
             SD::vtype(..) => Some(RO::Variants),

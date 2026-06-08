@@ -36,7 +36,6 @@ pub use TokenTree as TT;
 
 pub use super::approx_equal::{tokens_cmpeq, Equality};
 pub use super::define::escape_dollars;
-pub use super::framework::TokenAccumulator;
 pub use super::paste::TokenPastesAsIdent;
 
 pub use super::utils::{
@@ -50,7 +49,8 @@ pub use super::utils::{
 
 pub(super) use super::{
     accum, adviseable, beta, check, concat, dbg_allkw, define, engine,
-    framework, general_context, generics, meta, modules, string_template,
+    framework, general_context, generics, meta, modules, repeat,
+    string_template,
 };
 
 #[allow(unused_imports)] // used in tests
@@ -59,6 +59,7 @@ pub use super::utils::{Concatenated, Discard};
 pub use meta::CheckUsed as mCU;
 
 pub use framework::SynErrorExt as _;
+pub use repeat::AnalyseRepeat as _;
 pub use string_template::LexicalContext as _;
 
 // this is used by the dprintln! macro, which can't just use crate
