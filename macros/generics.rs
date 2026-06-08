@@ -106,9 +106,7 @@ impl<O: SubstParseContext> Collate<O> {
 
         let beta = beta::Enabled::new_for_syntax(kw_span)?;
 
-        let inputs = CollateInputs {
-            inputs,
-        };
+        let inputs = CollateInputs { inputs };
         Ok(Collate {
             inputs,
             filter_mode,
