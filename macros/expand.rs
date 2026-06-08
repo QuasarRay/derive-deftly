@@ -349,39 +349,14 @@ where
                 Ok(())
             })
         };
-
-        // There are three contexts where the top-level type
-        // name might occur with generics, and two syntaxes:
-        //   referring to the type    $ttype     Type::<G>
-        //   impl'ing for the type    $ttype     Type::<G>
-        //   defining a new type      $tdeftype  Type<G: bounds>
-        // Handles $ttype and $tdeftype, and, indirectly, $vtype
-        let do_ttype = |out: &mut O, colons: Option<()>, filter_mode| {
-            // specify type to help inference:
-            let _: generics::FilterMode = filter_mode;
-            let ctx = ctx?;
-            let gens = &ctx.top.generics;
-            let colons = gens
-                .lt_token
-                .and_then(|_| colons.map(|()| Token![::](kw_span)));
-            out.append_idpath(
+        let do_ttype = |out, colons: Option<_>, filter_mode| {
+            generics::expand_ttype(
+                ctx?,
+                out,
                 kw_span,
-                |_| {},
-                &ctx.top.ident,
-                |out| {
-                    out.append(colons);
-                    out.append(gens.lt_token);
-                    generics::expand_tgens(
-                        ctx,
-                        out,
-                        WPC::AvoidIntroducingTrailingComma,
-                        filter_mode,
-                    );
-                    out.append(gens.gt_token);
-                },
-                Grouping::Ungrouped,
-            )
-            .unwrap_or_else(|e| e.unreachable());
+                colons.map(|()| Token![::](kw_span)),
+                filter_mode,
+            );
             Ok::<_, MissingContextError>(())
         };
 
