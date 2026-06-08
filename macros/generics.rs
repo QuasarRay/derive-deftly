@@ -162,7 +162,8 @@ impl CollateDetails {
                 Err(e) => {
                     out.record_error(e);
                     out.record_error(kw_span.error(format_args!(
- "failed to parse expanded argument `{ts}` as generic parameters (for this generics manipulation)"
+ "failed to parse expanded argument `{}` as generic parameters (for this generics manipulation)",
+                        ts,
                     )));
                     // That's enough of this, let's not make more errors.
                     return;
