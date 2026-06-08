@@ -499,11 +499,12 @@ so for full support of generic types the template must expand both.
 </div>
 </div>
 
- * **`${gens_FILTER [GENERICS [GENERICS ..]]}`**
+ * **`${gens_FILTER GENERICS...]}`**
 
 Each of these expansion keywords:
- - expands each of their input positional arguments, into tokens;
- - parses each of those as a (possibly empty) series of generic parameters;
+ - expands the content (into tokens);
+ - parses the result as a series of generic parameters
+   (tolerating empty items, ie consecutive commas);
  - possibly redacts each of those parameters,
    selecting only part of each one;
  - collates all of the parameters into the proper order:
@@ -516,17 +517,17 @@ Redaction is needed for proper use of generics in every syntactic context.
 The input must use `const` for const generics, or they might be misorderd.
 So `$ttdefgens`, not `$tgens`, should be used as input to collations.
 
- * **`${gens_collate ..]]}`**: Just collates:
+ * **`${gens_collate ..}`**: Just collates:
    each generic parameter is reproduced in its entirety.
    Like `$tdefgens`.
    Suitable for defining a new derived type.
 
- * **`${gens_nodefs ..]]}`**:
+ * **`${gens_nodefs ..}`**:
    Filters out defaults.
    Like `$tgens`.
    Suitable for binding parameters, e.g. when starting an `impl`.
 
- * **`${gens_names ..]]}`**:
+ * **`${gens_names ..}`**:
    Only the names.
    Like `$tgnames`.
    Suitable for referring to already-bound parameters.
@@ -537,18 +538,18 @@ Available only in [**beta**].
 
 #### Examples
 
- * `${gens_collate {'a: 'b, A: B = (), const C: i32 = 0}}`: `'a: 'b, A: B = (), const C: i32 = 0,`
- * `${gens_nodefs {'a: 'b, A: B = (), const C: i32 = 0}}`: `'a: 'b, A: B, const C: i32,`
- * `${gens_names {'a: 'b, A: B = (), const C: i32 = 0}}`: `'a, A, C,`
- * `${gens_collate {'a, A, const C: i32} {'b, B, const D: i32}}`: `'a, 'b, A, B, const C: i32, const D: i32,`
- * `${gens_collate $tdefgens {}}` for `SimpleUnit`: `/*empty*/`
+ * `${gens_collate 'a: 'b, A: B = (), const C: i32 = 0}`: `'a: 'b, A: B = (), const C: i32 = 0,`
+ * `${gens_nodefs 'a: 'b, A: B = (), const C: i32 = 0}`: `'a: 'b, A: B, const C: i32,`
+ * `${gens_names 'a: 'b, A: B = (), const C: i32 = 0}`: `'a, A, C,`
+ * `${gens_collate 'a, A, const C: i32, 'b, B, const D: i32}`: `'a, 'b, A, B, const C: i32, const D: i32,`
+ * `${gens_collate $tdefgens}` for `SimpleUnit`: `/*empty*/`
 
 ##### More complex examples, involving example `Struct`
 
- * `${gens_nodefs $tdefgens CorrectlyInserted}`: `'a, 'l: 'a, T: Display, CorrectlyInserted, const C: usize,`
- * `${gens_collate {'pre: 'bound, Pre: Bound = (), const PRE: i32 = 2} $tdefgens {'post: 'bound, Post: Bound = (), const POST: i32 = 3}}`: `'pre: 'bound, 'a, 'l: 'a, 'post: 'bound, Pre: Bound = (), T: Display = usize, Post: Bound = (), const PRE: i32 = 2, const C: usize = 1, const POST: i32 = 3,`
- * `${gens_nodefs {'pre: 'bound, Pre: Bound = (), const PRE: i32 = 2} $tdefgens {'post: 'bound, Post: Bound = (), const POST: i32 = 3}}`: `'pre: 'bound, 'a, 'l: 'a, 'post: 'bound, Pre: Bound, T: Display, Post: Bound, const PRE: i32, const C: usize, const POST: i32,`
- * `${gens_names {'pre: 'bound, Pre: Bound = (), const PRE: i32 = 2} $tdefgens {'post: 'bound, Post: Bound = (), const POST: i32 = 3}}`: `'pre, 'a, 'l, 'post, Pre, T, Post, PRE, C, POST,`
+ * `${gens_nodefs $tdefgens, CorrectlyInserted}`: `'a, 'l: 'a, T: Display, CorrectlyInserted, const C: usize,`
+ * `${gens_collate 'pre: 'bound, Pre: Bound = (), const PRE: i32 = 2, $tdefgens 'post: 'bound, Post: Bound = (), const POST: i32 = 3}`: `'pre: 'bound, 'a, 'l: 'a, 'post: 'bound, Pre: Bound = (), T: Display = usize, Post: Bound = (), const PRE: i32 = 2, const C: usize = 1, const POST: i32 = 3,`
+ * `${gens_nodefs 'pre: 'bound, Pre: Bound = (), const PRE: i32 = 2, $tdefgens 'post: 'bound, Post: Bound = (), const POST: i32 = 3}`: `'pre: 'bound, 'a, 'l: 'a, 'post: 'bound, Pre: Bound, T: Display, Post: Bound, const PRE: i32, const C: usize, const POST: i32,`
+ * `${gens_names 'pre: 'bound, Pre: Bound = (), const PRE: i32 = 2, $tdefgens 'post: 'bound, Post: Bound = (), const POST: i32 = 3}`: `'pre, 'a, 'l, 'post, Pre, T, Post, PRE, C, POST,`
 
 <div id="x:fmeta">
 <div id="x:tmeta">
