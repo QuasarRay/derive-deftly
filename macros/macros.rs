@@ -20,6 +20,8 @@ pub(crate) mod framework;
 pub(crate) mod general_context;
 
 // Implementation - specific areas
+#[macro_use]
+pub(crate) mod repeat;
 pub(crate) mod accum;
 pub(crate) mod approx_equal;
 pub(crate) mod boolean;
@@ -31,7 +33,6 @@ pub(crate) mod meta;
 pub(crate) mod modules;
 pub(crate) mod options;
 pub(crate) mod paste;
-pub(crate) mod repeat;
 pub(crate) mod string_template;
 pub(crate) mod syntax;
 
