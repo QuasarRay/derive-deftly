@@ -25,35 +25,37 @@ fn expand_1(
 
     match filter_mode {
         FM::Names => {
-    match gp {
-        GP::Type(t) => out.append(&t.ident),
-        GP::Const(c) => out.append(&c.ident),
-        GP::Lifetime(l) => out.append(&l.lifetime),
-    }
+            match gp {
+                GP::Type(t) => out.append(&t.ident),
+                GP::Const(c) => out.append(&c.ident),
+                GP::Lifetime(l) => out.append(&l.lifetime),
+            }
+            //
         }
         FM::NoDefs => {
-    let out_attrs = |out: &mut TokenAccumulator, attrs: &[_]| {
-        attrs.iter().for_each(|attr| out.append(attr));
-    };
-    match gp {
-        GP::Type(t) => {
-            out_attrs(out, &t.attrs);
-            out.append(&t.ident);
-            out.append(&t.colon_token);
-            out.append(&t.bounds);
-        }
-        GP::Const(c) => {
-            out_attrs(out, &c.attrs);
-            out.append(&c.const_token);
-            out.append(&c.ident);
-            out.append(&c.colon_token);
-            out.append(&c.ty);
-        }
-        GP::Lifetime(l) => out.append(&l),
-    }
+            let out_attrs = |out: &mut TokenAccumulator, attrs: &[_]| {
+                attrs.iter().for_each(|attr| out.append(attr));
+            };
+            match gp {
+                GP::Type(t) => {
+                    out_attrs(out, &t.attrs);
+                    out.append(&t.ident);
+                    out.append(&t.colon_token);
+                    out.append(&t.bounds);
+                }
+                GP::Const(c) => {
+                    out_attrs(out, &c.attrs);
+                    out.append(&c.const_token);
+                    out.append(&c.ident);
+                    out.append(&c.colon_token);
+                    out.append(&c.ty);
+                }
+                GP::Lifetime(l) => out.append(&l),
+            }
         }
         FM::Complete => {
-    out.append(gp);
+            out.append(gp);
+            //
         }
     }
 
