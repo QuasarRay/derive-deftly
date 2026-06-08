@@ -142,15 +142,15 @@ impl CollateDetails {
     ) {
         let mut elements: Vec<(GP, Option<token::Comma>)> = vec![];
 
-            let mut ts = TokenAccumulator::new();
-            self.inputs.expand(gctx, &mut ts);
-            let ts = match ts.tokens() {
-                Ok(y) => y,
-                Err(e) => {
-                    out.record_error(e);
-                    return;
-                }
-            };
+        let mut ts = TokenAccumulator::new();
+        self.inputs.expand(gctx, &mut ts);
+        let ts = match ts.tokens() {
+            Ok(y) => y,
+            Err(e) => {
+                out.record_error(e);
+                return;
+            }
+        };
 
         struct ParamOrEmpty(Option<syn::GenericParam>);
         impl Parse for ParamOrEmpty {
@@ -163,27 +163,25 @@ impl CollateDetails {
             }
         }
 
-            let gps = Punctuated::parse_terminated.parse2(ts.clone());
-            let gps = match gps {
-                Ok(y) => y,
-                Err(e) => {
-                    out.record_error(e);
-                    out.record_error(kw_span.error(format_args!(
+        let gps = Punctuated::parse_terminated.parse2(ts.clone());
+        let gps = match gps {
+            Ok(y) => y,
+            Err(e) => {
+                out.record_error(e);
+                out.record_error(kw_span.error(format_args!(
  "failed to parse expanded argument `{}` as generic parameters (for this generics manipulation)",
                         ts,
                     )));
-                    // That's enough of this, let's not make more errors.
-                    return;
-                }
-            };
+                // That's enough of this, let's not make more errors.
+                return;
+            }
+        };
 
-            elements.extend(
-                gps.into_pairs().filter_map(|pair| {
-                    let (ParamOrEmpty(value), punct) = pair.into_tuple();
-                    let value = value?;
-                    Some((value, punct))
-                })
-            );
+        elements.extend(gps.into_pairs().filter_map(|pair| {
+            let (ParamOrEmpty(value), punct) = pair.into_tuple();
+            let value = value?;
+            Some((value, punct))
+        }));
 
         elements.sort_by_key(|(value, _)| match value {
             // syn doesn't promise the order is correct, so we have to
