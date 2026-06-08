@@ -3,20 +3,35 @@
 use super::framework::*;
 
 use syn::GenericParam as GP;
+use FilterMode as FM;
 
-pub type FilterMode = fn(&syn::GenericParam, &mut TokenAccumulator);
+#[derive(Debug, Copy, Clone)]
+pub enum FilterMode {
+    /// Filter mode emitting names only - `$tgnames`
+    Names,
+    /// Filter mode omitting only the defaults - `$tgens`
+    NoDefs,
+    /// Filter mode for including the whole generic - `$tdefgens`
+    Complete,
+}
 
-/// Filter mode emitting names only - `$tgnames`
-pub fn fm_names(gp: &syn::GenericParam, out: &mut TokenAccumulator) {
+fn expand_1(
+    pair: syn::punctuated::Pair<&GP, &token::Comma>,
+    out: &mut TokenAccumulator,
+    composable: WantPunctComposable,
+    filter_mode: FilterMode,
+) {
+    let gp = pair.value();
+
+    match filter_mode {
+        FM::Names => {
     match gp {
         GP::Type(t) => out.append(&t.ident),
         GP::Const(c) => out.append(&c.ident),
         GP::Lifetime(l) => out.append(&l.lifetime),
     }
-}
-
-/// Filter mode omitting only the defaults - `$tgens`
-pub fn fm_nodefs(gp: &syn::GenericParam, out: &mut TokenAccumulator) {
+        }
+        FM::NoDefs => {
     let out_attrs = |out: &mut TokenAccumulator, attrs: &[_]| {
         attrs.iter().for_each(|attr| out.append(attr));
     };
@@ -36,20 +51,12 @@ pub fn fm_nodefs(gp: &syn::GenericParam, out: &mut TokenAccumulator) {
         }
         GP::Lifetime(l) => out.append(&l),
     }
-}
-
-/// Filter mode for including the whole generic - `$tdefgens`
-pub fn fm_complete(gp: &syn::GenericParam, out: &mut TokenAccumulator) {
+        }
+        FM::Complete => {
     out.append(gp);
-}
+        }
+    }
 
-fn expand_1(
-    pair: syn::punctuated::Pair<&GP, &token::Comma>,
-    out: &mut TokenAccumulator,
-    composable: WantPunctComposable,
-    filter_mode: impl Fn(&syn::GenericParam, &mut TokenAccumulator),
-) {
-    filter_mode(pair.value(), out);
     out.append_maybe_punct_composable(&pair.punct(), composable);
 }
 
