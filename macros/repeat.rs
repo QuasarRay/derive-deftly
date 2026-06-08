@@ -75,6 +75,8 @@ impl RepeatAnalysisVisitor {
     }
 }
 
+//---------- AnalyseRepeat impls ----------
+
 impl<O: SubstParseContext> AnalyseRepeat for SubstIf<O> {
     fn analyse_repeat(
         &self,
@@ -242,6 +244,8 @@ impl AnalyseRepeat for ExplicitError {
         Ok(())
     }
 }
+
+//---------- WithinRepeatLevel ----------
 
 /// Implemented for [`WithinVariant`] and [`WithinField`]
 ///
