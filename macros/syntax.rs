@@ -140,7 +140,7 @@ pub enum SubstDetails<O: SubstParseContext> {
     vtype(SubstVType, AllowTokens<O>, O::NotInBool),
     v_explicit_discriminant(AllowTokens<O>, beta::Enabled),
 
-    Impl(ImplShorthand, AllowTokens<O>, O::NotInBool, beta::Enabled),
+    Impl(SubstImpl, AllowTokens<O>, O::NotInBool, beta::Enabled),
     tdefvariants(Template<TokenAccumulator>, AllowTokens<O>, O::NotInBool),
     fdefine(Option<Argument>, AllowTokens<O>, O::NotInBool),
     vdefbody(

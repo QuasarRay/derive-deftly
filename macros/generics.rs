@@ -264,7 +264,7 @@ impl UniformlyAnalysable for CollateInputs {
 ///  - no body
 ///  - less support for exciting Rust features eg `unsafe`
 #[derive(Debug)]
-pub struct ImplShorthand {
+pub struct SubstImpl {
     /// `${impl < GENERICS > ...}`
     ///
     /// Default is `$tgens`
@@ -294,7 +294,7 @@ pub struct ImplGenerics {
     pub gt: Token![>],
 }
 
-impl Parse for ImplShorthand {
+impl Parse for SubstImpl {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let generics = if input.peek(Token![<]) {
             let (lt, inputs, gt) = AngleBrackets::parse_bracketed_template(
@@ -345,7 +345,7 @@ impl Parse for ImplShorthand {
             )));
         }
 
-        Ok(ImplShorthand {
+        Ok(SubstImpl {
             generics,
             trait_,
             self_,
@@ -354,14 +354,14 @@ impl Parse for ImplShorthand {
     }
 }
 
-impl ImplShorthand {
+impl SubstImpl {
     pub fn expand<'c>(
         &self,
         ctx: &'c Context<'c>,
         out: &mut TokenAccumulator,
         kw_span: Span,
     ) {
-        let ImplShorthand { generics, trait_, self_, where_ } //_
+        let SubstImpl { generics, trait_, self_, where_ } //_
             = self;
         let gctx = ctx.as_general();
 
@@ -411,9 +411,9 @@ impl ImplShorthand {
     }
 }
 
-impl UniformlyAnalysable for ImplShorthand {
+impl UniformlyAnalysable for SubstImpl {
     fn impl_analyse<V: Visitor>(&self, v: &mut V) -> Result<(), V::E> {
-        let ImplShorthand { generics, trait_, self_, where_ } //_
+        let SubstImpl { generics, trait_, self_, where_ } //_
             = self;
 
         if let Some(ImplGenerics { lt: _, params, gt: _ }) //_
