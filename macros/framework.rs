@@ -290,8 +290,7 @@ pub trait SpecialParseContext {
     }
 }
 
-impl SpecialParseContext for () {
-}
+impl SpecialParseContext for () {}
 
 /// Inhabited iff this lexical content may expand to arbitrary tokens
 ///
