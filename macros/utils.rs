@@ -666,10 +666,6 @@ impl SpecialParseContext for Option<AngleBrackets> {
                 let _: Token![>] = input.parse()?;
                 state.found_close = true;
                 return Ok(Some(SpecialInstructions::EndOfTemplate));
-            } else {
-                return Err(
-                    input.error("stray > within curly-bracketed ${paste }")
-                );
             }
         }
         return Ok(None);
