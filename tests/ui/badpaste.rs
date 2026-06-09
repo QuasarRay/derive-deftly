@@ -60,6 +60,8 @@ derive_deftly_adhoc! {
     { $< ${define OK {>}} > }
     { $< }
     { $< < }
+    ${paste < }
+    ${paste > }
 }
 
 fn main() {}

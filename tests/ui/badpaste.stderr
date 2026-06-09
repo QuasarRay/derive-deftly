@@ -69,3 +69,15 @@ error: not allowed in within ${paste ...} (or case_changing)
    |
 62 |     { $< < }
    |          ^
+
+error: not allowed in within ${paste ...} (or case_changing)
+  --> ui/badpaste.rs:63:13
+   |
+63 |     ${paste < }
+   |             ^
+
+error: stray > within curly-bracketed ${paste }
+  --> ui/badpaste.rs:64:13
+   |
+64 |     ${paste > }
+   |             ^
