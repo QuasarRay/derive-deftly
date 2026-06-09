@@ -175,10 +175,7 @@ pub enum SubstDetails<O: SubstParseContext> {
         // other contexts and therefore on other content, too.
         beta::Enabled,
     ),
-    ChangeCase(
-        paste::SubstChangeCaseBody,
-        paste::ChangeCaseOkIn<O>,
-    ),
+    ChangeCase(paste::SubstChangeCaseBody, paste::ChangeCaseOkIn<O>),
     concat(
         Template<concat::Accumulator>,
         O::NotInBool,
