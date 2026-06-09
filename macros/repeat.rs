@@ -236,20 +236,6 @@ impl<O: SubstParseContext> AnalyseRepeat for Subst<O> {
     }
 }
 
-impl AnalyseRepeat for ExplicitError {
-    fn analyse_repeat(
-        &self,
-        visitor: &mut RepeatAnalysisVisitor,
-    ) -> syn::Result<()> {
-        let ExplicitError { message, span } = self;
-        message.analyse_repeat(visitor)?;
-        if let Some((span, _)) = span {
-            span.analyse_repeat(visitor)?;
-        }
-        Ok(())
-    }
-}
-
 //---------- WithinRepeatLevel ----------
 
 /// Implemented for [`WithinVariant`] and [`WithinField`]

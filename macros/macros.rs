@@ -18,6 +18,7 @@ pub(crate) mod utils;
 pub(crate) mod adviseable;
 pub(crate) mod framework;
 pub(crate) mod general_context;
+pub(crate) mod visitor;
 
 // Implementation - specific areas
 #[macro_use]
