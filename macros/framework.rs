@@ -286,33 +286,6 @@ pub trait SpecialParseContext {
 
 impl SpecialParseContext for () {}
 
-/// XXXX this impl is temporary - we won't actually need it
-impl<T: SpecialParseContext> SpecialParseContext for Option<T> {
-    fn before_element_hook(
-        &mut self,
-        input: ParseStream,
-    ) -> syn::Result<Option<SpecialInstructions>> {
-        if let Some(self_) = self {
-            self_.before_element_hook(input)
-        } else {
-            Ok(None)
-        }
-    }
-
-    /// Handle any special syntax, after parsing an element.
-    fn after_element_hook<O: SubstParseContext>(
-        &mut self,
-        input: ParseStream,
-        elem: &mut TemplateElement<O>,
-    ) -> syn::Result<()> {
-        if let Some(self_) = self {
-            self_.after_element_hook(input, elem)
-        } else {
-            Ok(())
-        }
-    }
-}
-
 /// Inhabited iff this lexical content may expand to arbitrary tokens
 ///
 /// Calculated automatically
