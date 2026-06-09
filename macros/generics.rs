@@ -505,8 +505,9 @@ impl SpecialParseContext for StopAtKeyword {
 
 impl Parse for TemplateUntilKeyword {
     fn parse(input: ParseStream) -> syn::Result<Self> {
-        Template::parse_special(input, &mut StopAtKeyword)
-            .map(TemplateUntilKeyword)
+        #[allow(unused_mut)]
+        let mut t = Template::parse_special(input, &mut StopAtKeyword)?;
+        Ok(TemplateUntilKeyword(t))
     }
 }
 
