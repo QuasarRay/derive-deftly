@@ -502,17 +502,8 @@ impl TemplateUntilKeyword {
     }
 }
 
-impl meta::FindRecogMetas for TemplateUntilKeyword {
-    fn find_recog_metas(&self, acc: &mut meta::Recognised) {
-        self.0.find_recog_metas(acc);
-    }
-}
-
-impl AnalyseRepeat for TemplateUntilKeyword {
-    fn analyse_repeat(
-        &self,
-        visitor: &mut RepeatAnalysisVisitor,
-    ) -> syn::Result<()> {
-        self.0.analyse_repeat(visitor)
+impl UniformlyAnalysable for TemplateUntilKeyword {
+    fn impl_analyse<V: Visitor>(&self, v: &mut V) -> Result<(), V::E> {
+        self.0.analyse(v)
     }
 }
