@@ -541,7 +541,8 @@ impl<O: SubstParseContext> TemplateWithWhens<O> {
                 Some(Some(SpecialInstructions::EndOfTemplate)) => break,
             }
             errors.handle_in(|| {
-                let elem = input.parse()?;
+                let mut elem = input.parse()?;
+                special.after_element_hook(input, &mut elem)?;
                 good.push(elem);
                 Ok(special)
             });

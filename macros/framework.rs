@@ -277,6 +277,15 @@ pub trait SpecialParseContext {
         &mut self,
         _input: ParseStream,
     ) -> syn::Result<Option<SpecialInstructions>>;
+
+    /// Handle any special syntax, after parsing an element.
+    fn after_element_hook<O: SubstParseContext>(
+        &mut self,
+        _input: ParseStream,
+        _elem: &mut TemplateElement<O>,
+    ) -> syn::Result<()> {
+        Ok(())
+    }
 }
 
 impl SpecialParseContext for () {
