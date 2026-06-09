@@ -176,8 +176,7 @@ pub enum SubstDetails<O: SubstParseContext> {
         beta::Enabled,
     ),
     ChangeCase(
-        Template<paste::Items>,
-        paste::ChangeCase,
+        paste::SubstChangeCaseBody,
         paste::ChangeCaseOkIn<O>,
     ),
     concat(
@@ -1146,8 +1145,8 @@ impl<O: SubstParseContext> Parse for Subst<O> {
 
         if let Ok(case) = kw.to_string().parse() {
             let ok = paste::ChangeCaseOkIn::new_checked(case, kw.span())?;
-
-            return from_sd(SD::ChangeCase(Template::parse(input)?, case, ok));
+            let body = paste::SubstChangeCaseBody::parse(input, case)?;
+            return from_sd(SD::ChangeCase(body, ok));
         }
 
         if let Ok(user_defined) = kw.clone().try_into() {

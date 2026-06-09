@@ -329,6 +329,41 @@ impl UniformlyAnalysable for SubstSpanned {
     }
 }
 
+#[derive(Debug)]
+pub struct SubstChangeCaseBody {
+    case: paste::ChangeCase,
+    content: Template<paste::Items>,
+}
+
+impl SubstChangeCaseBody {
+    pub fn parse(input: ParseStream, case: ChangeCase) -> syn::Result<Self> {
+        let content = Template::parse(input)?;
+        Ok(SubstChangeCaseBody { case, content })
+    }
+}
+
+impl SubstChangeCaseBody {
+    pub fn expand<'c, O: ExpansionOutput>(
+        &self,
+        gctx: GeneralContext<'c>,
+        kw_span: Span,
+        out: &mut O,
+    ) -> syn::Result<()> {
+        let SubstChangeCaseBody { case, content } = self;
+        let mut items = paste::Items::new(kw_span);
+        content.expand(gctx, &mut items);
+        items.assemble(out, Some(*case))?;
+        Ok(())
+    }
+}
+
+impl UniformlyAnalysable for SubstChangeCaseBody {
+    fn impl_analyse<V: Visitor>(&self, v: &mut V) -> Result<(), V::E> {
+        let SubstChangeCaseBody { case: _, content } = self;
+        content.analyse(v)
+    }
+}
+
 //---------- implementation ----------
 
 impl Items {
