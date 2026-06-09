@@ -17,6 +17,7 @@ enum Enum<T = (), const N: usize = 1> {
     Unit,
     Tuple([T; N]),
 }
+trait Trait<T> {}
 enum EnumCopy<T = (), const N: usize = 1> {
     Unit,
     Tuple([T; N]),
@@ -29,6 +30,10 @@ impl<T, const N: usize> From<Enum<T, N>> for EnumCopy<T, N> {
         }
     }
 }
+impl<T: Trait<T>> Trait<()> for Box<Box<T>>
+where
+    T: Sync,
+{}
 fn main() {
     let _: Option<Enum> = None;
     let _ = Enum::Unit::<u8, 3>;
