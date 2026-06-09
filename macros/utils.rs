@@ -683,9 +683,8 @@ impl AngleBrackets {
         start_span: Span,
         unmatched_message: impl Display,
     ) -> syn::Result<Token![>]> {
-        self.final_angle.ok_or_else(|| {
-                start_span.error(unmatched_message)
-        })
+        self.final_angle
+            .ok_or_else(|| start_span.error(unmatched_message))
     }
 }
 
