@@ -65,6 +65,7 @@ struct UseFieldsLikeOption {
 #[derive(Deftly)]
 #[derive_deftly_adhoc]
 struct TypePrecedenceDyn {
+    #[allow(unused_parens)]
     parens: (dyn Display + 'static),
     // Test that $ftype's None group is effective to disambiguate
     /* BUT we can't do that right now, because

@@ -13,6 +13,11 @@ use derive_deftly_tests::*;
 #[cfg(feature = "macrotest")]
 #[test]
 pub fn macrotest_expand() {
+    // We would like to use -Dwarnings to catch warnings in expand tests
+    // but:
+    //  - It would have to be done with RUSTFLAGS since cargo expand
+    //    has no way to pass arbitrary compiler flags except -Z !
+    //  - Anyway macrotest ignores the error from cargo expand.
     for path in list_expand_test_paths_for_macrotest() {
         macrotest::expand_args(path, ["--all-features"]);
     }
