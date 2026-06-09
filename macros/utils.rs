@@ -663,17 +663,40 @@ impl SpecialParseContext for Option<AngleBrackets> {
     ) -> syn::Result<Option<SpecialInstructions>> {
         if input.peek(Token![>]) {
             if let Some(state) = self {
-                state.final_angle = Some(input.parse()?);
-                return Ok(Some(SpecialInstructions::EndOfTemplate));
+                match state.inner_depth.checked_sub(1) {
+                    Some(remain) => state.inner_depth = remain,
+                    None => {
+                        state.final_angle = Some(input.parse()?);
+                        return Ok(Some(SpecialInstructions::EndOfTemplate));
+                    }
+                }
             }
         }
         return Ok(None);
+    }
+
+    fn after_element_hook<O: SubstParseContext>(
+        &mut self,
+        _input: ParseStream,
+        elem: &mut TemplateElement<O>,
+    ) -> syn::Result<()> {
+        if let Some(state) = self {
+            if let TE::Punct(p, _) = elem {
+                if p.as_char() == '<' {
+                    state.inner_depth += 1;
+                }
+            }
+        }
+        Ok(())
     }
 }
 
 /// Parsing state for `$<...>`
 #[derive(Default)]
 pub struct AngleBrackets {
+    /// Not including the outer `<`
+    inner_depth: u32,
+
     final_angle: Option<Token![>]>,
 }
 
