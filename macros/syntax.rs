@@ -905,6 +905,7 @@ impl<O: SubstParseContext> Subst<O> {
             let state = special.unwrap();
             state.finish(
                 angle.span(),
+                "unmatched paste $< start - missing >",
             )?;
             Ok(Subst {
                 kw_span: angle.span(),
