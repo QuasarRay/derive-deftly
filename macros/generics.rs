@@ -1,4 +1,7 @@
-//! Handling of generics - `$tgens` etc., `$gens_collate`, etc.
+//! Handling of generics and things that use them
+//!
+//! $tgens` and `$gens_collate` etc. but also
+//! `$ttype` and its variants, and `$impl`
 
 use super::framework::*;
 
@@ -258,5 +261,288 @@ impl AnalyseRepeat for CollateInputs {
 impl meta::FindRecogMetas for CollateInputs {
     fn find_recog_metas(&self, acc: &mut meta::Recognised) {
         self.inputs.find_recog_metas(acc);
+    }
+}
+
+//---------- $impl ----------
+
+/// The parsed contents of a `$impl`
+///
+/// A bit like some of `syn::ItemImpl` but it has
+///  - slightly different syntax (`${impl TRAIT [for TYPE]}`
+///  - no body
+///  - less support for exciting Rust features eg `unsafe`
+#[derive(Debug)]
+pub struct ImplShorthand {
+    /// `${impl < GENERICS > ...}`
+    ///
+    /// Default is `$tgens`
+    pub generics: Option<ImplGenerics>,
+
+    /// `${impl TRAIT ...}`
+    ///
+    /// Default is inherent impls.
+    /// Turns into `TRAIT for` in the expansion.
+    pub trait_: Option<TemplateUntilKeyword>,
+
+    /// `${impl ... for TYPE ...}`
+    ///
+    /// Default is `$ttype`.
+    pub self_: Option<TemplateUntilKeyword>,
+
+    /// `${impl ... where WHERES}`
+    ///
+    /// Default is `$twheres`
+    pub where_: Option<(Token![where], TemplateUntilKeyword)>,
+}
+
+#[derive(Debug)]
+pub struct ImplGenerics {
+    pub lt: Token![<],
+    pub params: CollateInputs,
+    pub gt: Token![>],
+}
+
+impl Parse for ImplShorthand {
+    fn parse(input: ParseStream) -> syn::Result<Self> {
+        let generics = if input.peek(Token![<]) {
+            let (lt, inputs, gt) = AngleBrackets::parse_bracketed_template(
+                input,
+                "unmatched < (start of generics) in ${impl ..}",
+            )?;
+            let params = CollateInputs { inputs };
+            Some(ImplGenerics { lt, params, gt })
+        } else {
+            None
+        };
+
+        macro_rules! parse_if_keyword { { $kw:ident } => {
+            if input.peek(Token![$kw]) {
+                let kw: Token![$kw] = input.parse()?;
+                let value = input.parse::<TemplateUntilKeyword>()?;
+                Some((kw, value))
+            } else {
+                None
+            }
+        } }
+
+        let trait_ = input.parse::<TemplateUntilKeyword>()?;
+        let trait_ = if trait_.is_empty() {
+            None
+        } else {
+            Some(trait_)
+        };
+
+        let self_ = if let Some((for_, self_)) = parse_if_keyword!(for) {
+            if self_.is_empty() {
+                Err(for_.error("expected type after `for`"))?;
+            }
+            Some(self_)
+        } else {
+            None
+        };
+
+        let where_ = parse_if_keyword!(where);
+
+        if !input.is_empty() {
+            let kw: IdentAny = input
+                .parse()
+                .expect("parse_until_keyword should have had this");
+            return Err(kw.error(format_args!(
+                "bad syntax for $impl: unknown/unrecognised keyword {}",
+                *kw,
+            )));
+        }
+
+        Ok(ImplShorthand {
+            generics,
+            trait_,
+            self_,
+            where_,
+        })
+    }
+}
+
+impl ImplShorthand {
+    pub fn expand<'c>(
+        &self,
+        ctx: &'c Context<'c>,
+        out: &mut TokenAccumulator,
+        kw_span: Span,
+    ) {
+        let ImplShorthand { generics, trait_, self_, where_ } //_
+            = self;
+        let gctx = ctx.as_general();
+
+        out.append(Token![impl](kw_span));
+
+        {
+            let filter_mode = FilterMode::NoDefs;
+            if let Some(ImplGenerics { lt, params, gt }) = generics {
+                out.append(lt);
+                params.expand(gctx, filter_mode, out, lt.span());
+                out.append(gt);
+            } else {
+                out.append(Token![<](kw_span));
+                expand_tgens(
+                    ctx,
+                    out,
+                    WantPunctComposable::AvoidIntroducingTrailingComma,
+                    filter_mode,
+                );
+                out.append(Token![>](kw_span));
+            }
+        }
+
+        if let Some(trait_) = trait_ {
+            trait_.0.expand(gctx, out);
+            out.append(Token![for](kw_span));
+        }
+
+        if let Some(self_) = self_ {
+            self_.0.expand(gctx, out);
+        } else {
+            expand_ttype(ctx, out, kw_span, None, FilterMode::Names);
+        }
+
+        if let Some((where_kw, where_)) = where_ {
+            out.append(where_kw);
+            where_.0.expand(gctx, out);
+        } else if let Some(clause) = &ctx.top.generics.where_clause {
+            // note similar code in `$twheres` in expand.rs
+            out.append(clause.where_token);
+            out.with_tokens(|out| {
+                clause.predicates.to_tokens_punct_composable(out);
+            });
+        } else {
+            out.append(Token![where](kw_span));
+        }
+    }
+}
+
+impl meta::FindRecogMetas for ImplShorthand {
+    fn find_recog_metas(&self, acc: &mut meta::Recognised) {
+        let ImplShorthand { generics, trait_, self_, where_ } //_
+            = self;
+
+        if let Some(ImplGenerics { lt: _, params, gt: _ }) //_
+            = generics
+        {
+            params.find_recog_metas(acc);
+        }
+
+        trait_.find_recog_metas(acc);
+        self_.find_recog_metas(acc);
+
+        where_.as_ref().map(|(_kw, w)| w.find_recog_metas(acc));
+    }
+}
+
+impl AnalyseRepeat for ImplShorthand {
+    fn analyse_repeat(
+        &self,
+        visitor: &mut RepeatAnalysisVisitor,
+    ) -> syn::Result<()> {
+        let ImplShorthand { generics, trait_, self_, where_ } //_
+            = self;
+
+        if let Some(ImplGenerics { lt: _, params, gt: _ }) //_
+            = generics
+        {
+            params.analyse_repeat(visitor)?;
+        }
+
+        analyse_repeat_iter!(visitor, trait_);
+        analyse_repeat_iter!(visitor, self_);
+
+        if let Some((_kw, where_)) = where_ {
+            where_.analyse_repeat(visitor)?;
+        }
+
+        Ok(())
+    }
+}
+
+//----- TemplateUntilKeyword -----
+
+#[derive(Debug)]
+pub struct TemplateUntilKeyword(Template<TokenAccumulator>);
+
+struct StopAtKeyword;
+
+impl SpecialParseContext for StopAtKeyword {
+    fn before_element_hook(
+        &mut self,
+        input: ParseStream,
+    ) -> syn::Result<Option<SpecialInstructions>> {
+        let la = input.lookahead1();
+        if la.peek(syn::Ident) {
+            // ordinary identifier, so not a keyword
+            return Ok(None);
+        }
+
+        if !la.peek(syn::Ident::peek_any) {
+            // not in identifier syntax, so not a keyword
+            return Ok(None);
+        }
+
+        macro_rules! allow_keywords { { $($kw:ident)* } => { $(
+            if la.peek(Token![$kw]) {
+                return Ok(None)
+            }
+        )* } }
+        allow_keywords! {
+            // used in paths
+            self super crate
+            // used in types we might be implementing some trait of ours for
+            dyn fn mut Self
+        }
+
+        // is a keyword, stop parsing
+        Ok(Some(SpecialInstructions::EndOfTemplate))
+    }
+}
+
+impl Parse for TemplateUntilKeyword {
+    fn parse(input: ParseStream) -> syn::Result<Self> {
+        let mut t = Template::parse_special(input, &mut StopAtKeyword)?;
+
+        // Respan the delimiters of (...) groups, since the user might
+        // have needed them for *our* parser, even though Rust's parser
+        // is OK without them.
+        for te in &mut t.elements {
+            match te {
+                TE::Group {
+                    delimiter: Delimiter::Parenthesis,
+                    delim_span,
+                    ..
+                } => {
+                    *delim_span = Span::call_site();
+                }
+                _other => {}
+            }
+        }
+        Ok(TemplateUntilKeyword(t))
+    }
+}
+
+impl TemplateUntilKeyword {
+    fn is_empty(&self) -> bool {
+        self.0.elements.is_empty()
+    }
+}
+
+impl meta::FindRecogMetas for TemplateUntilKeyword {
+    fn find_recog_metas(&self, acc: &mut meta::Recognised) {
+        self.0.find_recog_metas(acc);
+    }
+}
+
+impl AnalyseRepeat for TemplateUntilKeyword {
+    fn analyse_repeat(
+        &self,
+        visitor: &mut RepeatAnalysisVisitor,
+    ) -> syn::Result<()> {
+        self.0.analyse_repeat(visitor)
     }
 }

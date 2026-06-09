@@ -443,6 +443,81 @@ They use derive-deftly's usual
    for enum variant:
    `EnumReference::RefTupleVariant::<'a, 'l, T, C>`
 
+<div id="x:impl">
+
+### `$impl` -- shorthand for impl blocks (**beta**)
+
+</div>
+
+  * **`$impl`**
+   is short for `impl<$tgens> $ttype where $wheres`.
+  * **`${impl TRAIT}`**
+   is short for `impl<$tgens> TRAIT for $ttype where $wheres`.
+ * **`${impl [<GENERICS>] TRAIT [for TYPE] [where WHERES]}`**
+   allows each the output pieces to be separately overridden.
+
+An `$impl` expands to one of the following:
+
+ * `impl<GENERICS> TYPE where WHERES`
+ * `impl<GENERICS> TRAIT for TYPE where WHERES`
+
+The usual usage is `${impl ...} { ITEMS }`.
+
+The overrideable elements are:
+
+ * **`<GENERICS>`**:
+   Generic bindings.
+   The default is `$tgens`.
+   `GENERICS` is processed as if by [`$gens_nodefs`](#x:gens_nodefs).
+
+ * **`TRAIT`**:
+   Trait to implement.
+   The default is to make inherent impls (no output `for` clause).
+
+ * **`for TYPE`**:
+   Type to implement for.
+   The default is [`$ttype`](#x:ttype).
+
+ * **`where WHERES`**:
+   Any `where` clauses.  The default is [`$twheres`](#x:twheres).
+   (The expansion of `$impl` always contains the actual `where` keyword.)
+
+Note that unlike normal `impl` syntax,
+`for` inside `${impl }` *introduces the self type to implement for*,
+rather than retrospectively indicating
+that the preceding path was a trait.
+So `${impl Trait} {..}`, unlike (inherent) `impl Type {..}`.
+
+Each of the input pieces `GENERICS`, `TRAIT`, `TYPE` and `WHERES`
+is a template which is expanded,
+and then placed in the appropriate part of the resulting `$impl`.
+`GENERICS` is terminated by the closing `>`.
+`TRAIT`, `TYPE` and `WHERES` are terminated by the `for` and `where` keywords,
+and may not contain other unbracketed keywords except
+`self` `super` `crate` `dyn` `fn` `mut` `Self`.
+
+Available only in [**beta**].
+
+#### Examples
+
+##### For `SimpleUnit`
+
+<!--##examples-for `SimpleUnit`##-->
+
+ * `$impl`: `impl<> SimpleUnit where`
+ * `${impl Trait}`: `impl<> Trait for SimpleUnit where`
+ * `${impl for Type}`: `impl<> Type where`
+
+##### For `Struct`
+
+<!--##examples-for `Struct`##-->
+
+ * `$impl`: `impl<'a, 'l: 'a, T: Display, const C: usize> Struct<'a, 'l, T, C> where T: 'l, T: TryInto<u8>,`
+ * `${impl AssertUnwindSafe} {}`: `impl<'a, 'l: 'a, T: Display, const C: usize> AssertUnwindSafe for Struct<'a, 'l, T, C> where T:  'l, T: TryInto<u8>, {}`
+ * `${impl for Type}`: `impl<'a, 'l: 'a, T: Display, const C: usize> Type where T: 'l, T: TryInto<u8>,`
+ * `${impl where}`: `impl<'a, 'l: 'a, T: Display, const C: usize> Struct<'a, 'l, T, C> where`
+ * `${impl<> Trait for Type where}`: `impl<> Trait for Type where`
+
 <div id="x:tdefgens">
 <div id="x:tgens">
 <div id="x:tgnames">

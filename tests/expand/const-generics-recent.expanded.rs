@@ -6,6 +6,7 @@
 //!
 //! `recent` in the filename arranges for it not to be run by the MSRV
 //! compiler.
+#![forbid(unused_parens)]
 #![allow(dead_code)]
 use derive_deftly::{derive_deftly_adhoc, Deftly};
 #[derive_deftly_adhoc]
@@ -17,6 +18,7 @@ enum Enum<T = (), const N: usize = 1> {
     Unit,
     Tuple([T; N]),
 }
+trait Trait<T> {}
 enum EnumCopy<T = (), const N: usize = 1> {
     Unit,
     Tuple([T; N]),
@@ -29,6 +31,14 @@ impl<T, const N: usize> From<Enum<T, N>> for EnumCopy<T, N> {
         }
     }
 }
+impl<T: Trait<T>> Trait<()> for Box<Box<T>>
+where
+    T: Sync,
+{}
+impl Trait<(for<'x> fn(&'x u32))> for (for<'x> fn(&'x u32))
+where
+    Box<(for<'x> fn(&'x u32))>: Sync,
+{}
 fn main() {
     let _: Option<Enum> = None;
     let _ = Enum::Unit::<u8, 3>;

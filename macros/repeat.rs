@@ -134,6 +134,7 @@ impl<O: SubstParseContext> AnalyseRepeat for TemplateElement<O> {
 // In theory maybe this could be done impl for IntoIterator, but in
 // practice that is very fiddly due to all the &'s, and coherence.
 macro_rules! analyse_repeat_iter { { $visitor:expr, $it:expr } => { {
+    #[allow(for_loops_over_fallibles)]
     for elem in $it {
         elem.analyse_repeat($visitor)?;
     }
@@ -190,6 +191,7 @@ impl<O: SubstParseContext> AnalyseRepeat for Subst<O> {
             SD::loop_index(..) => None,
             SD::loop_initial(..) => None,
             SD::loop_final(..) => None,
+            SD::Impl(body, ..) => recurse!(body),
             SD::tdefvariants(..) => None,
             SD::fdefine(..) => Some(RO::Fields),
             SD::vdefbody(..) => Some(RO::Variants),

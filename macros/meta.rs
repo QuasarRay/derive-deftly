@@ -2241,6 +2241,7 @@ impl<O: SubstParseContext> FindRecogMetas for SubstDetails<O> {
             Xmeta(v) => v.find_recog_metas(acc),
             vpat(v, _, _) => v.find_recog_metas(acc),
             vtype(v, _, _) => v.find_recog_metas(acc),
+            Impl(v, ..) => v.find_recog_metas(acc),
             tdefvariants(v, _, _) => v.find_recog_metas(acc),
             fdefine(v, _, _) => v.find_recog_metas(acc),
             vdefbody(a, b, _, _) => {

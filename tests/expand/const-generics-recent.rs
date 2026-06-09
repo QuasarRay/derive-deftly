@@ -7,6 +7,7 @@
 //! `recent` in the filename arranges for it not to be run by the MSRV
 //! compiler.
 
+#![forbid(unused_parens)]
 #![allow(dead_code)]
 
 use derive_deftly::{derive_deftly_adhoc, Deftly};
@@ -26,8 +27,10 @@ enum Enum<T = (), const N: usize = 1> {
     Tuple([T; N]),
 }
 
+trait Trait<T> {}
+
 derive_deftly_adhoc! {
-    Enum:
+    Enum beta_deftly:
 
     $tvis $tdefkwd ${paste $tdeftype Copy}
     ${tdefvariants $(
@@ -45,6 +48,14 @@ derive_deftly_adhoc! {
             ) }
         }
     }
+
+    ${impl<T: Trait<T>> Trait<()> for Box<Box<T>> where T: Sync} {}
+
+    ${impl<>
+      Trait::<(for <'x> fn(&'x u32))>
+      for (for <'x> fn(&'x u32))
+      where Box::<(for <'x> fn(&'x u32))>: Sync
+    } {}
 }
 
 fn main() {
