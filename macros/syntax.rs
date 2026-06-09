@@ -899,10 +899,10 @@ impl<O: SubstParseContext> Subst<O> {
             Ok(exp)
         } else if la.peek(Token![<]) {
             let (angle, template, _) =
-            AngleBrackets::parse_bracketed_template(
-                input,
-                "unmatched paste $< start - missing >",
-            )?;
+                AngleBrackets::parse_bracketed_template(
+                    input,
+                    "unmatched paste $< start - missing >",
+                )?;
             Ok(Subst {
                 kw_span: angle.span(),
                 sd: SD::paste(template, O::not_in_bool(&angle)?),
