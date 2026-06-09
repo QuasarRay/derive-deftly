@@ -705,11 +705,9 @@ impl AngleBrackets {
         O: SubstParseContext,
     {
         let angle: Token![<] = input.parse()?;
-        let state = AngleBrackets::default();
-        let mut special = Some(state);
+        let mut special = AngleBrackets::default();
         let template = Template::parse_special(input, &mut special)?;
-        let state = special.unwrap();
-        let final_angle = state.finish(angle.span(), unmatched_message)?;
+        let final_angle = special.finish(angle.span(), unmatched_message)?;
         Ok((angle, template, final_angle))
     }
 
