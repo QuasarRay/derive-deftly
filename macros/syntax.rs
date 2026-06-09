@@ -898,13 +898,9 @@ impl<O: SubstParseContext> Subst<O> {
             let exp = syn::parse2(exp.to_token_stream())?;
             Ok(exp)
         } else if la.peek(Token![<]) {
-            let angle: Token![<] = input.parse()?;
-            let state = AngleBrackets::default();
-            let mut special = Some(state);
-            let template = Template::parse_special(input, &mut special)?;
-            let state = special.unwrap();
-            state.finish(
-                angle.span(),
+            let (angle, template, _) =
+            AngleBrackets::parse_bracketed_template(
+                input,
                 "unmatched paste $< start - missing >",
             )?;
             Ok(Subst {

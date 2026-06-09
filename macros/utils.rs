@@ -701,6 +701,22 @@ pub struct AngleBrackets {
 }
 
 impl AngleBrackets {
+    pub fn parse_bracketed_template<O>(
+        input: ParseStream,
+        unmatched_message: impl Display,
+    ) -> syn::Result<(Token![<], Template<O>, Token![>])>
+    where
+        O: SubstParseContext,
+    {
+        let angle: Token![<] = input.parse()?;
+        let state = AngleBrackets::default();
+        let mut special = Some(state);
+        let template = Template::parse_special(input, &mut special)?;
+        let state = special.unwrap();
+        let final_angle = state.finish(angle.span(), unmatched_message)?;
+        Ok((angle, template, final_angle))
+    }
+
     pub fn finish(
         self,
         start_span: Span,
