@@ -662,13 +662,13 @@ impl SpecialParseContext for AngleBrackets {
         input: ParseStream,
     ) -> syn::Result<Option<SpecialInstructions>> {
         if input.peek(Token![>]) {
-                match self.inner_depth.checked_sub(1) {
-                    Some(remain) => self.inner_depth = remain,
-                    None => {
-                        self.final_angle = Some(input.parse()?);
-                        return Ok(Some(SpecialInstructions::EndOfTemplate));
-                    }
+            match self.inner_depth.checked_sub(1) {
+                Some(remain) => self.inner_depth = remain,
+                None => {
+                    self.final_angle = Some(input.parse()?);
+                    return Ok(Some(SpecialInstructions::EndOfTemplate));
                 }
+            }
         }
         return Ok(None);
     }
@@ -678,11 +678,11 @@ impl SpecialParseContext for AngleBrackets {
         _input: ParseStream,
         elem: &mut TemplateElement<O>,
     ) -> syn::Result<()> {
-            if let TE::Punct(p, _) = elem {
-                if p.as_char() == '<' {
-                    self.inner_depth += 1;
-                }
+        if let TE::Punct(p, _) = elem {
+            if p.as_char() == '<' {
+                self.inner_depth += 1;
             }
+        }
         Ok(())
     }
 }
