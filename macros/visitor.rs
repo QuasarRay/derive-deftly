@@ -69,8 +69,7 @@ impl<T: AnalyseRepeat + meta::FindRecogMetas + Sized> Analysable for T {}
 
 //---------- macrology ----------
 
-// XXXX rename this macro
-macro_rules! impL_find_recog_metas_via_iter { {
+macro_rules! impL_analysable_via_iter { {
     ( $($gens:tt)* ), $i:ty
 } => {
     impl<T: Analysable, $($gens)*> UniformlyAnalysable for $i {
@@ -84,12 +83,11 @@ macro_rules! impL_find_recog_metas_via_iter { {
     }
 } }
 
-impL_find_recog_metas_via_iter!((), [T]);
-impL_find_recog_metas_via_iter!((), Option<T>);
-impL_find_recog_metas_via_iter!((U), Punctuated<T, U>);
+impL_analysable_via_iter!((), [T]);
+impL_analysable_via_iter!((), Option<T>);
+impL_analysable_via_iter!((U), Punctuated<T, U>);
 
-// XXXX rename this macro
-macro_rules! impL_find_recog_metas_via_deref { {
+macro_rules! impL_analysable_via_deref { {
     ( $($gens:tt)* ), $i:ty
 } => {
     impl<$($gens)*> UniformlyAnalysable for $i {
@@ -99,8 +97,8 @@ macro_rules! impL_find_recog_metas_via_deref { {
     }
 } }
 
-impL_find_recog_metas_via_deref!((O: SubstParseContext), Argument<O>);
-impL_find_recog_metas_via_deref!((T: Analysable), Box<T>);
+impL_analysable_via_deref!((O: SubstParseContext), Argument<O>);
+impL_analysable_via_deref!((T: Analysable), Box<T>);
 
 //---------- impls of UniformlyAnalysable ----------
 
