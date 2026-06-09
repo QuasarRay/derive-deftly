@@ -118,15 +118,6 @@ impl<O: SubstParseContext> AnalyseRepeat for TemplateElement<O> {
     }
 }
 
-// In theory maybe this could be done impl for IntoIterator, but in
-// practice that is very fiddly due to all the &'s, and coherence.
-macro_rules! analyse_repeat_iter { { $visitor:expr, $it:expr } => { {
-    #[allow(for_loops_over_fallibles)]
-    for elem in $it {
-        elem.analyse_repeat($visitor)?;
-    }
-} } }
-
 impl<O: SubstParseContext> AnalyseRepeat for Subst<O> {
     fn analyse_repeat(
         &self,
@@ -134,10 +125,6 @@ impl<O: SubstParseContext> AnalyseRepeat for Subst<O> {
     ) -> syn::Result<()> {
         macro_rules! recurse { { $v:expr } => { {
             $v.analyse_repeat(visitor)?;
-            None
-        } } }
-        macro_rules! recurse_iter { { $it:expr } => { {
-            analyse_repeat_iter!(visitor, $it);
             None
         } } }
 
@@ -198,10 +185,10 @@ impl<O: SubstParseContext> AnalyseRepeat for Subst<O> {
             SD::defcond(..) => None,
             SD::UserDefined(..) => None,
             SD::is_empty(_, content) => recurse!(content),
-            SD::approx_equal(_, ab) => recurse_iter!(ab),
+            SD::approx_equal(_, ab) => recurse!(ab),
             SD::not(cond, _) => recurse!(cond),
             SD::If(conds, ..) | SD::select1(conds, ..) => recurse!(conds),
-            SD::any(conds, _) | SD::all(conds, _) => recurse_iter!(conds),
+            SD::any(conds, _) | SD::all(conds, _) => recurse!(conds),
             // Have a RepeatOver, but don't imply anything about its context.
             SD::For(..) | SD::for_loop_count(..) => None,
             SD::False(..) | SD::True(..) => None, // condition: ignore.
