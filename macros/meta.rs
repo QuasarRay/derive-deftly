@@ -2205,39 +2205,6 @@ impl<O: SubstParseContext> FindRecogMetas for Subst<O> {
     }
 }
 
-// XXXX rename this macro
-macro_rules! impL_find_recog_metas_via_iter { {
-    ( $($gens:tt)* ), $i:ty
-} => {
-    impl<T: Analysable, $($gens)*> UniformlyAnalysable for $i {
-        fn impl_analyse<V: Visitor>(&self, v: &mut V) -> Result<(), V::E> {
-            #[allow(for_loops_over_fallibles)]
-            for item in self {
-                item.analyse(v)?;
-            }
-            Ok(())
-        }
-    }
-} }
-
-impL_find_recog_metas_via_iter!((), [T]);
-impL_find_recog_metas_via_iter!((), Option<T>);
-impL_find_recog_metas_via_iter!((U), Punctuated<T, U>);
-
-// XXXX rename this macro
-macro_rules! impL_find_recog_metas_via_deref { {
-    ( $($gens:tt)* ), $i:ty
-} => {
-    impl<$($gens)*> UniformlyAnalysable for $i {
-        fn impl_analyse<V: Visitor>(&self, v: &mut V) -> Result<(), V::E> {
-            (**self).analyse(v)
-        }
-    }
-} }
-
-impL_find_recog_metas_via_deref!((O: SubstParseContext), Argument<O>);
-impL_find_recog_metas_via_deref!((T: Analysable), Box<T>);
-
 impl<O: SubstParseContext> FindRecogMetas for SubstDetails<O> {
     fn find_recog_metas(&self, acc: &mut Recognised) {
         use SD::*;
