@@ -276,7 +276,9 @@ pub trait SpecialParseContext {
     fn before_element_hook(
         &mut self,
         _input: ParseStream,
-    ) -> syn::Result<Option<SpecialInstructions>>;
+    ) -> syn::Result<Option<SpecialInstructions>> {
+        Ok(None)
+    }
 
     /// Handle any special syntax, after parsing an element.
     fn after_element_hook<O: SubstParseContext>(
@@ -289,12 +291,6 @@ pub trait SpecialParseContext {
 }
 
 impl SpecialParseContext for () {
-    fn before_element_hook(
-        &mut self,
-        _input: ParseStream,
-    ) -> syn::Result<Option<SpecialInstructions>> {
-        Ok(None)
-    }
 }
 
 /// Inhabited iff this lexical content may expand to arbitrary tokens
