@@ -204,7 +204,6 @@ impl<L: LexicalContext> SubstParseContext for Accumulator<L> {
     type BoolOnly = Void;
     type ConcatOnly = ();
     type DbgContent = Template<Self>;
-    type SpecialParseContext = ();
     type AllowTemplate = L;
 
     fn not_in_paste(_: &impl Spanned) -> syn::Result<()> {

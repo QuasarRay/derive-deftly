@@ -508,7 +508,7 @@ impl TopTemplate {
 
 impl<O: SubstParseContext> Parse for Template<O> {
     fn parse(input: ParseStream) -> syn::Result<Self> {
-        Template::parse_special(input, &mut O::SpecialParseContext::default())
+        Template::parse_special(input, &mut ())
     }
 }
 
@@ -541,7 +541,8 @@ impl<O: SubstParseContext> TemplateWithWhens<O> {
                 Some(Some(SpecialInstructions::EndOfTemplate)) => break,
             }
             errors.handle_in(|| {
-                let elem = input.parse()?;
+                let mut elem = input.parse()?;
+                special.after_element_hook(input, &mut elem)?;
                 good.push(elem);
                 Ok(special)
             });
@@ -897,12 +898,11 @@ impl<O: SubstParseContext> Subst<O> {
             let exp = syn::parse2(exp.to_token_stream())?;
             Ok(exp)
         } else if la.peek(Token![<]) {
-            let angle: Token![<] = input.parse()?;
-            let state = paste::AngleBrackets::default();
-            let mut special = Some(state);
-            let template = Template::parse_special(input, &mut special)?;
-            let state = special.unwrap();
-            state.finish(angle.span())?;
+            let (angle, template, _) =
+                AngleBrackets::parse_bracketed_template(
+                    input,
+                    "unmatched paste $< start - missing >",
+                )?;
             Ok(Subst {
                 kw_span: angle.span(),
                 sd: SD::paste(template, O::not_in_bool(&angle)?),
@@ -1438,10 +1438,7 @@ impl<O: SubstParseContext> RepeatedTemplate<O> {
         let TWW {
             elements,
             allow_recursive_parse,
-        } = TWW::parse_special::<O::SpecialParseContext>(
-            input,
-            &mut Default::default(),
-        )?;
+        } = TWW::parse_special::<()>(input, &mut ())?;
 
         // split `when` off
         let mut elements = VecDeque::from(elements);

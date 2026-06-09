@@ -54,4 +54,14 @@ derive_deftly_adhoc! {
     $<${kebab_case $tname}>
 }
 
+derive_deftly_adhoc! {
+    DataType beta_deftly:
+    { $< ${define OK {<}} > }
+    { $< ${define OK {>}} > }
+    { $< }
+    { $< < }
+    ${paste < }
+    ${paste > }
+}
+
 fn main() {}

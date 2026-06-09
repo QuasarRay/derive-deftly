@@ -57,3 +57,27 @@ error: derive-deftly keyword is only allowed within ${concat }
    |
 54 |     $<${kebab_case $tname}>
    |         ^^^^^^^^^^
+
+error: unmatched paste $< start - missing >
+  --> ui/badpaste.rs:61:8
+   |
+61 |     { $< }
+   |        ^
+
+error: not allowed in within ${paste ...} (or case_changing)
+  --> ui/badpaste.rs:62:10
+   |
+62 |     { $< < }
+   |          ^
+
+error: not allowed in within ${paste ...} (or case_changing)
+  --> ui/badpaste.rs:63:13
+   |
+63 |     ${paste < }
+   |             ^
+
+error: not allowed in within ${paste ...} (or case_changing)
+  --> ui/badpaste.rs:64:13
+   |
+64 |     ${paste > }
+   |             ^

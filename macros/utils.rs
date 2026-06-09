@@ -654,6 +654,73 @@ impl<'t, 'o> TokenOutputTrimmer<'t, 'o> {
     }
 }
 
+//---------- parsing things inside <...> ----------
+
+impl SpecialParseContext for AngleBrackets {
+    fn before_element_hook(
+        &mut self,
+        input: ParseStream,
+    ) -> syn::Result<Option<SpecialInstructions>> {
+        if input.peek(Token![>]) {
+            match self.inner_depth.checked_sub(1) {
+                Some(remain) => self.inner_depth = remain,
+                None => {
+                    self.final_angle = Some(input.parse()?);
+                    return Ok(Some(SpecialInstructions::EndOfTemplate));
+                }
+            }
+        }
+        return Ok(None);
+    }
+
+    fn after_element_hook<O: SubstParseContext>(
+        &mut self,
+        _input: ParseStream,
+        elem: &mut TemplateElement<O>,
+    ) -> syn::Result<()> {
+        if let TE::Punct(p, _) = elem {
+            if p.as_char() == '<' {
+                self.inner_depth += 1;
+            }
+        }
+        Ok(())
+    }
+}
+
+/// Parsing state for `$<...>`
+#[derive(Default)]
+pub struct AngleBrackets {
+    /// Not including the outer `<`
+    inner_depth: u32,
+
+    final_angle: Option<Token![>]>,
+}
+
+impl AngleBrackets {
+    pub fn parse_bracketed_template<O>(
+        input: ParseStream,
+        unmatched_message: impl Display,
+    ) -> syn::Result<(Token![<], Template<O>, Token![>])>
+    where
+        O: SubstParseContext,
+    {
+        let angle: Token![<] = input.parse()?;
+        let mut special = AngleBrackets::default();
+        let template = Template::parse_special(input, &mut special)?;
+        let final_angle = special.finish(angle.span(), unmatched_message)?;
+        Ok((angle, template, final_angle))
+    }
+
+    pub fn finish(
+        self,
+        start_span: Span,
+        unmatched_message: impl Display,
+    ) -> syn::Result<Token![>]> {
+        self.final_angle
+            .ok_or_else(|| start_span.error(unmatched_message))
+    }
+}
+
 //---------- TemplateName ----------
 
 pub type TemplateName = SyntheticMacroName<SyntheticMacroTemplate>;
