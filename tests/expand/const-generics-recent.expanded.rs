@@ -6,6 +6,7 @@
 //!
 //! `recent` in the filename arranges for it not to be run by the MSRV
 //! compiler.
+#![forbid(unused_parens)]
 #![allow(dead_code)]
 use derive_deftly::{derive_deftly_adhoc, Deftly};
 #[derive_deftly_adhoc]

@@ -505,8 +505,23 @@ impl SpecialParseContext for StopAtKeyword {
 
 impl Parse for TemplateUntilKeyword {
     fn parse(input: ParseStream) -> syn::Result<Self> {
-        #[allow(unused_mut)]
         let mut t = Template::parse_special(input, &mut StopAtKeyword)?;
+
+        // Respan the delimiters of (...) groups, since the user might
+        // have needed them for *our* parser, even though Rust's parser
+        // is OK without them.
+        for te in &mut t.elements {
+            match te {
+                TE::Group {
+                    delimiter: Delimiter::Parenthesis,
+                    delim_span,
+                    ..
+                } => {
+                    *delim_span = Span::call_site();
+                }
+                _other => {}
+            }
+        }
         Ok(TemplateUntilKeyword(t))
     }
 }
