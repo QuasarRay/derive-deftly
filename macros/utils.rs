@@ -656,21 +656,19 @@ impl<'t, 'o> TokenOutputTrimmer<'t, 'o> {
 
 //---------- parsing things inside <...> ----------
 
-impl SpecialParseContext for Option<AngleBrackets> {
+impl SpecialParseContext for AngleBrackets {
     fn before_element_hook(
         &mut self,
         input: ParseStream,
     ) -> syn::Result<Option<SpecialInstructions>> {
         if input.peek(Token![>]) {
-            if let Some(state) = self {
-                match state.inner_depth.checked_sub(1) {
-                    Some(remain) => state.inner_depth = remain,
+                match self.inner_depth.checked_sub(1) {
+                    Some(remain) => self.inner_depth = remain,
                     None => {
-                        state.final_angle = Some(input.parse()?);
+                        self.final_angle = Some(input.parse()?);
                         return Ok(Some(SpecialInstructions::EndOfTemplate));
                     }
                 }
-            }
         }
         return Ok(None);
     }
@@ -680,13 +678,11 @@ impl SpecialParseContext for Option<AngleBrackets> {
         _input: ParseStream,
         elem: &mut TemplateElement<O>,
     ) -> syn::Result<()> {
-        if let Some(state) = self {
             if let TE::Punct(p, _) = elem {
                 if p.as_char() == '<' {
-                    state.inner_depth += 1;
+                    self.inner_depth += 1;
                 }
             }
-        }
         Ok(())
     }
 }
