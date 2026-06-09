@@ -508,7 +508,7 @@ impl TopTemplate {
 
 impl<O: SubstParseContext> Parse for Template<O> {
     fn parse(input: ParseStream) -> syn::Result<Self> {
-        Template::parse_special(input, &mut O::SpecialParseContext::default())
+        Template::parse_special(input, &mut ())
     }
 }
 
@@ -1438,9 +1438,9 @@ impl<O: SubstParseContext> RepeatedTemplate<O> {
         let TWW {
             elements,
             allow_recursive_parse,
-        } = TWW::parse_special::<O::SpecialParseContext>(
+        } = TWW::parse_special::<()>(
             input,
-            &mut Default::default(),
+            &mut (),
         )?;
 
         // split `when` off

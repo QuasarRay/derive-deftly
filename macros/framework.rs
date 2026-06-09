@@ -211,12 +211,6 @@ pub trait SubstParseContext: Sized {
         }
     }
 
-    /// For communicating through `parse_special`
-    ///
-    /// Used when parsing `${paste ..}` to handle
-    /// the special `>`-based end condition.
-    type SpecialParseContext: SpecialParseContext + Default;
-
     /// Parse using `f`, within parens in boolean context, not otherwise
     ///
     /// Useful for parsing the arguments to an argument-taking keyword
@@ -605,8 +599,6 @@ impl SubstParseContext for TokenAccumulator {
 
     type BoolOnly = Void;
     type ConcatOnly = Void;
-
-    type SpecialParseContext = ();
 }
 
 impl ExpansionOutput for TokenAccumulator {
