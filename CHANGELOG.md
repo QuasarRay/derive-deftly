@@ -947,6 +947,9 @@ So you should pin your derive-deftly minor version:
 derive-deftly = { version = "~1.0.0", features = ["full", "beta"] }
 ```
 
+When beta features are added or improved,
+we'll only bump the patchlevel.
+
 The `beta` cargo feature may imply a higher MSRV.
 
 </div>
