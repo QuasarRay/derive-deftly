@@ -2213,10 +2213,7 @@ impl<O: SubstParseContext> FindRecogMetas for SubstDetails<O> {
                 b.find_recog_metas(acc);
             }
             paste(v, _) => v.find_recog_metas(acc),
-            paste_spanned(span, content, ..) => {
-                span.find_recog_metas(acc);
-                content.find_recog_metas(acc);
-            }
+            paste_spanned(v, ..) => v.find_recog_metas(acc),
             ChangeCase(v, _, _) => v.find_recog_metas(acc),
             concat(v, ..) => v.find_recog_metas(acc),
             error(v, ..) => v.find_recog_metas(acc),

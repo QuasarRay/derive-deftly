@@ -170,11 +170,7 @@ impl<O: SubstParseContext> AnalyseRepeat for Subst<O> {
             SD::fdefine(..) => Some(RO::Fields),
             SD::vdefbody(..) => Some(RO::Variants),
             SD::paste(body, ..) => recurse!(body),
-            SD::paste_spanned(span, content, ..) => {
-                span.analyse_repeat(visitor)?;
-                content.analyse_repeat(visitor)?;
-                None
-            }
+            SD::paste_spanned(body, ..) => recurse!(body),
             SD::ChangeCase(body, ..) => recurse!(body),
             SD::concat(body, ..) => recurse!(body),
             SD::StringTemplate(body, ..) => recurse!(body),

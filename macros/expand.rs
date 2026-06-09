@@ -539,13 +539,7 @@ where
             SD::paste(content, ..) => {
                 paste::expand(gctx, kw_span, content, out)?;
             }
-            SD::paste_spanned(span, content, ..) => {
-                let span = span.span_from_arg(gctx).unwrap_or_else(|e| {
-                    out.record_error(e);
-                    kw_span
-                });
-                paste::expand(gctx, span, content, out)?;
-            }
+            SD::paste_spanned(body, ..) => body.expand(gctx, kw_span, out)?,
             SD::ChangeCase(content, case, ..) => {
                 let mut items = paste::Items::new(kw_span);
                 content.expand(gctx, &mut items);

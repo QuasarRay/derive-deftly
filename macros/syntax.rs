@@ -153,8 +153,7 @@ pub enum SubstDetails<O: SubstParseContext> {
     // expansion manipulation
     paste(Template<paste::Items>, O::NotInBool),
     paste_spanned(
-        Argument,
-        Argument<paste::Items>,
+        paste::SubstSpanned,
         O::NotInBool,
         // TODO
         //
@@ -1097,7 +1096,6 @@ impl<O: SubstParseContext> Parse for Subst<O> {
 
         keyword! { paste(Template::parse(input)?, not_in_bool()?) }
         keyword! { paste_spanned(
-            input.parse()?,
             input.parse()?,
             not_in_bool()?,
             beta()?,

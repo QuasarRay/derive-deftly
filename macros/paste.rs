@@ -289,6 +289,46 @@ impl<T: ToTokens> IdentFrag for TokenPastesAsIdent<T> {
     }
 }
 
+//---------- substitutions ----------
+
+#[derive(Debug)]
+pub struct SubstSpanned {
+    span: Argument,
+    content: Argument<paste::Items>,
+}
+
+impl Parse for SubstSpanned {
+    fn parse(input: ParseStream) -> syn::Result<Self> {
+        let span = input.parse()?;
+        let content = input.parse()?;
+        Ok(SubstSpanned { span, content })
+    }
+}
+
+impl SubstSpanned {
+    pub fn expand<'c, O: ExpansionOutput>(
+        &self,
+        gctx: GeneralContext<'c>,
+        kw_span: Span,
+        out: &mut O,
+    ) -> syn::Result<()> {
+        let span = self.span.span_from_arg(gctx).unwrap_or_else(|e| {
+            out.record_error(e);
+            kw_span
+        });
+        paste::expand(gctx, span, &self.content, out)
+    }
+}
+
+impl UniformlyAnalysable for SubstSpanned {
+    fn impl_analyse<V: Visitor>(&self, v: &mut V) -> Result<(), V::E> {
+        let SubstSpanned { span, content } = self;
+        span.analyse(v)?;
+        content.analyse(v)?;
+        Ok(())
+    }
+}
+
 //---------- implementation ----------
 
 impl Items {
