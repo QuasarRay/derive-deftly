@@ -57,6 +57,21 @@ or via the [account request form].
 
 ## Changelog
 
+### 1.11.3 - 2026-06-09
+
+#### Added
+
+ * BETA: `$impl`
+ * BETA: `${gens_collate }`, `${gens_nodefs}`, `${gens_names}`
+
+#### Changed
+
+ * BETA: semver policy: beta additions are now just a patch bump.
+
+#### Improved
+
+ * Minor docs improvements.
+
 ### 1.11.2 - 2026-05-18
 
 #### Improved
