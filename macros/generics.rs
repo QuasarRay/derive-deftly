@@ -249,18 +249,9 @@ impl CollateInputs {
     }
 }
 
-impl AnalyseRepeat for CollateInputs {
-    fn analyse_repeat(
-        &self,
-        visitor: &mut RepeatAnalysisVisitor,
-    ) -> syn::Result<()> {
-        self.inputs.analyse_repeat(visitor)
-    }
-}
-
-impl meta::FindRecogMetas for CollateInputs {
-    fn find_recog_metas(&self, acc: &mut meta::Recognised) {
-        self.inputs.find_recog_metas(acc);
+impl UniformlyAnalysable for CollateInputs {
+    fn impl_analyse<V: Visitor>(&self, v: &mut V) -> Result<(), V::E> {
+        self.inputs.analyse(v)
     }
 }
 

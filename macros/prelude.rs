@@ -73,5 +73,4 @@ pub use super::compat_syn_2::*;
 pub use super::compat_syn_common::*;
 
 pub use super::options::*;
-#[allow(unused)] // XXXX
 pub use super::visitor::*;
