@@ -34,6 +34,10 @@ impl<T: Trait<T>> Trait<()> for Box<Box<T>>
 where
     T: Sync,
 {}
+impl Trait<(for<'x> fn(&'x u32))> for (for<'x> fn(&'x u32))
+where
+    Box<(for<'x> fn(&'x u32))>: Sync,
+{}
 fn main() {
     let _: Option<Enum> = None;
     let _ = Enum::Unit::<u8, 3>;
