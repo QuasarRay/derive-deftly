@@ -411,43 +411,22 @@ impl ImplShorthand {
     }
 }
 
-impl meta::FindRecogMetas for ImplShorthand {
-    fn find_recog_metas(&self, acc: &mut meta::Recognised) {
+impl UniformlyAnalysable for ImplShorthand {
+    fn impl_analyse<V: Visitor>(&self, v: &mut V) -> Result<(), V::E> {
         let ImplShorthand { generics, trait_, self_, where_ } //_
             = self;
 
         if let Some(ImplGenerics { lt: _, params, gt: _ }) //_
             = generics
         {
-            params.find_recog_metas(acc);
+            params.analyse(v)?;
         }
 
-        trait_.find_recog_metas(acc);
-        self_.find_recog_metas(acc);
-
-        where_.as_ref().map(|(_kw, w)| w.find_recog_metas(acc));
-    }
-}
-
-impl AnalyseRepeat for ImplShorthand {
-    fn analyse_repeat(
-        &self,
-        visitor: &mut RepeatAnalysisVisitor,
-    ) -> syn::Result<()> {
-        let ImplShorthand { generics, trait_, self_, where_ } //_
-            = self;
-
-        if let Some(ImplGenerics { lt: _, params, gt: _ }) //_
-            = generics
-        {
-            params.analyse_repeat(visitor)?;
-        }
-
-        analyse_repeat_iter!(visitor, trait_);
-        analyse_repeat_iter!(visitor, self_);
+        trait_.analyse(v)?;
+        self_.analyse(v)?;
 
         if let Some((_kw, where_)) = where_ {
-            where_.analyse_repeat(visitor)?;
+            where_.analyse(v)?;
         }
 
         Ok(())
