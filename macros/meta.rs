@@ -2167,14 +2167,6 @@ fn unrecognised_error(
 
 //---------- impls of FindRecogMetas ----------
 
-impl<O: SubstParseContext> FindRecogMetas for Template<O> {
-    fn find_recog_metas(&self, acc: &mut Recognised) {
-        for e in &self.elements {
-            e.find_recog_metas(acc)
-        }
-    }
-}
-
 impl<O: SubstParseContext> FindRecogMetas for TemplateElement<O> {
     fn find_recog_metas(&self, acc: &mut Recognised) {
         match self {

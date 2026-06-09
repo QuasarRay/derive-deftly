@@ -100,19 +100,6 @@ impl<O: SubstParseContext> AnalyseRepeat for SubstIf<O> {
     }
 }
 
-impl<O: SubstParseContext> AnalyseRepeat for Template<O> {
-    /// Analyses a template section to be repeated
-    fn analyse_repeat(
-        &self,
-        visitor: &mut RepeatAnalysisVisitor,
-    ) -> syn::Result<()> {
-        for element in &self.elements {
-            element.analyse_repeat(visitor)?;
-        }
-        Ok(())
-    }
-}
-
 impl<O: SubstParseContext> AnalyseRepeat for TemplateElement<O> {
     fn analyse_repeat(
         &self,

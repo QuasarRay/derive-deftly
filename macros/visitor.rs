@@ -102,6 +102,15 @@ impL_analysable_via_deref!((T: Analysable), Box<T>);
 
 //---------- impls of UniformlyAnalysable ----------
 
+impl<O: SubstParseContext> UniformlyAnalysable for Template<O> {
+    fn impl_analyse<V: Visitor>(&self, v: &mut V) -> Result<(), V::E> {
+        for element in &self.elements {
+            element.analyse(v)?;
+        }
+        Ok(())
+    }
+}
+
 impl UniformlyAnalysable for ExplicitError {
     fn impl_analyse<V: Visitor>(&self, v: &mut V) -> Result<(), V::E> {
         let ExplicitError { message, span } = self;
