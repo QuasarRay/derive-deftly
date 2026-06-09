@@ -679,7 +679,10 @@ pub struct AngleBrackets {
 }
 
 impl AngleBrackets {
-    pub fn finish(self, start_span: Span) -> syn::Result<()> {
+    pub fn finish(
+        self,
+        start_span: Span,
+    ) -> syn::Result<()> {
         if !self.found_close {
             return Err(
                 start_span.error("unmatched paste $< start - missing >")

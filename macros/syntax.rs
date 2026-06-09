@@ -903,7 +903,9 @@ impl<O: SubstParseContext> Subst<O> {
             let mut special = Some(state);
             let template = Template::parse_special(input, &mut special)?;
             let state = special.unwrap();
-            state.finish(angle.span())?;
+            state.finish(
+                angle.span(),
+            )?;
             Ok(Subst {
                 kw_span: angle.span(),
                 sd: SD::paste(template, O::not_in_bool(&angle)?),
