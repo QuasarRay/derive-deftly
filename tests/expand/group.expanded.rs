@@ -42,6 +42,7 @@ impl UseFieldsLikeOption {
 }
 #[derive_deftly_adhoc]
 struct TypePrecedenceDyn {
+    #[allow(unused_parens)]
     parens: (dyn Display + 'static),
 }
 fn main() {
