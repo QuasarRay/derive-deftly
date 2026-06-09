@@ -1438,10 +1438,7 @@ impl<O: SubstParseContext> RepeatedTemplate<O> {
         let TWW {
             elements,
             allow_recursive_parse,
-        } = TWW::parse_special::<()>(
-            input,
-            &mut (),
-        )?;
+        } = TWW::parse_special::<()>(input, &mut ())?;
 
         // split `when` off
         let mut elements = VecDeque::from(elements);
