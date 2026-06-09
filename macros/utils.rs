@@ -663,8 +663,7 @@ impl SpecialParseContext for Option<AngleBrackets> {
     ) -> syn::Result<Option<SpecialInstructions>> {
         if input.peek(Token![>]) {
             if let Some(state) = self {
-                let _: Token![>] = input.parse()?;
-                state.found_close = true;
+                state.final_angle = Some(input.parse()?);
                 return Ok(Some(SpecialInstructions::EndOfTemplate));
             }
         }
@@ -675,20 +674,17 @@ impl SpecialParseContext for Option<AngleBrackets> {
 /// Parsing state for `$<...>`
 #[derive(Default)]
 pub struct AngleBrackets {
-    found_close: bool,
+    final_angle: Option<Token![>]>,
 }
 
 impl AngleBrackets {
     pub fn finish(
         self,
         start_span: Span,
-    ) -> syn::Result<()> {
-        if !self.found_close {
-            return Err(
+    ) -> syn::Result<Token![>]> {
+        self.final_angle.ok_or_else(|| {
                 start_span.error("unmatched paste $< start - missing >")
-            );
-        }
-        Ok(())
+        })
     }
 }
 
