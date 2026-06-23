@@ -249,18 +249,9 @@ impl CollateInputs {
     }
 }
 
-impl AnalyseRepeat for CollateInputs {
-    fn analyse_repeat(
-        &self,
-        visitor: &mut RepeatAnalysisVisitor,
-    ) -> syn::Result<()> {
-        self.inputs.analyse_repeat(visitor)
-    }
-}
-
-impl meta::FindRecogMetas for CollateInputs {
-    fn find_recog_metas(&self, acc: &mut meta::Recognised) {
-        self.inputs.find_recog_metas(acc);
+impl UniformlyAnalysable for CollateInputs {
+    fn impl_analyse<V: Visitor>(&self, v: &mut V) -> Result<(), V::E> {
+        self.inputs.analyse(v)
     }
 }
 
@@ -273,7 +264,7 @@ impl meta::FindRecogMetas for CollateInputs {
 ///  - no body
 ///  - less support for exciting Rust features eg `unsafe`
 #[derive(Debug)]
-pub struct ImplShorthand {
+pub struct SubstImpl {
     /// `${impl < GENERICS > ...}`
     ///
     /// Default is `$tgens`
@@ -303,7 +294,7 @@ pub struct ImplGenerics {
     pub gt: Token![>],
 }
 
-impl Parse for ImplShorthand {
+impl Parse for SubstImpl {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let generics = if input.peek(Token![<]) {
             let (lt, inputs, gt) = AngleBrackets::parse_bracketed_template(
@@ -354,7 +345,7 @@ impl Parse for ImplShorthand {
             )));
         }
 
-        Ok(ImplShorthand {
+        Ok(SubstImpl {
             generics,
             trait_,
             self_,
@@ -363,14 +354,14 @@ impl Parse for ImplShorthand {
     }
 }
 
-impl ImplShorthand {
+impl SubstImpl {
     pub fn expand<'c>(
         &self,
         ctx: &'c Context<'c>,
         out: &mut TokenAccumulator,
         kw_span: Span,
     ) {
-        let ImplShorthand { generics, trait_, self_, where_ } //_
+        let SubstImpl { generics, trait_, self_, where_ } //_
             = self;
         let gctx = ctx.as_general();
 
@@ -420,43 +411,22 @@ impl ImplShorthand {
     }
 }
 
-impl meta::FindRecogMetas for ImplShorthand {
-    fn find_recog_metas(&self, acc: &mut meta::Recognised) {
-        let ImplShorthand { generics, trait_, self_, where_ } //_
+impl UniformlyAnalysable for SubstImpl {
+    fn impl_analyse<V: Visitor>(&self, v: &mut V) -> Result<(), V::E> {
+        let SubstImpl { generics, trait_, self_, where_ } //_
             = self;
 
         if let Some(ImplGenerics { lt: _, params, gt: _ }) //_
             = generics
         {
-            params.find_recog_metas(acc);
+            params.analyse(v)?;
         }
 
-        trait_.find_recog_metas(acc);
-        self_.find_recog_metas(acc);
-
-        where_.as_ref().map(|(_kw, w)| w.find_recog_metas(acc));
-    }
-}
-
-impl AnalyseRepeat for ImplShorthand {
-    fn analyse_repeat(
-        &self,
-        visitor: &mut RepeatAnalysisVisitor,
-    ) -> syn::Result<()> {
-        let ImplShorthand { generics, trait_, self_, where_ } //_
-            = self;
-
-        if let Some(ImplGenerics { lt: _, params, gt: _ }) //_
-            = generics
-        {
-            params.analyse_repeat(visitor)?;
-        }
-
-        analyse_repeat_iter!(visitor, trait_);
-        analyse_repeat_iter!(visitor, self_);
+        trait_.analyse(v)?;
+        self_.analyse(v)?;
 
         if let Some((_kw, where_)) = where_ {
-            where_.analyse_repeat(visitor)?;
+            where_.analyse(v)?;
         }
 
         Ok(())
@@ -532,17 +502,8 @@ impl TemplateUntilKeyword {
     }
 }
 
-impl meta::FindRecogMetas for TemplateUntilKeyword {
-    fn find_recog_metas(&self, acc: &mut meta::Recognised) {
-        self.0.find_recog_metas(acc);
-    }
-}
-
-impl AnalyseRepeat for TemplateUntilKeyword {
-    fn analyse_repeat(
-        &self,
-        visitor: &mut RepeatAnalysisVisitor,
-    ) -> syn::Result<()> {
-        self.0.analyse_repeat(visitor)
+impl UniformlyAnalysable for TemplateUntilKeyword {
+    fn impl_analyse<V: Visitor>(&self, v: &mut V) -> Result<(), V::E> {
+        self.0.analyse(v)
     }
 }

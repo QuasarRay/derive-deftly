@@ -57,7 +57,7 @@ pub(super) use super::{
 #[allow(unused_imports)] // used in tests
 pub use super::utils::{Concatenated, Discard};
 
-pub use generics::ImplShorthand;
+pub use generics::SubstImpl;
 pub use meta::CheckUsed as mCU;
 
 pub use framework::SynErrorExt as _;
@@ -73,3 +73,4 @@ pub use super::compat_syn_2::*;
 pub use super::compat_syn_common::*;
 
 pub use super::options::*;
+pub use super::visitor::*;

@@ -140,7 +140,7 @@ pub enum SubstDetails<O: SubstParseContext> {
     vtype(SubstVType, AllowTokens<O>, O::NotInBool),
     v_explicit_discriminant(AllowTokens<O>, beta::Enabled),
 
-    Impl(ImplShorthand, AllowTokens<O>, O::NotInBool, beta::Enabled),
+    Impl(SubstImpl, AllowTokens<O>, O::NotInBool, beta::Enabled),
     tdefvariants(Template<TokenAccumulator>, AllowTokens<O>, O::NotInBool),
     fdefine(Option<Argument>, AllowTokens<O>, O::NotInBool),
     vdefbody(
@@ -153,8 +153,7 @@ pub enum SubstDetails<O: SubstParseContext> {
     // expansion manipulation
     paste(Template<paste::Items>, O::NotInBool),
     paste_spanned(
-        Argument,
-        Argument<paste::Items>,
+        paste::SubstSpanned,
         O::NotInBool,
         // TODO
         //
@@ -176,11 +175,7 @@ pub enum SubstDetails<O: SubstParseContext> {
         // other contexts and therefore on other content, too.
         beta::Enabled,
     ),
-    ChangeCase(
-        Template<paste::Items>,
-        paste::ChangeCase,
-        paste::ChangeCaseOkIn<O>,
-    ),
+    ChangeCase(paste::SubstChangeCaseBody, paste::ChangeCaseOkIn<O>),
     concat(
         Template<concat::Accumulator>,
         O::NotInBool,
@@ -1098,7 +1093,6 @@ impl<O: SubstParseContext> Parse for Subst<O> {
         keyword! { paste(Template::parse(input)?, not_in_bool()?) }
         keyword! { paste_spanned(
             input.parse()?,
-            input.parse()?,
             not_in_bool()?,
             beta()?,
         ) }
@@ -1148,8 +1142,8 @@ impl<O: SubstParseContext> Parse for Subst<O> {
 
         if let Ok(case) = kw.to_string().parse() {
             let ok = paste::ChangeCaseOkIn::new_checked(case, kw.span())?;
-
-            return from_sd(SD::ChangeCase(Template::parse(input)?, case, ok));
+            let body = paste::SubstChangeCaseBody::parse(input, case)?;
+            return from_sd(SD::ChangeCase(body, ok));
         }
 
         if let Ok(user_defined) = kw.clone().try_into() {
