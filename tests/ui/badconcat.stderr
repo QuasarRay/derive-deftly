@@ -79,3 +79,15 @@ error: DataType is not used for span (template error message)
    |
 66 |     ${error message=${concat $tname " is not used for span"}}
    |                                     ^^^^^^^^^^^^^^^^^^^^^^^
+
+error: not allowed in within ${paste ...} (or case_changing)
+  --> ui/badconcat.rs:74:25
+   |
+74 |     const $<bad_ident_ $JUST_STRING>: () = ();
+   |                         ^^^^^^^^^^^
+
+error: user-defined expansion is not pasteable because it isn't, itself, ${paste }
+  --> ui/badconcat.rs:72:26
+   |
+72 |     ${define JUST_STRING "just string"}
+   |                          ^^^^^^^^^^^^^

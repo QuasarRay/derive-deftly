@@ -252,6 +252,7 @@ pub enum DefinitionBody {
     Normal(Argument),
     Paste(Argument<paste::Items>),
     Concat(Argument<concat::Accumulator>),
+    LitStr(syn::LitStr),
 }
 
 pub type DefCondBody = Box<Condition>;
@@ -382,7 +383,8 @@ impl Parse for Definition<DefinitionBody> {
         /// Token to make sure we undo the pop in the match
         struct PushedBack;
 
-        // Is it precisely an invocation of $paste/$< > or $concat/$".." ?
+        // Is it precisely an invocation of $paste/$< > or $concat/$"..",
+        // or a string literal ?
         let body = match (|| {
             let Template {
                 elements,
@@ -395,6 +397,9 @@ impl Parse for Definition<DefinitionBody> {
             // let ... else would be nice, but not available at MSRV 1.56
             let (kw_span, sd) = match first {
                 TE::Subst(Subst { kw_span, sd }) => (kw_span, sd),
+                TE::LitStr(litstr) => {
+                    return Ok(DefinitionBody::LitStr(litstr))
+                }
                 _ => {
                     elements.push(first);
                     return Err(PushedBack);

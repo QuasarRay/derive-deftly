@@ -11,4 +11,7 @@ const _: &[&str] = &[
     "cond  so empty.",
     "quotes \" apostrophes ' and backslashes \\ ok in lit parts.",
 ];
+const _: &str = "just string";
+const _: &str = "just string";
+const _: &str = "just string";
 fn main() {}

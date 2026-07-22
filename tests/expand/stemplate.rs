@@ -21,6 +21,12 @@ derive_deftly_adhoc! {
         $"cond ${defcond T approx_equal({<}, $<>)} so empty.",
         $r#"quotes " apostrophes ' and backslashes \ ok in lit parts."#,
     ];
+
+    ${define JUST_STRING "just string"}
+    const _: &str = $JUST_STRING;
+
+    const _: &str = ${concat $JUST_STRING};
+    const _: &str = $"$JUST_STRING";
 }
 
 fn main() {}

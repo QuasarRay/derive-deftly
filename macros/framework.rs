@@ -351,7 +351,7 @@ pub trait ExpansionOutput: SubstParseContext {
     /// and we don't want to unconditionally turn it into a string
     /// before retokenising it.
     ///
-    /// `tspan` is the span of a literal in the template that
+    /// `te_span` is the span of a literal in the template that
     /// determined the string (or was included in it).
     /// This is used by `$[concat }` to arrange that the span of its output
     /// is always the template, not anything that was substituted into it.
