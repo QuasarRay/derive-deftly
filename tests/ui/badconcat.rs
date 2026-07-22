@@ -72,9 +72,6 @@ derive_deftly_adhoc! {
     ${define JUST_STRING "just string"}
 
     const $<bad_ident_ $JUST_STRING>: () = ();
-
-    const _: &str = ${concat $JUST_STRING};
-    const _: &str = $"$JUST_STRING";
 }
 
 fn main() {}

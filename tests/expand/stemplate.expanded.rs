@@ -12,4 +12,6 @@ const _: &[&str] = &[
     "quotes \" apostrophes ' and backslashes \\ ok in lit parts.",
 ];
 const _: &str = "just string";
+const _: &str = "just string";
+const _: &str = "just string";
 fn main() {}

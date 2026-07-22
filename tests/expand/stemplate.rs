@@ -24,6 +24,9 @@ derive_deftly_adhoc! {
 
     ${define JUST_STRING "just string"}
     const _: &str = $JUST_STRING;
+
+    const _: &str = ${concat $JUST_STRING};
+    const _: &str = $"$JUST_STRING";
 }
 
 fn main() {}
