@@ -66,4 +66,15 @@ derive_deftly_adhoc! {
     ${error message=${concat $tname " is not used for span"}}
 }
 
+derive_deftly_adhoc! {
+    DataType beta_deftly:
+
+    ${define JUST_STRING "just string"}
+
+    const $<bad_ident_ $JUST_STRING>: () = ();
+
+    const _: &str = ${concat $JUST_STRING};
+    const _: &str = $"$JUST_STRING";
+}
+
 fn main() {}
