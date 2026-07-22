@@ -65,6 +65,7 @@ or via the [account request form].
    a string literal `"..." within `${concat }` and `$"..."`.
  * BETA: Scan the span argument to `${paste_spanned}` for `$Xmeta`
    for the purposes of meta recognition error reporting.
+ * Relaxed upper dependency bounds for `educe`.
 
 ### 1.11.3 - 2026-06-09
 
