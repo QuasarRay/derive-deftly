@@ -57,6 +57,15 @@ or via the [account request form].
 
 ## Changelog
 
+### 1.11.4 - 2026-07-22
+
+#### Improved
+
+ * BETA: Allow user-defined expansions whose definition is just
+   a string literal `"..." within `${concat }` and `$"..."`.
+ * BETA: Scan the span argument to `${paste_spanned}` for `$Xmeta`
+   for the purposes of meta recognition error reporting.
+
 ### 1.11.3 - 2026-06-09
 
 #### Added
