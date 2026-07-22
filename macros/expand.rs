@@ -706,6 +706,12 @@ impl DefinitionName {
             DefinitionBody::Concat(content) => {
                 content.expand_onto(def.body_span, ctx, &not_in_paste()?, out);
             }
+            DefinitionBody::LitStr(content) => {
+                // Even though "..." is allowed in ${paste },
+                // we don't allow ${define X ".."} ${paste $X}
+                let _: O::NotInPaste = not_in_paste()?;
+                out.append_syn_litstr(&content, Some(def.body_span));
+            }
             DefinitionBody::Normal(content) => {
                 let ok = (not_in_paste()?, not_in_concat()?);
                 out.append_tokens_with(&ok, |out| {

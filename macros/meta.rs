@@ -2325,6 +2325,7 @@ impl FindRecogMetas for DefinitionBody {
             DefinitionBody::Normal(v) => v.find_recog_metas(acc),
             DefinitionBody::Paste(v) => v.find_recog_metas(acc),
             DefinitionBody::Concat(v) => v.find_recog_metas(acc),
+            DefinitionBody::LitStr(_) => {}
         }
     }
 }

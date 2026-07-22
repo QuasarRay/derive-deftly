@@ -91,32 +91,3 @@ error: user-defined expansion is not pasteable because it isn't, itself, ${paste
    |
 72 |     ${define JUST_STRING "just string"}
    |                          ^^^^^^^^^^^^^
-
-error: not allowed in within ${concat ...}
-  --> ui/badconcat.rs:76:31
-   |
-76 |     const _: &str = ${concat $JUST_STRING};
-   |                               ^^^^^^^^^^^
-
-error: user-defined expansion is not concatenable because it isn't, itself, ${concat } or ${paste }
-  --> ui/badconcat.rs:72:26
-   |
-72 |     ${define JUST_STRING "just string"}
-   |                          ^^^^^^^^^^^^^
-
-error: not allowed in within ${concat ...}
-  --> ui/badconcat.rs:3:10
-   |
- 3 |   #[derive(Deftly)]
-   |            ^^^^^^
-...
-69 | / derive_deftly_adhoc! {
-70 | |     DataType beta_deftly:
-71 | |
-72 | |     ${define JUST_STRING "just string"}
-...  |
-77 | |     const _: &str = $"$JUST_STRING";
-78 | | }
-   | |_- in this macro invocation
-   |
-   = note: this error originates in the macro `::derive_deftly::derive_deftly_engine` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
