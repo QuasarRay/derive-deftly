@@ -57,6 +57,12 @@ or via the [account request form].
 
 ## Changelog
 
+### 1.11.5 - 2026-07-23
+
+#### Improved
+
+ * Fixed some minor slips in the changelog entry for 1.11.4.
+
 ### 1.11.4 - 2026-07-22
 
 #### Improved
