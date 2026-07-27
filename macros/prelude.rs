@@ -18,6 +18,7 @@ pub use std::str::FromStr;
 pub use std::thread::panicking;
 
 pub use itertools::{chain, izip, Either, Either::*, EitherOrBoth, Itertools};
+pub use proc_macro2::extra::DelimSpan;
 pub use proc_macro2::{Delimiter, Ident, Punct};
 pub use proc_macro2::{Span, TokenStream, TokenTree};
 pub use quote::{format_ident, quote, quote_spanned, ToTokens};
@@ -44,7 +45,7 @@ pub use super::utils::{
     group_clone_set_stream, group_new_with_span, respan_hygiene, spans_join,
     typepath_add_missing_argument_colons, DocAttributes, ErrorAccumulator,
     ErrorGenerator, ErrorLoc, Grouping, IdentAny, MacroExport, MakeError,
-    ModuleName, ModulePath, TemplateName, TemplatePath,
+    ModuleName, ModulePath, Spanned, TemplateName, TemplatePath,
     ToTokensPunctComposable, TokenOutputTrimmer, WantPunctComposable,
 };
 
@@ -61,6 +62,7 @@ pub use generics::SubstImpl;
 pub use meta::CheckUsed as mCU;
 
 pub use framework::SynErrorExt as _;
+pub use meta::AttributeExt12 as _;
 pub use repeat::AnalyseRepeat as _;
 pub use string_template::LexicalContext as _;
 
@@ -69,7 +71,9 @@ pub use string_template::LexicalContext as _;
 #[allow(unused_imports)]
 pub use super::utils::dprint;
 
+#[allow(unused)] // TODO syn 3 ?
 pub use super::compat_syn_2::*;
+#[allow(unused)] // TODO syn 3 ?
 pub use super::compat_syn_common::*;
 
 pub use super::options::*;
