@@ -30,7 +30,7 @@ proc-macro2 = "1.0.53"
 quote = "1"
 sha3 = { version = ">=0.10, <0.13", optional = true }
 strum = { version = ">=0.24, <0.29", features = ["derive"] }
-syn = { version = "2.0.53", features = ["extra-traits"] }
+syn = { version = ">=2.0.53, <4", features = ["extra-traits"] }
 unicode-ident = "1"
 void = "1"
 

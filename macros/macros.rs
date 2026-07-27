@@ -48,7 +48,6 @@ pub(crate) mod derive;
 pub(crate) mod engine;
 pub(crate) mod semver;
 
-pub(crate) mod compat_syn_2;
 pub(crate) mod compat_syn_common;
 
 #[doc=include_str!("HACKING.md")]

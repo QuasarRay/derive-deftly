@@ -900,7 +900,7 @@ pub fn engine_macro_name() -> Result<TokenStream, syn::Error> {
 
 /// Local version of `Spanned`
 ///
-/// Works around `Spanned` being sealed in syn 2.
+/// Works around `Spanned` being sealed in syn 2 onwards.
 /// <https://github.com/dtolnay/syn/pull/1524>.
 /// (Not needed with syn 1, but would be harmless there.)
 pub trait Spanned {

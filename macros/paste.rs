@@ -895,7 +895,7 @@ impl ExpansionOutput for Items {
                     let (last_segment, last_punct) = path
                         .path
                         .segments
-                        .pop()
+                        .pop_pair_()
                         .ok_or_else(|| {
                             te_span.error(
                                 "derive-deftly token pasting applied to path with no components",
