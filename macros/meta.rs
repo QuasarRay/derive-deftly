@@ -717,6 +717,39 @@ impl Parse for Label {
     }
 }
 
+//---------- extension methods on syn::Attribute ----------
+
+/// Helper trait to deal with syn's idea of attribute contents
+///
+/// We expect all our attributes to be parenthesised.
+pub trait AttributeExt12 {
+    /// Parse the content within an `#[attribute(content)]`
+    ///
+    /// Parses the `content` as `T`.
+    fn parse_in_parens<T: Parse>(&self) -> syn::Result<T> {
+        self.call_in_parens(Parse::parse)
+    }
+
+    /// Like `parse_in_parens`, but takes a parser callback.
+    fn call_in_parens<T, F>(&self, f: F) -> syn::Result<T>
+    where
+        F: FnOnce(ParseStream<'_>) -> syn::Result<T>;
+}
+
+impl AttributeExt12 for syn::Attribute {
+    fn call_in_parens<T, F>(&self, f: F) -> syn::Result<T>
+    where
+        F: FnOnce(ParseStream<'_>) -> syn::Result<T>,
+    {
+        let list = self.meta.require_list()?;
+        let _paren: syn::token::Paren = match list.delimiter {
+            syn::MacroDelimiter::Paren(p) => p,
+            _ => return Err(list.error("expected parenthesised attributes")),
+        };
+        f.parse2(list.tokens.clone())
+    }
+}
+
 //---------- searching and matching ----------
 
 impl Label {

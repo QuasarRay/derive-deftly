@@ -62,6 +62,7 @@ pub use generics::SubstImpl;
 pub use meta::CheckUsed as mCU;
 
 pub use framework::SynErrorExt as _;
+pub use meta::AttributeExt12 as _;
 pub use repeat::AnalyseRepeat as _;
 pub use string_template::LexicalContext as _;
 
