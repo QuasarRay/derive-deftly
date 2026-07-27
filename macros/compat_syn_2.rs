@@ -14,8 +14,6 @@
 #[allow(unused)] // TODO syn 3 ?
 use super::prelude::*;
 
-pub use proc_macro2::extra::DelimSpan;
-
 //---------- Attribute methods ----------
 
 impl AttributeExt12 for syn::Attribute {
