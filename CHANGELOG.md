@@ -57,10 +57,11 @@ or via the [account request form].
 
 ## Changelog
 
-### 1.11.5 - 2026-07-23
+### 1.11.5 - 2026-07-27
 
 #### Improved
 
+ * Relaxed upper dependency for `syn`: allow use of syn 3.x, as well as 2.x.
  * Fixed some minor slips in the changelog entry for 1.11.4.
 
 ### 1.11.4 - 2026-07-22
