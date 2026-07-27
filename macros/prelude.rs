@@ -44,7 +44,7 @@ pub use super::utils::{
     group_clone_set_stream, group_new_with_span, respan_hygiene, spans_join,
     typepath_add_missing_argument_colons, DocAttributes, ErrorAccumulator,
     ErrorGenerator, ErrorLoc, Grouping, IdentAny, MacroExport, MakeError,
-    ModuleName, ModulePath, TemplateName, TemplatePath,
+    ModuleName, ModulePath, Spanned, TemplateName, TemplatePath,
     ToTokensPunctComposable, TokenOutputTrimmer, WantPunctComposable,
 };
 
