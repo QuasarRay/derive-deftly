@@ -71,7 +71,6 @@ pub use string_template::LexicalContext as _;
 #[allow(unused_imports)]
 pub use super::utils::dprint;
 
-#[allow(unused)] // TODO syn 3 ?
 pub use super::compat_syn_common::*;
 
 pub use super::options::*;
