@@ -11,6 +11,7 @@
 
 // TODO we're committed to syn 2 now, we could maybe remove some of this
 
+#[allow(unused)] // TODO syn 3 ?
 use super::prelude::*;
 
 pub use proc_macro2::extra::DelimSpan;
