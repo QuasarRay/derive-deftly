@@ -1488,11 +1488,19 @@ impl<'l> FoundNode<'l> {
                         group.set_span(span);
                         group.to_token_stream()
                     }
-                    _ => {
-                        let span = expr.span();
-                        Grouping::Parens.surround(span, expr)
-                    }
+                    _ => expr.to_token_stream(),
                 };
+                // Now surround with `( )` for precedence reasons.
+                // (And, if we surrounded with `{ }` above, to turn the
+                // block into an expression that's useable everywhere, for eg
+                //     #[deftly(fn = { |_| .. })]
+                // and then
+                //     ${fmeta(fn as expr)}(arg)
+                // which we need to expand to
+                //     ({ |_| .. })(arg)
+                // not
+                //     { |_| .. }(arg)   // <- doesn't compile
+                let content = Grouping::Parens.surround(expr.span(), content);
                 out.append_tokens(at, content)?;
             }
             SA::ident => {
