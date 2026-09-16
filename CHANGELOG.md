@@ -57,6 +57,12 @@ or via the [account request form].
 
 ## Changelog
 
+### 1.12.1 - 2026-09-16
+
+#### Improved
+
+ * Relaxed upper dependency for `educe`: allow use of 0.8.
+
 ### 1.12.0 - 2026-09-16
 
 ##### Breaking changes to beta features
