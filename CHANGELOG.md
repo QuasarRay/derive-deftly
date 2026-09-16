@@ -57,6 +57,14 @@ or via the [account request form].
 
 ## Changelog
 
+### 1.12.0 - 2026-09-16
+
+##### Breaking changes to beta features
+
+ * BETA: `${Xmeta as expr}` with `#[deftly(value = { .. })]` adds parens:
+   now it expands to `({ .. })` not `{ .. }`, so it's useable everywhere
+   an expression is.  Shouldn't break any non-buggy macros.
+
 ### 1.11.5 - 2026-07-27
 
 #### Improved

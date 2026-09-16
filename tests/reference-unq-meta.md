@@ -671,6 +671,7 @@ These checks are disabled by `#[derive_deftly_adhoc]`.
  * `${tmeta(gentype) as str}`: error, ``expected string literal, for meta value``
  * `${tmeta(gentype) as token_stream}`: `Vec<i32>`
  * `${vmeta(value) as ident}`: `unit_toplevel`, `enum_variant`
+ * `${vmeta(value) as expr}`: `(unit_toplevel)`, `({ enum_variant })`
  * `${tmeta(some_vis) as vis}`: `pub(crate)`
  * `${fmeta(nested(inner)) as expr}` for `field` in `Struct`: `(42)`
  * `${vmeta(items) as items}` for `TupleVariant`: `type T = i32; const K: T = 7;`
@@ -763,7 +764,7 @@ that come *after* the `#[derive(..., Deftly, ...)]`.
 
 ##### For `Enum`
 
- * `${vattrs deftly}` for `UnitVariant`: `#[deftly(value = enum_variant)]`
+ * `${vattrs deftly}` for `UnitVariant`: `#[deftly(value = { enum_variant })]`
 
 <div id="x:findex">
 <div id="x:vindex">
@@ -1850,7 +1851,7 @@ where T: 'l, T: TryInto<u8>
 pub enum Enum<'a, 'l: 'a, T: Display = usize, const C: usize = 1>
 where T: 'l, T: TryInto<u8>
 {
-    #[deftly(value = enum_variant)]
+    #[deftly(value = { enum_variant })]
     UnitVariant,
     #[deftly(items = { type T = i32; const K: T = 7; })]
     TupleVariant(std::iter::Once::<T>),
