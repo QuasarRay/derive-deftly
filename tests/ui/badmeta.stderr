@@ -1,8 +1,8 @@
 error: cannot parse string into token stream
-  --> ui/badmeta.rs:6:10
+  --> ui/badmeta.rs:9:18
    |
- 6 |   #[derive(Deftly)]
-   |            ^^^^^^
+ 9 |   #[deftly(wrong = "{")]
+   |                    ^^^
 ...
 18 | / derive_deftly_adhoc! {
 19 | |     DataType:
@@ -12,7 +12,7 @@ error: cannot parse string into token stream
 23 | | }
    | |_- in this macro invocation
    |
-   = note: this error originates in the macro `::derive_deftly::derive_deftly_engine` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
+   = note: this error originates in the macro `derive_deftly_driver_DataType` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: expected an expression
   --> ui/badmeta.rs:10:16
