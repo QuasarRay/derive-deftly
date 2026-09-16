@@ -1475,6 +1475,9 @@ impl<'l> FoundNode<'l> {
             SA::expr(.., at, supported) => {
                 let expr = metavalue_as(AVH::Expr, input)?;
                 supported.infer_type(&expr);
+                // If the value was braced, reconstruct the Group, so that
+                //     #[deftly(e = { stmt; value })]
+                // works as expected.
                 let content = match val {
                     PV::Braced { brace_token, .. } => {
                         let span = brace_token.span.span();
