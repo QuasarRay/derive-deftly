@@ -1374,7 +1374,7 @@ All these features are available only in [**beta**].
 
 <div id="x:v_explicit_discriminant">
 
-### `${v_explicit_discriminant ..}` -- Explicitly specified enum discriminant (**beta**)
+### `${v_explicit_discriminant ..}` -- Explicitly specified enum discriminant
 
 </div>
 
@@ -1391,8 +1391,6 @@ Usually it is better to use `Enum::Variant as _`, or perhaps
 If no discriminant was explicitly specified, it is an error.
 
 The expression is enclosed in `( )` to avoid precedence problems.
-
-Available only in [**beta**].
 
 #### Examples
 
@@ -1799,7 +1797,7 @@ Available only in [**beta**].
 
 <div id="c:v_explicit_discriminant">
 
-### `v_explicit_discriminant` -- enum discriminant explicitly specified? (**beta**)
+### `v_explicit_discriminant` -- enum discriminant explicitly specified?
 
 </div>
 
@@ -1807,8 +1805,6 @@ Does this variant have an explicitly specified discriminant, in
 the Rust `Variant = DISCRIMINANT` syntax?
 
 False for structs and unions.
-
-Available only in [**beta**].
 
 #### Examples
 

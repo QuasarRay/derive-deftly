@@ -255,10 +255,9 @@ fn dump_variant(mut w: &mut Out, ctx: &Context, wv: &WithinVariant) -> R {
     expand! { c, $vindex }
     expand! { c, $vpat }
     expand! { c, ${vdefbody VNAME FIELDS..} }
-    beta_omit! {
-        beta:
-        expand! { c, $v_explicit_discriminant } @ (_, beta);
-    }
+  if false { // XXXX
+    expand! { c, $v_explicit_discriminant }
+  }
 
     beta_omit! {
         beta:
@@ -267,10 +266,9 @@ fn dump_variant(mut w: &mut Out, ctx: &Context, wv: &WithinVariant) -> R {
     bool! { c, v_is_unit }
     bool! { c, v_is_tuple }
     bool! { c, v_is_named }
-    beta_omit! {
-        beta:
-        bool! { c, v_explicit_discriminant } @ (_, beta);
-    }
+  if false { // XXXX
+    bool! { c, v_explicit_discriminant }
+  }
 
     expand! { c, $vattrs }
 
