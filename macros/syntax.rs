@@ -176,11 +176,7 @@ pub enum SubstDetails<O: SubstParseContext> {
         beta::Enabled,
     ),
     ChangeCase(paste::SubstChangeCaseBody, paste::ChangeCaseOkIn<O>),
-    concat(
-        Template<concat::Accumulator>,
-        O::NotInBool,
-        O::NotInPaste,
-    ),
+    concat(Template<concat::Accumulator>, O::NotInBool, O::NotInPaste),
     StringTemplate(
         Template<string_template::Accumulator>,
         O::NotInBool,
@@ -440,11 +436,7 @@ impl Parse for Definition<DefinitionBody> {
                     mk_special_body(
                         kw_span,
                         DefinitionBody::Concat,
-                        SD::StringTemplate(
-                            items,
-                            not_in_bool,
-                            not_in_paste,
-                        ),
+                        SD::StringTemplate(items, not_in_bool, not_in_paste),
                     )
                 }
                 other => {
