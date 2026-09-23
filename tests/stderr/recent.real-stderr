@@ -22,9 +22,11 @@ variant Unit:
         $vindex      =>  0
         $vpat        =>  Enum :: Unit {}
         ${vdefbody VNAME FIELDS ..} => VNAME FIELDS .. ,
+        $v_explicit_discriminant => <error: enum variant does not have explicit discriminant>
         v_is_unit    =   true
         v_is_tuple   =   false
         v_is_named   =   false
+        v_explicit_discriminant = false
         $vattrs      =>  
 variant Tuple:
         $vname       =>  Tuple
@@ -32,9 +34,11 @@ variant Tuple:
         $vindex      =>  1
         $vpat        =>  Enum :: Tuple { 0 : f_0, }
         ${vdefbody VNAME FIELDS ..} => VNAME(FIELDS ..),
+        $v_explicit_discriminant => <error: enum variant does not have explicit discriminant>
         v_is_unit    =   false
         v_is_tuple   =   true
         v_is_named   =   false
+        v_explicit_discriminant = false
         $vattrs      =>  
 variant Tuple, field 0:
         $fname       =>  0
@@ -53,9 +57,11 @@ variant Struct:
         $vindex      =>  2
         $vpat        =>  Enum :: Struct { field : f_field, }
         ${vdefbody VNAME FIELDS ..} => VNAME { FIELDS .. },
+        $v_explicit_discriminant => <error: enum variant does not have explicit discriminant>
         v_is_unit    =   false
         v_is_tuple   =   false
         v_is_named   =   true
+        v_explicit_discriminant = false
         $vattrs      =>  
 variant Struct, field field:
         $fname       =>  field
@@ -93,9 +99,11 @@ variant Unit:
         $vindex      =>  0
         $vpat        =>  Enum :: Unit {}
         ${vdefbody VNAME FIELDS ..} => VNAME FIELDS .. ,
+        $v_explicit_discriminant => <error: enum variant does not have explicit discriminant>
         v_is_unit    =   true
         v_is_tuple   =   false
         v_is_named   =   false
+        v_explicit_discriminant = false
         $vattrs      =>  
 variant Unit, no field:
         $fname       =>  <error: must be within a field, so within a field repeat group; but, is only within a variant repeat group>
@@ -133,9 +141,11 @@ variant Tuple:
         $vindex      =>  1
         $vpat        =>  Enum :: Tuple { 0 : f_0, }
         ${vdefbody VNAME FIELDS ..} => VNAME(FIELDS ..),
+        $v_explicit_discriminant => <error: enum variant does not have explicit discriminant>
         v_is_unit    =   false
         v_is_tuple   =   true
         v_is_named   =   false
+        v_explicit_discriminant = false
         $vattrs      =>  
 variant Tuple, no field:
         $fname       =>  <error: must be within a field, so within a field repeat group; but, is only within a variant repeat group>
@@ -173,9 +183,11 @@ variant Struct:
         $vindex      =>  2
         $vpat        =>  Enum :: Struct { field : f_field, }
         ${vdefbody VNAME FIELDS ..} => VNAME { FIELDS .. },
+        $v_explicit_discriminant => <error: enum variant does not have explicit discriminant>
         v_is_unit    =   false
         v_is_tuple   =   false
         v_is_named   =   true
+        v_explicit_discriminant = false
         $vattrs      =>  
 variant Struct, no field:
         $fname       =>  <error: must be within a field, so within a field repeat group; but, is only within a variant repeat group>
@@ -213,9 +225,11 @@ variant Tuple:
         $vindex      =>  1
         $vpat        =>  Enum :: Tuple { 0 : f_0, }
         ${vdefbody VNAME FIELDS ..} => VNAME(FIELDS ..),
+        $v_explicit_discriminant => <error: enum variant does not have explicit discriminant>
         v_is_unit    =   false
         v_is_tuple   =   true
         v_is_named   =   false
+        v_explicit_discriminant = false
         $vattrs      =>  
 variant Tuple, field 0:
         $fname       =>  0
@@ -253,9 +267,11 @@ variant Struct:
         $vindex      =>  2
         $vpat        =>  Enum :: Struct { field : f_field, }
         ${vdefbody VNAME FIELDS ..} => VNAME { FIELDS .. },
+        $v_explicit_discriminant => <error: enum variant does not have explicit discriminant>
         v_is_unit    =   false
         v_is_tuple   =   false
         v_is_named   =   true
+        v_explicit_discriminant = false
         $vattrs      =>  
 variant Struct, field field:
         $fname       =>  field
@@ -293,9 +309,11 @@ variant Tuple:
         $vindex      =>  1
         $vpat        =>  Enum :: Tuple { 0 : f_0, }
         ${vdefbody VNAME FIELDS ..} => VNAME(FIELDS ..),
+        $v_explicit_discriminant => <error: enum variant does not have explicit discriminant>
         v_is_unit    =   false
         v_is_tuple   =   true
         v_is_named   =   false
+        v_explicit_discriminant = false
         $vattrs      =>  
 variant Tuple, field 0:
         $fname       =>  0
@@ -337,9 +355,11 @@ variant Struct:
         $vindex      =>  2
         $vpat        =>  Enum :: Struct { field : f_field, }
         ${vdefbody VNAME FIELDS ..} => VNAME { FIELDS .. },
+        $v_explicit_discriminant => <error: enum variant does not have explicit discriminant>
         v_is_unit    =   false
         v_is_tuple   =   false
         v_is_named   =   true
+        v_explicit_discriminant = false
         $vattrs      =>  
 variant Struct, field field:
         $fname       =>  field
@@ -381,9 +401,11 @@ value:
         $vindex      =>  0
         $vpat        =>  Unit {}
         ${vdefbody VNAME FIELDS ..} => FIELDS .. ;
+        $v_explicit_discriminant => <error: not an enum, so no explicit discriminant>
         v_is_unit    =   true
         v_is_tuple   =   false
         v_is_named   =   false
+        v_explicit_discriminant = false
         $vattrs      =>  
 ---------- derive-deftly expansions dump for Unit from Dbg (end) ----------
 ---------- derive-deftly expansions dump for Tuple from Dbg (start) ----------
@@ -410,9 +432,11 @@ value:
         $vindex      =>  0
         $vpat        =>  Tuple { 0 : f_0, }
         ${vdefbody VNAME FIELDS ..} => (FIELDS ..);
+        $v_explicit_discriminant => <error: not an enum, so no explicit discriminant>
         v_is_unit    =   false
         v_is_tuple   =   true
         v_is_named   =   false
+        v_explicit_discriminant = false
         $vattrs      =>  
 value, field 0:
         $fname       =>  0
@@ -450,9 +474,11 @@ value:
         $vindex      =>  0
         $vpat        =>  Struct { field : f_field, }
         ${vdefbody VNAME FIELDS ..} => { FIELDS .. }
+        $v_explicit_discriminant => <error: not an enum, so no explicit discriminant>
         v_is_unit    =   false
         v_is_tuple   =   false
         v_is_named   =   true
+        v_explicit_discriminant = false
         $vattrs      =>  
 value, field field:
         $fname       =>  field
@@ -565,9 +591,11 @@ variant Unit:
         $vindex      =>  0
         $vpat        =>  EnumReference :: Unit {}
         ${vdefbody VNAME FIELDS ..} => VNAME FIELDS .. ,
+        $v_explicit_discriminant => <error: enum variant does not have explicit discriminant>
         v_is_unit    =   true
         v_is_tuple   =   false
         v_is_named   =   false
+        v_explicit_discriminant = false
         $vattrs      =>  
 variant Tuple:
         $vname       =>  Tuple
@@ -575,9 +603,11 @@ variant Tuple:
         $vindex      =>  1
         $vpat        =>  EnumReference :: Tuple { 0 : f_0, }
         ${vdefbody VNAME FIELDS ..} => VNAME(FIELDS ..),
+        $v_explicit_discriminant => <error: enum variant does not have explicit discriminant>
         v_is_unit    =   false
         v_is_tuple   =   true
         v_is_named   =   false
+        v_explicit_discriminant = false
         $vattrs      =>  
 variant Tuple, field 0:
         $fname       =>  0
@@ -596,9 +626,11 @@ variant Struct:
         $vindex      =>  2
         $vpat        =>  EnumReference :: Struct { field : f_field, }
         ${vdefbody VNAME FIELDS ..} => VNAME { FIELDS .. },
+        $v_explicit_discriminant => <error: enum variant does not have explicit discriminant>
         v_is_unit    =   false
         v_is_tuple   =   false
         v_is_named   =   true
+        v_explicit_discriminant = false
         $vattrs      =>  
 variant Struct, field field:
         $fname       =>  field
