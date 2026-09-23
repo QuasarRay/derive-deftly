@@ -100,7 +100,7 @@ impl Subst<BooleanContext> {
                 } = sm;
                 match default {
                     None => {}
-                    Some((_, nb)) => void::unreachable(*nb),
+                    Some((_, nb, _)) => void::unreachable(*nb),
                 };
                 match quoted {
                     None => {}
