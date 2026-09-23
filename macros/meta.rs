@@ -106,7 +106,7 @@ struct BorrowedDesig<'p> {
 pub struct SubstMeta<O: SubstParseContext> {
     pub desig: Desig,
     pub as_: Option<SubstAsSpecified<O>>,
-    pub default: Option<(Argument<O>, O::NotInBool, beta::Enabled)>,
+    pub default: Option<(Argument<O>, O::NotInBool)>,
     pub quoted: Option<(QuotedMode, O::NotInBool)>,
 }
 
@@ -547,14 +547,13 @@ impl<O: SubstParseContext> SubstMeta<O> {
             let keyword = Ident::parse_any(input)?;
             let kw_span = keyword.span();
             let nb = O::not_in_bool(&kw_span).expect("checked already");
-            let ue = || beta::Enabled::new_for_syntax(kw_span);
             if keyword == "as" {
                 store(kw_span, &mut as_, || {
                     SubstAsSpecified::parse(input, nb)
                 })?;
             } else if keyword == "default" {
                 store(kw_span, &mut default, || {
-                    Ok((input.parse()?, nb, ue()?))
+                    Ok((input.parse()?, nb))
                 })?;
             } else if keyword == "quoted" {
                 store(kw_span, &mut quoted, || Ok((input.parse()?, nb)))?;

@@ -480,12 +480,6 @@ error: integer literal comparison with both values >u64 is not supported (compar
 158 |     ${if approx_equal(0x12345678_12345678_12345678_aaaaaaaa,
     |          ^^^^^^^^^^^^
 
-error: beta derive-deftly feature used, without `beta_deftly` template option
-   --> ui/badmeta.rs:163:37
-    |
-163 |     const _: i32 = ${tmeta(missing) default { 42 }};
-    |                                     ^^^^^^^
-
 error: meta attribute provided as unit (flag), but is used only with default values, so the unit is ignored
    --> ui/badmeta.rs:178:10
     |

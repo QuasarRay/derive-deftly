@@ -757,7 +757,7 @@ Accesses macro parameters passed via `#[deftly(...)]` attributes.
 
       The bare form `NAME = VALUE` is not allowed.
 
- * **`${Xmeta(...) .. , default DEFAULT}`** ([**beta**]):
+ * **`${Xmeta(...) .. , default DEFAULT}`**:
    If there is no `VALUE` expands
    the [positional argument] `DEFAULT` instead.
 
