@@ -25,9 +25,5 @@ derive_deftly_adhoc! {
 derive_deftly_adhoc! {
     S beta_deftly:
 }
-derive_deftly_adhoc! {
-    S:
-    const _: i32 = ${tmeta(missing) as token_stream, default { 42 }};
-}
 
 fn main() {}

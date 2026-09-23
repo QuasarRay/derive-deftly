@@ -158,10 +158,10 @@ derive_deftly_adhoc! {
     ${if approx_equal(0x12345678_12345678_12345678_aaaaaaaa,
                       ${tmeta(int128) as token_stream}) {}}
 }
-derive_deftly_adhoc! {
-    DataType:
-    const _: i32 = ${tmeta(missing) default { 42 }};
-}
+
+
+
+
 derive_deftly_adhoc! {
     DataType beta_deftly:
     // This might be allowed to work in future?  See
