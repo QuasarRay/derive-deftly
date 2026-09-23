@@ -2150,7 +2150,8 @@ fn unrecognised_error(
             return None;
         }
         let y_ss = SuppliedScope::iter()
-            .filter(|ss| ss.recog_search().any(|s| y_scopes.contains(&s)))
+            .filter(|ss| ss.recog_search().any(|s| y_scopes.contains(&s)));
+        let y_ss = y_ss
             .map(|ss| ss.to_string())
             .join("/");
         let y_scopes = y_scopes.iter().map(|s| s.as_ref()).join("/");
