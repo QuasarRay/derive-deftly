@@ -160,7 +160,7 @@ derive_deftly_adhoc! {
 }
 derive_deftly_adhoc! {
     DataType:
-    ${fmeta(missing) default { 42 }}
+    const _: i32 = ${tmeta(missing) default { 42 }};
 }
 derive_deftly_adhoc! {
     DataType beta_deftly:

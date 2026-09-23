@@ -481,10 +481,10 @@ error: integer literal comparison with both values >u64 is not supported (compar
     |          ^^^^^^^^^^^^
 
 error: beta derive-deftly feature used, without `beta_deftly` template option
-   --> ui/badmeta.rs:163:22
+   --> ui/badmeta.rs:163:37
     |
-163 |     ${fmeta(missing) default { 42 }}
-    |                      ^^^^^^^
+163 |     const _: i32 = ${tmeta(missing) default { 42 }};
+    |                                     ^^^^^^^
 
 error: meta attribute provided as unit (flag), but is used only with default values, so the unit is ignored
    --> ui/badmeta.rs:178:10
