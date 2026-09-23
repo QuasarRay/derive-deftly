@@ -1049,7 +1049,7 @@ Available only in [**beta**].
 
 <div id="x:concat">
 
-### `${concat ...}` - string literal concatenation (**beta**)
+### `${concat ...}` - string literal concatenation
 
 </div>
 
@@ -1084,8 +1084,6 @@ and `${concat }` itself.
 `${concat }` does the jobs of `std::concat!` and `std::stringify!`
 but can be used in more places and is more convenient.
 
-This feature is available only in [**beta**].
-
 #### Examples
 
  * `${concat "first" "second"}`: `"firstsecond"`
@@ -1099,7 +1097,7 @@ This feature is available only in [**beta**].
 
 <div id="string-template">
 
-### `$"..."`, `$///...` - string and documentation templating (**beta**)
+### `$"..."`, `$///...` - string and documentation templating
 
 </div>
 
@@ -1135,8 +1133,6 @@ or
 put the forbidden template elements
 into a user-defined expansion whose body is precisely `${concat }`,
 and reference that from within the `$"..."` or `$///`.
-
-Available only in [**beta**].
 
 #### Examples
 
@@ -1578,7 +1574,6 @@ const ALL_STRUCT_FIELDS: StructFields = {
 
  * `${error "message"}`: equivalent to `${error message="message"}`.
  * `${error message=MESSAGE [span=SPAN]}`,
-   ([**beta**]),
    using the usual
 [syntax for named arguments](#named-and-positional-template-arguments-to-expansions-and-conditions).
 
@@ -1969,7 +1964,6 @@ and is treated the same way.
 `${title_case }`, and `${train_case }`
 don't generate valid Rust identifiers and
 are only allowed within [`${concat }`](#x:concat).
-(Therefore they are [**beta**] features.)
 
 This table shows the supported case styles.
 Note that changing the case can add and remove underscores.

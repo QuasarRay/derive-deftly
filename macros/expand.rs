@@ -541,10 +541,10 @@ where
             }
             SD::paste_spanned(body, ..) => body.expand(gctx, kw_span, out)?,
             SD::ChangeCase(body, ..) => body.expand(gctx, kw_span, out)?,
-            SD::concat(content, _not_in_bool, not_in_paste, _) => {
+            SD::concat(content, _not_in_bool, not_in_paste) => {
                 content.expand_onto(kw_span, gctx, not_in_paste, out);
             }
-            SD::StringTemplate(content, _not_in_bool, not_in_paste, _) => {
+            SD::StringTemplate(content, _not_in_bool, not_in_paste) => {
                 content.expand_onto(kw_span, gctx, not_in_paste, out);
             }
             SD::DocTemplate(content, _nb, allow_tokens) => {

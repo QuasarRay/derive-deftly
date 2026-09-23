@@ -16,29 +16,23 @@ error: not allowed in within ${paste ...} (or case_changing)
 17 |     ${paste ident:upper}
    |                  ^
 
-error: beta derive-deftly feature used, without `beta_deftly` template option
-  --> ui/badreserved.rs:22:22
-   |
-22 |     const _: &str = $r#"template content?"#;
-   |                      ^^^^^^^^^^^^^^^^^^^^^^
-
 error: inner attributes are reserved syntax, anywhere in derive-deftly templates
   --> ui/badreserved.rs:29:9
    |
 29 |         //! template doc comment?
    |         ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-error: beta derive-deftly feature used, without `beta_deftly` template option
+error: expected square brackets
   --> ui/badreserved.rs:37:10
    |
 37 |         $//! string template inner attr?
    |          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-error: beta derive-deftly feature used, without `beta_deftly` template option
-  --> ui/badreserved.rs:44:6
+error: only `$#[doc = "..."]` is supported, not `$# anything else`, nor `$//!`
+  --> ui/badreserved.rs:37:10
    |
-44 |     $/// template doc comment?
-   |      ^^^^^^^^^^^^^^^^^^^^^^^^^
+37 |         $//! string template inner attr?
+   |          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 error: expected ident
   --> ui/badreserved.rs:52:14
