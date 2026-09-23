@@ -30,13 +30,13 @@ derive_deftly_adhoc! {
     }
 }
 
+derive_deftly_adhoc! {
+    ReserveDriver:
 
-
-
-
-
-
-
+    mod prevent {
+        $//! string template inner attr?
+    }
+}
 
 derive_deftly_adhoc! {
     ReserveDriver:

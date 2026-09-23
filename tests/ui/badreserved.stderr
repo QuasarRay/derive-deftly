@@ -29,6 +29,12 @@ error: inner attributes are reserved syntax, anywhere in derive-deftly templates
    |         ^^^^^^^^^^^^^^^^^^^^^^^^^
 
 error: beta derive-deftly feature used, without `beta_deftly` template option
+  --> ui/badreserved.rs:37:10
+   |
+37 |         $//! string template inner attr?
+   |          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: beta derive-deftly feature used, without `beta_deftly` template option
   --> ui/badreserved.rs:44:6
    |
 44 |     $/// template doc comment?
