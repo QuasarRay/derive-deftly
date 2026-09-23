@@ -145,7 +145,6 @@ define_derive_deftly! {
 
 derive_deftly_adhoc! {
     DataType:
-
     ${tmeta(dot)} // forgot `.. as`, so `"."` not even parsed
 }
 
@@ -159,13 +158,7 @@ derive_deftly_adhoc! {
                       ${tmeta(int128) as token_stream}) {}}
 }
 derive_deftly_adhoc! {
-    DataType:
-    ${fmeta(missing) default { 42 }}
-}
-derive_deftly_adhoc! {
     DataType beta_deftly:
-    // This might be allowed to work in future?  See
-    //  https://gitlab.torproject.org/Diziet/rust-derive-deftly/-/issues/48#note_3284656
     ${tmeta(unit) as token_stream, default {}}
 }
 
