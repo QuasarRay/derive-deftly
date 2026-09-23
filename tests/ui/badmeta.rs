@@ -145,7 +145,6 @@ define_derive_deftly! {
 
 derive_deftly_adhoc! {
     DataType:
-
     ${tmeta(dot)} // forgot `.. as`, so `"."` not even parsed
 }
 
@@ -158,14 +157,8 @@ derive_deftly_adhoc! {
     ${if approx_equal(0x12345678_12345678_12345678_aaaaaaaa,
                       ${tmeta(int128) as token_stream}) {}}
 }
-
-
-
-
 derive_deftly_adhoc! {
     DataType beta_deftly:
-
-
     ${tmeta(unit) as token_stream, default {}}
 }
 
