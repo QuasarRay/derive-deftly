@@ -33,7 +33,7 @@
       * [`$tdefkwd` -- keyword introducing the new data structure](#tdefkwd--keyword-introducing-the-new-data-structure)
       * [`$tdefvariants`, `$vdefbody`, `$fdefine` -- tools for defining types](#tdefvariants-vdefbody-fdefine--tools-for-defining-types)
       * [`$loop_index`, `$for_loop_count`, `${loop_exactly_1 ...}` -- repetition information (**beta**)](#loop_index-for_loop_count-loop_exactly_1---repetition-information-beta)
-      * [`${v_explicit_discriminant ..}` -- Explicitly specified enum discriminant (**beta**)](#v_explicit_discriminant---explicitly-specified-enum-discriminant-beta)
+      * [`${v_explicit_discriminant ..}` -- Explicitly specified enum discriminant](#v_explicit_discriminant---explicitly-specified-enum-discriminant)
       * [`${ignore ..}` -- Expand but then discard](#ignore---expand-but-then-discard)
       * [`${dbg ..}`, `$dbg_all_keywords` -- Debugging output](#dbg--dbg_all_keywords--debugging-output)
       * [`${define ...}`, `${defcond ...}` -- user-defined expansions and conditions](#define--defcond---user-defined-expansions-and-conditions)
@@ -46,7 +46,7 @@
       * [`v_is_unit`, `v_is_tuple`, `v_is_named`](#v_is_unit-v_is_tuple-v_is_named)
       * [`tgens`](#tgens)
       * [`loop_initial`, `loop_final` -- repetition information (**beta**)](#loop_initial-loop_final--repetition-information-beta)
-      * [`v_explicit_discriminant` -- enum discriminant explicitly specified? (**beta**)](#v_explicit_discriminant--enum-discriminant-explicitly-specified-beta)
+      * [`v_explicit_discriminant` -- enum discriminant explicitly specified?](#v_explicit_discriminant--enum-discriminant-explicitly-specified)
       * [`is_empty(..)`, `approx_equal(ARG1, ARG2)` -- equality comparison (token comparison)](#is_empty-approx_equalarg1-arg2--equality-comparison-token-comparison)
       * [`false`, `true`, `not(CONDITION)`, `any(COND1,COND2,...)`, `all(COND1,COND2,...)` -- boolean logic](#false-true-notcondition-anycond1cond2-allcond1cond2--boolean-logic)
       * [`dbg(...)` -- Debug dump of condition value](#dbg--debug-dump-of-condition-value)
@@ -1374,7 +1374,7 @@ All these features are available only in [**beta**].
 
 <div id="x:v_explicit_discriminant">
 
-### `${v_explicit_discriminant ..}` -- Explicitly specified enum discriminant (**beta**)
+### `${v_explicit_discriminant ..}` -- Explicitly specified enum discriminant
 
 </div>
 
@@ -1391,8 +1391,6 @@ Usually it is better to use `Enum::Variant as _`, or perhaps
 If no discriminant was explicitly specified, it is an error.
 
 The expression is enclosed in `( )` to avoid precedence problems.
-
-Available only in [**beta**].
 
 #### Examples
 
@@ -1799,7 +1797,7 @@ Available only in [**beta**].
 
 <div id="c:v_explicit_discriminant">
 
-### `v_explicit_discriminant` -- enum discriminant explicitly specified? (**beta**)
+### `v_explicit_discriminant` -- enum discriminant explicitly specified?
 
 </div>
 
@@ -1807,8 +1805,6 @@ Does this variant have an explicitly specified discriminant, in
 the Rust `Variant = DISCRIMINANT` syntax?
 
 False for structs and unions.
-
-Available only in [**beta**].
 
 #### Examples
 
