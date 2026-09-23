@@ -552,9 +552,7 @@ impl<O: SubstParseContext> SubstMeta<O> {
                     SubstAsSpecified::parse(input, nb)
                 })?;
             } else if keyword == "default" {
-                store(kw_span, &mut default, || {
-                    Ok((input.parse()?, nb))
-                })?;
+                store(kw_span, &mut default, || Ok((input.parse()?, nb)))?;
             } else if keyword == "quoted" {
                 store(kw_span, &mut quoted, || Ok((input.parse()?, nb)))?;
             } else {
