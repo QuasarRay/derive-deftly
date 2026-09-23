@@ -17,57 +17,57 @@ error: not allowed in within ${paste ...} (or case_changing)
    |                  ^
 
 error: inner attributes are reserved syntax, anywhere in derive-deftly templates
-  --> ui/badreserved.rs:29:9
+  --> ui/badreserved.rs:24:9
    |
-29 |         //! template doc comment?
+24 |         //! template doc comment?
    |         ^^^^^^^^^^^^^^^^^^^^^^^^^
 
 error: expected square brackets
-  --> ui/badreserved.rs:37:10
+  --> ui/badreserved.rs:32:10
    |
-37 |         $//! string template inner attr?
+32 |         $//! string template inner attr?
    |          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 error: only `$#[doc = "..."]` is supported, not `$# anything else`, nor `$//!`
-  --> ui/badreserved.rs:37:10
+  --> ui/badreserved.rs:32:10
    |
-37 |         $//! string template inner attr?
+32 |         $//! string template inner attr?
    |          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 error: expected ident
-  --> ui/badreserved.rs:52:14
+  --> ui/badreserved.rs:39:14
    |
-52 |     ${define 0 { mod x {} }}
+39 |     ${define 0 { mod x {} }}
    |              ^
 
 error: expected one of: `$`, parentheses, curly braces, identifier, `<`, string literal, `#`
-  --> ui/badreserved.rs:53:6
+  --> ui/badreserved.rs:40:6
    |
-53 |     $0
+40 |     $0
    |      ^
 
 error: template name may not start with a lowercase letter (after any underscores)
-  --> ui/badreserved.rs:57:5
+  --> ui/badreserved.rs:44:5
    |
-57 |     lowercase:
+44 |     lowercase:
    |     ^^^^^^^^^
 
 error: template name may not start with a lowercase letter (after any underscores)
-  --> ui/badreserved.rs:61:5
+  --> ui/badreserved.rs:48:5
    |
-61 |     __lowercase:
+48 |     __lowercase:
    |     ^^^^^^^^^^^
 
 warning: unused macro definition: `derive_deftly_template__0unused`
-  --> ui/badreserved.rs:65:5
+  --> ui/badreserved.rs:52:5
    |
-65 |     _0unused:
+52 |     _0unused:
    |     ^^^^^^^^
    |
    = note: `#[warn(unused_macros)]` (part of `#[warn(unused)]`) on by default
 
 warning: unused macro definition: `derive_deftly_template__Unused`
-  --> ui/badreserved.rs:69:5
+  --> ui/badreserved.rs:56:5
    |
-69 |     _Unused:
+56 |     _Unused:
    |     ^^^^^^^

@@ -17,11 +17,6 @@ derive_deftly_adhoc! {
     ${paste ident:upper}
 }
 
-
-
-
-
-
 derive_deftly_adhoc! {
     ReserveDriver:
 
@@ -37,14 +32,6 @@ derive_deftly_adhoc! {
         $//! string template inner attr?
     }
 }
-
-
-
-
-
-
-
-
 
 derive_deftly_adhoc! {
     ReserveDriver:
