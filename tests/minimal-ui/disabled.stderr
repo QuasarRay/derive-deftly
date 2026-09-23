@@ -25,3 +25,9 @@ error: derive-deftly's `beta_deftly` template option is only available when the 
    |
 26 |     S beta_deftly:
    |       ^^^^^^^^^^^
+
+error: beta derive-deftly feature used, which requires both the `beta` cargo feature and the `beta_deftly` template option
+  --> minimal-ui/disabled.rs:30:22
+   |
+30 |     ${fmeta(missing) default { 42 }}
+   |                      ^^^^^^^

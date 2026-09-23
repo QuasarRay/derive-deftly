@@ -428,9 +428,9 @@ error: expected curly braces
     |                           ^^^^^^^^^^^^^^
 
 error: missing `as ...` in meta expansion
-   --> ui/badmeta.rs:148:7
+   --> ui/badmeta.rs:149:7
     |
-148 |     ${tmeta(dot)} // forgot `.. as`, so `"."` not even parsed
+149 |     ${tmeta(dot)} // forgot `.. as`, so `"."` not even parsed
     |       ^^^^^^^^^
 
 error: comparison of string/byte/character literals with suffixes is not supported (literal)
@@ -439,24 +439,24 @@ error: comparison of string/byte/character literals with suffixes is not support
  14 |   #[deftly(integer = "42", with_suffix = "42"x)]
     |                                          ^^^^^
 ...
-151 | / derive_deftly_adhoc! {
-152 | |     DataType:
-153 | |     ${if approx_equal("42", ${tmeta(with_suffix) as str}) {}}
-154 | | }
+152 | / derive_deftly_adhoc! {
+153 | |     DataType:
+154 | |     ${if approx_equal("42", ${tmeta(with_suffix) as str}) {}}
+155 | | }
     | |_- in this macro invocation
     |
     = note: this error originates in the macro `derive_deftly_driver_DataType` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: comparison of string/byte/character literals with suffixes is not supported (comparison)
-   --> ui/badmeta.rs:153:10
+   --> ui/badmeta.rs:154:10
     |
-153 |     ${if approx_equal("42", ${tmeta(with_suffix) as str}) {}}
+154 |     ${if approx_equal("42", ${tmeta(with_suffix) as str}) {}}
     |          ^^^^^^^^^^^^
 
 error: integer literal comparison with both values >u64 is not supported (left: number too large to fit in target type)
-   --> ui/badmeta.rs:157:23
+   --> ui/badmeta.rs:158:23
     |
-157 |     ${if approx_equal(0x12345678_12345678_12345678_aaaaaaaa,
+158 |     ${if approx_equal(0x12345678_12345678_12345678_aaaaaaaa,
     |                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 error: integer literal comparison with both values >u64 is not supported (right: number too large to fit in target type)
@@ -465,53 +465,59 @@ error: integer literal comparison with both values >u64 is not supported (right:
  15 |   #[deftly(int128 = "0x12345678_12345678_12345678_12345678")]
     |                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 ...
-155 | / derive_deftly_adhoc! {
-156 | |     DataType:
-157 | |     ${if approx_equal(0x12345678_12345678_12345678_aaaaaaaa,
-158 | |                       ${tmeta(int128) as token_stream}) {}}
-159 | | }
+156 | / derive_deftly_adhoc! {
+157 | |     DataType:
+158 | |     ${if approx_equal(0x12345678_12345678_12345678_aaaaaaaa,
+159 | |                       ${tmeta(int128) as token_stream}) {}}
+160 | | }
     | |_- in this macro invocation
     |
     = note: this error originates in the macro `derive_deftly_driver_DataType` which comes from the expansion of the macro `derive_deftly_adhoc` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: integer literal comparison with both values >u64 is not supported (comparison)
-   --> ui/badmeta.rs:157:10
+   --> ui/badmeta.rs:158:10
     |
-157 |     ${if approx_equal(0x12345678_12345678_12345678_aaaaaaaa,
+158 |     ${if approx_equal(0x12345678_12345678_12345678_aaaaaaaa,
     |          ^^^^^^^^^^^^
 
-error: meta attribute provided as unit (flag), but is used only with default values, so the unit is ignored
-   --> ui/badmeta.rs:171:10
+error: beta derive-deftly feature used, without `beta_deftly` template option
+   --> ui/badmeta.rs:163:22
     |
-171 | #[deftly(unit)]
+163 |     ${fmeta(missing) default { 42 }}
+    |                      ^^^^^^^
+
+error: meta attribute provided as unit (flag), but is used only with default values, so the unit is ignored
+   --> ui/badmeta.rs:178:10
+    |
+178 | #[deftly(unit)]
     |          ^^^^
 
 error: force failure (in this data structure)
-   --> ui/badmeta.rs:179:1
+   --> ui/badmeta.rs:186:1
     |
-179 | / #[derive_deftly(UnusedDueToError)]
-180 | | #[deftly(unused)] // shouldn't be reported, since template has error
-181 | | struct UnusedDueToError;
+186 | / #[derive_deftly(UnusedDueToError)]
+187 | | #[deftly(unused)] // shouldn't be reported, since template has error
+188 | | struct UnusedDueToError;
     | |________________________^
 
 error: force failure (template error message)
-   --> ui/badmeta.rs:176:13
+   --> ui/badmeta.rs:183:13
     |
-176 |     ${error "force failure"}
+183 |     ${error "force failure"}
     |             ^^^^^^^^^^^^^^^
-177 | }
-178 | #[derive(Deftly)]
+184 | }
+185 | #[derive(Deftly)]
     |          ------ in this derive macro expansion
     |
     = note: this error originates in the macro `derive_deftly_template_UnusedDueToError` which comes from the expansion of the derive macro `Deftly` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: expected `!`
-   --> ui/badmeta.rs:185:9
+   --> ui/badmeta.rs:192:9
     |
-185 |     not item;
+192 |     not item;
     |         ^^^^
-186 | }
-187 | #[derive(Deftly)]
+193 | }
+194 | #[derive(Deftly)]
     |          ------ in this derive macro expansion
     |
     = note: this error originates in the macro `derive_deftly_template_UnusedDueToSyntax` which comes from the expansion of the derive macro `Deftly` (in Nightly builds, run with -Z macro-backtrace for more info)

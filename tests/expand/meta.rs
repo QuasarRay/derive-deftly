@@ -14,7 +14,7 @@ struct IgnoredThings {
 }
 
 derive_deftly_adhoc! {
-    IgnoredThings:
+    IgnoredThings beta_deftly:
 
   $(
     // normal fmeta parsing
