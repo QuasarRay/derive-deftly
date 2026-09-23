@@ -65,7 +65,7 @@ struct ExpandName {
 }
 
 derive_deftly_adhoc! {
-    ExpandName beta_deftly:
+    ExpandName:
 
     ${define VIA_DEFINE ${paste ${tmeta(t_frag) as ident}}}
     ${define CONCAT_DEFINE ${concat "$ttype = " $ttype "."}}

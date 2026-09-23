@@ -7,7 +7,7 @@ use derive_deftly::{derive_deftly_adhoc, Deftly};
 struct Struct;
 
 derive_deftly_adhoc! {
-    Struct beta_deftly:
+    Struct:
 
     ${define C ${concat "c1 c2"}}
     ${define T $"t1 t2"}
