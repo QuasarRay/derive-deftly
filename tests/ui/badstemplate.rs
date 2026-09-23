@@ -25,6 +25,11 @@ derive_deftly_adhoc! {
         $r#"forbid ${define X { \ }} backslash"#,
         $r#"forbid ${define X { ' }} apostrophe"#,
         $r#"un-lexable ${define X { let 🦀 = 1; }}."#,
+
+
+
+
+
         $r#"un-parseable ${invalid_expansion}."#,
     ];
 
