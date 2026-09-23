@@ -189,4 +189,27 @@ define_derive_deftly! {
 #[deftly(ignored)]
 struct UnusedDueToSyntax;
 
+define_derive_deftly! {
+    IgnoredDueToCondition:
+
+    $(
+        ${when not(fmeta(thing(okay)))}
+        ${if fmeta(thing(x)) { }}
+    )
+}
+#[derive(Deftly)]
+#[derive_deftly(IgnoredDueToCondition)]
+struct IgnoredDueToCondition {
+    #[deftly(thing(okay))]
+    #[deftly(thing(x))]
+    a: bool,
+}
+#[derive(Deftly)]
+#[derive_deftly(IgnoredDueToCondition)]
+struct IgnoredDueToCondition2 {
+    #[deftly(thing(okay))]
+    #[deftly(thing(x = "x"))]
+    a: bool,
+}
+
 fn main() {}
