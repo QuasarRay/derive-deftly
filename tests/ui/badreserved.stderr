@@ -29,45 +29,45 @@ error: inner attributes are reserved syntax, anywhere in derive-deftly templates
    |         ^^^^^^^^^^^^^^^^^^^^^^^^^
 
 error: beta derive-deftly feature used, without `beta_deftly` template option
-  --> ui/badreserved.rs:36:6
+  --> ui/badreserved.rs:44:6
    |
-36 |     $/// template doc comment?
+44 |     $/// template doc comment?
    |      ^^^^^^^^^^^^^^^^^^^^^^^^^
 
 error: expected ident
-  --> ui/badreserved.rs:44:14
+  --> ui/badreserved.rs:52:14
    |
-44 |     ${define 0 { mod x {} }}
+52 |     ${define 0 { mod x {} }}
    |              ^
 
 error: expected one of: `$`, parentheses, curly braces, identifier, `<`, string literal, `#`
-  --> ui/badreserved.rs:45:6
+  --> ui/badreserved.rs:53:6
    |
-45 |     $0
+53 |     $0
    |      ^
 
 error: template name may not start with a lowercase letter (after any underscores)
-  --> ui/badreserved.rs:49:5
+  --> ui/badreserved.rs:57:5
    |
-49 |     lowercase:
+57 |     lowercase:
    |     ^^^^^^^^^
 
 error: template name may not start with a lowercase letter (after any underscores)
-  --> ui/badreserved.rs:53:5
+  --> ui/badreserved.rs:61:5
    |
-53 |     __lowercase:
+61 |     __lowercase:
    |     ^^^^^^^^^^^
 
 warning: unused macro definition: `derive_deftly_template__0unused`
-  --> ui/badreserved.rs:57:5
+  --> ui/badreserved.rs:65:5
    |
-57 |     _0unused:
+65 |     _0unused:
    |     ^^^^^^^^
    |
    = note: `#[warn(unused_macros)]` (part of `#[warn(unused)]`) on by default
 
 warning: unused macro definition: `derive_deftly_template__Unused`
-  --> ui/badreserved.rs:61:5
+  --> ui/badreserved.rs:69:5
    |
-61 |     _Unused:
+69 |     _Unused:
    |     ^^^^^^^
