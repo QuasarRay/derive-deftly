@@ -164,8 +164,8 @@ derive_deftly_adhoc! {
 
 derive_deftly_adhoc! {
     DataType beta_deftly:
-    // This might be allowed to work in future?  See
-    //  https://gitlab.torproject.org/Diziet/rust-derive-deftly/-/issues/48#note_3284656
+
+
     ${tmeta(unit) as token_stream, default {}}
 }
 
