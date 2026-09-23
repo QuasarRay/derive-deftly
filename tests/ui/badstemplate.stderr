@@ -88,6 +88,36 @@ error: cannot parse string into token stream; in string template, error in fragm
 27 |         $r#"un-lexable ${define X { let 🦀 = 1; }}."#,
    |          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+error: expected one of: curly braces, identifier, `<`, string literal, `#`; in string template, error in fragment "$( repetition )", near this location "un-lexable $( repetition )"<-HERE
+  --> ui/badstemplate.rs:28:10
+   |
+28 |         $r#"un-lexable $( repetition )"#,
+   |          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: control structures are not allowed in string templates (within an expansion in a string template, reentering the string template lexing/parsing context is not possible); in string template, error in fragment "${if true { conditionals }}", near this location "un-lexable ${if true { conditionals }}"<-HERE
+  --> ui/badstemplate.rs:29:10
+   |
+29 |         $r#"un-lexable ${if true { conditionals }}"#,
+   |          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: control structures are not allowed in string templates (within an expansion in a string template, reentering the string template lexing/parsing context is not possible); in string template, error in fragment "${for fields { loops }}", near this location "un-lexable ${for fields { loops }}"<-HERE
+  --> ui/badstemplate.rs:30:10
+   |
+30 |         $r#"un-lexable ${for fields { loops }}"#,
+   |          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: control structures are not allowed in string templates (within an expansion in a string template, reentering the string template lexing/parsing context is not possible); in string template, error in fragment "${tmeta(something) as str, default { re-enter }}", near this location "un-lexable ${tmeta(something) as str, default { re-enter }}"<-HERE
+  --> ui/badstemplate.rs:31:10
+   |
+31 |         $r#"un-lexable ${tmeta(something) as str, default { re-enter }}}"#,
+   |          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: invalid/unsupported syntax after `$` in string template; in string template, error in fragment "$/", near this location "not lexed heere $/"<-HERE
+  --> ui/badstemplate.rs:32:10
+   |
+32 |         $r#"not lexed heere $/// doc"#,
+   |          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 error: unknown derive-deftly keyword; in string template, error in fragment "${invalid_expansion}", near this location "un-parseable ${invalid_expansion}"<-HERE
   --> ui/badstemplate.rs:33:10
    |

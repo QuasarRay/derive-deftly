@@ -25,11 +25,11 @@ derive_deftly_adhoc! {
         $r#"forbid ${define X { \ }} backslash"#,
         $r#"forbid ${define X { ' }} apostrophe"#,
         $r#"un-lexable ${define X { let 🦀 = 1; }}."#,
-
-
-
-
-
+        $r#"un-lexable $( repetition )"#,
+        $r#"un-lexable ${if true { conditionals }}"#,
+        $r#"un-lexable ${for fields { loops }}"#,
+        $r#"un-lexable ${tmeta(something) as str, default { re-enter }}}"#,
+        $r#"not lexed heere $/// doc"#,
         $r#"un-parseable ${invalid_expansion}."#,
     ];
 
