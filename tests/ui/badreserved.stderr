@@ -17,10 +17,10 @@ error: not allowed in within ${paste ...} (or case_changing)
    |                  ^
 
 error: beta derive-deftly feature used, without `beta_deftly` template option
-  --> ui/badreserved.rs:22:6
+  --> ui/badreserved.rs:22:22
    |
-22 |     $r#"template content?"#
-   |      ^^^^^^^^^^^^^^^^^^^^^^
+22 |     const _: &str = $r#"template content?"#;
+   |                      ^^^^^^^^^^^^^^^^^^^^^^
 
 error: inner attributes are reserved syntax, anywhere in derive-deftly templates
   --> ui/badreserved.rs:29:9

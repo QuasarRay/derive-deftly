@@ -19,7 +19,7 @@ derive_deftly_adhoc! {
 
 derive_deftly_adhoc! {
     ReserveDriver:
-    $r#"template content?"#
+    const _: &str = $r#"template content?"#;
 }
 
 derive_deftly_adhoc! {
