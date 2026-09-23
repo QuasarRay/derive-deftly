@@ -2151,6 +2151,9 @@ fn unrecognised_error(
         }
         let y_ss = SuppliedScope::iter()
             .filter(|ss| ss.recog_search().any(|s| y_scopes.contains(&s)));
+        if y_ss.clone().contains(&supplied_scope) {
+            return None;
+        }
         let y_ss = y_ss
             .map(|ss| ss.to_string())
             .join("/");

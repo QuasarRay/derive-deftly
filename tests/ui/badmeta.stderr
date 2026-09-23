@@ -528,7 +528,7 @@ error: meta attribute provided, and (conditionally) recognised; but not used in 
 204 |     #[deftly(thing(x))]
     |                    ^
 
-error: meta attribute provided for field, but recognised by template only for field (fmeta)
+error: meta attribute provided, but not recognised; template only uses it as a container
    --> ui/badmeta.rs:211:20
     |
 211 |     #[deftly(thing(x = "x"))]
