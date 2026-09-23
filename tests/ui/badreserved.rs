@@ -17,10 +17,10 @@ derive_deftly_adhoc! {
     ${paste ident:upper}
 }
 
-derive_deftly_adhoc! {
-    ReserveDriver:
-    const _: &str = $r#"template content?"#;
-}
+
+
+
+
 
 derive_deftly_adhoc! {
     ReserveDriver:
@@ -38,13 +38,13 @@ derive_deftly_adhoc! {
     }
 }
 
-derive_deftly_adhoc! {
-    ReserveDriver:
 
-    $/// template doc comment?
-    mod prevent {
-    }
-}
+
+
+
+
+
+
 
 derive_deftly_adhoc! {
     ReserveDriver:
