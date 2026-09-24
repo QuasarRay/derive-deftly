@@ -886,7 +886,7 @@ These checks are disabled by `#[derive_deftly_adhoc]`.
  * `${vmeta(items) as token_stream}` for `TupleVariant`: `type T = i32; const K: T = 7;`
  * `${tmeta(items_quoted) as items}` for `Struct`: `type T = i8;`
  * `${tmeta(items_quoted) as token_stream}` for `Struct`: `type T = i8;`
- * `${fmeta(nested)}`: rejected, ``expected a leaf node, found a list with sub-attributes``
+ * `${fmeta(nested) as token_stream}`: rejected, ``expected a leaf node, found a list with sub-attributes``
 
 #### Examples of `as attrs` value handing
 
