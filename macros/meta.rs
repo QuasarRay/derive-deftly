@@ -1289,7 +1289,41 @@ where
                 }
                 _ => false,
             } {
-                return Ok(def.expand(ctx.as_general(), out));
+                use SubstAs as SA;
+
+                return match &as_.as_ {
+                    SA::expr(at, _) => {
+                        let mut expr = TokenAccumulator::new();
+                        def.expand(
+                            ctx.as_general(),
+                            O::from_token_accumulator(at, &mut expr),
+                        );
+                        let mut expr = expr.tokens()?;
+                        if let Some(brace) = &def.brace {
+                            expr = meta_expr_surround_1(brace, expr);
+                        }
+                        meta_expr_surround_2(expr, at, out)
+                    }
+
+                    SA::attrs(..) => panic!("as attrs, default not rejected?"),
+
+                    // Don't ever need group wrapping for precedence:
+                    SA::items(..)
+                    | SA::str
+                    | SA::vis(..)
+                    // XXXX
+                    | SA::ty
+                    | SA::path
+                    // May want to be able to expand to nothing - ie, no
+                    // path components?  And, see above.
+                    // Definitely wants to be able to expand to nothing,
+                    // so we mustn't reparse and anyway we don't want to group.
+                    | SA::ident
+                    // User's responsibility to deal with precedence.
+                    | SA::token_stream(..) => {
+                        Ok(def.expand(ctx.as_general(), out))
+                    }
+                };
             }
         }
 

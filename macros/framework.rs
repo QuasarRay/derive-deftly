@@ -483,7 +483,6 @@ pub trait ExpansionOutput: SubstParseContext<BoolOnly = Void> {
     /// Used for `$Xmeta ... default ...`, which sometimes wants to expand
     /// the default value as tokens, but needs to convince the type system
     /// that this is OK.
-    #[allow(unused)] // XXXX
     fn from_token_accumulator<'o>(
         allow_tokens: &AllowTokens<Self>,
         out: &'o mut TokenAccumulator,
