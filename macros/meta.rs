@@ -1339,6 +1339,7 @@ where
 {
     use SubstAs as SA;
 
+    // We would have liked `if let` in the ty/path match pattern
     let allow_tokens_for_ty_path = O::is_tokens_vary_behaviour();
 
     let def_as_tokens = |at: &AllowTokens<O>| -> syn::Result<TokenStream> {
