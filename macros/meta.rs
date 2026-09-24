@@ -1341,7 +1341,7 @@ where
 
     let allow_tokens_for_ty_path = O::is_tokens_vary_behaviour();
 
-    let def_as_tokens = |at: &AllowTokens<O>| {
+    let def_as_tokens = |at: &AllowTokens<O>| -> syn::Result<TokenStream> {
         let mut content = TokenAccumulator::new();
         def.expand(
             ctx.as_general(),
