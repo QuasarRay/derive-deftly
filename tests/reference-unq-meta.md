@@ -663,7 +663,7 @@ These checks are disabled by `#[derive_deftly_adhoc]`.
 #### Examples
 
  * `${tmeta(simple) as ty}`: `« String »`
- * `${tmeta(missing) as ty, default String}`: `String`
+ * `${tmeta(missing) as ty, default String}`: `« String »`
  * `${tmeta(simple) as path}`: `« String »`
  * `${tmeta(simple) as str}`: `"String"`
  * `${tmeta(simple) as token_stream}`: `String`

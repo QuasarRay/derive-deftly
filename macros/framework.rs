@@ -264,7 +264,6 @@ pub trait SubstParseContext: Sized {
     ///
     /// Used for choosing whether to `None`-wrap
     /// `${Xmets as ty/path, default ... }`.
-    #[allow(unused)] // XXXX
     fn is_tokens_vary_behaviour() -> Option<AllowTokens<Self>>;
 
     fn default_subst_meta_as(

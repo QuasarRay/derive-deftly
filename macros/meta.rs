@@ -1291,6 +1291,8 @@ where
             } {
                 use SubstAs as SA;
 
+                let allow_tokens_for_ty_path = O::is_tokens_vary_behaviour();
+
                 let def_as_tokens = |at: &AllowTokens<O>| {
                     let mut content = TokenAccumulator::new();
                     def.expand(
@@ -1309,13 +1311,28 @@ where
                         meta_expr_surround_2(expr, at, out)
                     }
 
+                    SA::ty | SA::path if allow_tokens_for_ty_path.is_some() =>
+                    {
+                        let at = &allow_tokens_for_ty_path.expect("was some");
+                        let ty = def_as_tokens(at)?;
+                        let mut add_grouping = Grouping::Invisible;
+                        let ty = ty.strip_groups(&mut add_grouping);
+                        let ty = add_grouping.surround(
+                            def.brace.map(|t| t.span.span())
+                                .unwrap_or(kw_span),
+                            ty,
+                        );
+                        out.append_tokens(at, ty)
+                    }
+
                     SA::attrs(..) => panic!("as attrs, default not rejected?"),
 
                     // Don't ever need group wrapping for precedence:
                     SA::items(..)
                     | SA::str
                     | SA::vis(..)
-                    // XXXX
+                    // tokens context was handled before, so we're in
+                    // concat or paste, and want to just expand it
                     | SA::ty
                     | SA::path
                     // May want to be able to expand to nothing - ie, no

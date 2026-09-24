@@ -761,8 +761,6 @@ Accesses macro parameters passed via `#[deftly(...)]` attributes.
    If there is no `VALUE` expands
    the [positional argument] `DEFAULT` instead.
 
-   XXXX need to wrap as ty/path
-
    With `as expr`, the expansion of `DEFAULT` will be surrounded by `( )`
    (and if `DEFAULT` is `{ ... }`, the braces are retained in the expansion).
    With `as ty` and `as path` a `None`-delimited group is added
@@ -874,7 +872,7 @@ These checks are disabled by `#[derive_deftly_adhoc]`.
 #### Examples
 
  * `${tmeta(simple) as ty}`: `« String »`
- * `${tmeta(missing) as ty, default String}`: `String`
+ * `${tmeta(missing) as ty, default String}`: `« String »`
  * `$<${tmeta(missing) as ty, default String}>`: `String`
  * `${tmeta(missing) as expr, default 42}`: `(42)`
  * `${tmeta(missing) as expr, default { 42 }}`: `({ 42 })`

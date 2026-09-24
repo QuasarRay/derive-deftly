@@ -553,6 +553,26 @@ impl StripParenGroups for syn::Type {
     }
 }
 
+impl StripParenGroups for TokenStream {
+    fn strip_outer_group(self) -> (Self, Grouping) {
+        (|| {
+            let only =
+                Itertools::exactly_one(self.clone().into_iter()).ok()?;
+            let group = match only {
+                TT::Group(group) => group,
+                _other => return None,
+            };
+            let grouping = match group.delimiter() {
+                Delimiter::Parenthesis => Grouping::Parens,
+                Delimiter::None => Grouping::Invisible,
+                _other => return None,
+            };
+            Some((group.stream(), grouping))
+        })()
+        .unwrap_or_else(|| (self, Grouping::Ungrouped))
+    }
+}
+
 //---------- DocAttribute ----------
 
 /// `syn::Attribute`(s) (zero or more) that are known to be a `#[doc ]`.
