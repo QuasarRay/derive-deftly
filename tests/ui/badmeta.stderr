@@ -486,38 +486,44 @@ error: beta derive-deftly feature used, without `beta_deftly` template option
 163 |     ${fmeta(missing) default { 42 }}
     |                      ^^^^^^^
 
-error: meta attribute provided as unit (flag), but is used only with default values, so the unit is ignored
-   --> ui/badmeta.rs:178:10
+error: expected parentheses
+   --> ui/badmeta.rs:173:13
     |
-178 | #[deftly(unit)]
+173 |     ${tmeta as token_stream}
+    |             ^^
+
+error: meta attribute provided as unit (flag), but is used only with default values, so the unit is ignored
+   --> ui/badmeta.rs:182:10
+    |
+182 | #[deftly(unit)]
     |          ^^^^
 
 error: force failure (in this data structure)
-   --> ui/badmeta.rs:186:1
+   --> ui/badmeta.rs:190:1
     |
-186 | / #[derive_deftly(UnusedDueToError)]
-187 | | #[deftly(unused)] // shouldn't be reported, since template has error
-188 | | struct UnusedDueToError;
+190 | / #[derive_deftly(UnusedDueToError)]
+191 | | #[deftly(unused)] // shouldn't be reported, since template has error
+192 | | struct UnusedDueToError;
     | |________________________^
 
 error: force failure (template error message)
-   --> ui/badmeta.rs:183:13
+   --> ui/badmeta.rs:187:13
     |
-183 |     ${error "force failure"}
+187 |     ${error "force failure"}
     |             ^^^^^^^^^^^^^^^
-184 | }
-185 | #[derive(Deftly)]
+188 | }
+189 | #[derive(Deftly)]
     |          ------ in this derive macro expansion
     |
     = note: this error originates in the macro `derive_deftly_template_UnusedDueToError` which comes from the expansion of the derive macro `Deftly` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: expected `!`
-   --> ui/badmeta.rs:192:9
+   --> ui/badmeta.rs:196:9
     |
-192 |     not item;
+196 |     not item;
     |         ^^^^
-193 | }
-194 | #[derive(Deftly)]
+197 | }
+198 | #[derive(Deftly)]
     |          ------ in this derive macro expansion
     |
     = note: this error originates in the macro `derive_deftly_template_UnusedDueToSyntax` which comes from the expansion of the derive macro `Deftly` (in Nightly builds, run with -Z macro-backtrace for more info)
@@ -529,15 +535,15 @@ error: expected one of `!` or `::`, found `item`
   |     ^^^^ expected one of `!` or `::`
 
 error: meta attribute provided, and (conditionally) recognised; but not used in these particular circumstances
-   --> ui/badmeta.rs:211:20
+   --> ui/badmeta.rs:215:20
     |
-211 |     #[deftly(thing(x))]
+215 |     #[deftly(thing(x))]
     |                    ^
 
 error: meta attribute provided, but not recognised; template only uses it as a container
-   --> ui/badmeta.rs:218:20
+   --> ui/badmeta.rs:222:20
     |
-218 |     #[deftly(thing(x = "x"))]
+222 |     #[deftly(thing(x = "x"))]
     |                    ^
 
 warning: unused macro definition: `derive_deftly_template_WrongRequestSyntax`

@@ -869,6 +869,8 @@ These checks are disabled by `#[derive_deftly_adhoc]`.
 
  * `${tmeta(simple) as ty}`: `« String »`
  * `${tmeta(missing) as ty, default String}`: `String`
+ * `${tmeta(missing) as expr, default 42}`: `42`
+ * `${tmeta(missing) as expr, default { 42 }}`: `42`
  * `${tmeta(simple) as path}`: `« String »`
  * `${tmeta(simple) as str}`: `"String"`
  * `${tmeta(simple) as token_stream}`: `String`
@@ -884,7 +886,7 @@ These checks are disabled by `#[derive_deftly_adhoc]`.
  * `${vmeta(items) as token_stream}` for `TupleVariant`: `type T = i32; const K: T = 7;`
  * `${tmeta(items_quoted) as items}` for `Struct`: `type T = i8;`
  * `${tmeta(items_quoted) as token_stream}` for `Struct`: `type T = i8;`
- * `${fmeta(nested)}`: rejected, ``expected a leaf node, found a list with sub-attributes``
+ * `${fmeta(nested) as token_stream}`: rejected, ``expected a leaf node, found a list with sub-attributes``
 
 #### Examples of `as attrs` value handing
 
