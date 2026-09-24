@@ -869,6 +869,7 @@ These checks are disabled by `#[derive_deftly_adhoc]`.
 
  * `${tmeta(simple) as ty}`: `« String »`
  * `${tmeta(missing) as ty, default String}`: `String`
+ * `$<${tmeta(missing) as ty, default String}>`: `String`
  * `${tmeta(missing) as expr, default 42}`: `42`
  * `${tmeta(missing) as expr, default { 42 }}`: `42`
  * `${tmeta(simple) as path}`: `« String »`
