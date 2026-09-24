@@ -950,6 +950,13 @@ impl ExpansionOutput for Items {
         void::unreachable(*bool_only)
     }
 
+    fn from_token_accumulator<'o>(
+        (not_in_paste, _not_in_concat): &(Void, ()),
+        _out: &'o mut TokenAccumulator,
+    ) -> &'o mut Self {
+        void::unreachable(*not_in_paste);
+    }
+
     fn record_error(&mut self, err: syn::Error) {
         self.errors.push(err);
     }

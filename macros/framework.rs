@@ -465,6 +465,20 @@ pub trait ExpansionOutput: SubstParseContext<BoolOnly = Void> {
     /// This one is used for special cases, eg `${ignore ...}`
     fn new_with_span(kw_span: Span) -> Self;
 
+    /// Use a `TokenAccumulator` as `Self`
+    ///
+    /// Effectively, allows "upcasting" a template from a more restricted
+    /// context to a general token one.
+    ///
+    /// Used for `$Xmeta ... default ...`, which sometimes wants to expand
+    /// the default value as tokens, but needs to convince the type system
+    /// that this is OK.
+    #[allow(unused)] // XXXX
+    fn from_token_accumulator<'o>(
+        allow_tokens: &AllowTokens<Self>,
+        out: &'o mut TokenAccumulator,
+    ) -> &'o mut Self;
+
     /// Implement the core of the `ignore` keyword
     ///
     /// If there was an error, returns it.
@@ -681,6 +695,13 @@ impl ExpansionOutput for TokenAccumulator {
 
     fn ignore_impl(self) -> syn::Result<()> {
         self.0.map(|_: TokenStream| ())
+    }
+
+    fn from_token_accumulator<'o>(
+        _: &AllowTokens<Self>,
+        out: &'o mut TokenAccumulator,
+    ) -> &'o mut Self {
+        out
     }
 
     fn dbg_expand<'c>(
