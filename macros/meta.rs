@@ -1350,7 +1350,7 @@ where
         content.tokens()
     };
 
-    return match &as_.as_ {
+    match &as_.as_ {
         SA::expr(at, _) => {
             let mut expr = def_as_tokens(at)?;
             if let Some(brace) = &def.brace {
@@ -1392,7 +1392,7 @@ where
         | SA::token_stream(..) => {
             Ok(def.expand(ctx.as_general(), out))
         }
-    };
+    }
 }
 
 fn metavalue_spans(tspan: Span, vspan: Span) -> [ErrorLoc<'static>; 2] {
