@@ -1232,6 +1232,15 @@ where
         let self_loc = (span_whole, "expansion");
         let error_loc = [ctx.error_loc(), self_loc];
 
+        let default_buf;
+        let as_ = match as_ {
+            Some(as_) => &as_.as_,
+            None => {
+                default_buf = O::default_subst_meta_as(span_whole)?;
+                &default_buf
+            }
+        };
+
         let mut found = self
             .as_
             .as_ref()
@@ -1447,7 +1456,7 @@ impl<'l> FoundNode<'l> {
     fn expand<O>(
         &self,
         tspan: Span,
-        as_: &Option<SubstAsSpecified<O>>,
+        as_: &SubstAs<O>,
         quoted: Option<QuotedMode>,
         out: &mut O,
     ) -> syn::Result<()>
@@ -1466,14 +1475,6 @@ impl<'l> FoundNode<'l> {
         use AsValueHandling as AVH;
         use SubstAs as SA;
 
-        let default_buf;
-        let as_ = match as_ {
-            Some(as_) => &as_.as_,
-            None => {
-                default_buf = O::default_subst_meta_as(tspan)?;
-                &default_buf
-            }
-        };
         let quoted = quoted.map(|q| q.mode);
 
         let input = MetaValueAsInput {
