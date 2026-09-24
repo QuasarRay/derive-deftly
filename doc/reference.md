@@ -2208,8 +2208,12 @@ These are shown in the example outputs, in this reference,
 surrounded by guillemets `« »`.
 
 This is done for
+
  * `$ftype`
  * `$Xmeta as ty`
+ * `$Xmeta as path`
+
+unless the type (or path) is already surrounded by `( )`.
 
 <div id="t:example-structs">
 
