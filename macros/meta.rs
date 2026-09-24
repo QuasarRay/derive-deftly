@@ -1291,14 +1291,18 @@ where
             } {
                 use SubstAs as SA;
 
+                let def_as_tokens = |at: &AllowTokens<O>| {
+                    let mut content = TokenAccumulator::new();
+                    def.expand(
+                        ctx.as_general(),
+                        O::from_token_accumulator(at, &mut content),
+                    );
+                    content.tokens()
+                };
+
                 return match &as_.as_ {
                     SA::expr(at, _) => {
-                        let mut expr = TokenAccumulator::new();
-                        def.expand(
-                            ctx.as_general(),
-                            O::from_token_accumulator(at, &mut expr),
-                        );
-                        let mut expr = expr.tokens()?;
+                        let mut expr = def_as_tokens(at)?;
                         if let Some(brace) = &def.brace {
                             expr = meta_expr_surround_1(brace, expr);
                         }
