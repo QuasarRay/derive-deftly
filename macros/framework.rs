@@ -385,15 +385,7 @@ pub trait ExpansionOutput: SubstParseContext<BoolOnly = Void> {
         mut v: syn::Type,
         mut grouping: Grouping,
     ) {
-        loop {
-            let (inner, add_grouping) = match v {
-                syn::Type::Paren(inner) => (inner.elem, Grouping::Parens),
-                syn::Type::Group(inner) => (inner.elem, Grouping::Invisible),
-                _ => break,
-            };
-            v = *inner;
-            grouping = cmp::max(grouping, add_grouping);
-        }
+        v = v.strip_groups(&mut grouping);
         if let syn::Type::Path(tp) = &mut v {
             typepath_add_missing_argument_colons(tp, te_span);
         }

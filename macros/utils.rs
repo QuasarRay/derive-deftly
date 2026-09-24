@@ -527,6 +527,32 @@ impl Grouping {
     }
 }
 
+pub trait StripParenGroups: Sized {
+    fn strip_groups(mut self, most_stripped: &mut Grouping) -> Self {
+        loop {
+            let (self_, this_stripped) = self.strip_outer_group();
+            self = self_;
+            if this_stripped == Grouping::Ungrouped {
+                break;
+            }
+            *most_stripped = cmp::max(*most_stripped, this_stripped);
+        }
+        self
+    }
+
+    fn strip_outer_group(self) -> (Self, Grouping);
+}
+
+impl StripParenGroups for syn::Type {
+    fn strip_outer_group(self) -> (Self, Grouping) {
+        match self {
+            syn::Type::Paren(inner) => (*inner.elem, Grouping::Parens),
+            syn::Type::Group(inner) => (*inner.elem, Grouping::Invisible),
+            other => (other, Grouping::Ungrouped),
+        }
+    }
+}
+
 //---------- DocAttribute ----------
 
 /// `syn::Attribute`(s) (zero or more) that are known to be a `#[doc ]`.
