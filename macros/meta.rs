@@ -2153,10 +2153,12 @@ fn unrecognised_error(
             return None;
         }
         let y_ss = SuppliedScope::iter()
-            .filter(|ss| ss.recog_search().any(|s| y_scopes.contains(&s)))
-            .map(|ss| ss.to_string())
-            .join("/");
-        let y_scopes = y_scopes.iter().map(|s| s.as_ref()).join("/");
+            .filter(|ss| ss.recog_search().any(|s| y_scopes.contains(&s)));
+        if y_ss.clone().contains(&supplied_scope) {
+            return None;
+        }
+        let y_ss = y_ss.format("/");
+        let y_scopes = y_scopes.iter().map(|s| s.as_ref()).format("/");
         some_err(&format_args!(
  "meta attribute provided for {}, but recognised by template only for {} ({})",
             supplied_scope,
