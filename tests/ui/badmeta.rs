@@ -168,10 +168,10 @@ derive_deftly_adhoc! {
     //  https://gitlab.torproject.org/Diziet/rust-derive-deftly/-/issues/48#note_3284656
     ${tmeta(unit) as token_stream, default {}}
 }
-
-
-
-
+derive_deftly_adhoc! {
+    DataType:
+    ${tmeta as token_stream}
+}
 
 define_derive_deftly! {
     UnusedUnit beta_deftly:

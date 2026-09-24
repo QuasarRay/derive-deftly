@@ -486,6 +486,12 @@ error: beta derive-deftly feature used, without `beta_deftly` template option
 163 |     ${fmeta(missing) default { 42 }}
     |                      ^^^^^^^
 
+error: expected parentheses
+   --> ui/badmeta.rs:173:13
+    |
+173 |     ${tmeta as token_stream}
+    |             ^^
+
 error: meta attribute provided as unit (flag), but is used only with default values, so the unit is ignored
    --> ui/badmeta.rs:182:10
     |
