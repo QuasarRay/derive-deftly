@@ -761,11 +761,18 @@ Accesses macro parameters passed via `#[deftly(...)]` attributes.
    If there is no `VALUE` expands
    the [positional argument] `DEFAULT` instead.
 
-   NB: in this case the expansions of `DEFAULT` is used as is:
-   *not* affected by any `as ..` clause;
-   *not* surrounded with additional `( )` (for `as expr`),
-   nor any additional [`None`-delimited group](#t:none-delimiters).
-   See [Precedence considerations](#precedence-considerations).
+   XXXX need to wrap as expr
+   XXXX need to wrap as ty/path
+
+   With `as expr`, the expansion of `DEFAULT` will be surrounded by `( )`
+   (and if `DEFAULT` is `{ ... }`, the braces are retained in the expansion).
+   With `as ty` and `as path` a `None`-delimited group is added
+   (except within pasting or string concatenation).
+   (See [Precedence considerations](#precedence-considerations).)
+
+   But apart from that, is is just as if contents of `DEFAULT`
+   were written directly instead of inside the `$Xmeta`.
+   The `DEFAULT` is not syntax-checked against the `as`,
 
  * **`${Xmeta(...) .. , quoted strip | quoted rigorous | quoted retain}`** ([**beta**]):
 
@@ -2159,7 +2166,7 @@ and dumping the expansion to stderr during compilation.
 
 When using
 `${Xmeta as token_stream}`,
-`${Xmeta ... default ...}`,
+`${Xmeta ... as ty, default ...}`,
 and user-defined expansions (`${define ...}`)
 it can be necessary to add `{ }` or `( )`
 to avoid surprising expansions due to operator precedence.
