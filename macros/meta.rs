@@ -1621,11 +1621,13 @@ impl<'l> FoundNode<'l> {
                 )?;
                 out.append_syn_litstr(s, None);
             }
-            SA::ty => out.append_syn_type(
-                tspan,
-                metavalue_as(AVH::Normal, input)?,
-                Grouping::Invisible,
-            ),
+            SA::ty => {
+                out.append_syn_type(
+                    tspan,
+                    metavalue_as(AVH::Normal, input)?,
+                    Grouping::Invisible,
+                )
+            }
             SA::vis(at, ..) => {
                 let vis: syn::Visibility = metavalue_as(AVH::Normal, input)?;
                 out.append_tokens(at, vis)?;
