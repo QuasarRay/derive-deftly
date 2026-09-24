@@ -218,6 +218,9 @@ impl<L: LexicalContext> SubstParseContext for Accumulator<L> {
     fn concat_only(_: &impl Spanned) -> syn::Result<()> {
         Ok(())
     }
+    fn is_tokens_vary_behaviour() -> Option<AllowTokens<Self>> {
+        None
+    }
 }
 
 impl<L: LexicalContext> ExpansionOutput for Accumulator<L> {

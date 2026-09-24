@@ -257,6 +257,16 @@ pub trait SubstParseContext: Sized {
         Ok((Self::not_in_paste(&span)?, (Self::not_in_concat(&span)?)))
     }
 
+    /// Are we in a `TokenAccumulator` ?
+    ///
+    /// Use with caution!  Correctness hazard: this method allows behavour
+    /// to be arbitrarily different between token contexts and others
+    ///
+    /// Used for choosing whether to `None`-wrap
+    /// `${Xmets as ty/path, default ... }`.
+    #[allow(unused)] // XXXX
+    fn is_tokens_vary_behaviour() -> Option<AllowTokens<Self>>;
+
     fn default_subst_meta_as(
         kw: Span,
     ) -> syn::Result<meta::SubstAsInfo<Self>> {
@@ -611,6 +621,9 @@ impl SubstParseContext for TokenAccumulator {
     }
     fn not_in_bool(_: &impl Spanned) -> syn::Result<()> {
         Ok(())
+    }
+    fn is_tokens_vary_behaviour() -> Option<AllowTokens<Self>> {
+        Some(((), ()))
     }
 
     type BoolOnly = Void;

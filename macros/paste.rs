@@ -831,6 +831,10 @@ impl SubstParseContext for Items {
             .error("not allowed in within ${paste ...} (or case_changing)"))
     }
 
+    fn is_tokens_vary_behaviour() -> Option<AllowTokens<Self>> {
+        None
+    }
+
     fn default_subst_meta_as(
         kw: Span,
     ) -> syn::Result<meta::SubstAsInfo<Self>> {
