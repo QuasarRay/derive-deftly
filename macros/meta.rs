@@ -1289,6 +1289,54 @@ where
                 }
                 _ => false,
             } {
+                return expand_default_value(kw_span, def, as_, ctx, out);
+            }
+        }
+
+        let found = found.iter_for_expand_or_else(|| {
+            if let Some(hint) = hint {
+                let hint_msg = match hint.kind {
+                    FNNK::Unit =>
+ "expected a list with sub-attributes, found a unit",
+                    FNNK::Lit =>
+ "expected a list with sub-attributes, found a simple value",
+                    FNNK::List =>
+ "expected a leaf node, found a list with sub-attributes",
+                };
+                let mut err = hint.path_span.error(hint_msg);
+                err.combine(error_loc.error(
+ "attribute value expanded, but no suitable value in data structure definition"
+                ));
+                err
+            } else {
+                error_loc.error(
+ "attribute value expanded, but no value in data structure definition"
+                )
+            }
+        })?;
+
+        let quoted = quoted.map(|(q, _nb)| q).or(ctx.meta_quoted);
+
+        for found in found {
+            found.ptree.update_used(Usage::VALUE);
+            found.expand(span_whole, &as_.as_, quoted, out)?;
+        }
+
+        Ok(())
+    }
+}
+
+fn expand_default_value<O>(
+    kw_span: Span,
+    def: &Argument<O>,
+    as_: &SubstAsResolved<O>,
+    ctx: &Context,
+    out: &mut O,
+) -> syn::Result<()>
+where
+    O: ExpansionOutput,
+    TemplateElement<O>: Expand<O>,
+{
                 use SubstAs as SA;
 
                 let allow_tokens_for_ty_path = O::is_tokens_vary_behaviour();
@@ -1345,40 +1393,6 @@ where
                         Ok(def.expand(ctx.as_general(), out))
                     }
                 };
-            }
-        }
-
-        let found = found.iter_for_expand_or_else(|| {
-            if let Some(hint) = hint {
-                let hint_msg = match hint.kind {
-                    FNNK::Unit =>
- "expected a list with sub-attributes, found a unit",
-                    FNNK::Lit =>
- "expected a list with sub-attributes, found a simple value",
-                    FNNK::List =>
- "expected a leaf node, found a list with sub-attributes",
-                };
-                let mut err = hint.path_span.error(hint_msg);
-                err.combine(error_loc.error(
- "attribute value expanded, but no suitable value in data structure definition"
-                ));
-                err
-            } else {
-                error_loc.error(
- "attribute value expanded, but no value in data structure definition"
-                )
-            }
-        })?;
-
-        let quoted = quoted.map(|(q, _nb)| q).or(ctx.meta_quoted);
-
-        for found in found {
-            found.ptree.update_used(Usage::VALUE);
-            found.expand(span_whole, &as_.as_, quoted, out)?;
-        }
-
-        Ok(())
-    }
 }
 
 fn metavalue_spans(tspan: Span, vspan: Span) -> [ErrorLoc<'static>; 2] {
