@@ -2154,8 +2154,7 @@ fn unrecognised_error(
         if y_ss.clone().contains(&supplied_scope) {
             return None;
         }
-        let y_ss = y_ss
-            .format("/");
+        let y_ss = y_ss.format("/");
         let y_scopes = y_scopes.iter().map(|s| s.as_ref()).format("/");
         some_err(&format_args!(
  "meta attribute provided for {}, but recognised by template only for {} ({})",
