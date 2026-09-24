@@ -384,6 +384,8 @@ pub trait ExpansionOutput: SubstParseContext<BoolOnly = Void> {
         mut v: syn::Type,
         mut grouping: Grouping,
     ) {
+        // There is also an ad-hoc version of this that works on TokenStream
+        // in meta::expand_default_value.
         v = v.strip_groups(&mut grouping);
         if let syn::Type::Path(tp) = &mut v {
             typepath_add_missing_argument_colons(tp, te_span);

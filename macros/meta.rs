@@ -1350,6 +1350,7 @@ where
         content.tokens()
     };
 
+    // Sort-of replicates some of the logic in FoundNode::expand
     match &as_.as_ {
         SA::expr(at, _) => {
             let mut expr = def_as_tokens(at)?;
@@ -1361,6 +1362,7 @@ where
 
         SA::ty | SA::path if allow_tokens_for_ty_path.is_some() =>
         {
+            // Replicate the behaviour of append_syn_type, only with ts
             let at = &allow_tokens_for_ty_path.expect("was some");
             let ty = def_as_tokens(at)?;
             let mut add_grouping = Grouping::Invisible;
@@ -1592,6 +1594,7 @@ impl<'l> FoundNode<'l> {
             into_what: as_,
         };
 
+        // See also the match as_ in expand_default_value
         match as_ {
             SA::expr(.., at, supported) => {
                 // Any surrounding `{ }` are re-added by metavalue_as
@@ -1622,6 +1625,9 @@ impl<'l> FoundNode<'l> {
                 out.append_syn_litstr(s, None);
             }
             SA::ty => {
+                // append_syn_type adds parens if appropriate; for `default`,
+                // it's reimplemented ad-hoc using StripParenGroups
+                // in expand_default_value.
                 out.append_syn_type(
                     tspan,
                     metavalue_as(AVH::Normal, input)?,
