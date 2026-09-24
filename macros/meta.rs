@@ -1472,10 +1472,27 @@ impl<'l> FoundNode<'l> {
             FNK::Value(value) => value,
         };
 
+        let quoted = quoted.map(|q| q.mode);
+
+        val.expand(tspan, as_, quoted, out)
+    }
+}
+
+impl PreprocessedValue {
+    fn expand<O>(
+        &self,
+        tspan: Span,
+        as_: &SubstAs<O>,
+        quoted: Option<QuotedModeMode>,
+        out: &mut O,
+    ) -> syn::Result<()>
+    where
+        O: ExpansionOutput,
+    {
         use AsValueHandling as AVH;
         use SubstAs as SA;
 
-        let quoted = quoted.map(|q| q.mode);
+        let val = self;
 
         let input = MetaValueAsInput {
             val,
