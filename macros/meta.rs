@@ -1381,10 +1381,8 @@ where
             // works as expected.  `( )` are added later by FoundNode::expand.
             AVH::Expr => {
                 let span = brace_token.span.span();
-                let mut group = proc_macro2::Group::new(
-                    Delimiter::Brace,
-                    value.clone(),
-                );
+                let mut group =
+                    proc_macro2::Group::new(Delimiter::Brace, value.clone());
                 group.set_span(span);
                 group.to_token_stream()
             }
