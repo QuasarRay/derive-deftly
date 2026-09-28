@@ -43,7 +43,7 @@ derive_deftly_adhoc! {
 
     fn ${tmeta(absent) as ident, default { defaulted }}() {}
 
-    const _BLOCK_EXPR: i32 = ${tmeta(block_expr) as expr};
+    const BLOCK_EXPR: i32 = ${tmeta(block_expr) as expr};
 }
 
 fn main() {}
