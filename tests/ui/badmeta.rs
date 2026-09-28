@@ -232,5 +232,10 @@ derive_deftly_adhoc! {
     DataType beta_deftly:
     const BAD_EXOR: () = ${tmeta(missing) as expr, default { . }};
 }
+derive_deftly_adhoc! {
+    DataType beta_deftly:
+    const BAD_EXOR_DEF: i32 = ${tmeta(integer) as expr, default { . }};
+    // XXXX this should generate an error but currently doesn't
+}
 
 fn main() {}
