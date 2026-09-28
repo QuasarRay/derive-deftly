@@ -224,4 +224,13 @@ struct IgnoredDueToCondition2 {
     a: bool,
 }
 
+derive_deftly_adhoc! {
+    DataType beta_deftly:
+    const BAD_TYPE: ${tmeta(missing) as ty, default { . }} = ();
+}
+derive_deftly_adhoc! {
+    DataType beta_deftly:
+    const BAD_EXOR: () = ${tmeta(missing) as expr, default { . }};
+}
+
 fn main() {}

@@ -545,3 +545,15 @@ error: meta attribute provided, but not recognised; template only uses it as a c
     |
 223 |     #[deftly(thing(x = "x"))]
     |                    ^
+
+error: expected type, found `.`
+   --> ui/badmeta.rs:229:55
+    |
+229 |     const BAD_TYPE: ${tmeta(missing) as ty, default { . }} = ();
+    |                                                       ^ expected type
+
+error: expected expression, found `.`
+   --> ui/badmeta.rs:233:62
+    |
+233 |     const BAD_EXOR: () = ${tmeta(missing) as expr, default { . }};
+    |                                                              ^ expected expression
