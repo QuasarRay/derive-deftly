@@ -309,7 +309,7 @@ pub type AllowTokens<O: SubstParseContext> = (
 ///
 /// The accumulating type (`Self` might be accumulating
 /// tokens ([`TokenStream`]) or strings ([`paste::Items`]).
-pub trait ExpansionOutput: SubstParseContext {
+pub trait ExpansionOutput: SubstParseContext<NotInBool = ()> {
     /// An identifier (or fragment of one)
     ///
     /// Uses the `IdentFragment` for identifier pasting,
