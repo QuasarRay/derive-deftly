@@ -44,6 +44,8 @@ derive_deftly_adhoc! {
     fn ${tmeta(absent) as ident, default { defaulted }}() {}
 
     const BLOCK_EXPR: i32 = ${tmeta(block_expr) as expr};
+
+    const NON_PATH_TYPE: ${tmeta(missing) as ty, default { () }} = ();
 }
 
 fn main() {}

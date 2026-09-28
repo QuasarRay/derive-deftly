@@ -20,4 +20,5 @@ const BLOCK_EXPR: i32 = ({
     let val = 42;
     val
 });
+const NON_PATH_TYPE: () = ();
 fn main() {}
