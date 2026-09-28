@@ -1319,7 +1319,7 @@ where
 
         for found in found {
             found.ptree.update_used(Usage::VALUE);
-            found.expand(span_whole, as_, quoted, out)?;
+            found.expand(span_whole, &as_.as_, quoted, out)?;
         }
 
         Ok(())
@@ -1471,7 +1471,7 @@ impl<'l> FoundNode<'l> {
     fn expand<O>(
         &self,
         tspan: Span,
-        as_: &SubstAsResolved<O>,
+        as_: &SubstAs<O>,
         quoted: Option<QuotedMode>,
         out: &mut O,
     ) -> syn::Result<()>
@@ -1490,7 +1490,6 @@ impl<'l> FoundNode<'l> {
         use AsValueHandling as AVH;
         use SubstAs as SA;
 
-        let as_ = &as_.as_;
         let quoted = quoted.map(|q| q.mode);
 
         let input = MetaValueAsInput {
