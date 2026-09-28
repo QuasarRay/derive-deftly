@@ -1,4 +1,4 @@
-
+#![allow(unused)]
 use derive_deftly::{
     define_derive_deftly, define_derive_deftly_module, derive_deftly_adhoc,
     Deftly,
