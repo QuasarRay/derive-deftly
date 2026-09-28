@@ -830,6 +830,17 @@ impl SubstParseContext for Items {
         Err(span
             .error("not allowed in within ${paste ...} (or case_changing)"))
     }
+
+    fn default_subst_meta_as(
+        kw: Span,
+    ) -> syn::Result<meta::SubstAsInfo<Self>> {
+        Ok(meta::SubstAsInfo::Expand(meta::SubstAsSpecified {
+            as_: meta::SubstAs::str,
+            nb: (),
+            kw_span: kw,
+            multiplicity: meta::MultiplicityCollector::default(),
+        }))
+    }
 }
 
 impl ExpansionOutput for Items {
@@ -945,10 +956,6 @@ impl ExpansionOutput for Items {
 
     fn new_with_span(kw_span: Span) -> Self {
         Self::new(kw_span)
-    }
-
-    fn default_subst_meta_as(_: Span) -> syn::Result<meta::SubstAs<Self>> {
-        Ok(meta::SubstAs::str)
     }
 
     fn ignore_impl(self) -> syn::Result<()> {

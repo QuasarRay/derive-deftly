@@ -256,6 +256,12 @@ pub trait SubstParseContext: Sized {
         let span = span.span();
         Ok((Self::not_in_paste(&span)?, (Self::not_in_concat(&span)?)))
     }
+
+    fn default_subst_meta_as(
+        kw: Span,
+    ) -> syn::Result<meta::SubstAsInfo<Self>> {
+        Err(kw.error("missing `as ...` in meta expansion"))
+    }
 }
 
 pub trait SpecialParseContext {
@@ -458,10 +464,6 @@ pub trait ExpansionOutput: SubstParseContext<BoolOnly = Void> {
     /// Normally, call sites use an inherent constructor method.
     /// This one is used for special cases, eg `${ignore ...}`
     fn new_with_span(kw_span: Span) -> Self;
-
-    fn default_subst_meta_as(kw: Span) -> syn::Result<meta::SubstAs<Self>> {
-        Err(kw.error("missing `as ...` in meta expansion"))
-    }
 
     /// Implement the core of the `ignore` keyword
     ///

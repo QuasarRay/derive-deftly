@@ -110,6 +110,18 @@ pub struct SubstMeta<O: SubstParseContext> {
     pub quoted: Option<(QuotedMode, O::NotInBool)>,
 }
 
+/// Default (or defaulted) `as`, or nothing in boolean context
+///
+/// Return value from [`SubstParseContext::default_subst_meta_as`].
+/// Only one of the arms is inhabited in any one context.
+///
+/// In expansion contexts, use `.for_expand()` to get the `SubstAsSpecified`.
+#[derive(Debug)]
+pub enum SubstAsInfo<O: SubstParseContext> {
+    Expand(meta::SubstAsSpecified<O>), // uninhabited in boolean context
+    Bool(O::BoolOnly),
+}
+
 #[derive(Debug)]
 pub struct SubstAsSpecified<O: SubstParseContext> {
     pub kw_span: Span,
@@ -335,6 +347,15 @@ impl<'f> MultiplicityCollector<FoundNode<'f>> {
             MC::Singleton(Some(n)) => Left(iter::once(n)),
             MC::Several(l) => Right(l.into_iter()),
         })
+    }
+}
+
+impl<O: ExpansionOutput> SubstAsInfo<O> {
+    pub fn for_expand(&self) -> &SubstAsSpecified<O> {
+        match self {
+            SubstAsInfo::Expand(e) => e,
+            SubstAsInfo::Bool(v) => void::unreachable(*v),
+        }
     }
 }
 
@@ -1471,7 +1492,7 @@ impl<'l> FoundNode<'l> {
             Some(as_) => &as_.as_,
             None => {
                 default_buf = O::default_subst_meta_as(tspan)?;
-                &default_buf
+                &default_buf.for_expand().as_
             }
         };
         let quoted = quoted.map(|q| q.mode);

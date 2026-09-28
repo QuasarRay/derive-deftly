@@ -50,6 +50,10 @@ impl SubstParseContext for BooleanContext {
     fn missing_keyword_arguments(kw_span: Span) -> syn::Result<Void> {
         Err(kw_span.error("missing parameters to condition"))
     }
+
+    fn default_subst_meta_as(_: Span) -> syn::Result<meta::SubstAsInfo<Self>> {
+        Ok(meta::SubstAsInfo::Bool(()))
+    }
 }
 
 impl Subst<BooleanContext> {
