@@ -16,7 +16,7 @@ fn mixed_no() {}
 fn mixed_yes() {}
 fn defaulted_hi() {}
 fn defaulted() {}
-const _BLOCK_EXPR: i32 = ({
+const BLOCK_EXPR: i32 = ({
     let val = 42;
     val
 });
