@@ -106,12 +106,6 @@ error: control structures are not allowed in string templates (within an expansi
 30 |         $r#"un-lexable ${for fields { loops }}"#,
    |          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-error: control structures are not allowed in string templates (within an expansion in a string template, reentering the string template lexing/parsing context is not possible); in string template, error in fragment "${tmeta(something) as str, default { re-enter }}", near this location "un-lexable ${tmeta(something) as str, default { re-enter }}"<-HERE
-  --> ui/badstemplate.rs:31:10
-   |
-31 |         $r#"un-lexable ${tmeta(something) as str, default { re-enter }}}"#,
-   |          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
 error: invalid/unsupported syntax after `$` in string template; in string template, error in fragment "$/", near this location "not lexed heere $/"<-HERE
   --> ui/badstemplate.rs:32:10
    |

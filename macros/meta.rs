@@ -106,7 +106,7 @@ struct BorrowedDesig<'p> {
 pub struct SubstMeta<O: SubstParseContext> {
     pub desig: Desig,
     pub as_: Option<SubstAsSpecified<O>>,
-    pub default: Option<(Argument<O>, O::NotInBool, beta::Enabled)>,
+    pub default: Option<(Argument, O::NotInBool, beta::Enabled)>,
     pub quoted: Option<(QuotedMode, O::NotInBool)>,
 }
 
@@ -578,6 +578,8 @@ impl<O: SubstParseContext> SubstMeta<O> {
                     })?;
             }
         }
+
+        // XXXX syntax-check the default vis-a-vis this as, if possible
 
         macro_rules! ret { { $( $f:ident )* } => {
             SubstMeta {
@@ -1274,7 +1276,19 @@ where
                 }
                 _ => false,
             } {
-                return Ok(def.expand(ctx.as_general(), out));
+                let mut expanded = TokenAccumulator::new();
+                def.expand(ctx.as_general(), &mut expanded);
+                let value = expanded.tokens()?;
+                // Simulate #[deftly(label = { ... })] as per the docs
+                let brace_token = token::Brace(kw_span);
+                let value = PV::Braced { brace_token, value };
+                return value.expand::<O>(
+                    value.span(),
+                    as_,
+                    // not actually used, since we don't pass PV::Quoted
+                    Some(QuotedModeMode::Retain),
+                    out,
+                );
             }
         }
 

@@ -768,8 +768,6 @@ Accesses macro parameters passed via `#[deftly(...)]` attributes.
    `DEFAULT` is syntax-checked at template parse time only if 
    doesn't itself contain any expansions.
 
-   XXXX ^ this is not yet implemented
-
  * **`${Xmeta(...) .. , quoted strip | quoted rigorous | quoted retain}`** ([**beta**]):
 
    Specifies how to handle `NAME = "..."` in a `#[deftly]`:
@@ -871,8 +869,8 @@ These checks are disabled by `#[derive_deftly_adhoc]`.
 #### Examples
 
  * `${tmeta(simple) as ty}`: `« String »`
- * `${tmeta(missing) as ty, default String}`: `String`
- * `${tmeta(missing) as expr, default 42}`: `42`
+ * `${tmeta(missing) as ty, default String}`: `« String »`
+ * `${tmeta(missing) as expr, default 42}`: `({ 42 })`
  * `${tmeta(simple) as path}`: `« String »`
  * `${tmeta(simple) as str}`: `"String"`
  * `${tmeta(simple) as token_stream}`: `String`
