@@ -6,6 +6,7 @@ use derive_deftly::{derive_deftly_adhoc, Deftly};
 
 #[derive(Deftly)]
 #[derive_deftly_adhoc]
+#[deftly(block_expr = { let val = 42; val })]
 struct IgnoredThings {
     #[deftly(prefix = "pfx")]
     #[deftly(multi(hi, there(wombat), path::suffix = "sfx"))]
@@ -14,7 +15,7 @@ struct IgnoredThings {
 }
 
 derive_deftly_adhoc! {
-    IgnoredThings beta_deftly:
+    IgnoredThings beta_deftly, meta_quoted strip:
 
   $(
     // normal fmeta parsing
@@ -41,6 +42,8 @@ derive_deftly_adhoc! {
   )
 
     fn ${tmeta(absent) as ident, default { defaulted }}() {}
+
+    const _BLOCK_EXPR: i32 = ${tmeta(block_expr) as expr};
 }
 
 fn main() {}
