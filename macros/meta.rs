@@ -1374,7 +1374,19 @@ where
     };
 
     let t = match val {
-        PV::Braced { value, .. } => value.clone(),
+        PV::Braced { value, brace_token } => match as_value_handling {
+            AVH::Normal | AVH::NoBare => value.clone(),
+            // If the value was braced, reconstruct the Group, so that
+            //     #[deftly(e = { stmt; value })]
+            // works as expected.  `( )` are added later by FoundNode::expand.
+            AVH::Expr => {
+                let span = brace_token.span.span();
+                let mut group =
+                    proc_macro2::Group::new(Delimiter::Brace, value.clone());
+                group.set_span(span);
+                group.to_token_stream()
+            }
+        },
         PV::Quoted { value } => match as_value_handling {
             AVH::Normal | AVH::NoBare => metavalue_lit_reparse(value)?,
             AVH::Expr => match quoted {
@@ -1473,23 +1485,9 @@ impl<'l> FoundNode<'l> {
 
         match as_ {
             SA::expr(.., at, supported) => {
+                // Any surrounding `{ }` are re-added by metavalue_as
                 let expr = metavalue_as(AVH::Expr, input)?;
                 supported.infer_type(&expr);
-                // If the value was braced, reconstruct the Group, so that
-                //     #[deftly(e = { stmt; value })]
-                // works as expected.
-                let content = match val {
-                    PV::Braced { brace_token, .. } => {
-                        let span = brace_token.span.span();
-                        let mut group = proc_macro2::Group::new(
-                            Delimiter::Brace,
-                            expr.to_token_stream(),
-                        );
-                        group.set_span(span);
-                        group.to_token_stream()
-                    }
-                    _ => expr.to_token_stream(),
-                };
                 // Now surround with `( )` for precedence reasons.
                 // (And, if we surrounded with `{ }` above, to turn the
                 // block into an expression that's useable everywhere, for eg
@@ -1500,7 +1498,7 @@ impl<'l> FoundNode<'l> {
                 //     ({ |_| .. })(arg)
                 // not
                 //     { |_| .. }(arg)   // <- doesn't compile
-                let content = Grouping::Parens.surround(expr.span(), content);
+                let content = Grouping::Parens.surround(expr.span(), expr);
                 out.append_tokens(at, content)?;
             }
             SA::ident => {
