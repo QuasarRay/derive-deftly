@@ -127,7 +127,7 @@ but not both:
 #   impl<$tgens> $ttype where $twheres {
 # pub fn
    ${select1
-       tmeta(constructor(newfn)) { ${tmeta(constructor(newfn))} }
+       tmeta(constructor(newfn)) { ${tmeta(constructor(newfn)) as ident} }
        else if tmeta(constructor(default_name)) { new }
        else { new }
     }
