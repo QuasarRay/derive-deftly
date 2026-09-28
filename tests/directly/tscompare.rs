@@ -64,12 +64,9 @@ impl DissimilarTokenStreams {
                         Delimiter::None => format!("« ... »"),
                         delim => format!(
                             "{}",
-                            proc_macro2::Group::new(
-                                delim,
-                                quote!(...),
-                            )
-                        )
-                    }
+                            proc_macro2::Group::new(delim, quote!(...),)
+                        ),
+                    },
                     Some(other) => format!("{}", other),
                 }
             )
