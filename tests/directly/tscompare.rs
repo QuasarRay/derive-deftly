@@ -60,12 +60,13 @@ impl DissimilarTokenStreams {
                 format!("{} token:", s),
                 match getter(self.diff.clone()) {
                     None => format!("(none)"),
-                    Some(TokenTree::Group(g)) => {
-                        format!(
+                    Some(TokenTree::Group(g)) => match g.delimiter() {
+                        Delimiter::None => format!("« ... »"),
+                        delim => format!(
                             "{}",
                             proc_macro2::Group::new(
-                                g.delimiter(),
-                                quote!("..."),
+                                delim,
+                                quote!(...),
                             )
                         )
                     }
