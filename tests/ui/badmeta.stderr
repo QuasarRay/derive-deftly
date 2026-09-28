@@ -431,7 +431,7 @@ error: missing `as ...` in meta expansion
    --> ui/badmeta.rs:149:7
     |
 149 |     ${tmeta(dot)} // forgot `.. as`, so `"."` not even parsed
-    |       ^^^^^^^^^
+    |       ^^^^^
 
 error: comparison of string/byte/character literals with suffixes is not supported (literal)
    --> ui/badmeta.rs:14:40
@@ -545,6 +545,12 @@ error: meta attribute provided, but not recognised; template only uses it as a c
     |
 222 |     #[deftly(thing(x = "x"))]
     |                    ^
+
+error: missing `as ...` in meta expansion
+   --> ui/badmeta.rs:228:20
+    |
+228 |     ${if false { ${tmeta(missing)} }} // forgot `as`, but unreachable
+    |                    ^^^^^
 
 warning: unused macro definition: `derive_deftly_template_WrongRequestSyntax`
    --> ui/badmeta.rs:137:5

@@ -226,7 +226,6 @@ struct IgnoredDueToCondition2 {
 derive_deftly_adhoc! {
     DataType beta_deftly:
     ${if false { ${tmeta(missing)} }} // forgot `as`, but unreachable
-    // XXXX ^ this should generate an error
 }
 
 fn main() {}

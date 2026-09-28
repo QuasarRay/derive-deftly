@@ -110,9 +110,10 @@ impl Subst<BooleanContext> {
                     None => {}
                     Some((_, nb)) => void::unreachable(*nb),
                 }
-                if let Some(as_) = as_ {
-                    void::unreachable(as_.nb)
-                };
+                match as_ {
+                    meta::SubstAsInfo::Expand(a) => void::unreachable(a.nb),
+                    meta::SubstAsInfo::Bool(()) => {}
+                }
                 is_found(label.search_eval_bool(sm.pmetas(ctx?, kw_span)?))
             }
 

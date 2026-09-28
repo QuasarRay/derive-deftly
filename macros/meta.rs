@@ -105,7 +105,7 @@ struct BorrowedDesig<'p> {
 #[derive(Debug)]
 pub struct SubstMeta<O: SubstParseContext> {
     pub desig: Desig,
-    pub as_: Option<SubstAsSpecified<O>>,
+    pub as_: SubstAsInfo<O>,
     pub default: Option<(Argument<O>, O::NotInBool, beta::Enabled)>,
     pub quoted: Option<(QuotedMode, O::NotInBool)>,
 }
@@ -600,15 +600,20 @@ impl<O: SubstParseContext> SubstMeta<O> {
             }
         }
 
+        let as_ = match as_ {
+            Some((_span, as_)) => SubstAsInfo::Expand(as_),
+            None => O::default_subst_meta_as(kw_span)?,
+        };
+
         macro_rules! ret { { $( $f:ident )* } => {
             SubstMeta {
+                as_,
                 desig: Desig { label, scope },
                 $( $f: $f.map(|(_span, v)| v), )*
             }
         } }
 
         Ok(ret! {
-            as_
             default
             quoted
         })
@@ -1252,12 +1257,9 @@ where
         let span_whole = self.span_whole(kw_span);
         let self_loc = (span_whole, "expansion");
         let error_loc = [ctx.error_loc(), self_loc];
+        let as_ = as_.for_expand();
 
-        let mut found = self
-            .as_
-            .as_ref()
-            .map(|as_| as_.multiplicity.start_collecting())
-            .unwrap_or_default();
+        let mut found = as_.multiplicity.start_collecting();
 
         desig.label.search(
             pmetas,
@@ -1468,7 +1470,7 @@ impl<'l> FoundNode<'l> {
     fn expand<O>(
         &self,
         tspan: Span,
-        as_: &Option<SubstAsSpecified<O>>,
+        as_: &SubstAsSpecified<O>,
         quoted: Option<QuotedMode>,
         out: &mut O,
     ) -> syn::Result<()>
@@ -1487,14 +1489,7 @@ impl<'l> FoundNode<'l> {
         use AsValueHandling as AVH;
         use SubstAs as SA;
 
-        let default_buf;
-        let as_ = match as_ {
-            Some(as_) => &as_.as_,
-            None => {
-                default_buf = O::default_subst_meta_as(tspan)?;
-                &default_buf.for_expand().as_
-            }
-        };
+        let as_ = &as_.as_;
         let quoted = quoted.map(|q| q.mode);
 
         let input = MetaValueAsInput {
