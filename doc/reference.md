@@ -761,11 +761,14 @@ Accesses macro parameters passed via `#[deftly(...)]` attributes.
    If there is no `VALUE` expands
    the [positional argument] `DEFAULT` instead.
 
-   NB: in this case the expansions of `DEFAULT` is used as is:
-   *not* affected by any `as ..` clause;
-   *not* surrounded with additional `( )` (for `as expr`),
-   nor any additional [`None`-delimited group](#t:none-delimiters).
-   See [Precedence considerations](#precedence-considerations).
+   In this case `DEFAULT` is expanded into a token stream,
+   and then used as if it had been specified with
+  `#[deftly(... = { DEFAULT })]`.
+   So its expansion must have the correct syntax.
+   `DEFAULT` is syntax-checked at template parse time only if 
+   doesn't itself contain any expansions.
+
+   XXXX ^ this is not yet implemented
 
  * **`${Xmeta(...) .. , quoted strip | quoted rigorous | quoted retain}`** ([**beta**]):
 
