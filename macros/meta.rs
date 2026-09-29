@@ -1337,62 +1337,62 @@ where
     O: ExpansionOutput,
     TemplateElement<O>: Expand<O>,
 {
-                use SubstAs as SA;
+    use SubstAs as SA;
 
-                let allow_tokens_for_ty_path = O::is_tokens_vary_behaviour();
+    let allow_tokens_for_ty_path = O::is_tokens_vary_behaviour();
 
-                let def_as_tokens = |at: &AllowTokens<O>| {
-                    let mut content = TokenAccumulator::new();
-                    def.expand(
-                        ctx.as_general(),
-                        O::from_token_accumulator(at, &mut content),
-                    );
-                    content.tokens()
-                };
+    let def_as_tokens = |at: &AllowTokens<O>| {
+        let mut content = TokenAccumulator::new();
+        def.expand(
+            ctx.as_general(),
+            O::from_token_accumulator(at, &mut content),
+        );
+        content.tokens()
+    };
 
-                return match &as_.as_ {
-                    SA::expr(at, _) => {
-                        let mut expr = def_as_tokens(at)?;
-                        if let Some(brace) = &def.brace {
-                            expr = meta_expr_surround_1(brace, expr);
-                        }
-                        meta_expr_surround_2(expr, at, out)
-                    }
+    return match &as_.as_ {
+        SA::expr(at, _) => {
+            let mut expr = def_as_tokens(at)?;
+            if let Some(brace) = &def.brace {
+                expr = meta_expr_surround_1(brace, expr);
+            }
+            meta_expr_surround_2(expr, at, out)
+        }
 
-                    SA::ty | SA::path if allow_tokens_for_ty_path.is_some() =>
-                    {
-                        let at = &allow_tokens_for_ty_path.expect("was some");
-                        let ty = def_as_tokens(at)?;
-                        let mut add_grouping = Grouping::Invisible;
-                        let ty = ty.strip_groups(&mut add_grouping);
-                        let ty = add_grouping.surround(
-                            def.brace.map(|t| t.span.span())
-                                .unwrap_or(kw_span),
-                            ty,
-                        );
-                        out.append_tokens(at, ty)
-                    }
+        SA::ty | SA::path if allow_tokens_for_ty_path.is_some() =>
+        {
+            let at = &allow_tokens_for_ty_path.expect("was some");
+            let ty = def_as_tokens(at)?;
+            let mut add_grouping = Grouping::Invisible;
+            let ty = ty.strip_groups(&mut add_grouping);
+            let ty = add_grouping.surround(
+                def.brace.map(|t| t.span.span())
+                    .unwrap_or(kw_span),
+                ty,
+            );
+            out.append_tokens(at, ty)
+        }
 
-                    SA::attrs(..) => panic!("as attrs, default not rejected?"),
+        SA::attrs(..) => panic!("as attrs, default not rejected?"),
 
-                    // Don't ever need group wrapping for precedence:
-                    SA::items(..)
-                    | SA::str
-                    | SA::vis(..)
-                    // tokens context was handled before, so we're in
-                    // concat or paste, and want to just expand it
-                    | SA::ty
-                    | SA::path
-                    // May want to be able to expand to nothing - ie, no
-                    // path components?  And, see above.
-                    // Definitely wants to be able to expand to nothing,
-                    // so we mustn't reparse and anyway we don't want to group.
-                    | SA::ident
-                    // User's responsibility to deal with precedence.
-                    | SA::token_stream(..) => {
-                        Ok(def.expand(ctx.as_general(), out))
-                    }
-                };
+        // Don't ever need group wrapping for precedence:
+        SA::items(..)
+        | SA::str
+        | SA::vis(..)
+        // tokens context was handled before, so we're in
+        // concat or paste, and want to just expand it
+        | SA::ty
+        | SA::path
+        // May want to be able to expand to nothing - ie, no
+        // path components?  And, see above.
+        // Definitely wants to be able to expand to nothing,
+        // so we mustn't reparse and anyway we don't want to group.
+        | SA::ident
+        // User's responsibility to deal with precedence.
+        | SA::token_stream(..) => {
+            Ok(def.expand(ctx.as_general(), out))
+        }
+    };
 }
 
 fn metavalue_spans(tspan: Span, vspan: Span) -> [ErrorLoc<'static>; 2] {
