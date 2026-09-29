@@ -1394,10 +1394,7 @@ where
             let ty = def_as_tokens(at)?;
             let mut add_grouping = Grouping::Invisible;
             let ty = ty.strip_groups(&mut add_grouping);
-            let ty = add_grouping.surround(
-                kw_span,
-                ty,
-            );
+            let ty = add_grouping.surround(kw_span, ty);
             out.append_tokens(at, ty)
         }
 
