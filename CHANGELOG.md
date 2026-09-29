@@ -57,6 +57,31 @@ or via the [account request form].
 
 ## Changelog
 
+### 1.13.0 - 2026-09-29
+
+#### Breaking (minor)
+
+ * Check for missing `as` in `$Xmeta` during template parse.
+   Previously this was erroneously accepted if the buggy part of the
+   template was never expanded.  We consider this a bugfix, which
+   probably won't affect anyone, so it's only a minor bump.
+
+##### Breaking changes to beta features
+
+ * `${Xmeta ... default ...}` now wraps the expansion of the default
+   value with `( )` (or `None`-delimited group), depending on the `as`.
+
+##### Added
+
+ * `${concat }` and string templating (`$"..."` etc.) stabilised.
+ * `$v_explicit_discriminant` and `v_explicit_discriminant` stabilised.
+
+#### Fixed
+
+ * Fixed `${Xmeta(...) as expr}` with `#[deftly(.. = { block })]`.
+ * Don't report "different scope" re meta when scope is the same.  \#143.
+ * Minor fixes to reference and the Book.
+
 ### 1.12.1 - 2026-09-16
 
 #### Improved
