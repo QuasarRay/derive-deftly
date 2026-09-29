@@ -1472,18 +1472,18 @@ fn meta_expr_surround_2<O: ExpansionOutput>(
     at: &AllowTokens<O>,
     out: &mut O,
 ) -> syn::Result<()> {
-                // Now surround with `( )` for precedence reasons.
-                // (And, if we surrounded with `{ }` above, to turn the
-                // block into an expression that's useable everywhere, for eg
-                //     #[deftly(fn = { |_| .. })]
-                // and then
-                //     ${fmeta(fn as expr)}(arg)
-                // which we need to expand to
-                //     ({ |_| .. })(arg)
-                // not
-                //     { |_| .. }(arg)   // <- doesn't compile
-                let content = Grouping::Parens.surround(expr.span(), expr);
-                out.append_tokens(at, content)?;
+    // Now surround with `( )` for precedence reasons.
+    // (And, if we surrounded with `{ }` above, to turn the
+    // block into an expression that's useable everywhere, for eg
+    //     #[deftly(fn = { |_| .. })]
+    // and then
+    //     ${fmeta(fn as expr)}(arg)
+    // which we need to expand to
+    //     ({ |_| .. })(arg)
+    // not
+    //     { |_| .. }(arg)   // <- doesn't compile
+    let content = Grouping::Parens.surround(expr.span(), expr);
+    out.append_tokens(at, content)?;
     Ok(())
 }
 
