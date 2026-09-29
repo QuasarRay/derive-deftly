@@ -584,7 +584,7 @@ Each of these expansion keywords:
  - possibly redacts each of those parameters,
    selecting only part of each one;
  - collates all of the parameters into the proper order:
-   lifetimes, types, then constants;
+   lifetimes, types, then constants.
 
 Collation is needed to add generic parameters to existing generic lists,
 since simply appending or prepending doesn't always work.
