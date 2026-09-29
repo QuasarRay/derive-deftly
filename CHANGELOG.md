@@ -57,7 +57,7 @@ or via the [account request form].
 
 ## Changelog
 
-### UNRELEASED
+### 1.13.0 - 2026-09-29
 
 #### Breaking (minor)
 
