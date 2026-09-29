@@ -19,11 +19,6 @@ derive_deftly_adhoc! {
 
 derive_deftly_adhoc! {
     ReserveDriver:
-    $r#"template content?"#
-}
-
-derive_deftly_adhoc! {
-    ReserveDriver:
 
     mod prevent {
         //! template doc comment?
@@ -33,8 +28,8 @@ derive_deftly_adhoc! {
 derive_deftly_adhoc! {
     ReserveDriver:
 
-    $/// template doc comment?
     mod prevent {
+        $//! string template inner attr?
     }
 }
 

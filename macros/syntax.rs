@@ -176,17 +176,11 @@ pub enum SubstDetails<O: SubstParseContext> {
         beta::Enabled,
     ),
     ChangeCase(paste::SubstChangeCaseBody, paste::ChangeCaseOkIn<O>),
-    concat(
-        Template<concat::Accumulator>,
-        O::NotInBool,
-        O::NotInPaste,
-        beta::Enabled,
-    ),
+    concat(Template<concat::Accumulator>, O::NotInBool, O::NotInPaste),
     StringTemplate(
         Template<string_template::Accumulator>,
         O::NotInBool,
         O::NotInPaste,
-        beta::Enabled,
     ),
     DocTemplate(string_template::DocTemplate, O::NotInBool, AllowTokens<O>),
 
@@ -429,25 +423,20 @@ impl Parse for Definition<DefinitionBody> {
                     DefinitionBody::Paste,
                     SD::paste(items, not_in_bool),
                 ),
-                SD::concat(items, not_in_bool, not_in_paste, beta) => {
+                SD::concat(items, not_in_bool, not_in_paste) => {
                     mk_special_body(
                         kw_span,
                         DefinitionBody::Concat,
-                        SD::concat(items, not_in_bool, not_in_paste, beta),
+                        SD::concat(items, not_in_bool, not_in_paste),
                     )
                 }
-                SD::StringTemplate(items, not_in_bool, not_in_paste, beta) => {
+                SD::StringTemplate(items, not_in_bool, not_in_paste) => {
                     // `items` has a different type to `items` above.
                     // hence the 2nd arm.
                     mk_special_body(
                         kw_span,
                         DefinitionBody::Concat,
-                        SD::StringTemplate(
-                            items,
-                            not_in_bool,
-                            not_in_paste,
-                            beta,
-                        ),
+                        SD::StringTemplate(items, not_in_bool, not_in_paste),
                     )
                 }
                 other => {
@@ -1106,7 +1095,6 @@ impl<O: SubstParseContext> Parse for Subst<O> {
             Template::parse(input)?,
             not_in_bool()?,
             not_in_paste()?,
-            beta()?,
         ) }
 
         keyword! { when(input.parse()?, not_in_bool()?) }

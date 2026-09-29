@@ -220,7 +220,6 @@ pub fn parse_as_subst<O: SubstParseContext>(
         parse_lit_str(&input)?,
         O::not_in_bool(&kw_span)?,
         O::not_in_paste(&kw_span)?,
-        beta::Enabled::new_for_syntax(kw_span)?,
     );
     Ok(Subst { kw_span, sd })
 }
@@ -235,14 +234,11 @@ pub struct DocTemplate {
     doc: syn::Ident,
     equals: Token![=],
     pub value: Box<Subst<TokenAccumulator>>,
-    #[allow(unused)]
-    beta: beta::Enabled,
 }
 
 impl Parse for DocTemplate {
     fn parse(outer: ParseStream<'_>) -> syn::Result<Self> {
         let hash: Token![#] = outer.parse()?;
-        let beta = beta::Enabled::new_for_syntax(hash.span())?;
 
         match (|| {
             let content;
@@ -265,7 +261,6 @@ impl Parse for DocTemplate {
                 doc,
                 equals,
                 value: Box::new(value),
-                beta,
             }))
         })() {
             Ok(Err(e)) => Err(e),
@@ -292,7 +287,6 @@ impl Expand<TokenAccumulator> for DocTemplate {
             doc,
             equals,
             value,
-            beta: _,
         } = self;
 
         let value = {
