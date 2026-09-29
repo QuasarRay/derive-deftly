@@ -1395,8 +1395,7 @@ where
             let mut add_grouping = Grouping::Invisible;
             let ty = ty.strip_groups(&mut add_grouping);
             let ty = add_grouping.surround(
-                def.brace.map(|t| t.span.span())
-                    .unwrap_or(kw_span),
+                kw_span,
                 ty,
             );
             out.append_tokens(at, ty)
