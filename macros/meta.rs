@@ -115,15 +115,16 @@ pub struct SubstMeta<O: SubstParseContext> {
 /// Return value from [`SubstParseContext::default_subst_meta_as`].
 /// Only one of the arms is inhabited in any one context.
 ///
-/// In expansion contexts, use `.for_expand()` to get the `SubstAsSpecified`.
+/// In expansion contexts, use `.for_expand()` to get the `SubstAsResolved`.
 #[derive(Debug)]
 pub enum SubstAsInfo<O: SubstParseContext> {
-    Expand(meta::SubstAsSpecified<O>), // uninhabited in boolean context
+    Expand(meta::SubstAsResolved<O>), // uninhabited in boolean context
     Bool(O::BoolOnly),
 }
 
+/// `as` in a meta expansion (or the default value)
 #[derive(Debug)]
-pub struct SubstAsSpecified<O: SubstParseContext> {
+pub struct SubstAsResolved<O: SubstParseContext> {
     pub kw_span: Span,
     pub as_: SubstAs<O>,
     pub nb: O::NotInBool,
@@ -262,13 +263,13 @@ pub use FoundNodeKind as FNK;
 /// The variant selected is determined solely by the `as`
 /// (or `Singleton` if not present).
 ///
-/// Also present in `SubstAsSpecified`, as `MultiplicityCollector<Void>`,
+/// Also present in `SubstAsResolved`, as `MultiplicityCollector<Void>`,
 /// mostly to prompt us to do the errors cross-checks
 /// of the various elements of the [`SubstMeta`].
 /// Specifically, that we don't use `default` with any `as` that
 /// has `MultiplicityCollector::Several`.
 ///
-/// Always absent in boolean context, because it lives in `SubstAsSpecified`.
+/// Always absent in boolean context, because it lives in `SubstAsResolved`.
 #[derive(Debug)]
 pub enum MultiplicityCollector<T> {
     /// Value can only be specified once.  Defaults are supported.
@@ -351,7 +352,7 @@ impl<'f> MultiplicityCollector<FoundNode<'f>> {
 }
 
 impl<O: ExpansionOutput> SubstAsInfo<O> {
-    pub fn for_expand(&self) -> &SubstAsSpecified<O> {
+    pub fn for_expand(&self) -> &SubstAsResolved<O> {
         match self {
             SubstAsInfo::Expand(e) => e,
             SubstAsInfo::Bool(v) => void::unreachable(*v),
@@ -480,14 +481,14 @@ impl Label {
     }
 }
 
-impl<O: SubstParseContext> SubstAsSpecified<O> {
+impl<O: SubstParseContext> SubstAsResolved<O> {
     fn parse(input: ParseStream, nb: O::NotInBool) -> syn::Result<Self> {
         let kw: IdentAny = input.parse()?;
         let kw_span = kw.span();
         let beta = || beta::Enabled::new_for_syntax(kw_span);
         let from_sma = |as_: SubstAs<_>| {
             let multiplicity = as_.multiplicity();
-            Ok(SubstAsSpecified {
+            Ok(SubstAsResolved {
                 //
                 as_,
                 nb,
@@ -560,7 +561,7 @@ impl<O: SubstParseContext> SubstMeta<O> {
             Ok(())
         }
 
-        let mut as_ = None::<(Span, SubstAsSpecified<O>)>;
+        let mut as_ = None::<(Span, SubstAsResolved<O>)>;
         let mut default = None;
         let mut quoted = None::<(Span, (QuotedMode, O::NotInBool))>;
 
@@ -571,7 +572,7 @@ impl<O: SubstParseContext> SubstMeta<O> {
             let ue = || beta::Enabled::new_for_syntax(kw_span);
             if keyword == "as" {
                 store(kw_span, &mut as_, || {
-                    SubstAsSpecified::parse(input, nb)
+                    SubstAsResolved::parse(input, nb)
                 })?;
             } else if keyword == "default" {
                 store(kw_span, &mut default, || {
@@ -1470,7 +1471,7 @@ impl<'l> FoundNode<'l> {
     fn expand<O>(
         &self,
         tspan: Span,
-        as_: &SubstAsSpecified<O>,
+        as_: &SubstAsResolved<O>,
         quoted: Option<QuotedMode>,
         out: &mut O,
     ) -> syn::Result<()>

@@ -834,7 +834,7 @@ impl SubstParseContext for Items {
     fn default_subst_meta_as(
         kw: Span,
     ) -> syn::Result<meta::SubstAsInfo<Self>> {
-        Ok(meta::SubstAsInfo::Expand(meta::SubstAsSpecified {
+        Ok(meta::SubstAsInfo::Expand(meta::SubstAsResolved {
             as_: meta::SubstAs::str,
             nb: (),
             kw_span: kw,
