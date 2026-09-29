@@ -37,10 +37,7 @@ impl_deref!(TopTemplate, content, Template<TokenAccumulator>);
 ///   *  `${EXPN..}`
 ///   *  `{ TEMPLATE }`
 #[derive(Debug)]
-pub struct Argument<O: SubstParseContext = TokenAccumulator> {
-    pub content: Template<O>,
-    pub brace: Option<token::Brace>,
-}
+pub struct Argument<O: SubstParseContext = TokenAccumulator>(pub Template<O>);
 
 #[derive(Debug)]
 pub struct TemplateWithWhens<O: SubstParseContext> {
@@ -386,7 +383,7 @@ impl Parse for Definition<DefinitionBody> {
             let Template {
                 elements,
                 allow_recursive_parse: (),
-            } = &mut body.content;
+            } = &mut body.0;
             if elements.len() != 1 {
                 return Err(PushedBack);
             }
@@ -403,16 +400,12 @@ impl Parse for Definition<DefinitionBody> {
                 }
             };
 
-            let for_special_body = (kw_span, body.brace);
-
             fn mk_special_body<IO: ExpansionOutput>(
-                (kw_span, body_brace): (Span, Option<token::Brace>),
+                kw_span: Span,
                 db_constructor: impl FnOnce(Argument<IO>) -> DefinitionBody,
                 new_sd: SubstDetails<IO>,
             ) -> DefinitionBody {
-                db_constructor(Argument {
-                    brace: body_brace,
-                    content: Template {
+                db_constructor(Argument(Template {
                     elements: vec![TE::Subst(Subst {
                         kw_span,
                         sd: new_sd,
@@ -421,18 +414,18 @@ impl Parse for Definition<DefinitionBody> {
                     //  0. is always parsed/lexed as TokenStream
                     //  1. we have already parsed above, anyway
                     allow_recursive_parse: IO::AllowTemplate::new_unchecked(),
-                }})
+                }))
             }
 
             let db = match sd {
                 SD::paste(items, not_in_bool) => mk_special_body(
-                    for_special_body,
+                    kw_span,
                     DefinitionBody::Paste,
                     SD::paste(items, not_in_bool),
                 ),
                 SD::concat(items, not_in_bool, not_in_paste) => {
                     mk_special_body(
-                        for_special_body,
+                        kw_span,
                         DefinitionBody::Concat,
                         SD::concat(items, not_in_bool, not_in_paste),
                     )
@@ -441,7 +434,7 @@ impl Parse for Definition<DefinitionBody> {
                     // `items` has a different type to `items` above.
                     // hence the 2nd arm.
                     mk_special_body(
-                        for_special_body,
+                        kw_span,
                         DefinitionBody::Concat,
                         SD::StringTemplate(items, not_in_bool, not_in_paste),
                     )
@@ -556,18 +549,15 @@ impl<O: SubstParseContext> Parse for Argument<O> {
         let la = input.lookahead1();
         if la.peek(token::Brace) {
             let inner;
-            let brace = braced!(inner in input);
-            Ok(Argument {
-                content: Template::parse(&inner)?,
-                brace: Some(brace),
-            })
+            let _brace = braced!(inner in input);
+            Template::parse(&inner)
         } else if la.peek(Ident::peek_any)
             || la.peek(Token![$])
             || la.peek(syn::Lit)
         {
             let span = input.span();
             let element = input.parse()?;
-            let content = TemplateWithWhens {
+            TemplateWithWhens {
                 elements: vec![element],
                 // Consider this kind of thing
                 //   $" ${expansion arg=ident } "
@@ -577,18 +567,18 @@ impl<O: SubstParseContext> Parse for Argument<O> {
                 // Forbid them all.
                 allow_recursive_parse: O::AllowTemplate::new_for_syntax(span)?,
             }
-            .try_into()?;
-            Ok(Argument { content, brace: None })
+            .try_into()
         } else {
             Err(la.error())
         }
+        .map(Argument)
     }
 }
 
 impl<O: SubstParseContext> Deref for Argument<O> {
     type Target = Template<O>;
     fn deref(&self) -> &Template<O> {
-        &self.content
+        &self.0
     }
 }
 
@@ -1239,12 +1229,10 @@ impl ExplicitError {
             if message.suffix() != "" {
                 return Err(message.error("suffix forbidden on error string"));
             }
-            let message = Argument {
-                brace: None,
-                content: Template {
+            let message = Argument(Template {
                 elements: vec![TE::LitStr(message)],
                 allow_recursive_parse: (),
-            }};
+            });
             Ok(ExplicitError {
                 message,
                 span: None,
