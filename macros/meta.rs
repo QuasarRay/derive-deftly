@@ -1379,11 +1379,13 @@ where
     // Sort-of replicates some of the logic in FoundNode::expand
     match &as_.as_ {
         SA::expr(at, _) => {
-            let mut expr = def_as_tokens(at)?;
-            // Corresponds to the `meta_expr_surround_1` in `metavalue_as`.
-            if let Some(brace) = &def.brace {
-                expr = meta_expr_surround_1(brace, expr);
-            }
+            let expr = def_as_tokens(at)?;
+            // We don't call `meta_expr_surround_1`.  The `{ }` magic
+            // is quite magical and would violate the invariant on
+            // positional arguments that the `{ }` don't have semantic import.
+            //
+            // Also, wrapping in `{ }` might prevents the user from doing
+            // some stunts where the expansion isn't suitable inside `{ }`.
             meta_expr_surround_2(expr, at, out)
         }
 
@@ -1497,9 +1499,6 @@ where
             // If the value was braced, reconstruct the Group, so that
             //     #[deftly(e = { stmt; value })]
             // works as expected.  `( )` are added later by FoundNode::expand.
-            //
-            // For default values, there'a another call to
-            // meta_expr_surround_1 in expand_default_value.
             AVH::Expr => meta_expr_surround_1(brace_token, value.clone()),
         },
         PV::Quoted { value } => match as_value_handling {
@@ -1560,12 +1559,13 @@ fn metavalue_lit_reparse(s: &syn::LitStr) -> syn::Result<TokenStream> {
 
 /// Wraps an `expr` in `{ }` (unconditionally)
 ///
-/// Used by both `metavalue_as`, and `expand_default_value`;
-/// in each case only if they have the `{ }` which ought to trigger it.
+/// Used by both `metavalue_as`, but only
+/// only if it has the `{ }` which ought to trigger it.
 ///
 /// Can't be combined with `meta_expr_surround_2` because `metavalue_as`
 /// wants to take the output from `meta_expr_surround_1` and parse it as a
-/// `syn::Expr`, whereas `expand_default_value`. just passes the ts through.
+/// `syn::Expr`, whereas `expand_default_value`. just passes the ts through,
+/// and because `expand_default_value` doesn't want to call it at all.
 fn meta_expr_surround_1(
     brace: &token::Brace,
     value: TokenStream,
