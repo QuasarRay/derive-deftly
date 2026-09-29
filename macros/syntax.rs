@@ -413,17 +413,15 @@ impl Parse for Definition<DefinitionBody> {
                 db_constructor(Argument {
                     brace: body_brace,
                     content: Template {
-                        elements: vec![TE::Subst(Subst {
-                            kw_span,
-                            sd: new_sd,
-                        })],
-                        // This is fine because this is the body which
-                        //  0. is always parsed/lexed as TokenStream
-                        //  1. we have already parsed above, anyway
-                        allow_recursive_parse:
-                            IO::AllowTemplate::new_unchecked(),
-                    },
-                })
+                    elements: vec![TE::Subst(Subst {
+                        kw_span,
+                        sd: new_sd,
+                    })],
+                    // This is fine because this is the body which
+                    //  0. is always parsed/lexed as TokenStream
+                    //  1. we have already parsed above, anyway
+                    allow_recursive_parse: IO::AllowTemplate::new_unchecked(),
+                }})
             }
 
             let db = match sd {
@@ -580,10 +578,7 @@ impl<O: SubstParseContext> Parse for Argument<O> {
                 allow_recursive_parse: O::AllowTemplate::new_for_syntax(span)?,
             }
             .try_into()?;
-            Ok(Argument {
-                content,
-                brace: None,
-            })
+            Ok(Argument { content, brace: None })
         } else {
             Err(la.error())
         }
@@ -1247,10 +1242,9 @@ impl ExplicitError {
             let message = Argument {
                 brace: None,
                 content: Template {
-                    elements: vec![TE::LitStr(message)],
-                    allow_recursive_parse: (),
-                },
-            };
+                elements: vec![TE::LitStr(message)],
+                allow_recursive_parse: (),
+            }};
             Ok(ExplicitError {
                 message,
                 span: None,
