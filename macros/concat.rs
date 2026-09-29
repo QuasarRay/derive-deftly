@@ -218,6 +218,9 @@ impl<L: LexicalContext> SubstParseContext for Accumulator<L> {
     fn concat_only(_: &impl Spanned) -> syn::Result<()> {
         Ok(())
     }
+    fn is_tokens_vary_behaviour() -> Option<AllowTokens<Self>> {
+        None
+    }
 }
 
 impl<L: LexicalContext> ExpansionOutput for Accumulator<L> {
@@ -327,6 +330,13 @@ impl<L: LexicalContext> ExpansionOutput for Accumulator<L> {
 
     fn record_error(&mut self, err: syn::Error) {
         self.errors.push(err);
+    }
+
+    fn from_token_accumulator<'o>(
+        (_not_in_paste, not_in_concat): &((), Void),
+        _out: &'o mut TokenAccumulator,
+    ) -> &'o mut Self {
+        void::unreachable(*not_in_concat);
     }
 }
 

@@ -1289,7 +1289,7 @@ where
                 }
                 _ => false,
             } {
-                return Ok(def.expand(ctx.as_general(), out));
+                return expand_default_value(kw_span, def, as_, ctx, out);
             }
         }
 
@@ -1323,6 +1323,102 @@ where
         }
 
         Ok(())
+    }
+}
+
+fn expand_default_value<O>(
+    kw_span: Span,
+    def: &Argument<O>,
+    as_: &SubstAsResolved<O>,
+    ctx: &Context,
+    out: &mut O,
+) -> syn::Result<()>
+where
+    O: ExpansionOutput,
+    TemplateElement<O>: Expand<O>,
+{
+    // Why don't we parse the `default` value the same way we parse
+    // a value in a attribute?  Well, that turns out to be troublesome:
+    //
+    // We get into complications with `{ }`.  Presumably we should allow
+    // them, but `as str` forbids them in values (even with
+    // `meta_quoted strip`).  So there is quite a bit of special-casing.
+    //
+    // Parsing as the `as` prevents
+    //   `${tmeta(something) as str, default { expression() }}`
+    // which is a reasonable-seeming idiom that we already have in
+    // arti.git.  Similar considerations might apply to `as ident`.
+    //
+    // It would also mean that `$Xmeta as ty` was a way to get a template-
+    // specified complex type into token pasting, which by the rule of
+    // not glomming functionality means we ought to have a primitive
+    // to do the same.
+    //
+    // In general, having the content of `default ...` be template input
+    // like the surrounding template seems to make more sense sense
+    // than having it be TokenStream and reparsing it.
+    //
+    // Finally, in an experimental branch, reparsing involves unpleasant
+    // contortions, especially if we want to syntax-check the value
+    // at template read time.
+
+    use SubstAs as SA;
+
+    // We would have liked `if let` in the ty/path match pattern
+    let allow_tokens_for_ty_path = O::is_tokens_vary_behaviour();
+
+    let def_as_tokens = |at: &AllowTokens<O>| -> syn::Result<TokenStream> {
+        let mut content = TokenAccumulator::new();
+        def.expand(
+            ctx.as_general(),
+            O::from_token_accumulator(at, &mut content),
+        );
+        content.tokens()
+    };
+
+    // Sort-of replicates some of the logic in FoundNode::expand
+    match &as_.as_ {
+        SA::expr(at, _) => {
+            let expr = def_as_tokens(at)?;
+            // We don't call `meta_expr_surround_1`.  The `{ }` magic
+            // is quite magical and would violate the invariant on
+            // positional arguments that the `{ }` don't have semantic import.
+            //
+            // Also, wrapping in `{ }` might prevents the user from doing
+            // some stunts where the expansion isn't suitable inside `{ }`.
+            meta_expr_surround_2(expr, at, out)
+        }
+
+        SA::ty | SA::path if allow_tokens_for_ty_path.is_some() =>
+        {
+            // Replicate the behaviour of append_syn_type, only with ts
+            let at = &allow_tokens_for_ty_path.expect("was some");
+            let ty = def_as_tokens(at)?;
+            let mut add_grouping = Grouping::Invisible;
+            let ty = ty.strip_groups(&mut add_grouping);
+            let ty = add_grouping.surround(kw_span, ty);
+            out.append_tokens(at, ty)
+        }
+
+        SA::attrs(..) => panic!("as attrs, default not rejected?"),
+
+        // Don't ever need group wrapping for precedence:
+        SA::items(..)
+        | SA::str
+        | SA::vis(..)
+        // tokens context was handled before, so we're in
+        // concat or paste, and want to just expand it
+        | SA::ty
+        | SA::path
+        // May want to be able to expand to nothing - ie, no
+        // path components?  And, see above.
+        // Definitely wants to be able to expand to nothing,
+        // so we mustn't reparse and anyway we don't want to group.
+        | SA::ident
+        // User's responsibility to deal with precedence.
+        | SA::token_stream(..) => {
+            Ok(def.expand(ctx.as_general(), out))
+        }
     }
 }
 
@@ -1403,13 +1499,7 @@ where
             // If the value was braced, reconstruct the Group, so that
             //     #[deftly(e = { stmt; value })]
             // works as expected.  `( )` are added later by FoundNode::expand.
-            AVH::Expr => {
-                let span = brace_token.span.span();
-                let mut group =
-                    proc_macro2::Group::new(Delimiter::Brace, value.clone());
-                group.set_span(span);
-                group.to_token_stream()
-            }
+            AVH::Expr => meta_expr_surround_1(brace_token, value.clone()),
         },
         PV::Quoted { value } => match as_value_handling {
             AVH::Normal | AVH::NoBare => metavalue_lit_reparse(value)?,
@@ -1467,6 +1557,46 @@ fn metavalue_lit_reparse(s: &syn::LitStr) -> syn::Result<TokenStream> {
     Ok(t)
 }
 
+/// Wraps an `expr` in `{ }` (unconditionally)
+///
+/// Used by both `metavalue_as`, but only
+/// only if it has the `{ }` which ought to trigger it.
+///
+/// Can't be combined with `meta_expr_surround_2` because `metavalue_as`
+/// wants to take the output from `meta_expr_surround_1` and parse it as a
+/// `syn::Expr`, whereas `expand_default_value`. just passes the ts through,
+/// and because `expand_default_value` doesn't want to call it at all.
+fn meta_expr_surround_1(
+    brace: &token::Brace,
+    value: TokenStream,
+) -> TokenStream {
+    let span = brace.span.span();
+    let mut group = proc_macro2::Group::new(Delimiter::Brace, value);
+    group.set_span(span);
+    group.to_token_stream()
+}
+
+/// Wraps an `expr` in `( )` (unconditionally)
+fn meta_expr_surround_2<O: ExpansionOutput>(
+    expr: impl ToTokens,
+    at: &AllowTokens<O>,
+    out: &mut O,
+) -> syn::Result<()> {
+    // Now surround with `( )` for precedence reasons.
+    // (And, if we surrounded with `{ }` above, to turn the
+    // block into an expression that's useable everywhere, for eg
+    //     #[deftly(fn = { |_| .. })]
+    // and then
+    //     ${fmeta(fn as expr)}(arg)
+    // which we need to expand to
+    //     ({ |_| .. })(arg)
+    // not
+    //     { |_| .. }(arg)   // <- doesn't compile
+    let content = Grouping::Parens.surround(expr.span(), expr);
+    out.append_tokens(at, content)?;
+    Ok(())
+}
+
 impl<'l> FoundNode<'l> {
     fn expand<O>(
         &self,
@@ -1499,23 +1629,13 @@ impl<'l> FoundNode<'l> {
             into_what: as_,
         };
 
+        // See also the match as_ in expand_default_value
         match as_ {
             SA::expr(.., at, supported) => {
                 // Any surrounding `{ }` are re-added by metavalue_as
                 let expr = metavalue_as(AVH::Expr, input)?;
                 supported.infer_type(&expr);
-                // Now surround with `( )` for precedence reasons.
-                // (And, if we surrounded with `{ }` above, to turn the
-                // block into an expression that's useable everywhere, for eg
-                //     #[deftly(fn = { |_| .. })]
-                // and then
-                //     ${fmeta(fn as expr)}(arg)
-                // which we need to expand to
-                //     ({ |_| .. })(arg)
-                // not
-                //     { |_| .. }(arg)   // <- doesn't compile
-                let content = Grouping::Parens.surround(expr.span(), expr);
-                out.append_tokens(at, content)?;
+                meta_expr_surround_2(&expr, at, out)?;
             }
             SA::ident => {
                 let ident: IdentAny = metavalue_as(AVH::Normal, input)?;
@@ -1539,11 +1659,16 @@ impl<'l> FoundNode<'l> {
                 )?;
                 out.append_syn_litstr(s, None);
             }
-            SA::ty => out.append_syn_type(
-                tspan,
-                metavalue_as(AVH::Normal, input)?,
-                Grouping::Invisible,
-            ),
+            SA::ty => {
+                // append_syn_type adds parens if appropriate; for `default`,
+                // it's reimplemented ad-hoc using StripParenGroups
+                // in expand_default_value.
+                out.append_syn_type(
+                    tspan,
+                    metavalue_as(AVH::Normal, input)?,
+                    Grouping::Invisible,
+                )
+            }
             SA::vis(at, ..) => {
                 let vis: syn::Visibility = metavalue_as(AVH::Normal, input)?;
                 out.append_tokens(at, vis)?;

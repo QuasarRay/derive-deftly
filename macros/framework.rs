@@ -257,6 +257,15 @@ pub trait SubstParseContext: Sized {
         Ok((Self::not_in_paste(&span)?, (Self::not_in_concat(&span)?)))
     }
 
+    /// Are we in a `TokenAccumulator` ?
+    ///
+    /// Use with caution!  Correctness hazard: this method allows behavour
+    /// to be arbitrarily different between token contexts and others
+    ///
+    /// Used for choosing whether to `None`-wrap
+    /// `${Xmets as ty/path, default ... }`.
+    fn is_tokens_vary_behaviour() -> Option<AllowTokens<Self>>;
+
     fn default_subst_meta_as(
         kw: Span,
     ) -> syn::Result<meta::SubstAsInfo<Self>> {
@@ -375,15 +384,9 @@ pub trait ExpansionOutput: SubstParseContext<BoolOnly = Void> {
         mut v: syn::Type,
         mut grouping: Grouping,
     ) {
-        loop {
-            let (inner, add_grouping) = match v {
-                syn::Type::Paren(inner) => (inner.elem, Grouping::Parens),
-                syn::Type::Group(inner) => (inner.elem, Grouping::Invisible),
-                _ => break,
-            };
-            v = *inner;
-            grouping = cmp::max(grouping, add_grouping);
-        }
+        // There is also an ad-hoc version of this that works on TokenStream
+        // in meta::expand_default_value.
+        v = v.strip_groups(&mut grouping);
         if let syn::Type::Path(tp) = &mut v {
             typepath_add_missing_argument_colons(tp, te_span);
         }
@@ -464,6 +467,19 @@ pub trait ExpansionOutput: SubstParseContext<BoolOnly = Void> {
     /// Normally, call sites use an inherent constructor method.
     /// This one is used for special cases, eg `${ignore ...}`
     fn new_with_span(kw_span: Span) -> Self;
+
+    /// Use a `TokenAccumulator` as `Self`
+    ///
+    /// Effectively, allows "upcasting" a template from a more restricted
+    /// context to a general token one.
+    ///
+    /// Used for `$Xmeta ... default ...`, which sometimes wants to expand
+    /// the default value as tokens, but needs to convince the type system
+    /// that this is OK.
+    fn from_token_accumulator<'o>(
+        allow_tokens: &AllowTokens<Self>,
+        out: &'o mut TokenAccumulator,
+    ) -> &'o mut Self;
 
     /// Implement the core of the `ignore` keyword
     ///
@@ -598,6 +614,9 @@ impl SubstParseContext for TokenAccumulator {
     fn not_in_bool(_: &impl Spanned) -> syn::Result<()> {
         Ok(())
     }
+    fn is_tokens_vary_behaviour() -> Option<AllowTokens<Self>> {
+        Some(((), ()))
+    }
 
     type BoolOnly = Void;
     type ConcatOnly = Void;
@@ -681,6 +700,13 @@ impl ExpansionOutput for TokenAccumulator {
 
     fn ignore_impl(self) -> syn::Result<()> {
         self.0.map(|_: TokenStream| ())
+    }
+
+    fn from_token_accumulator<'o>(
+        _: &AllowTokens<Self>,
+        out: &'o mut TokenAccumulator,
+    ) -> &'o mut Self {
+        out
     }
 
     fn dbg_expand<'c>(

@@ -831,6 +831,10 @@ impl SubstParseContext for Items {
             .error("not allowed in within ${paste ...} (or case_changing)"))
     }
 
+    fn is_tokens_vary_behaviour() -> Option<AllowTokens<Self>> {
+        None
+    }
+
     fn default_subst_meta_as(
         kw: Span,
     ) -> syn::Result<meta::SubstAsInfo<Self>> {
@@ -948,6 +952,13 @@ impl ExpansionOutput for Items {
 
     fn append_bool_only(&mut self, bool_only: &Self::BoolOnly) -> ! {
         void::unreachable(*bool_only)
+    }
+
+    fn from_token_accumulator<'o>(
+        (not_in_paste, _not_in_concat): &(Void, ()),
+        _out: &'o mut TokenAccumulator,
+    ) -> &'o mut Self {
+        void::unreachable(*not_in_paste);
     }
 
     fn record_error(&mut self, err: syn::Error) {

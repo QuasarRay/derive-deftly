@@ -40,6 +40,9 @@ impl SubstParseContext for BooleanContext {
     fn meta_recog_usage(_: &meta::SubstMeta<Self>) -> meta::Usage {
         meta::Usage::BOOL_ONLY
     }
+    fn is_tokens_vary_behaviour() -> Option<AllowTokens<Self>> {
+        None
+    }
 
     fn not_in_bool(span: &impl Spanned) -> syn::Result<Void> {
         Err(span.error(
