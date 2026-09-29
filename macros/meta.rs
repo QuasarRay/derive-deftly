@@ -1337,6 +1337,31 @@ where
     O: ExpansionOutput,
     TemplateElement<O>: Expand<O>,
 {
+    // Why don't we parse the `default` value the same way we parse
+    // a value in a attribute?  Well, that turns out to be troublesome:
+    //
+    // We get into complications with `{ }`.  Presumably we should allow
+    // them, but `as str` forbids them in values (even with
+    // `meta_quoted strip`).  So there is quite a bit of special-casing.
+    //
+    // Parsing as the `as` prevents
+    //   `${tmeta(something) as str, default { expression() }}`
+    // which is a reasonable-seeming idiom that we already have in
+    // arti.git.  Similar considerations might apply to `as ident`.
+    //
+    // It would also mean that `$Xmeta as ty` was a way to get a template-
+    // specified complex type into token pasting, which by the rule of
+    // not glomming functionality means we ought to have a primitive
+    // to do the same.
+    //
+    // In general, having the content of `default ...` be template input
+    // like the surrounding template seems to make more sense sense
+    // than having it be TokenStream and reparsing it.
+    //
+    // Finally, in an experimental branch, reparsing involves unpleasant
+    // contortions, especially if we want to syntax-check the value
+    // at template read time.
+
     use SubstAs as SA;
 
     // We would have liked `if let` in the ty/path match pattern
