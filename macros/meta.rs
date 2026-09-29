@@ -1465,11 +1465,10 @@ fn meta_expr_surround_1(
     brace: &token::Brace,
     value: TokenStream,
 ) -> TokenStream {
-                let span = brace.span.span();
-                let mut group =
-                    proc_macro2::Group::new(Delimiter::Brace, value);
-                group.set_span(span);
-                group.to_token_stream()
+    let span = brace.span.span();
+    let mut group = proc_macro2::Group::new(Delimiter::Brace, value);
+    group.set_span(span);
+    group.to_token_stream()
 }
 
 fn meta_expr_surround_2<O: ExpansionOutput>(
