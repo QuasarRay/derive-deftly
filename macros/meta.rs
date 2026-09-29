@@ -1403,13 +1403,7 @@ where
             // If the value was braced, reconstruct the Group, so that
             //     #[deftly(e = { stmt; value })]
             // works as expected.  `( )` are added later by FoundNode::expand.
-            AVH::Expr => {
-                let span = brace_token.span.span();
-                let mut group =
-                    proc_macro2::Group::new(Delimiter::Brace, value.clone());
-                group.set_span(span);
-                group.to_token_stream()
-            }
+            AVH::Expr => meta_expr_surround_1(brace_token, value.clone()),
         },
         PV::Quoted { value } => match as_value_handling {
             AVH::Normal | AVH::NoBare => metavalue_lit_reparse(value)?,
@@ -1465,6 +1459,17 @@ fn metavalue_lit_reparse(s: &syn::LitStr) -> syn::Result<TokenStream> {
     })?;
 
     Ok(t)
+}
+
+fn meta_expr_surround_1(
+    brace: &token::Brace,
+    value: TokenStream,
+) -> TokenStream {
+                let span = brace.span.span();
+                let mut group =
+                    proc_macro2::Group::new(Delimiter::Brace, value);
+                group.set_span(span);
+                group.to_token_stream()
 }
 
 fn meta_expr_surround_2<O: ExpansionOutput>(
