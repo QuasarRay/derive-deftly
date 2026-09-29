@@ -50,6 +50,10 @@ impl SubstParseContext for BooleanContext {
     fn missing_keyword_arguments(kw_span: Span) -> syn::Result<Void> {
         Err(kw_span.error("missing parameters to condition"))
     }
+
+    fn default_subst_meta_as(_: Span) -> syn::Result<meta::SubstAsInfo<Self>> {
+        Ok(meta::SubstAsInfo::Bool(()))
+    }
 }
 
 impl Subst<BooleanContext> {
@@ -106,9 +110,10 @@ impl Subst<BooleanContext> {
                     None => {}
                     Some((_, nb)) => void::unreachable(*nb),
                 }
-                if let Some(as_) = as_ {
-                    void::unreachable(as_.nb)
-                };
+                match as_ {
+                    meta::SubstAsInfo::Expand(a) => void::unreachable(a.nb),
+                    meta::SubstAsInfo::Bool(()) => {}
+                }
                 is_found(label.search_eval_bool(sm.pmetas(ctx?, kw_span)?))
             }
 

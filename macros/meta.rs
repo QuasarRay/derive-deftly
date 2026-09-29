@@ -105,13 +105,26 @@ struct BorrowedDesig<'p> {
 #[derive(Debug)]
 pub struct SubstMeta<O: SubstParseContext> {
     pub desig: Desig,
-    pub as_: Option<SubstAsSpecified<O>>,
+    pub as_: SubstAsInfo<O>,
     pub default: Option<(Argument<O>, O::NotInBool, beta::Enabled)>,
     pub quoted: Option<(QuotedMode, O::NotInBool)>,
 }
 
+/// Default (or defaulted) `as`, or nothing in boolean context
+///
+/// Return value from [`SubstParseContext::default_subst_meta_as`].
+/// Only one of the arms is inhabited in any one context.
+///
+/// In expansion contexts, use `.for_expand()` to get the `SubstAsResolved`.
 #[derive(Debug)]
-pub struct SubstAsSpecified<O: SubstParseContext> {
+pub enum SubstAsInfo<O: SubstParseContext> {
+    Expand(meta::SubstAsResolved<O>), // uninhabited in boolean context
+    Bool(O::BoolOnly),
+}
+
+/// `as` in a meta expansion (or the default value)
+#[derive(Debug)]
+pub struct SubstAsResolved<O: SubstParseContext> {
     pub kw_span: Span,
     pub as_: SubstAs<O>,
     pub nb: O::NotInBool,
@@ -250,13 +263,13 @@ pub use FoundNodeKind as FNK;
 /// The variant selected is determined solely by the `as`
 /// (or `Singleton` if not present).
 ///
-/// Also present in `SubstAsSpecified`, as `MultiplicityCollector<Void>`,
+/// Also present in `SubstAsResolved`, as `MultiplicityCollector<Void>`,
 /// mostly to prompt us to do the errors cross-checks
 /// of the various elements of the [`SubstMeta`].
 /// Specifically, that we don't use `default` with any `as` that
 /// has `MultiplicityCollector::Several`.
 ///
-/// Always absent in boolean context, because it lives in `SubstAsSpecified`.
+/// Always absent in boolean context, because it lives in `SubstAsResolved`.
 #[derive(Debug)]
 pub enum MultiplicityCollector<T> {
     /// Value can only be specified once.  Defaults are supported.
@@ -335,6 +348,15 @@ impl<'f> MultiplicityCollector<FoundNode<'f>> {
             MC::Singleton(Some(n)) => Left(iter::once(n)),
             MC::Several(l) => Right(l.into_iter()),
         })
+    }
+}
+
+impl<O: ExpansionOutput> SubstAsInfo<O> {
+    pub fn for_expand(&self) -> &SubstAsResolved<O> {
+        match self {
+            SubstAsInfo::Expand(e) => e,
+            SubstAsInfo::Bool(v) => void::unreachable(*v),
+        }
     }
 }
 
@@ -459,14 +481,14 @@ impl Label {
     }
 }
 
-impl<O: SubstParseContext> SubstAsSpecified<O> {
+impl<O: SubstParseContext> SubstAsResolved<O> {
     fn parse(input: ParseStream, nb: O::NotInBool) -> syn::Result<Self> {
         let kw: IdentAny = input.parse()?;
         let kw_span = kw.span();
         let beta = || beta::Enabled::new_for_syntax(kw_span);
         let from_sma = |as_: SubstAs<_>| {
             let multiplicity = as_.multiplicity();
-            Ok(SubstAsSpecified {
+            Ok(SubstAsResolved {
                 //
                 as_,
                 nb,
@@ -539,7 +561,7 @@ impl<O: SubstParseContext> SubstMeta<O> {
             Ok(())
         }
 
-        let mut as_ = None::<(Span, SubstAsSpecified<O>)>;
+        let mut as_ = None::<(Span, SubstAsResolved<O>)>;
         let mut default = None;
         let mut quoted = None::<(Span, (QuotedMode, O::NotInBool))>;
 
@@ -550,7 +572,7 @@ impl<O: SubstParseContext> SubstMeta<O> {
             let ue = || beta::Enabled::new_for_syntax(kw_span);
             if keyword == "as" {
                 store(kw_span, &mut as_, || {
-                    SubstAsSpecified::parse(input, nb)
+                    SubstAsResolved::parse(input, nb)
                 })?;
             } else if keyword == "default" {
                 store(kw_span, &mut default, || {
@@ -579,15 +601,20 @@ impl<O: SubstParseContext> SubstMeta<O> {
             }
         }
 
+        let as_ = match as_ {
+            Some((_span, as_)) => SubstAsInfo::Expand(as_),
+            None => O::default_subst_meta_as(kw_span)?,
+        };
+
         macro_rules! ret { { $( $f:ident )* } => {
             SubstMeta {
+                as_,
                 desig: Desig { label, scope },
                 $( $f: $f.map(|(_span, v)| v), )*
             }
         } }
 
         Ok(ret! {
-            as_
             default
             quoted
         })
@@ -1231,12 +1258,9 @@ where
         let span_whole = self.span_whole(kw_span);
         let self_loc = (span_whole, "expansion");
         let error_loc = [ctx.error_loc(), self_loc];
+        let as_ = as_.for_expand();
 
-        let mut found = self
-            .as_
-            .as_ref()
-            .map(|as_| as_.multiplicity.start_collecting())
-            .unwrap_or_default();
+        let mut found = as_.multiplicity.start_collecting();
 
         desig.label.search(
             pmetas,
@@ -1295,7 +1319,7 @@ where
 
         for found in found {
             found.ptree.update_used(Usage::VALUE);
-            found.expand(span_whole, as_, quoted, out)?;
+            found.expand(span_whole, &as_.as_, quoted, out)?;
         }
 
         Ok(())
@@ -1447,7 +1471,7 @@ impl<'l> FoundNode<'l> {
     fn expand<O>(
         &self,
         tspan: Span,
-        as_: &Option<SubstAsSpecified<O>>,
+        as_: &SubstAs<O>,
         quoted: Option<QuotedMode>,
         out: &mut O,
     ) -> syn::Result<()>
@@ -1466,14 +1490,6 @@ impl<'l> FoundNode<'l> {
         use AsValueHandling as AVH;
         use SubstAs as SA;
 
-        let default_buf;
-        let as_ = match as_ {
-            Some(as_) => &as_.as_,
-            None => {
-                default_buf = O::default_subst_meta_as(tspan)?;
-                &default_buf
-            }
-        };
         let quoted = quoted.map(|q| q.mode);
 
         let input = MetaValueAsInput {
