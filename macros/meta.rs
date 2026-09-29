@@ -1467,6 +1467,26 @@ fn metavalue_lit_reparse(s: &syn::LitStr) -> syn::Result<TokenStream> {
     Ok(t)
 }
 
+fn meta_expr_surround_2<O: ExpansionOutput>(
+    expr: impl ToTokens,
+    at: &AllowTokens<O>,
+    out: &mut O,
+) -> syn::Result<()> {
+                // Now surround with `( )` for precedence reasons.
+                // (And, if we surrounded with `{ }` above, to turn the
+                // block into an expression that's useable everywhere, for eg
+                //     #[deftly(fn = { |_| .. })]
+                // and then
+                //     ${fmeta(fn as expr)}(arg)
+                // which we need to expand to
+                //     ({ |_| .. })(arg)
+                // not
+                //     { |_| .. }(arg)   // <- doesn't compile
+                let content = Grouping::Parens.surround(expr.span(), expr);
+                out.append_tokens(at, content)?;
+    Ok(())
+}
+
 impl<'l> FoundNode<'l> {
     fn expand<O>(
         &self,
@@ -1504,18 +1524,7 @@ impl<'l> FoundNode<'l> {
                 // Any surrounding `{ }` are re-added by metavalue_as
                 let expr = metavalue_as(AVH::Expr, input)?;
                 supported.infer_type(&expr);
-                // Now surround with `( )` for precedence reasons.
-                // (And, if we surrounded with `{ }` above, to turn the
-                // block into an expression that's useable everywhere, for eg
-                //     #[deftly(fn = { |_| .. })]
-                // and then
-                //     ${fmeta(fn as expr)}(arg)
-                // which we need to expand to
-                //     ({ |_| .. })(arg)
-                // not
-                //     { |_| .. }(arg)   // <- doesn't compile
-                let content = Grouping::Parens.surround(expr.span(), expr);
-                out.append_tokens(at, content)?;
+                meta_expr_surround_2(&expr, at, out)?;
             }
             SA::ident => {
                 let ident: IdentAny = metavalue_as(AVH::Normal, input)?;
