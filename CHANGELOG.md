@@ -68,7 +68,7 @@ or via the [account request form].
 
 ##### Breaking changes to beta features
 
- * `${Xmeta ... default ...}` now wraps the expansion of the default
+ * BETA: `${Xmeta ... default ...}` now wraps the expansion of the default
    value with `( )` (or `None`-delimited group), depending on the `as`.
 
 ##### Added
@@ -78,7 +78,7 @@ or via the [account request form].
 
 #### Fixed
 
- * Fixed `${Xmeta(...) as expr}` with `#[deftly(.. = { block })]`.
+ * BETA: Fixed `${Xmeta(...) as expr}` with `#[deftly(.. = { block })]`.
  * Don't report "different scope" re meta when scope is the same.  \#143.
  * Minor fixes to reference and the Book.
 
