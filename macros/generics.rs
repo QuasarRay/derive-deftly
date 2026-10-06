@@ -231,9 +231,9 @@ impl CollateInputs {
         elements.sort_by_key(|(value, _)| match value {
             // syn doesn't promise the order is correct, so we have to
             // open-code it like this, which is rather unsatisfactory
-            GP::Lifetime { .. } => 0,
-            GP::Type { .. } => 1,
-            GP::Const { .. } => 2,
+            GP::Lifetime(_) => (0, false),
+            GP::Type(p) => (1, p.default.is_some()),
+            GP::Const(p) => (2, p.default.is_some()),
         });
 
         for (value, punct) in &elements {

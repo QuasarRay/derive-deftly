@@ -582,7 +582,8 @@ Each of these expansion keywords:
  - parses the result as a series of generic parameters
    (tolerating empty items, ie consecutive commas);
  - collates all of the parameters into the proper order:
-   lifetimes, types, then constants;
+   lifetimes, types, then constants,
+   and with each of those, generics with defaults after those without;
  - possibly redacts each of those parameters,
    selecting only part of each one.
 
@@ -619,7 +620,7 @@ Available only in [**beta**].
 
 ##### More complex examples, involving example `Struct`
 
- * `${gens_nodefs $tdefgens, CorrectlyInserted}`: `'a, 'l: 'a, T: Display, CorrectlyInserted, const C: usize,`
+ * `${gens_nodefs $tdefgens, CorrectlyInserted}`: `'a, 'l: 'a, CorrectlyInserted, T: Display, const C: usize,`
  * `${gens_collate 'pre: 'bound, Pre: Bound = (), const PRE: i32 = 2, $tdefgens 'post: 'bound, Post: Bound = (), const POST: i32 = 3}`: `'pre: 'bound, 'a, 'l: 'a, 'post: 'bound, Pre: Bound = (), T: Display = usize, Post: Bound = (), const PRE: i32 = 2, const C: usize = 1, const POST: i32 = 3,`
  * `${gens_nodefs 'pre: 'bound, Pre: Bound = (), const PRE: i32 = 2, $tdefgens 'post: 'bound, Post: Bound = (), const POST: i32 = 3}`: `'pre: 'bound, 'a, 'l: 'a, 'post: 'bound, Pre: Bound, T: Display, Post: Bound, const PRE: i32, const C: usize, const POST: i32,`
  * `${gens_names 'pre: 'bound, Pre: Bound = (), const PRE: i32 = 2, $tdefgens 'post: 'bound, Post: Bound = (), const POST: i32 = 3}`: `'pre, 'a, 'l, 'post, Pre, T, Post, PRE, C, POST,`
