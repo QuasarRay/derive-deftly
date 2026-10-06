@@ -73,6 +73,8 @@ derive_deftly_adhoc! {
     struct Nodefs<${gens_nodefs , $GENS_MIXTURE ,}> {
         d: Defs<${gens_names , $GENS_MIXTURE}>,
     }
+
+    struct NoGens<${gens_collate ,,,,}>;
 }
 
 fn main() {
