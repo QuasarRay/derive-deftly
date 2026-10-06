@@ -581,10 +581,11 @@ Each of these expansion keywords:
  - expands the content (into tokens);
  - parses the result as a series of generic parameters
    (tolerating empty items, ie consecutive commas);
- - possibly redacts each of those parameters,
-   selecting only part of each one;
  - collates all of the parameters into the proper order:
-   lifetimes, types, then constants.
+   lifetimes, types/consts without defaults,
+   and finally types/consts with defaults;
+ - possibly redacts each of those parameters,
+   selecting only part of each one.
 
 Collation is needed to add generic parameters to existing generic lists,
 since simply appending or prepending doesn't always work.
@@ -609,20 +610,37 @@ The expansion always ends in a comma, if it's not empty.
 
 Available only in [**beta**].
 
+#### Ordering considerations
+
+It is important that the same set of generics is written in the same order,
+everywhere in a template.  Otherwise the template can have latent bugs
+which trigger depending on the input generics.  Use `${define }`.
+
+Generics with defaults are always sorted after generics without defaults;
+but you would usually prefer your derived code's generic ordering
+not to depend on whether the driver's generics happen to provide defaults.
+Therefore, when defining items with a superset of the driver's generics,
+put your non-ddefaulted generic types/consts before the input generics
+(`$tdefgens`, or `${Xmeta..}`),
+and your defaulted types/consts after.
+
+(This is not relevant if you just use `$impl`, since
+any permissible ordering of generics on a Rust `impl` is equivalent.)
+
 #### Examples
 
  * `${gens_collate 'a: 'b, A: B = (), const C: i32 = 0}`: `'a: 'b, A: B = (), const C: i32 = 0,`
  * `${gens_nodefs 'a: 'b, A: B = (), const C: i32 = 0}`: `'a: 'b, A: B, const C: i32,`
  * `${gens_names 'a: 'b, A: B = (), const C: i32 = 0}`: `'a, A, C,`
- * `${gens_collate 'a, A, const C: i32, 'b, B, const D: i32}`: `'a, 'b, A, B, const C: i32, const D: i32,`
+ * `${gens_collate 'a, const C: i32 = 0, D = (), 'b, const A: i32, B}`: `'a, 'b, const A: i32, B, const C: i32 = 0, D = (),`
  * `${gens_collate $tgens}` for `SimpleUnit`: `/*empty*/`
 
 ##### More complex examples, involving example `Struct`
 
- * `${gens_nodefs $tdefgens, CorrectlyInserted}`: `'a, 'l: 'a, T: Display, CorrectlyInserted, const C: usize,`
- * `${gens_collate 'pre: 'bound, Pre: Bound = (), const PRE: i32 = 2, $tdefgens 'post: 'bound, Post: Bound = (), const POST: i32 = 3}`: `'pre: 'bound, 'a, 'l: 'a, 'post: 'bound, Pre: Bound = (), T: Display = usize, Post: Bound = (), const PRE: i32 = 2, const C: usize = 1, const POST: i32 = 3,`
- * `${gens_nodefs 'pre: 'bound, Pre: Bound = (), const PRE: i32 = 2, $tdefgens 'post: 'bound, Post: Bound = (), const POST: i32 = 3}`: `'pre: 'bound, 'a, 'l: 'a, 'post: 'bound, Pre: Bound, T: Display, Post: Bound, const PRE: i32, const C: usize, const POST: i32,`
- * `${gens_names 'pre: 'bound, Pre: Bound = (), const PRE: i32 = 2, $tdefgens 'post: 'bound, Post: Bound = (), const POST: i32 = 3}`: `'pre, 'a, 'l, 'post, Pre, T, Post, PRE, C, POST,`
+ * `${gens_nodefs $tdefgens, CorrectlyInserted}`: `'a, 'l: 'a, CorrectlyInserted, T: Display, const C: usize,`
+ * `${gens_collate 'pre: 'bound, Pre: Bound = (), const PRE: i32 = 2, $tdefgens 'post: 'bound, Post: Bound = (), const POST: i32 = 3}`: `'pre: 'bound, 'a, 'l: 'a, 'post: 'bound, Pre: Bound = (), const PRE: i32 = 2, T: Display = usize, const C: usize = 1, Post: Bound = (), const POST: i32 = 3,`
+ * `${gens_nodefs 'pre: 'bound, Pre: Bound = (), const PRE: i32 = 2, $tdefgens 'post: 'bound, Post: Bound = (), const POST: i32 = 3}`: `'pre: 'bound, 'a, 'l: 'a, 'post: 'bound, Pre: Bound, const PRE: i32, T: Display, const C: usize, Post: Bound, const POST: i32,`
+ * `${gens_names 'pre: 'bound, Pre: Bound = (), const PRE: i32 = 2, $tdefgens 'post: 'bound, Post: Bound = (), const POST: i32 = 3}`: `'pre, 'a, 'l, 'post, Pre, PRE, T, C, Post, POST,`
 
 <div id="x:fmeta">
 <div id="x:tmeta">

@@ -30,7 +30,7 @@ enum Enum<T = (), const N: usize = 1> {
 trait Trait<T> {}
 
 derive_deftly_adhoc! {
-    Enum beta_deftly:
+    Enum beta_deftly, dbg:
 
     $tvis $tdefkwd ${paste $tdeftype Copy}
     ${tdefvariants $(
@@ -56,6 +56,25 @@ derive_deftly_adhoc! {
       for (for <'x> fn(&'x u32))
       where Box::<(for <'x> fn(&'x u32))>: Sync
     } {}
+
+    ${define GENS_MIXTURE {
+        , ZD=(), const KD: usize = 23,, 'l,
+        $tdefgens
+        'z: 'l, , const KM: usize,, ZM,
+    }}
+
+    struct Defs<${gens_collate $GENS_MIXTURE}> {
+        l: &'l &'z (),
+        d: [ZD; KD],
+        m: [ZM; KM],
+        t: $ttype,
+    }
+
+    struct Nodefs<${gens_nodefs , $GENS_MIXTURE ,}> {
+        d: Defs<${gens_names , $GENS_MIXTURE}>,
+    }
+
+    struct NoGens<${gens_collate ,,,,}>;
 }
 
 fn main() {
