@@ -610,6 +610,23 @@ The expansion always ends in a comma, if it's not empty.
 
 Available only in [**beta**].
 
+#### Ordering considerations
+
+It is important that the same set of generics is written in the same order,
+everywhere in a template.  Otherwise the template can have latent bugs
+which trigger depending on the input generics.  Use `${define }`.
+
+Generics with defaults are always sorted after generics without defaults;
+but you would usually prefer your derived code's generic ordering
+not to depend on whether the driver's generics happen to provide defaults.
+Therefore, when defining items with a superset of the driver's generics,
+put your non-ddefaulted generic types/consts before the input generics
+(`$tdefgens`, or `${Xmeta..}`),
+and your defaulted types/consts after.
+
+(This is not relevant if you just use `$impl`, since
+any permissible ordering of generics on a Rust `impl` is equivalent.)
+
 #### Examples
 
  * `${gens_collate 'a: 'b, A: B = (), const C: i32 = 0}`: `'a: 'b, A: B = (), const C: i32 = 0,`
