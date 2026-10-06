@@ -615,7 +615,7 @@ Available only in [**beta**].
  * `${gens_collate 'a: 'b, A: B = (), const C: i32 = 0}`: `'a: 'b, A: B = (), const C: i32 = 0,`
  * `${gens_nodefs 'a: 'b, A: B = (), const C: i32 = 0}`: `'a: 'b, A: B, const C: i32,`
  * `${gens_names 'a: 'b, A: B = (), const C: i32 = 0}`: `'a, A, C,`
- * `${gens_collate 'a, A, const C: i32, 'b, B, const D: i32}`: `'a, 'b, A, const C: i32, B, const D: i32,`
+ * `${gens_collate 'a, const C: i32 = 0, D = (), 'b, const A: i32, B}`: `'a, 'b, const A: i32, B, const C: i32 = 0, D = (),`
  * `${gens_collate $tgens}` for `SimpleUnit`: `/*empty*/`
 
 ##### More complex examples, involving example `Struct`
