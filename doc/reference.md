@@ -582,8 +582,8 @@ Each of these expansion keywords:
  - parses the result as a series of generic parameters
    (tolerating empty items, ie consecutive commas);
  - collates all of the parameters into the proper order:
-   lifetimes, types, then constants,
-   and with each of those, generics with defaults after those without;
+   lifetimes, types/consts without defaults,
+   and finally types/consts with defaults;
  - possibly redacts each of those parameters,
    selecting only part of each one.
 
@@ -615,15 +615,15 @@ Available only in [**beta**].
  * `${gens_collate 'a: 'b, A: B = (), const C: i32 = 0}`: `'a: 'b, A: B = (), const C: i32 = 0,`
  * `${gens_nodefs 'a: 'b, A: B = (), const C: i32 = 0}`: `'a: 'b, A: B, const C: i32,`
  * `${gens_names 'a: 'b, A: B = (), const C: i32 = 0}`: `'a, A, C,`
- * `${gens_collate 'a, A, const C: i32, 'b, B, const D: i32}`: `'a, 'b, A, B, const C: i32, const D: i32,`
+ * `${gens_collate 'a, A, const C: i32, 'b, B, const D: i32}`: `'a, 'b, A, const C: i32, B, const D: i32,`
  * `${gens_collate $tgens}` for `SimpleUnit`: `/*empty*/`
 
 ##### More complex examples, involving example `Struct`
 
  * `${gens_nodefs $tdefgens, CorrectlyInserted}`: `'a, 'l: 'a, CorrectlyInserted, T: Display, const C: usize,`
- * `${gens_collate 'pre: 'bound, Pre: Bound = (), const PRE: i32 = 2, $tdefgens 'post: 'bound, Post: Bound = (), const POST: i32 = 3}`: `'pre: 'bound, 'a, 'l: 'a, 'post: 'bound, Pre: Bound = (), T: Display = usize, Post: Bound = (), const PRE: i32 = 2, const C: usize = 1, const POST: i32 = 3,`
- * `${gens_nodefs 'pre: 'bound, Pre: Bound = (), const PRE: i32 = 2, $tdefgens 'post: 'bound, Post: Bound = (), const POST: i32 = 3}`: `'pre: 'bound, 'a, 'l: 'a, 'post: 'bound, Pre: Bound, T: Display, Post: Bound, const PRE: i32, const C: usize, const POST: i32,`
- * `${gens_names 'pre: 'bound, Pre: Bound = (), const PRE: i32 = 2, $tdefgens 'post: 'bound, Post: Bound = (), const POST: i32 = 3}`: `'pre, 'a, 'l, 'post, Pre, T, Post, PRE, C, POST,`
+ * `${gens_collate 'pre: 'bound, Pre: Bound = (), const PRE: i32 = 2, $tdefgens 'post: 'bound, Post: Bound = (), const POST: i32 = 3}`: `'pre: 'bound, 'a, 'l: 'a, 'post: 'bound, Pre: Bound = (), const PRE: i32 = 2, T: Display = usize, const C: usize = 1, Post: Bound = (), const POST: i32 = 3,`
+ * `${gens_nodefs 'pre: 'bound, Pre: Bound = (), const PRE: i32 = 2, $tdefgens 'post: 'bound, Post: Bound = (), const POST: i32 = 3}`: `'pre: 'bound, 'a, 'l: 'a, 'post: 'bound, Pre: Bound, const PRE: i32, T: Display, const C: usize, Post: Bound, const POST: i32,`
+ * `${gens_names 'pre: 'bound, Pre: Bound = (), const PRE: i32 = 2, $tdefgens 'post: 'bound, Post: Bound = (), const POST: i32 = 3}`: `'pre, 'a, 'l, 'post, Pre, PRE, T, C, Post, POST,`
 
 <div id="x:fmeta">
 <div id="x:tmeta">
