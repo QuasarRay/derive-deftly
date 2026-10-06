@@ -57,6 +57,22 @@ or via the [account request form].
 
 ## Changelog
 
+### 1.14.0 - 2026-10-06
+
+#### Breaking changes to beta features
+
+ * BETA: `$gens_collate`, `$gens_nodefs` and `$gens_names` no longer sort
+   types before consts, and sort generics with defaults to the end.
+
+#### Fixed
+
+ * BETA: `$impl` sorts generics correctly, defaulted ones to the end.
+
+#### Improved
+
+ * reference: Improved/fixed documentation for `$gens_...`
+ * changelog: Add two missing BETA: notes.
+
 ### 1.13.0 - 2026-09-29
 
 #### Breaking (minor)
