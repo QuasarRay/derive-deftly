@@ -57,6 +57,22 @@ or via the [account request form].
 
 ## Changelog
 
+### 1.14.0 - 2026-10-06
+
+#### Breaking changes to beta features
+
+ * BETA: `$gens_collate`, `$gens_nodefs` and `$gens_names` no longer sort
+   types before consts, and sort generics with defaults to the end.
+
+#### Fixed
+
+ * BETA: `$impl` sorts generics correctly, defaulted ones to the end.
+
+#### Improved
+
+ * reference: Improved/fixed documentation for `$gens_...`
+ * changelog: Add two missing BETA: notes.
+
 ### 1.13.0 - 2026-09-29
 
 #### Breaking (minor)
@@ -68,7 +84,7 @@ or via the [account request form].
 
 ##### Breaking changes to beta features
 
- * `${Xmeta ... default ...}` now wraps the expansion of the default
+ * BETA: `${Xmeta ... default ...}` now wraps the expansion of the default
    value with `( )` (or `None`-delimited group), depending on the `as`.
 
 ##### Added
@@ -78,7 +94,7 @@ or via the [account request form].
 
 #### Fixed
 
- * Fixed `${Xmeta(...) as expr}` with `#[deftly(.. = { block })]`.
+ * BETA: Fixed `${Xmeta(...) as expr}` with `#[deftly(.. = { block })]`.
  * Don't report "different scope" re meta when scope is the same.  \#143.
  * Minor fixes to reference and the Book.
 
