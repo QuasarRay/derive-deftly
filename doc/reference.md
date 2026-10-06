@@ -581,10 +581,10 @@ Each of these expansion keywords:
  - expands the content (into tokens);
  - parses the result as a series of generic parameters
    (tolerating empty items, ie consecutive commas);
- - possibly redacts each of those parameters,
-   selecting only part of each one;
  - collates all of the parameters into the proper order:
-   lifetimes, types, then constants.
+   lifetimes, types, then constants;
+ - possibly redacts each of those parameters,
+   selecting only part of each one.
 
 Collation is needed to add generic parameters to existing generic lists,
 since simply appending or prepending doesn't always work.
