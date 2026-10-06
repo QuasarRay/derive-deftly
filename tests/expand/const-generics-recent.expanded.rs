@@ -39,6 +39,24 @@ impl Trait<(for<'x> fn(&'x u32))> for (for<'x> fn(&'x u32))
 where
     Box<(for<'x> fn(&'x u32))>: Sync,
 {}
+struct Defs<
+    'l,
+    'z: 'l,
+    const KM: usize,
+    ZM,
+    ZD = (),
+    const KD: usize = 23,
+    T = (),
+    const N: usize = 1,
+> {
+    l: &'l &'z (),
+    d: [ZD; KD],
+    m: [ZM; KM],
+    t: Enum<T, N>,
+}
+struct Nodefs<'l, 'z: 'l, const KM: usize, ZM, ZD, const KD: usize, T, const N: usize> {
+    d: Defs<'l, 'z, KM, ZM, ZD, KD, T, N>,
+}
 fn main() {
     let _: Option<Enum> = None;
     let _ = Enum::Unit::<u8, 3>;
